@@ -11,13 +11,16 @@ define('DB_NAME','krev_agent_sandbox'); define('DB_USER','root'); define('DB_PAS
 define('DB_CHARSET','utf8mb4'); define('DB_COLLATE','');
 define('WP_ENVIRONMENT_TYPE','local'); define('DISABLE_WP_CRON',true); define('WP_DEBUG',true); define('WP_DEBUG_DISPLAY',false);
 define('WP_DEBUG_LOG',dirname(__DIR__).'/.runtime/wp-debug.log');
-define('WP_HOME','http://localhost:11080'); define('WP_SITEURL','http://localhost:11080');
+$setupTest=($argv[2]??'')==='setup';
+define('WP_HOME',$setupTest?'https://kniferevive.com':'http://localhost:11080'); define('WP_SITEURL',WP_HOME);
 define('WP_HTTP_BLOCK_EXTERNAL',true); define('WP_ACCESSIBLE_HOSTS','localhost,127.0.0.1');
 define('WPMU_PLUGIN_DIR',dirname(__DIR__).'/.runtime/mu-plugins');
 define('WPMU_PLUGIN_URL','http://localhost:11080/mu-plugins');
 foreach (['AUTH_KEY','SECURE_AUTH_KEY','LOGGED_IN_KEY','NONCE_KEY','AUTH_SALT','SECURE_AUTH_SALT','LOGGED_IN_SALT','NONCE_SALT'] as $key) define($key,'Synthetic test configuration only: '.$key);
-define('KREV_AGENT_STRIPE_TEST_SECRET_KEY','sk_test_synthetic_fixture');
-define('KREV_AGENT_STRIPE_TEST_WEBHOOK_SECRET','synthetic-webhook-fixture-only');
+if (!$setupTest) {
+    define('KREV_AGENT_STRIPE_TEST_SECRET_KEY','sk_test_synthetic_fixture');
+    define('KREV_AGENT_STRIPE_TEST_WEBHOOK_SECRET','synthetic-webhook-fixture-only');
+}
 if (PHP_SAPI==='cli') { $_SERVER['HTTP_HOST']='localhost:11080'; $_SERVER['REQUEST_URI']='/'; $_SERVER['HTTP_ORIGIN']=WP_HOME; }
 $table_prefix='krev_sandbox_';
 if (($argv[2]??'')==='install') define('WP_INSTALLING',true);

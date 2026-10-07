@@ -2,7 +2,7 @@
 
 A local release candidate implementing the KnifeRevive Concierge storefront skill and a WordPress/WooCommerce adapter. Annex technology discovery is available through a structured catalog and existing product checkout. The adapter supports authorized, prepaid, operator-owned sharpening orders through hosted Stripe Checkout or the existing KnifeRevive Lightning coordinator, with separate intake/return appointments.
 
-**Version 0.1.0 — release candidate. New payments are disabled by default.** Deployment, processor setup and operational rules require verification before the skill can advertise working booking or payments. The owner authorized GitHub and ClawHub publication on October 7, 2026; publication does not activate the merchant backend or verify live payments. See [publication status](docs/publication-status.md) for actual release and audit results.
+**Merchant plugin 0.1.1; portable skill 0.1.0 — release candidates. New payments are disabled by default.** Deployment, processor setup and operational rules require verification before the skill can advertise working booking or payments. The owner authorized GitHub and ClawHub publication on October 7, 2026; publication does not verify live payments. See [publication status](docs/publication-status.md) for the skill release and audit results.
 
 [Get the skill on ClawHub](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Download the release](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/v0.1.0) · [Security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.0)
 
@@ -24,7 +24,7 @@ The observed ClawHub security result is clean/benign with no warnings. Its separ
 
 The implementation followed the owner's October 7, 2026 architecture brief. See `docs/architecture.md`, `docs/data-flow-and-permissions.md`, `docs/operations-and-recovery.md`, and `docs/release-evidence.md` for integration decisions, operational limits, and actual verification.
 
-The local release passed 75 behavioral assertions in each of WooCommerce's legacy and HPOS storage modes, seven actual API schema checks, skill validation, and browser review/checkout checks. See [release evidence](docs/release-evidence.md) for the tested scope and remaining gates. An inactive copy is available in the Local Sites project's plugins folder. [Publication and discovery](docs/publication-and-discovery.md) describes release and measurement steps.
+The local release passed 75 behavioral assertions in each of WooCommerce's legacy and HPOS storage modes, seven actual API schema checks, skill validation, and browser review/checkout checks. Version 0.1.1 also passed 16 merchant Stripe setup assertions. See [release evidence](docs/release-evidence.md) for the original tested scope and remaining gates. The Local Sites plugin is activated with paid booking disabled. [Publication and discovery](docs/publication-and-discovery.md) describes release and measurement steps.
 
 ## Local installation and configuration
 
@@ -44,6 +44,9 @@ Open **WooCommerce → Agent Commerce**. The settings editor accepts validated J
 The technology taxonomy defaults to `technology`; change `technology_category` if the actual site's Annex category differs. Technology results deliberately use the existing WooCommerce checkout rather than this adapter's direct orders. Mixed tech/service carts are rejected by the direct service interface.
 
 ## Stripe configuration
+
+For WordPress-managed hosting, an administrator can set `stripe_use_woocommerce_keys` to `true` in WooCommerce → Agent Commerce. This explicitly reuses the official WooCommerce Stripe gateway's existing secret key for the selected environment; configured server constants take precedence. Click **Connect dedicated Stripe test webhook** from the HTTPS production administration page to register only this adapter's test events. Registration does not enable payments or change the official gateway's webhooks. The dedicated signing secret is encrypted in a non-autoloaded WordPress option using AES-256-GCM and a key derived from WordPress salts. Changing those salts invalidates decryption and requires administrator review of the original Stripe endpoint. Live webhook configuration still uses a server constant and requires a separate verified launch.
+
 
 Supply constants through the site's server-managed configuration or secret manager. Their names are:
 

@@ -3,7 +3,7 @@ namespace KnifeRevive\AgentCommerce;
 defined('ABSPATH') || exit;
 final class Settings {
     public static function defaults(): array {
-        return ['enabled' => false, 'pricing_verified' => false, 'stripe_enabled' => false, 'stripe_live' => false, 'live_verified' => false,
+        return ['enabled' => false, 'pricing_verified' => false, 'stripe_enabled' => false, 'stripe_live' => false, 'live_verified' => false, 'stripe_use_woocommerce_keys' => false,
             'lightning_enabled' => false, 'pending_scheduling' => false, 'technology_category' => 'technology',
             'merchant_ids' => [], 'services' => [], 'postal_codes' => [], 'location' => '', 'policy_url' => '', 'return_policy_url' => '',
             'policy_version' => '', 'slots' => [], 'transport' => [], 'max_minor' => 10000];
@@ -12,7 +12,7 @@ final class Settings {
     public static function validate(array $s): array {
         Domain::fields($s, array_keys(self::defaults()));
         $s = array_replace(self::defaults(), $s);
-        foreach (['enabled', 'pricing_verified', 'stripe_enabled', 'stripe_live', 'live_verified', 'lightning_enabled', 'pending_scheduling'] as $key) {
+        foreach (['enabled', 'pricing_verified', 'stripe_enabled', 'stripe_live', 'live_verified', 'stripe_use_woocommerce_keys', 'lightning_enabled', 'pending_scheduling'] as $key) {
             if (!is_bool($s[$key])) Domain::fail('INVALID_SETTINGS', 'Settings flags must be booleans.');
         }
         foreach (['location', 'policy_version', 'technology_category'] as $key) $s[$key] = Domain::text($s[$key], 300);
@@ -58,11 +58,15 @@ final class Settings {
     }
     public static function stripeKey(bool $live): string {
         $key = $live ? 'KREV_AGENT_STRIPE_LIVE_SECRET_KEY' : 'KREV_AGENT_STRIPE_TEST_SECRET_KEY';
-        return defined($key) ? (string)constant($key) : '';
+        if (defined($key)) return (string)constant($key);
+        if (!self::get()['stripe_use_woocommerce_keys']) return '';
+        $s=(array)get_option('woocommerce_stripe_settings',[]);
+        $secret=(string)($s[$live?'secret_key':'test_secret_key']??'');
+        return preg_match($live?'/^sk_live_[A-Za-z0-9]+$/D':'/^sk_test_[A-Za-z0-9]+$/D',$secret) ? $secret : '';
     }
     public static function webhookSecret(bool $live): string {
         $key = $live ? 'KREV_AGENT_STRIPE_LIVE_WEBHOOK_SECRET' : 'KREV_AGENT_STRIPE_TEST_WEBHOOK_SECRET';
-        return defined($key) ? (string)constant($key) : '';
+        return defined($key) ? (string)constant($key) : StripeSetup::secret($live);
     }
     public static function rails(): array {
         $s = self::get(); $rails = [];
@@ -74,6 +78,11 @@ final class Settings {
     public static function page(): void {
         if (!current_user_can('manage_woocommerce')) return;
         $notice = '';
+        if (isset($_POST['krev_agent_test_webhook']) && current_user_can('manage_options')) {
+            check_admin_referer('krev_agent_test_webhook');
+            try { StripeSetup::testWebhook(); $notice='Dedicated Stripe test webhook configured. New payments remain controlled by the settings below.'; }
+            catch (\Throwable $e) { $notice=$e instanceof Fault ? $e->getMessage() : 'Webhook setup could not be verified. No payment was created.'; }
+        }
         if (isset($_POST['krev_agent_reconcile'])) {
             check_admin_referer('krev_agent_reconcile');
             try {
@@ -103,7 +112,13 @@ final class Settings {
             $d = $row['data']; $order = !empty($d['order_id']) ? wc_get_order($d['order_id']) : null;
             echo '<tr><td>' . esc_html($row['kind']) . '</td><td>' . esc_html($row['id']) . '</td><td>' . esc_html($d['payment_state'] ?? $d['state'] ?? 'pending') . '</td><td>' . ($order ? '<a href="' . esc_url($order->get_edit_order_url()) . '">' . esc_html($order->get_order_number()) . '</a>' : '—') . '</td></tr>';
         }
-        echo '</table><h2>Reconcile an original attempt</h2><form method="post">';
+        echo '</table>';
+        if (current_user_can('manage_options')) {
+            echo '<h2>Stripe test connection</h2><p>Test key: '.(self::stripeKey(false)?'present':'missing').'. Dedicated test webhook signing secret: '.(self::webhookSecret(false)?'present':'missing').'. Enable stripe_use_woocommerce_keys above to reuse the existing official WooCommerce Stripe test key. The button registers only test events with Stripe, stores the signing secret encrypted, and never enables live payments. Existing gateway webhooks are retained.</p><form method="post">';
+            wp_nonce_field('krev_agent_test_webhook');
+            echo '<button class="button" name="krev_agent_test_webhook">Connect dedicated Stripe test webhook</button></form>';
+        }
+        echo '<h2>Reconcile an original attempt</h2><form method="post">';
         wp_nonce_field('krev_agent_reconcile');
         echo '<label>Attempt reference <input name="attempt_id" maxlength="32" pattern="[a-f0-9]{32}" required></label> <button class="button" name="krev_agent_reconcile">Reconcile original attempt</button></form><p>Automatic transient retries use exponential backoff and pause after eight failures. Manual review is retained; do not issue another payment to resolve an uncertain attempt.</p></div>';
     }

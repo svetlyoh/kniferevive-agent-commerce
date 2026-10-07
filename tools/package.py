@@ -3,12 +3,14 @@ from pathlib import Path
 import hashlib
 import json
 import zipfile
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'dist'
 OUT.mkdir(exist_ok=True)
-manifest = {'version': '0.1.0', 'components': {}}
-for folder, archive in [('wordpress/kniferevive-agent-commerce','kniferevive-agent-commerce-0.1.0.zip'), ('skills/kniferevive-concierge','kniferevive-concierge-0.1.0.zip')]:
+plugin_version = re.search(r'\* Version: ([0-9.]+)', (ROOT / 'wordpress/kniferevive-agent-commerce/kniferevive-agent-commerce.php').read_text()).group(1)
+manifest = {'version': plugin_version, 'components': {}}
+for folder, archive in [('wordpress/kniferevive-agent-commerce',f'kniferevive-agent-commerce-{plugin_version}.zip'), ('skills/kniferevive-concierge','kniferevive-concierge-0.1.0.zip')]:
     base = ROOT / folder
     files = sorted(p for p in base.rglob('*') if p.is_file())
     entries = []
