@@ -1,0 +1,46 @@
+const fs = require('fs');
+const path = require('path');
+const runtimeModules = process.env.KREV_TEST_NODE_MODULES;
+if (!runtimeModules) throw new Error('Set KREV_TEST_NODE_MODULES to the installed Playwright modules directory.');
+const {chromium} = require(require.resolve('playwright', {paths: [runtimeModules]}));
+const root = path.resolve(__dirname, '..');
+let browser;
+let page;
+(async () => {
+  browser = await chromium.launch({headless: true, channel: 'msedge'});
+  page = await browser.newPage({viewport: {width: 390, height: 844}});
+  const failures = [];
+  page.on('pageerror', error => failures.push(error.message));
+  // Keep processor/policy navigation local test-only. Do not contact Stripe from the browser.
+  await page.route('**/*', route => {
+    const url = new URL(route.request().url());
+    return url.hostname === 'localhost' ? route.continue() : route.abort();
+  });
+  const fixture = JSON.parse(fs.readFileSync(path.join(root,'.runtime/ui-fixture.json'),'utf8'));
+  await page.goto(fixture.review_url);
+  await page.getByLabel('Full name').waitFor();
+  if (new URL(page.url()).hash) throw new Error('Private fragment was not removed.');
+  await page.getByLabel('Full name').fill('Synthetic Browser Shopper');
+  await page.getByLabel('Receipt email').fill('browser@example.invalid');
+  await page.getByLabel('Billing street address').fill('123 Fixture Street');
+  await page.getByLabel('Billing city').fill('San Francisco');
+  await page.getByRole('button',{name:'Prepare final review'}).click();
+  await page.getByRole('link',{name:'Review final quote'}).click();
+  await page.getByRole('button',{name:'Approve and create payment request'}).waitFor();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+  if (overflow) throw new Error('Mobile review overflows horizontally.');
+  await page.screenshot({path:path.join(root,'.runtime/review-mobile.png'),fullPage:true});
+  await page.getByRole('checkbox').check();
+  await page.getByRole('button',{name:'Approve and create payment request'}).click();
+  await page.getByRole('link',{name:'Open payment and booking status'}).click();
+  await page.getByRole('link',{name:'Continue to secure Stripe checkout'}).waitFor();
+  if (!(await page.locator('main').innerText()).includes('Payment: Awaiting payment')) throw new Error('Unpaid synthetic checkout claimed success.');
+  const cookie = (await page.context().cookies()).find(c => c.name === 'krev_agent_session');
+  if (!cookie || !cookie.httpOnly || cookie.sameSite !== 'Strict') throw new Error('Session cookie is not protected.');
+  await page.screenshot({path:path.join(root,'.runtime/status-mobile.png'),fullPage:true});
+  await page.setViewportSize({width:1280,height:900});
+  await page.screenshot({path:path.join(root,'.runtime/status-desktop.png'),fullPage:true});
+  if (failures.length) throw new Error(failures.join('\n'));
+  console.log('PASS: private fragment exchange, contact review, consent, pending checkout, HttpOnly cookie, mobile/desktop layout, and no browser errors.');
+  await browser.close();
+})().catch(async e => {console.error(e.message); if (page) { console.error((await page.locator('main').innerText()).slice(0,1200)); await page.screenshot({path:path.join(root,'.runtime/browser-failure.png'),fullPage:true}); } if (browser) await browser.close(); process.exitCode=1;});

@@ -1,0 +1,7 @@
+.runtime/
+dist/
+__pycache__/
+*.pyc
+.env*
+wp-config.php
+*.log
