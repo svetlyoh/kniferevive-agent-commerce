@@ -4,6 +4,16 @@ A local release candidate implementing the KnifeRevive Concierge storefront skil
 
 **Version 0.1.0 — release candidate. New payments are disabled by default.** Deployment, processor setup and operational rules require verification before the skill can advertise working booking or payments. The owner authorized GitHub and ClawHub publication on October 7, 2026; publication does not activate the merchant backend or verify live payments. See [publication status](docs/publication-status.md) for actual release and audit results.
 
+[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Download the release](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/v0.1.0) · [Security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.0)
+
+Install the published skill with the ClawHub CLI:
+
+```sh
+clawhub install @svetlyoh/kniferevive-concierge --version 0.1.0
+```
+
+The observed ClawHub security result is clean/benign with no warnings. Its separate Skill Card verification currently reports `card.missing`; full card/provenance verification is therefore not claimed. See the version-specific evidence before deciding to install.
+
 ## Components
 
 - `skills/kniferevive-concierge`: portable text-only skill, with MIT-0 license and no installers, binaries, wallet setup, required credentials, or background promotion.

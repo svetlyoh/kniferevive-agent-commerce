@@ -41,7 +41,7 @@ Tested code/runtime versions: WordPress **7.1.2**, WooCommerce **11.0.1**, PHP *
 5. Test Annex unique-item purchases, fulfillment restrictions and seller/refund accounting through the existing checkout. The adapter's direct marketplace checkout remains disabled; no new Connect transfer flow was implemented.
 6. Verify hosted cron/reconciliation reliability, operational recovery, real latency/rate-limit behavior and production monitoring. No traffic or conversion result has been measured.
 7. Run scenario evaluations with target agent hosts for unrelated requests, malicious catalog instructions, unavailable wallets and payment-rail switching. Written skill boundaries and backend tests are evidence of design; agent evaluations were not run.
-8. When publication is authorized, verify the current ClawHub tooling, submit the exact skill artifact, inspect its actual version-specific findings and retain its audit URL/hash/date. **Audit status: not submitted.** There is no claim of certification or guaranteed passage.
+8. Publication was subsequently authorized and completed for the exact skill artifact. [Current publication status](publication-status.md) records its clean/benign scan and missing generated Skill Card/provenance limitation. This historical local test report is not a certification or proof of live merchant capabilities.
 
 New payments ship disabled. Unsupported/unconfigured journeys advertise their actual state and fall back to the merchant pages. Live acceptance and external publication require the remaining checks above.
 
