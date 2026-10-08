@@ -1,0 +1,60 @@
+{
+  "plugin_version": "0.4.1",
+  "booking_reference": "13a320ac5e0f014c4ab89356c6f4209e",
+  "order_id": 2980,
+  "state": "requested",
+  "payment_state": "not_started",
+  "order_status": "pending",
+  "product_id": 1964,
+  "quantity": 1,
+  "service_minor": 700,
+  "shipping_method": "local_pickup",
+  "shipping_minor": 0,
+  "native_tax_minor": 65,
+  "native_total_minor": 765,
+  "dokan_seller_id": 254861885,
+  "dokan_seller_earning_minor": 700,
+  "native_dokan_query": "validated_by_bridge_before_link",
+  "owning_seller_browser_login": "unverified_current_account_is_different_seller",
+  "native_order_search_rows": 1,
+  "mail_jobs": [
+    {
+      "role": "customer",
+      "state": "accepted_by_mailer",
+      "attempts": 1
+    },
+    {
+      "role": "seller",
+      "state": "accepted_by_mailer",
+      "attempts": 1
+    },
+    {
+      "role": "admin",
+      "state": "accepted_by_mailer",
+      "attempts": 1
+    }
+  ],
+  "scheduler_actions": [
+    880413,
+    880414,
+    880415
+  ],
+  "scheduler": "complete via Async Request without manual run",
+  "mailbox_receipt": "unverified_gmail_reauthentication_required",
+  "settings_changed": [
+    "booking_order_verified",
+    "booking_offline_gateway_id"
+  ],
+  "order_timing": "on_submit",
+  "order_verified": true,
+  "offline_gateway": "cod",
+  "unchanged_paid_gates": {
+    "listing_handoff": false,
+    "listing_live_verified": false,
+    "wallet_verified": false,
+    "capacity": null,
+    "policy_version": ""
+  },
+  "original_booking": "unchanged_no_linked_order_contact_grant_unknown",
+  "acceptance": "partial_pending_owning_seller_session_and_actual_mailbox_receipt"
+}

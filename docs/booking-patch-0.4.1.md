@@ -1,6 +1,8 @@
 # Deployed asset patch 0.4.1 — October 8, 2026
 
-**Current production plugin: 0.4.1. Order creation remains gated.**
+**Production plugin: 0.4.1. This patch record describes the initially gated state.**
+Subsequent owner approval and the unpaid live test are recorded in
+[the current enablement evidence](booking-live-unpaid-0.4.1-2026-10-08.md).
 The owner-approved 0.4.0 deployment is recorded in
 [the deployment report](booking-deployment-0.4.0-2026-10-08.md).
 Live visual verification then found the unversioned stylesheet response still
