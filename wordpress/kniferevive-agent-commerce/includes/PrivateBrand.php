@@ -35,7 +35,7 @@ final class PrivateBrand {
             ob_start();wp_print_font_faces();$fontOutput=ob_get_clean();
             if(preg_match_all('/<style[^>]*>(.*?)<\/style>/is',$fontOutput,$fontStyles))foreach($fontStyles[1] as $fontCss)echo '<style nonce="'.esc_attr(self::$nonce).'">'.str_ireplace('</style','\\3C /style',$fontCss).'</style>';
         }
-        echo '<link rel="stylesheet" href="'.esc_url($assets.'storefront.css').'"></head><body class="krev-private"><a class="krev-skip" href="#booking-main">Skip to main content</a><header class="krev-header"><a href="'.esc_url(home_url('/')).'" aria-label="KnifeRevive home">'.(self::logo()?:'<span>KnifeRevive</span>').'</a><a href="'.esc_url(home_url('/#knife-sharpening')).'">Sharpening services</a></header><main id="booking-main" tabindex="-1" '.$attributes.'><div id="session-status" role="status"></div>';
+        echo '<link rel="stylesheet" href="'.esc_url(add_query_arg('ver',VERSION,$assets.'storefront.css')).'"></head><body class="krev-private"><a class="krev-skip" href="#booking-main">Skip to main content</a><header class="krev-header"><a href="'.esc_url(home_url('/')).'" aria-label="KnifeRevive home">'.(self::logo()?:'<span>KnifeRevive</span>').'</a><a href="'.esc_url(home_url('/#knife-sharpening')).'">Sharpening services</a></header><main id="booking-main" tabindex="-1" '.$attributes.'><div id="session-status" role="status"></div>';
     }
     public static function support(): void {
         echo '<footer class="krev-support"><h2>KnifeRevive Support Crew</h2><p><a href="https://t.me/svetlyoh?text=Hi%20KnifeRevive%20Support%20Crew!%20I%20need%20help%20with%20a%20question%20about%20KnifeRevive." target="_blank" rel="noopener noreferrer">Chat on Telegram</a> · <a href="https://wa.me/14152999611?text=Hi%20KnifeRevive%20Support%20Crew!%20I%20need%20help%20with%20a%20question%20about%20KnifeRevive." target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a> · <a href="mailto:knifereviveofficial@gmail.com?subject=KnifeRevive%20support">Email the Support Crew</a></p>';
@@ -44,8 +44,8 @@ final class PrivateBrand {
         echo '</footer>';
     }
     public static function end(bool $booking=false): void {
-        self::support();$assets=plugin_dir_url(FILE).'assets/';echo '</main><script src="'.esc_url($assets.'storefront.js').'" defer></script>';
-        if($booking)echo '<script src="'.esc_url($assets.'booking.js').'" defer></script>';
+        self::support();$assets=plugin_dir_url(FILE).'assets/';echo '</main><script src="'.esc_url(add_query_arg('ver',VERSION,$assets.'storefront.js')).'" defer></script>';
+        if($booking)echo '<script src="'.esc_url(add_query_arg('ver',VERSION,$assets.'booking.js')).'" defer></script>';
         echo '</body></html>';
     }
 }

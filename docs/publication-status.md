@@ -1,10 +1,11 @@
 # Publication status
 
-## Current published skill 0.3.0; plugin 0.4.0 deployed
+## Current published skill 0.3.0; plugin 0.4.1 deployed
 
 The newest verified publication is [0.3.0](booking-publication-0.3.0.md), including
 its generated card and disclosed audit warnings. The incremental **plugin** 0.4.0
-was deployed after owner approval, with unpaid order creation still gated. The
+was deployed after owner approval and [patched to 0.4.1](booking-patch-0.4.1.md),
+with unpaid order creation still gated. The
 0.4.0 **skill** has no ClawHub submission or audit; no payment activation occurred.
 See [deployment observations](booking-deployment-0.4.0-2026-10-08.md) and
 [incident and readiness notes](incremental-booking-0.4.0.md).

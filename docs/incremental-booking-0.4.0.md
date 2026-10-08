@@ -2,6 +2,7 @@
 
 **Plugin deployed October 8 after owner approval; order creation remains gated.
 Skill 0.4.0 is not released or published to ClawHub.**
+Current production plugin is [0.4.1 with versioned assets](booking-patch-0.4.1.md).
 See [production observations and remaining acceptance](booking-deployment-0.4.0-2026-10-08.md).
 Implementation baseline: 0.3.0, source e7e807a on existing draft PR #2. No theme/core,
 gateway credential, Stripe mode, seller ownership, ListLab or WhatsApp integration

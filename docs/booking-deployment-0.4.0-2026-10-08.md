@@ -1,5 +1,8 @@
 # Booking deployment 0.4.0 — October 8, 2026
 
+Subsequently patched to [0.4.1 for versioned assets](booking-patch-0.4.1.md).
+The following records the initial 0.4.0 deployment and unchanged order/payment gates.
+
 **Plugin 0.4.0 is deployed and active. Unpaid order creation remains gated.**
 The owner approved production deployment and unpaid order creation on submission.
 WordPress's native uploader successfully replaced 0.3.0 with the reviewed 0.4.0
