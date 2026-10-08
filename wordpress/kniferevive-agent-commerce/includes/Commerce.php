@@ -124,8 +124,15 @@ final class Commerce {
         $cart = new QuoteCart(); $wc->cart = $cart; $wc->session = $session; $wc->customer = $customer;
         $transport = static function ($active) use ($cart,$input) {
             if ($active !== $cart) return;
-            foreach (['intake','return'] as $leg) foreach (Settings::get()['transport'] as $fee) {
-                if ($fee['kind'] === $input[$leg]['kind']) $cart->add_fee($leg === 'intake' ? 'Sharpening courier pickup' : 'Sharpening return delivery',Domain::decimal($fee['fee_minor']),$fee['taxable'],$fee['tax_class']);
+            $settings=Settings::get(); $fees=array_column($settings['transport'],null,'kind');
+            if ($input['intake']['kind']==='courier_pickup' && $input['return']['kind']==='courier_delivery' && $settings['transport_round_trip_minor'] !== null) {
+                // Allocate the rounding cent deterministically; one-way prices stay unchanged.
+                $fees['courier_pickup']['fee_minor']=min($fees['courier_pickup']['fee_minor'],$settings['transport_round_trip_minor']);
+                $fees['courier_delivery']['fee_minor']=$settings['transport_round_trip_minor']-$fees['courier_pickup']['fee_minor'];
+            }
+            foreach (['intake','return'] as $leg) {
+                $fee=$fees[$input[$leg]['kind']]??null;
+                if ($fee) $cart->add_fee($leg === 'intake' ? 'Sharpening courier pickup' : 'Sharpening return delivery',Domain::decimal($fee['fee_minor']),$fee['taxable'],$fee['tax_class']);
             }
         };
         add_action('woocommerce_cart_calculate_fees',$transport,20);

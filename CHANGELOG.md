@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 courier pricing — October 7, 2026
+
+- Optional exact combined pickup/return delivery total, with deterministic integer-cent allocation. The confirmed merchant price is $7.99 combined, $4.00 for one merchant trip, and $0 courier fee for customer drop-off plus collection; applicable taxes remain separate.
+- Validation rejects incomplete courier configuration, incompatible tax treatment, and combined prices exceeding separate trips. Null preserves existing per-leg pricing; a confirmed price can be staged without enabling courier transport.
+- Eleven added behavioral assertions pass in each WooCommerce storage mode (86 per mode). Address verification and payment enablement gates remain intact.
+
 ## 0.1.0 — October 7, 2026
 
 Initial KnifeRevive Concierge storefront skill and merchant adapter candidate.

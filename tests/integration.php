@@ -63,6 +63,38 @@ update_option('pisol_cefw_payment_gateway_charges',['stripe'=>['apply_fee'=>1,'a
 $input=['items'=>[['product_id'=>$p->get_id(),'quantity'=>2]],'postal_code'=>'94110','intake'=>['kind'=>'customer_dropoff','slot_id'=>'intake-test'],
     'return'=>['kind'=>'customer_collection','slot_id'=>'return-test'],'rail'=>'stripe_checkout','booking_mode'=>'scheduled',
     'customer'=>['name'=>'Synthetic Shopper','email'=>'shopper@example.invalid','billing'=>['address_1'=>'123 Fixture Street','city'=>'San Francisco','state'=>'CA','postcode'=>'94110','country'=>'US']]];
+// Merchant round-trip pricing must preserve the odd cent and address verification.
+$courierSettings=$settings; $courierSettings['pending_scheduling']=true;
+$courierSettings['transport']=[['kind'=>'courier_pickup','fee_minor'=>400,'taxable'=>false,'tax_class'=>''],['kind'=>'courier_delivery','fee_minor'=>400,'taxable'=>false,'tax_class'=>'']];
+$courierSettings['transport_round_trip_minor']=799;
+update_option('krev_agent_settings',Settings::validate($courierSettings),false);
+$courierInput=$input; $courierInput['booking_mode']='pending_scheduling';
+$courierInput['intake']=['kind'=>'courier_pickup','address'=>$input['customer']['billing']];
+$courierInput['return']=['kind'=>'courier_delivery','address'=>$input['customer']['billing']];
+rejected(static fn()=>Commerce::price($courierInput),'ADDRESS_REVIEW_REQUIRED','round-trip discount never bypasses address verification');
+$fixtureAddressVerifier=static fn()=>true; add_filter('krev_agent_address_verified',$fixtureAddressVerifier);
+$roundTrip=Commerce::price($courierInput);
+check($roundTrip['total_minor']===2299,'two merchant trips charge exactly $7.99 plus service and existing fees');
+$roundTripFees=array_column($roundTrip['fees'],'amount','name');
+check(Domain::cents(wc_format_decimal($roundTripFees['Sharpening courier pickup'],2))===400 && Domain::cents(wc_format_decimal($roundTripFees['Sharpening return delivery'],2))===399,'round-trip fee lines allocate the odd cent deterministically');
+$oneWay=$courierInput; $oneWay['return']=['kind'=>'customer_collection'];
+check(Commerce::price($oneWay)['total_minor']===1900,'merchant pickup only charges $4.00');
+$oneWay=$courierInput; $oneWay['intake']=['kind'=>'customer_dropoff'];
+check(Commerce::price($oneWay)['total_minor']===1900,'merchant return delivery only charges $4.00');
+$selfHandoff=$oneWay; $selfHandoff['return']=['kind'=>'customer_collection'];
+check(Commerce::price($selfHandoff)['total_minor']===1500,'customer drop-off and collection incur no courier fee');
+$courierSettings['transport_round_trip_minor']=null; update_option('krev_agent_settings',Settings::validate($courierSettings),false);
+check(Commerce::price($courierInput)['total_minor']===2300,'null combined price retains existing per-leg behavior');
+$badCourier=$courierSettings; $badCourier['transport_round_trip_minor']=801;
+rejected(static fn()=>Settings::validate($badCourier),'INVALID_SETTINGS','combined fee cannot exceed separate trip fees');
+$badCourier['transport_round_trip_minor']=799; $badCourier['transport'][1]['taxable']=true;
+rejected(static fn()=>Settings::validate($badCourier),'INVALID_SETTINGS','combined fee rejects incompatible tax treatment');
+$badCourier=$courierSettings; $badCourier['transport_round_trip_minor']=799; array_pop($badCourier['transport']);
+rejected(static fn()=>Settings::validate($badCourier),'INVALID_SETTINGS','combined fee rejects incomplete courier configuration');
+$staged=$settings; $staged['transport_round_trip_minor']=799;
+check(Settings::validate($staged)['transport']===[],'confirmed combined price can be staged without enabling courier transport');
+remove_filter('krev_agent_address_verified',$fixtureAddressVerifier);
+update_option('krev_agent_settings',$settings,false);
 $ordersBefore=count(wc_get_orders(['limit'=>-1]));
 $oldCart=WC()->cart; $oldSession=WC()->session;
 $q=Commerce::quote($input,$owner,'quote-first-fixture');

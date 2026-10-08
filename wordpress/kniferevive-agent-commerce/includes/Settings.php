@@ -6,7 +6,7 @@ final class Settings {
         return ['enabled' => false, 'pricing_verified' => false, 'stripe_enabled' => false, 'stripe_live' => false, 'live_verified' => false, 'stripe_use_woocommerce_keys' => false,
             'lightning_enabled' => false, 'pending_scheduling' => false, 'technology_category' => 'technology',
             'merchant_ids' => [], 'services' => [], 'postal_codes' => [], 'location' => '', 'policy_url' => '', 'return_policy_url' => '',
-            'policy_version' => '', 'slots' => [], 'transport' => [], 'max_minor' => 10000];
+            'policy_version' => '', 'slots' => [], 'transport' => [], 'transport_round_trip_minor' => null, 'max_minor' => 10000];
     }
     public static function get(): array { return array_replace(self::defaults(), (array)get_option('krev_agent_settings', [])); }
     public static function validate(array $s): array {
@@ -46,8 +46,18 @@ final class Settings {
             Domain::fields($leg, ['kind','fee_minor','taxable','tax_class'], ['kind','fee_minor','taxable','tax_class']);
             if (!in_array($leg['kind'], ['courier_pickup','courier_delivery'], true) || !is_bool($leg['taxable'])) Domain::fail('INVALID_SETTINGS', 'Invalid transport leg.');
             if (isset($kinds[$leg['kind']])) Domain::fail('INVALID_SETTINGS', 'Configure each transport kind only once.');
-            $kinds[$leg['kind']]=true;
+            $kinds[$leg['kind']]=$leg;
             Domain::integer($leg['fee_minor'], 0, 100000); Domain::text($leg['tax_class'], 100);
+        }
+        if ($s['transport_round_trip_minor'] !== null) {
+            Domain::integer($s['transport_round_trip_minor'], 0, 200000);
+            // The total can be staged while courier transport is disabled.
+            if ($kinds) {
+                if (!isset($kinds['courier_pickup'],$kinds['courier_delivery'])) Domain::fail('INVALID_SETTINGS', 'A combined transport price requires both courier legs.');
+                $pickup=$kinds['courier_pickup']; $delivery=$kinds['courier_delivery'];
+                if ($pickup['taxable'] !== $delivery['taxable'] || $pickup['tax_class'] !== $delivery['tax_class']) Domain::fail('INVALID_SETTINGS', 'Combined transport legs must use the same tax treatment.');
+                if ($s['transport_round_trip_minor'] > $pickup['fee_minor'] + $delivery['fee_minor']) Domain::fail('INVALID_SETTINGS', 'Combined transport price cannot exceed the separate trip fees.');
+            }
         }
         Domain::integer($s['max_minor'], 1, 1000000);
         return $s;
@@ -105,7 +115,7 @@ final class Settings {
                 $notice = 'Settings saved. Capacity is jobs per window. Existing payment attempts are retained.';
             } catch (\Throwable $e) { $notice = $e instanceof Fault ? $e->getMessage() : 'Settings could not be saved. Check JSON and database readiness.'; }
         }
-        echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><form method="post">';
+        echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>transport_round_trip_minor sets the combined pickup and return delivery price in cents; null keeps separate trip pricing. For a $7.99 combined price, set 799 and each individual trip to 400 ($4.00). Both trips together total exactly $7.99 before applicable tax; customer drop-off and collection have no courier fee.</p><form method="post">';
         wp_nonce_field('krev_agent_settings');
         echo '<textarea name="settings" rows="28" style="width:100%;font-family:monospace">' . esc_textarea(wp_json_encode(self::get(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea><p><button class="button button-primary" name="krev_agent_save">Save validated settings</button></p></form><p>Stripe secrets use server constants, never this form or the public skill. Google Pay availability is decided by Stripe checkout and the customer device. Review retained attempts and change requests below; process refunds through existing merchant workflows.</p><table class="widefat"><tr><th>Type</th><th>Reference</th><th>State</th><th>WooCommerce order</th></tr>';
         foreach (Store::backlog(100) as $row) {
