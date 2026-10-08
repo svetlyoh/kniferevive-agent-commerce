@@ -1,6 +1,18 @@
 # Publication status
 
-## Current skill version 0.1.1 — October 7, 2026
+## Current skill version 0.1.2 — October 8, 2026
+
+Documentation-only installation/onboarding release, published under the owner's existing GitHub/ClawHub authorization. [GitHub release and ZIP](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.2), [public listing](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge), and [version-specific security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2) are live. Registry latest and the public Versions view show 0.1.2. The exact title, Finance/Lifestyle categories, topics and publisher remain unchanged.
+
+The public SKILL.md displays a distinct installation section. Its relative reference link is rewritten to ClawHub's file API; Files exposes `references/installation.md` as readable raw Markdown, and the absolute versioned GitHub fallback renders the guide. All six registry file hashes match release source commit `474c3f6e2bfc77a65cce40e7866d4d31d9022765`.
+
+Public audit outcome: **Pass**; registry security: **clean / benign, high confidence**. Static analysis has no findings. The separately generated card is currently unavailable: CLI verification returns `card.missing`, the `--card` request returns unavailable, and the public listing omits the Skill Card tab for this version. Server-resolved GitHub-import provenance is unavailable. No generated card was authored or uploaded. Scanner report absence is not a completed passing scan. Exact evidence and report archive hash: [security-scan-0.1.2.json](security-scan-0.1.2.json).
+
+Source is pushed on review branch `docs/concierge-installation-0.1.2`; [draft review PR](https://github.com/svetlyoh/kniferevive-agent-commerce/pull/1) is open, with main unchanged. [Installation validation and platform limits](installation-validation-0.1.2.md) records actual checks. Merchant plugin, APIs, payment flags and booking behavior are unchanged.
+
+On October 8, the older 0.1.1 generated card was independently rechecked and verification now passes. The following October 7 card-missing observation is retained as historical evidence, not a current guarantee.
+
+## Historical metadata release 0.1.1 — October 7, 2026
 
 The public listing is **KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech**. Authored categories are **Finance** (shopping/commerce) and **Lifestyle** (cooking/home), replacing Uncategorized/Other. Topics: `knife-sharpening`, `sf-bay-area`, `ai-tech`, `shopping`. The public page and registry latest tag both show **0.1.1**.
 

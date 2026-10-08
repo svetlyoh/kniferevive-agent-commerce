@@ -2,9 +2,9 @@
 
 A local release candidate implementing the KnifeRevive Concierge storefront skill and a WordPress/WooCommerce adapter. Annex technology discovery is available through a structured catalog and existing product checkout. The adapter supports authorized, prepaid, operator-owned sharpening orders through hosted Stripe Checkout or the existing KnifeRevive Lightning coordinator, with separate intake/return appointments.
 
-**Merchant plugin 0.1.3; portable skill 0.1.1. New agent payments remain disabled.** The merchant backend is installed locally and on KnifeRevive, and a dedicated Stripe test webhook is registered. Operational rules and real processor payment verification remain necessary before the skill can advertise working prepaid bookings. The owner authorized GitHub and ClawHub publication on October 7, 2026; publication does not verify live payments. See [publication status](docs/publication-status.md) for the skill release and audit results.
+**Merchant plugin 0.1.3; portable skill 0.1.2. New agent payments remain disabled.** The merchant backend is installed locally and on KnifeRevive, and a dedicated Stripe test webhook is registered. Operational rules and real processor payment verification remain necessary before the skill can advertise working prepaid bookings. The owner authorized GitHub and ClawHub publication on October 7, 2026; publication does not verify live payments. See [publication status](docs/publication-status.md) for the skill release and audit results.
 
-[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Download the release](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.1) · [Security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.1)
+[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Download the release](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.2) · [Security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2)
 
 ## Install with OpenClaw
 
@@ -23,13 +23,13 @@ A prompt does not prove native installation or authorize payment.
 
 The ClawHub CLI also supports downloading a registry skill into its selected
 workspace directory. This is a registry download; use the native commands above
-for an active OpenClaw workspace. Existing published version example:
+for an active OpenClaw workspace. Published version example:
 
 ```sh
-clawhub install @svetlyoh/kniferevive-concierge --version 0.1.1
+clawhub install @svetlyoh/kniferevive-concierge --version 0.1.2
 ```
 
-Version 0.1.1 registry security is clean/benign and, rechecked October 8, 2026, generated-card verification passes. The earlier `card.missing` result was transient; server-resolved GitHub import provenance remains unavailable. See the version-specific evidence before deciding to install. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
+Version 0.1.2 registry security is clean/benign and the public security audit shows Pass. Separate verification currently reports `card.missing`; server-resolved GitHub import provenance remains unavailable. The earlier 0.1.1 card became available on an October 8 recheck, but that does not establish a card for 0.1.2. See [installation validation](docs/installation-validation-0.1.2.md) and version-specific evidence. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
 
 ## Components
 
