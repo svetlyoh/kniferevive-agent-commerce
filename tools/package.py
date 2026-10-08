@@ -9,8 +9,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'dist'
 OUT.mkdir(exist_ok=True)
 plugin_version = re.search(r'\* Version: ([0-9.]+)', (ROOT / 'wordpress/kniferevive-agent-commerce/kniferevive-agent-commerce.php').read_text()).group(1)
+skill_version = re.search(r'^  version: "([0-9.]+)"', (ROOT / 'skills/kniferevive-concierge/SKILL.md').read_text(encoding='utf-8'), re.M).group(1)
 manifest = {'version': plugin_version, 'components': {}}
-for folder, archive in [('wordpress/kniferevive-agent-commerce',f'kniferevive-agent-commerce-{plugin_version}.zip'), ('skills/kniferevive-concierge','kniferevive-concierge-0.1.0.zip')]:
+for folder, archive in [('wordpress/kniferevive-agent-commerce',f'kniferevive-agent-commerce-{plugin_version}.zip'), ('skills/kniferevive-concierge',f'kniferevive-concierge-{skill_version}.zip')]:
     base = ROOT / folder
     files = sorted(p for p in base.rglob('*') if p.is_file())
     entries = []

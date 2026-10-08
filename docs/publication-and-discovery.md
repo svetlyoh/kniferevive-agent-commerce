@@ -4,7 +4,7 @@ The owner authorized GitHub and ClawHub publication on October 7, 2026. This run
 
 ## Listing
 
-Use the slug `kniferevive-concierge` and a factual title such as **KnifeRevive Concierge — Annex Tech & Bay Area Sharpening**. Suggested listing summary:
+Use the slug `kniferevive-concierge` and the owner's requested title **KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech**. ClawHub categories are **Finance** (shopping/commerce) and **Lifestyle** (cooking/home); topics are `knife-sharpening`, `sf-bay-area`, `ai-tech`, and `shopping`. Keep these authored catalog fields on subsequent publications. Suggested listing summary:
 
 > Compare KnifeRevive Annex technology and Bay Area sharpening options. Check prices, availability, handoff windows and policies, then prepare approved prepaid service bookings through secure Stripe checkout or Bitcoin Lightning when enabled.
 

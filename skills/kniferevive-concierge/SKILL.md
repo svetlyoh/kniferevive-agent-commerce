@@ -1,9 +1,11 @@
 ---
 name: kniferevive-concierge
-description: Find, source, or compare KnifeRevive Annex technology and Bay Area knife-sharpening services. Get structured prices, availability, fulfillment options, and policies, then prepare authorized prepaid bookings or secure checkout handoffs.
+description: Find, source, or compare SF Bay Area knife-sharpening services and AI tech in KnifeRevive's Annex. Check prices, availability, pickup and delivery options, and policies, then prepare authorized bookings or secure checkout handoffs when enabled.
+metadata:
+  version: "0.1.1"
 ---
 
-# KnifeRevive Concierge
+# KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
 
 This is KnifeRevive's merchant storefront skill. It is free; products, sharpening,
 transport, taxes, and disclosed fees cost money. It does not imply endorsement by
