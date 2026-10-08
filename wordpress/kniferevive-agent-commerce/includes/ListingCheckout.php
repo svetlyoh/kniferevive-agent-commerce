@@ -16,6 +16,7 @@ final class ListingCheckout {
     }
     public static function clearBrowserIntent(): void {
         if(WC()->session){WC()->session->set('krev_listing_intent',null);WC()->session->set('krev_listing_owner',null);}
+        if(WC()->session)WC()->session->set('krev_booking_id',null);
         // Keep the durable intent/order evidence; only the emptied browser cart is detached.
     }
     public static function enabled(): bool {
@@ -102,7 +103,7 @@ final class ListingCheckout {
         return ['schema_version'=>'1.1','items'=>$items,'page'=>$page,'per_page'=>$per,'total'=>(int)$found->total,'pages'=>(int)$found->max_num_pages,'fetched_at'=>gmdate('c')];
     }
     private static function selection(array $input): array {
-        Domain::fields($input,['items','coupons','source'],['items']);
+        Domain::fields($input,['items','coupons','source','booking_id'],['items']);
         if (!is_array($input['items']) || !array_is_list($input['items']) || !$input['items'] || count($input['items'])>10) Domain::fail('INVALID_REQUEST','Use one to ten listing lines.');
         $seen=[];$sellers=[];$quantity=0;
         foreach ($input['items'] as $item) {
@@ -124,10 +125,14 @@ final class ListingCheckout {
         unset($code);$input['coupons']=array_values(array_unique($coupons));sort($input['coupons']);
         $input['source']=Domain::text($input['source']??'kniferevive-concierge',80);
         usort($input['items'],static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
+        if(isset($input['booking_id'])){
+            if(!Domain::validId($input['booking_id']))Domain::fail('INVALID_REQUEST','Invalid booking reference.');
+            if($input['items']!==Booking::paymentSelection($input['booking_id'])['items'])Domain::fail('BOOKING_CHANGED','Checkout items must match the confirmed booking.');
+        }
         return $input;
     }
     public static function create(array $input,string $owner,string $key): array {
-        self::requireEnabled();$input=self::selection($input);$purchase=Domain::digest($input['items']);
+        self::requireEnabled();if(isset($input['booking_id']))Booking::get($input['booking_id'],$owner);$input=self::selection($input);$purchase=Domain::digest($input['items']);
         return Store::lock('listing-purchase:'.Domain::digest([$owner,$purchase]),static function()use($input,$owner,$key,$purchase){
             return Store::idempotent($owner,'listing-create',$key,$input,static function()use($input,$owner,$purchase){
                 if (Store::unresolvedListing($owner,$purchase)) Domain::fail('PAYMENT_UNRESOLVED','A matching native checkout is unresolved. Check its original status.',409);
@@ -169,11 +174,17 @@ final class ListingCheckout {
         $empty=['currency'=>'USD','items'=>$items,'total_minor'=>null,'estimate_only'=>true,'reason'=>'customer_address_and_gateway_required',
             'shipping_rates'=>[],'fees'=>[],'tax_minor'=>null,'shipping_minor'=>null,'discount_minor'=>null,'payment_methods'=>[],'policy_url'=>Settings::get()['listing_policy_url'],'return_policy_url'=>Settings::get()['return_policy_url']];
         if (!isset($context['billing'],$context['shipping'],$context['email'],$context['payment_method'])) return $empty;
+        if(isset($selection['booking_id'])){
+            $booking=Store::get($selection['booking_id'],'booking')['data']['input'];$address=$context['shipping'];
+            if($address['country']!=='US' || $address['state']!=='CA' || $address['postcode']!==$booking['postal_code'])Domain::fail('ADDRESS_REVIEW_REQUIRED','Service address must match the confirmed booking ZIP code.');
+            if(isset($booking['pickup_address']))foreach($booking['pickup_address'] as $field=>$value)if(($address[$field]??'')!==$value)Domain::fail('ADDRESS_REVIEW_REQUIRED','The fulfillment address must match the address approved by KnifeRevive.');
+        }
         $wc=WC();$saved=[$wc->cart,$wc->session,$wc->customer];$shipping=$wc->shipping();$savedShipping=[$shipping->packages,$shipping->shipping_methods];
         $customer=new \WC_Customer(get_current_user_id());$customer->set_billing_email($context['email']);
         foreach(['billing','shipping'] as $kind)foreach($context[$kind] as $field=>$value)$customer->{'set_'.$kind.'_'.$field}($value);
         $customer->set_calculated_shipping(true);
         $session=new QuoteSession();$session->set('chosen_payment_method',$context['payment_method']);$session->set('chosen_shipping_methods',$context['shipping_methods']);
+        if(isset($selection['booking_id']))$session->set('krev_booking_id',$selection['booking_id']);
         $cart=new ListingCart();$wc->cart=$cart;$wc->session=$session;$wc->customer=$customer;
         // Suspend only native browser-cart persistence callbacks; retain pricing/fee/shipping hooks.
         $suspended=[];global $wp_filter;
@@ -207,7 +218,7 @@ final class ListingCheckout {
                 'shipping_rates'=>$rates,'shipping_minor'=>$missing?null:self::minor($cart->get_shipping_total()),'tax_minor'=>self::minor($cart->get_total_tax()),'discount_minor'=>self::minor($cart->get_discount_total()),
                 'payment_methods'=>array_values(array_intersect(array_keys($gateways),Settings::get()['listing_gateway_ids'])),'payment_method'=>$context['payment_method'],
                 'native_cart_hash'=>$cart->get_cart_hash(),'buyer_context_id'=>get_current_user_id(),'policy_version'=>Settings::get()['listing_policy_version']]);
-            $quote['quote_hash']=Domain::digest([$quote,$context,$selection]);return $quote;
+            $quote['quote_hash']=Domain::digest([$quote,$context,$selection,isset($selection['booking_id'])?Booking::paymentSelection($selection['booking_id'])['fingerprint']:null]);return $quote;
         } finally {
             [$wc->cart,$wc->session,$wc->customer]=$saved;[$shipping->packages,$shipping->shipping_methods]=$savedShipping;
             foreach($suspended as [$hook,$fn,$priority,$accepted])add_action($hook,$fn,$priority,$accepted);
@@ -247,12 +258,13 @@ final class ListingCheckout {
             $fresh=self::price($d['selection'],$d['context']);if(!hash_equals($fresh['quote_hash']??'',$hash))Domain::fail('QUOTE_CHANGED','Items, totals or policies changed. Review a fresh quote.',409);
             $d['browser_binding']=$binding;$d['handoff_state']='preparing_cart';Store::update($id,$d);
             $savedCustomer=clone WC()->customer;
-            $savedSession=[];foreach(['customer','chosen_payment_method','chosen_shipping_methods','krev_listing_intent','krev_listing_owner'] as $field)$savedSession[$field]=WC()->session->get($field);
+            $savedSession=[];foreach(['customer','chosen_payment_method','chosen_shipping_methods','krev_listing_intent','krev_listing_owner','krev_booking_id'] as $field)$savedSession[$field]=WC()->session->get($field);
             try {
                 foreach($d['context']['billing'] as $field=>$value)WC()->customer->{'set_billing_'.$field}($value);
                 foreach($d['context']['shipping'] as $field=>$value)WC()->customer->{'set_shipping_'.$field}($value);
                 WC()->customer->set_billing_email($d['context']['email']);WC()->customer->set_calculated_shipping(true);
                 WC()->session->set('chosen_payment_method',$d['context']['payment_method']);WC()->session->set('chosen_shipping_methods',$d['context']['shipping_methods']);
+                WC()->session->set('krev_booking_id',$d['selection']['booking_id']??null);
                 foreach($d['selection']['items'] as $line)if(!WC()->cart->add_to_cart($line['product_id'],$line['quantity']))Domain::fail('LISTING_UNAVAILABLE','Native cart refused the selected item.');
                 foreach($d['selection']['coupons'] as $code)if(!WC()->cart->apply_coupon($code))Domain::fail('COUPON_UNAVAILABLE','Native checkout refused the coupon.');
                 WC()->cart->calculate_totals();
@@ -297,6 +309,7 @@ final class ListingCheckout {
             $row=Store::get($row['id'],'listing',$row['owner']);self::validateOrder($order,$row);$d=$row['data'];
             if($d['handoff_state']!=='cart_ready' && $d['handoff_state']!=='order_linked')Domain::fail('PAYMENT_UNRESOLVED','Original order creation needs reconciliation.',409);
             $order->update_meta_data('_krev_listing_intent',$row['id']);$order->update_meta_data('_krev_listing_quote_hash',$d['quote']['quote_hash']);
+            if(isset($d['selection']['booking_id']))$order->update_meta_data('_krev_service_booking',$d['selection']['booking_id']);
             $d['creation_started']=true;if($order->get_id()){$d['order_id']=$order->get_id();$d['handoff_state']='order_linked';}Store::update($row['id'],$d);
         });
     }

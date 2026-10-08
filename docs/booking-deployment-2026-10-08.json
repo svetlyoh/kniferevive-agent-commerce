@@ -1,0 +1,123 @@
+{
+  "checked_on": "2026-10-08",
+  "adapter_version": "0.3.0",
+  "booking_enabled": true,
+  "booking_url": "https://kniferevive.com/?krev_agent=booking",
+  "services": [
+    {
+      "product_id": 1964,
+      "title": "Large Knife Sharpening",
+      "definition": "An 8-inch chef knife qualifies as Large Knife Sharpening. Other knives require KnifeRevive confirmation of service scope.",
+      "unit_price_minor": 700,
+      "currency": "USD",
+      "canonical_url": "https://kniferevive.com/shop/knife-sharpening/large-knife-sharpening/"
+    }
+  ],
+  "hours": [
+    {
+      "weekday": 5,
+      "open": "09:00",
+      "close": "19:00"
+    },
+    {
+      "weekday": 6,
+      "open": "09:00",
+      "close": "19:00"
+    },
+    {
+      "weekday": 7,
+      "open": "10:00",
+      "close": "16:00"
+    }
+  ],
+  "daily_capacity": null,
+  "merchant_trip_fee_minor": 799,
+  "prepayment_enabled": false,
+  "authorized_wallet_payment_enabled": false,
+  "direct_wallet_enabled": false,
+  "coverage": {
+    "94565": {
+      "postal_code": "94565",
+      "coverage_state": "eligible",
+      "service_available": true,
+      "pickup_eligible": true,
+      "prepayment_eligible": true,
+      "address_review_required": false,
+      "counties": [
+        "Contra Costa"
+      ],
+      "message": "Pickup and prepayment are offered in Contra Costa and Santa Clara counties, subject to booking confirmation and payment availability.",
+      "source_url": "https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt",
+      "geography_vintage": "2020 Census ZCTA / county"
+    },
+    "95112": {
+      "postal_code": "95112",
+      "coverage_state": "eligible",
+      "service_available": true,
+      "pickup_eligible": true,
+      "prepayment_eligible": true,
+      "address_review_required": false,
+      "counties": [
+        "Santa Clara"
+      ],
+      "message": "Pickup and prepayment are offered in Contra Costa and Santa Clara counties, subject to booking confirmation and payment availability.",
+      "source_url": "https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt",
+      "geography_vintage": "2020 Census ZCTA / county"
+    },
+    "94103": {
+      "postal_code": "94103",
+      "coverage_state": "bay_area_dropoff_only",
+      "service_available": true,
+      "pickup_eligible": false,
+      "prepayment_eligible": false,
+      "address_review_required": false,
+      "counties": [
+        "San Francisco"
+      ],
+      "message": "Pickup service is not available in your area but will be available in the near future.",
+      "source_url": "https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt",
+      "geography_vintage": "2020 Census ZCTA / county"
+    },
+    "90001": {
+      "postal_code": "90001",
+      "coverage_state": "outside_bay_area",
+      "service_available": false,
+      "pickup_eligible": false,
+      "prepayment_eligible": false,
+      "address_review_required": false,
+      "counties": [],
+      "message": "We do not currently offer sharpening services in your area. We are operating in the SF Bay Area only.",
+      "source_url": "https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt",
+      "geography_vintage": "2020 Census ZCTA / county"
+    },
+    "95033": {
+      "postal_code": "95033",
+      "coverage_state": "address_review_required",
+      "service_available": false,
+      "pickup_eligible": true,
+      "prepayment_eligible": true,
+      "address_review_required": true,
+      "counties": [
+        "Santa Clara",
+        "Outside SF Bay Area"
+      ],
+      "message": "This ZIP code needs address review before KnifeRevive can confirm service coverage or accept prepayment.",
+      "source_url": "https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt",
+      "geography_vintage": "2020 Census ZCTA / county"
+    }
+  },
+  "openapi_exact_match": true,
+  "api_read_only_verification": "anonymous HTTP with JSON Accept and identifiable merchant agent User-Agent",
+  "production_test_write": false,
+  "real_payment_or_wallet_send": false,
+  "missing": [
+    "daily job capacity",
+    "public prepaid cancellation/refund policy",
+    "native payment/seller fulfillment verification",
+    "Lightning settlement verification"
+  ],
+  "components": {
+    "kniferevive-agent-commerce-0.3.0.zip": "eb326b82415799b0c5f5eb1c9ef304eea275de40114769e51815dde0a0b5f38c",
+    "kniferevive-concierge-0.3.0.zip": "37e6c20896d5e485b71ce539ae5389dcfa880dd836fdbf3c822dfb25c14230f4"
+  }
+}

@@ -109,7 +109,7 @@ final class Store {
         self::lock('slots-admin', static function () use ($wpdb,$slots) {
             self::transaction(static function () use ($wpdb,$slots) {
                 $table = self::table('slots');
-                if ($wpdb->query("UPDATE $table SET enabled=0") === false) throw new \RuntimeException();
+                if ($wpdb->query("UPDATE $table SET enabled=0 WHERE id NOT LIKE 'booking-%'") === false) throw new \RuntimeException();
                 foreach ($slots as $slot) {
                     $current = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id=%s FOR UPDATE", $slot['id']), ARRAY_A);
                     $start = Domain::slotTime($slot['start']); $end = Domain::slotTime($slot['end']);
@@ -128,7 +128,7 @@ final class Store {
     }
     public static function slots(?string $kind = null): array {
         global $wpdb;
-        $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . self::table('slots') . ' WHERE enabled=1 AND start_at>%d ORDER BY start_at,id LIMIT 200', time()), ARRAY_A);
+        $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . self::table('slots') . " WHERE enabled=1 AND id NOT LIKE 'booking-%%' AND start_at>%d ORDER BY start_at,id LIMIT 200", time()), ARRAY_A);
         $out = [];
         foreach ($rows as $row) {
             if ($kind !== null && $row['kind'] !== $kind) continue;
@@ -195,7 +195,9 @@ final class Store {
         $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='listing' AND expires<%d
             AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.handoff_state'))='review'
             AND (JSON_EXTRACT(data,'$.order_id') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.order_id'))='null')
+            AND (JSON_EXTRACT(data,'$.selection.booking_id') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.selection.booking_id'))='null')
             AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(data,'$.creation_started')),'false')='false'",time()-86400));
         // Checkout, event, idempotency, and refund evidence is retained for operator reconciliation.
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='booking' AND expires<%d AND (JSON_EXTRACT(data,'$.listing_intent') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.listing_intent'))='null')",time()-86400));
     }
 }

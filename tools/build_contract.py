@@ -57,6 +57,11 @@ S["CatalogProduct"] = obj({
 S["Catalog"] = obj({"schema_version": string, "items": array(ref("CatalogProduct")), "page": integer, "per_page": integer, "total": integer, "pages": integer, "fetched_at": string, "cache_ttl_seconds": integer}, ["items", "page", "total"])
 S["Capabilities"] = {"type": "object", "required": ["schema_version", "merchant", "payment_rails", "sharpening", "technology"], "properties": {"schema_version": string, "merchant": string, "payment_rails": array(string), "sharpening": {"type": "object"}, "technology": {"type": "object"}}, "additionalProperties": True}
 paths = {}
+S["BookingInput"] = obj({"items": S["QuoteInput"]["properties"]["items"], "mode": {"enum": ["pay_later_dropoff", "prepaid_dropoff", "prepaid_pickup"]}, "preferred_date": {"type": "string", "format": "date"}, "postal_code": postal, "return_mode": {"enum": ["customer_collection", "courier_delivery"]}, "customer": obj({"name": string, "email": {"type": "string", "format": "email"}, "phone": string}, ["name", "email"]), "pickup_address": ref("Address"), "notes": {"type": "string", "maxLength": 500}}, ["items", "mode", "preferred_date", "postal_code"])
+S["Booking"] = obj({"booking_id": opaque, "booking_state": {"enum": ["draft", "requested", "confirmed", "cancelled"]}, "payment_state": string, "mode": string, "items": array(obj({"product_id": integer, "title": string, "quantity": integer, "unit_price_minor": integer}, ["product_id", "title", "quantity", "unit_price_minor"])), "preferred_window": obj({"date": string, "start_at": string, "end_at": string, "timezone": string}, ["date", "start_at", "end_at", "timezone"]), "return_mode": string, "location": string, "currency": string, "service_subtotal_minor": integer, "merchant_trip_fee_minor": integer, "estimated_subtotal_minor": integer, "total_minor": {"type": "null"}, "estimate_only": {"const": True}, "prepayment_enabled": {"type": "boolean"}, "policy_url": {"type": ["string", "null"]}, "review_url": string, "status_url": string, "appointment_confirmed": {"type": "boolean"}, "refund_state": {"const": "not_issued"}, "expires_at": string}, ["booking_id", "booking_state", "payment_state", "mode", "items", "preferred_window", "estimated_subtotal_minor", "total_minor", "estimate_only", "review_url", "status_url", "appointment_confirmed", "refund_state"])
+S["BookingCoverage"] = obj({"postal_code": postal, "coverage_state": {"enum": ["eligible", "bay_area_dropoff_only", "outside_bay_area", "address_review_required"]}, "service_available": {"type": "boolean"}, "pickup_eligible": {"type": "boolean"}, "prepayment_eligible": {"type": "boolean"}, "address_review_required": {"type": "boolean"}, "counties": array(string), "message": string, "source_url": string, "geography_vintage": string}, ["postal_code", "coverage_state", "service_available", "pickup_eligible", "prepayment_eligible", "address_review_required", "message"])
+S["Booking"]["properties"].update({"coverage": ref("BookingCoverage"), "direct_wallet_enabled": {"const": False}, "booking_access_token": string})
+S["WalletInvoice"] = obj({"booking_id": opaque, "state": {"enum": ["settled", "awaiting-payment"]}, "payable": {"type": "boolean"}, "bolt11": {"type": ["string", "null"]}, "amount_sat": integer, "amount_msat": integer, "payment_hash": string, "network": {"const": "bc"}, "fiat_minor": integer, "currency": {"const": "USD"}, "expires_at": integer, "wallet_authorization_required": {"const": True}, "status_url": string}, ["booking_id", "state", "payable", "bolt11"])
 
 nullable = {"type": ["string", "null"]}
 nullable_minor = {"type": ["integer", "null"], "minimum": 0}
@@ -74,7 +79,7 @@ S["Listing"] = obj({
     "policy_url": nullable, "return_policy_url": nullable, "return_policy": {"anyOf": [ref("ListingReturnPolicy"), {"type": "null"}]}, "updated_at": nullable
 }, ["product_id", "canonical_url", "seller", "checkout_eligibility", "direct_payment_enabled", "inventory_reserved"])
 S["Listings"] = obj({"schema_version": string, "items": array(ref("Listing")), "page": integer, "per_page": integer, "total": integer, "pages": integer, "fetched_at": string}, ["schema_version", "items", "page", "per_page", "total", "pages", "fetched_at"])
-S["ListingInput"] = obj({"items": S["QuoteInput"]["properties"]["items"], "coupons": {"type": "array", "items": string, "maxItems": 5}, "source": {"type": "string", "maxLength": 80}}, ["items"])
+S["ListingInput"] = obj({"items": S["QuoteInput"]["properties"]["items"], "coupons": {"type": "array", "items": string, "maxItems": 5}, "source": {"type": "string", "maxLength": 80}, "booking_id": opaque}, ["items"])
 S["ListingQuoteInput"] = obj({"billing": ref("Address"), "shipping": ref("Address"), "email": {"type": "string", "format": "email"}, "payment_method": string, "shipping_methods": {"type": "array", "items": string, "maxItems": 10}})
 S["ListingQuote"] = obj({
     "currency": {"const": "USD"},
@@ -106,6 +111,19 @@ def route(path, method, operation, output=None, body=None, private=False, idem=F
     if body is not None: op["requestBody"] = {"required": True, "content": {"application/json": {"schema": ref(body) if body else obj({})}}}
     paths.setdefault(path, {})[method.lower()] = op
 route("/capabilities", "GET", "capabilities", "Capabilities")
+route("/booking-options", "GET", "bookingOptions")
+route("/booking-availability", "GET", "bookingAvailability")
+route("/booking-coverage", "GET", "bookingCoverage", "BookingCoverage", query=[("postal_code", postal, True)])
+route("/bookings", "POST", "bookingCreate", "Booking", "BookingInput", True, True)
+route("/bookings/{id}", "GET", "bookingGet", "Booking", private=True)
+route("/bookings/{id}/checkout", "POST", "bookingCheckout", "ListingIntent", "", True)
+route("/bookings/{id}/cancel", "POST", "bookingCancel", "Booking", "", True)
+route("/bookings/{id}/wallet-invoice", "GET", "bookingWalletInvoice", "WalletInvoice", private=True)
+route("/bookings/{id}/attach", "POST", "bookingAttach", body="", private=True)
+for booking_path in ["/bookings/{id}", "/bookings/{id}/checkout", "/bookings/{id}/cancel", "/bookings/{id}/wallet-invoice", "/bookings/{id}/attach"]:
+    for operation in paths[booking_path].values():
+        operation['security'] = [{'BookingAccess': []}, {'ShopperSession': []}]
+paths['/bookings/{id}/attach']['post']['security'] = [{'BookingAccess': []}]
 route("/catalog", "GET", "catalog", "Catalog", query=[("category", {"enum": ["technology", "sharpening"]}, False), ("search", string, False), ("page", {"type": "integer", "minimum": 1, "maximum": 100}, False), ("per_page", {"type": "integer", "minimum": 1, "maximum": 20}, False)])
 route("/service-area", "GET", "area", query=[("postal_code", postal, True)])
 route("/listings", "GET", "listings", "Listings", query=[("search", string, False), ("category", string, False), ("seller", {"type": "integer", "minimum": 1}, False), ("page", {"type": "integer", "minimum": 1, "maximum": 100}, False), ("per_page", {"type": "integer", "minimum": 1, "maximum": 100}, False)])
@@ -126,7 +144,7 @@ route("/orders/{id}", "GET", "statusOrder", "Status", private=True)
 route("/orders/{id}/change-requests", "POST", "change", body="ChangeInput", private=True, idem=True)
 route("/stripe/webhook", "POST", "webhook")
 paths["/stripe/webhook"]["post"]["description"] = "Stripe-Signature on the unmodified raw request body is mandatory. This is a processor callback, not a shopper mutation."
-contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.1.0", "description": "Local release candidate. Verify deployed capabilities before use."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}}, "schemas": S}}
+contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.2.0", "description": "Verify deployed capabilities before use. Booking requests and payment are independent."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}, "BookingAccess": {"type": "apiKey", "in": "header", "name": "X-Krev-Booking"}}, "schemas": S}}
 payload = json.dumps(contract, indent=2) + "\n"
 for file in [ROOT / "openapi/kniferevive-agent-v1.yaml", ROOT / "wordpress/kniferevive-agent-commerce/assets/openapi.json"]:
     file.parent.mkdir(parents=True, exist_ok=True)

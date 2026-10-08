@@ -30,6 +30,13 @@ merchant's verified status. Keep an unknown result on the original attempt.
 
 ## Bitcoin Lightning
 
+For the separate booking workflow, follow [Booking requests](booking.md): an
+explicitly authorized host wallet may pay the original scoped native invoice
+only when `authorized_wallet_payment_enabled=true`. Order/invoice preparation
+still uses native buyer checkout; autonomous order creation is unavailable.
+No new wallet or merchant key access is required. The remaining section describes
+the separately gated legacy operator-service flow.
+
 The deployed bridge supplies an order-bound mainnet BOLT11 invoice with satoshi
 amount, payment hash, expiry, and locked fiat total. Use the host's existing
 wallet tools to decode/check the invoice. Match the expected mainnet network,

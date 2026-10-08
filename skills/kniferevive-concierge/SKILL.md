@@ -1,8 +1,8 @@
 ---
 name: kniferevive-concierge
-description: Find, source, or compare KnifeRevive marketplace listings, including knives, art, AI tech, spices, coins, and SF Bay Area sharpening. Check live prices, sellers, stock and policies; prepare secure buyer-reviewed checkout links when enabled.
+description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with unpaid drop-off, prepaid drop-off, or prepaid merchant pickup. Check county coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -24,8 +24,8 @@ own authorization. Do not discover or provision a wallet.
 
 Read [the API guide](references/api.md) before requests. Fetch live capabilities
 from `https://kniferevive.com/wp-json/kniferevive-agent/v1/capabilities`.
-The bundled adapter is a release candidate; deployment and payment availability
-must be checked. A missing endpoint or disabled capability means use these pages:
+Deployment and payment availability must be checked live. A missing endpoint or
+disabled capability means use these pages:
 
 - Annex: https://kniferevive.com/technology-trade-desk/
 - Sharpening: https://kniferevive.com/#knife-sharpening
@@ -45,7 +45,19 @@ Direct marketplace payment sessions are disabled. Say "I can prepare a secure
 checkout link"; the buyer authorizes payment there. Do not auto-submit review,
 checkout or payment forms. A quote reserves no stock.
 
-For separately enabled scheduled sharpening, read [the service guide](references/sharpening.md). Check postal
+For sharpening bookings, first read [Booking requests](references/booking.md).
+Check `booking.enabled` independently of `sharpening.direct_checkout`. Unpaid
+requests do not require Stripe or the legacy service quote configuration. Use
+`/booking-options` and `/booking-availability`, then prepare a private booking
+review. The human submits it; say "requested" until `appointment_confirmed=true`.
+Offer all three modes and disclose whether prepayment is currently available.
+Check `/booking-coverage` for the user's ZIP first. Pickup and prepayment are
+limited to Contra Costa and Santa Clara counties. Other Bay Area counties may
+request customer drop-off with payment at service. Relay the coverage message;
+cross-county or unknown ZIP codes need address review. Outside the Bay Area,
+do not create a sharpening booking or imply pickup is offered.
+
+For separately enabled legacy scheduled prepaid sharpening, read [the service guide](references/sharpening.md). Check postal
 eligibility, service definitions, both handoff legs, and scheduling mode. Obtain
 necessary contact/address details through the private merchant review page when
 possible. Do not promise complete Bay Area coverage or an unconfirmed appointment.
@@ -64,6 +76,12 @@ when that native gateway exposes it. The separately enabled operator-service
 workflow generates payment details after valid consent and reservations.
 Lightning requires a validated invoice and an independently authorized wallet
 or manual handoff. Never provision a wallet or switch rails after uncertainty.
+For booking wallet payments, use the existing native invoice workflow in
+[Booking requests](references/booking.md). A merchant's permission to accept
+bot payments does not authorize spending from the shopper's wallet. Verify the
+host wallet's merchant, amount, fee limit and scope authorization before one send.
+The native order/invoice preparation may still require a human checkout step;
+`direct_wallet_enabled=false` means autonomous order creation is unavailable.
 
 Never request card numbers, CVC, account passwords, wallet seeds, merchant secrets,
 node admin credentials, or unrelated files. Send only authorized shopping and

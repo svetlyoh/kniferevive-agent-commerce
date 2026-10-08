@@ -1,0 +1,92 @@
+﻿[
+    {
+        "label":  "storage-legacy",
+        "result":  "Synthetic database set to legacy; sync yes. Run tests in a fresh process.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "listing-legacy",
+        "result":  "75 listing checkout assertions passed.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "booking-legacy",
+        "result":  "60 booking assertions passed. No real processor request was sent.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "operator-regression-legacy",
+        "result":  "91 behavioral assertions passed. External requests and customer emails were blocked.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "storage-legacy-no-sync",
+        "result":  "Synthetic database set to legacy; sync no. Run tests in a fresh process.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "listing-legacy-no-sync",
+        "result":  "75 listing checkout assertions passed.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "booking-legacy-no-sync",
+        "result":  "60 booking assertions passed. No real processor request was sent.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "storage-hpos",
+        "result":  "Synthetic database set to hpos; sync yes. Run tests in a fresh process.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "listing-hpos",
+        "result":  "75 listing checkout assertions passed.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "booking-hpos",
+        "result":  "60 booking assertions passed. No real processor request was sent.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "operator-regression-hpos",
+        "result":  "91 behavioral assertions passed. External requests and customer emails were blocked.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "storage-hpos-no-sync",
+        "result":  "Synthetic database set to hpos; sync no. Run tests in a fresh process.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "listing-hpos-no-sync",
+        "result":  "75 listing checkout assertions passed.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "booking-hpos-no-sync",
+        "result":  "60 booking assertions passed. No real processor request was sent.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    },
+    {
+        "label":  "stripe-setup-regression",
+        "result":  "16 merchant setup assertions passed; all processor requests were fixtures.",
+        "processor_evidence":  "synthetic only",
+        "state":  "PASS"
+    }
+]

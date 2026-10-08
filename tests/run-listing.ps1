@@ -17,6 +17,7 @@ foreach($taskMode in @('legacy','legacy-no-sync','hpos','hpos-no-sync')) {
     $taskSync=if($taskMode.EndsWith('no-sync')){'off'}else{'on'}
     Invoke-SandboxCheck 'tests/storage-mode.php' @($taskStorage,$taskSync) 'Synthetic database set' "storage-$taskMode"
     Invoke-SandboxCheck 'tests/listing-checkout.php' @() 'listing checkout assertions passed.' "listing-$taskMode"
+    Invoke-SandboxCheck 'tests/booking.php' @() 'booking assertions passed.' "booking-$taskMode"
     if($taskMode -in @('legacy','hpos')) {
         Remove-Item Env:KREV_LISTING_TEST_STACK
         Invoke-SandboxCheck 'tests/integration.php' @() 'behavioral assertions passed.' "operator-regression-$taskMode"

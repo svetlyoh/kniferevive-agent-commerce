@@ -1,10 +1,10 @@
 # KnifeRevive Agent Commerce
 
-A merchant storefront skill and WooCommerce adapter. Candidate **plugin 0.2.0 / skill 0.2.0** adds published marketplace discovery, private listing intents, native shipping/tax/coupon/fee quotes, buyer-approved cart handoff and scoped native order status. It preserves existing WooCommerce/Dokan gateways and seller accounting. Simple products from one seller are supported; direct marketplace provider sessions are disabled. Sharpening SKU payment is separate from appointments.
+A merchant storefront skill and WooCommerce adapter. **Plugin/skill 0.3.0** adds sharpening booking requests, unpaid/prepaid drop-off and prepaid pickup choices, exact ZIP coverage, merchant confirmation and shared capacity. An explicitly authorized host wallet can pay a scoped existing native Lightning invoice when separately verified/enabled. Native order/invoice preparation still requires buyer checkout. WooCommerce/Dokan remains authoritative for pricing, gateway settlement and seller accounting.
 
-**Installed plugin remains 0.1.3; published skill remains 0.1.2.** Candidate handoff defaults off and is not deployed. Real native Stripe sandbox payment, seller transfer/refund and production-version staging proof remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md), [operator runbook](docs/listing-checkout-runbook-0.2.0.md), and [acceptance/release checklist](docs/listing-checkout-release-0.2.0.md).
+Installed/published versions and payment gates are recorded in the [booking release record](docs/booking-release-0.3.0.md). A deployed version does not prove payments are enabled. Real payment, seller settlement/refund and merchant capacity/policy checks remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md), [native checkout runbook](docs/listing-checkout-runbook-0.2.0.md), and [booking operator instructions](docs/booking-release-0.3.0.md).
 
-[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Download the release](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.2) · [Security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2)
+[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.3.0](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.3.0) · [Prior 0.1.2 security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2)
 
 ## Install with OpenClaw
 

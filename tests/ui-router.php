@@ -2,7 +2,7 @@
 // Loopback-only synthetic sandbox; never serves the user's normal WordPress configuration.
 if (PHP_SAPI!=='cli-server' || !in_array($_SERVER['REMOTE_ADDR']??'',['127.0.0.1','::1'],true)) { http_response_code(403); exit; }
 $path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-$assetMap=['storefront.js'=>'text/javascript','storefront.css'=>'text/css'];
+$assetMap=['storefront.js'=>'text/javascript','booking.js'=>'text/javascript','storefront.css'=>'text/css'];
 foreach ($assetMap as $name=>$type) if ($path==='/wp-content/plugins/kniferevive-agent-commerce/assets/'.$name) {
     header('Content-Type: '.$type); readfile(dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/assets/'.$name); exit;
 }

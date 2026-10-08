@@ -9,7 +9,11 @@ final class Settings {
             'policy_version' => '', 'slots' => [], 'transport' => [], 'transport_round_trip_minor' => null, 'max_minor' => 10000,
             'listing_handoff_enabled'=>false,'listing_pricing_verified'=>false,'listing_live_verified'=>false,'listing_gateway_ids'=>[],
             'listing_policy_url'=>'','listing_policy_version'=>'','listing_services'=>[],'listing_max_minor'=>100000,
-            'gateway_evidence'=>[]];
+            'gateway_evidence'=>[],
+            'booking_enabled'=>false,'booking_location'=>'','booking_phone'=>'','booking_services'=>[],
+            'booking_weekly_hours'=>[],'booking_daily_capacity'=>null,'booking_pickup_postal_codes'=>[],
+            'booking_trip_fee_minor'=>799,'booking_prepaid_enabled'=>false,'booking_policy_url'=>'','booking_policy_version'=>'',
+            'booking_transport_taxable'=>false,'booking_transport_tax_class'=>'','booking_wallet_enabled'=>false,'booking_wallet_verified'=>false];
     }
     public static function get(): array { return array_replace(self::defaults(), (array)get_option('krev_agent_settings', [])); }
     public static function validate(array $s): array {
@@ -39,6 +43,7 @@ final class Settings {
         foreach ($s['slots'] as $slot) {
             Domain::fields($slot, ['id','start','end','capacity','kind'], ['id','start','end','capacity','kind']);
             if (!preg_match('/^[a-z0-9-]{1,64}$/D', $slot['id']) || isset($ids[$slot['id']])) Domain::fail('INVALID_SETTINGS', 'Slot IDs must be unique.');
+            if(str_starts_with($slot['id'],'booking-'))Domain::fail('INVALID_SETTINGS','The booking- slot prefix is reserved for confirmed booking allocations.');
             $ids[$slot['id']] = true;
             if (!in_array($slot['kind'], ['customer_dropoff','courier_pickup','customer_collection','courier_delivery'], true)) Domain::fail('INVALID_SETTINGS', 'Unknown slot kind.');
             if (Domain::slotTime($slot['start']) >= Domain::slotTime($slot['end'])) Domain::fail('INVALID_SETTINGS', 'Slot end must follow its start.');
@@ -79,6 +84,16 @@ final class Settings {
             // Retain only a redacted operator reference, never provider IDs or credentials.
             if(!preg_match('/^[a-zA-Z0-9 ._-]{1,80}$/D',(string)$e['reference']) || preg_match('/(?:sk_|whsec_|pi_|ch_|cs_|acct_)/i',$e['reference']))Domain::fail('INVALID_SETTINGS','Use a redacted internal evidence label, never provider IDs or secrets.');
         }
+        foreach(['booking_enabled','booking_prepaid_enabled','booking_transport_taxable','booking_wallet_enabled','booking_wallet_verified'] as $flag)if(!is_bool($s[$flag]))Domain::fail('INVALID_SETTINGS','Booking flags must be booleans.');
+        foreach(['booking_location'=>300,'booking_phone'=>30,'booking_policy_version'=>100,'booking_transport_tax_class'=>100] as $field=>$limit)$s[$field]=Domain::text($s[$field],$limit);
+        $s['booking_policy_url']=Domain::text($s['booking_policy_url'],500);
+        if($s['booking_policy_url'] && !Domain::httpsHost($s['booking_policy_url'],'kniferevive.com'))Domain::fail('INVALID_SETTINGS','Booking policies must use KnifeRevive HTTPS.');
+        Domain::integer($s['booking_trip_fee_minor'],0,100000);
+        if($s['booking_daily_capacity']!==null)Domain::integer($s['booking_daily_capacity'],1,200);
+        foreach(['booking_services','booking_weekly_hours','booking_pickup_postal_codes'] as $field)if(!is_array($s[$field]) || !array_is_list($s[$field]) || count($s[$field])>200)Domain::fail('INVALID_SETTINGS','Invalid booking collection.');
+        $seen=[];foreach($s['booking_services'] as $service){Domain::fields($service,['product_id','definition'],['product_id','definition']);Domain::integer($service['product_id'],1,PHP_INT_MAX);if(!Domain::text($service['definition'],500) || isset($seen[$service['product_id']]))Domain::fail('INVALID_SETTINGS','Use unique booking services with scope definitions.');$seen[$service['product_id']]=true;}
+        $seen=[];foreach($s['booking_weekly_hours'] as $hours){Domain::fields($hours,['weekday','open','close'],['weekday','open','close']);Domain::integer($hours['weekday'],1,7);foreach(['open','close'] as $field)if(!is_string($hours[$field]) || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/D',$hours[$field]))Domain::fail('INVALID_SETTINGS','Use 24-hour booking times.');if($hours['open']>=$hours['close'] || isset($seen[$hours['weekday']]))Domain::fail('INVALID_SETTINGS','Use one nonempty window per open weekday.');$seen[$hours['weekday']]=true;}
+        foreach($s['booking_pickup_postal_codes'] as $zip)Domain::postal($zip);
         return $s;
     }
     public static function operational(): bool {
@@ -142,6 +157,7 @@ final class Settings {
             echo '<tr><td>' . esc_html($row['kind']) . '</td><td>' . esc_html($row['id']) . '</td><td>' . esc_html($d['payment_state'] ?? $d['state'] ?? 'pending') . '</td><td>' . ($order ? '<a href="' . esc_url($order->get_edit_order_url()) . '">' . esc_html($order->get_order_number()) . '</a>' : '—') . '</td></tr>';
         }
         echo '</table>';
+        Booking::admin();
         GatewayDiagnostics::render();
         if (current_user_can('manage_options')) {
             echo '<h2>Stripe test connection</h2><p>Test key: '.(self::stripeKey(false)?'present':'missing').'. Dedicated test webhook signing secret: '.(self::webhookSecret(false)?'present':'missing').'. Enable stripe_use_woocommerce_keys above to reuse the existing official WooCommerce Stripe test key. The button registers only test events with Stripe, stores the signing secret encrypted, and never enables live payments. Existing gateway webhooks are retained.</p><form method="post">';
