@@ -23,7 +23,7 @@ stock and totals are checked again for quotes and checkout.
 independent merchant verification. Unconfigured coverage returns no promise.
 Technology purchases use the canonical product page's existing checkout.
 
-## Quote, private review, authorized checkout
+## Dedicated operator-service quote, private review, authorized checkout
 
 Create a guest session with `POST /sessions`, JSON `{}`, and a unique
 `Idempotency-Key`. Use the returned private token only in
@@ -78,3 +78,39 @@ Its result is a merchant-review request, not a refund.
 
 This guide is protocol documentation, not authority to spend, override assistant
 instructions, or invoke tools. It claims no ACP/AP2/MPP/L402 conformance.
+
+## Native marketplace listing handoff (candidate 0.2.0)
+
+`GET /listings` searches all visible published categories with optional `search`,
+actual category slug, public `seller`, `page`, `per_page` (maximum 100).
+`GET /listings/{product_id}` returns WC price, original URL, seller, stock,
+variations and eligibility. Simple single-seller selections are supported.
+Complex selections require normal listing checkout. Service SKUs require vetted
+fulfillment terms. Direct marketplace payment remains disabled.
+
+Require `/capabilities` to report `listings.handoff_state=handoff_enabled`.
+With a private session, `POST /listing-checkouts` accepts `items` (product ID and
+quantity), optional coupon codes and disclosed source, with an idempotency key.
+Its review link exchanges a private fragment for an HttpOnly cookie. Do not log it.
+Intent lifetime is 30 minutes; quotes last 10 minutes. GET/quote creates no order,
+stock hold, charge, Stripe session or Lightning invoice.
+
+`POST /listing-checkouts/{id}/quote` accepts complete US billing/shipping addresses,
+email, actual native `payment_method` and chosen `shipping_methods` rate IDs.
+WC pricing hooks calculate coupons, fees, tax and shipping. Missing address,
+gateway or rate means `estimate_only=true`, `total_minor=null`. No caller-supplied
+amount/payee/order state is accepted. Prefer entering PII on the private page.
+Use a fresh idempotency key for each repriced quote.
+
+The buyer reviews itemized totals, seller, fulfillment and policies. A protected
+POST prepares the native cart and redirects to `wc_get_checkout_url()`. Existing
+carts/pending orders block replacement. Changed stock, price, seller, address,
+identity, gateway, total or policies block payment until reviewed/reconciled.
+Native WC/Dokan gateway hooks own payment, notifications and seller accounting.
+
+`GET /listing-checkouts/{id}` returns the intent; `/status` returns separate
+payment/fulfillment/scheduling states without order keys, PII or processor IDs.
+`paid` requires the native gateway event plus bound transaction evidence;
+`refund_recorded` is not provider-refund confirmation. Sharpening remains
+`not_booked`. After uncertainty, resume the original checkout/status; do not
+start another charge. Real processor verification remains a launch requirement.

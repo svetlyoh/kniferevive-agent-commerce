@@ -8,6 +8,15 @@ foreach ($assetMap as $name=>$type) if ($path==='/wp-content/plugins/kniferevive
 }
 $argv=[__FILE__,getenv('KREV_TEST_WP_ROOT')];
 require __DIR__.'/sandbox-bootstrap.php';
+if(getenv('KREV_LISTING_UI')==='1'){
+    class ListingUiGateway extends WC_Payment_Gateway {public function __construct(){$this->id='stripe';$this->enabled='yes';$this->title='Synthetic native test gateway';$this->settings=['testmode'=>'yes'];}public function is_available(){return true;}public function process_payment($id){throw new RuntimeException('Synthetic browser must not initiate payment.');}}
+    add_filter('woocommerce_payment_gateways',static fn($g)=>[ListingUiGateway::class],1000);WC()->payment_gateways()->init();
+    if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
+    if((int)($_GET['page_id']??0)===(int)get_option('woocommerce_checkout_page_id')){
+        echo '<!doctype html><html><head><meta charset="utf-8"><title>Synthetic native WooCommerce checkout</title></head><body><h1>Native WooCommerce checkout</h1>';
+        echo do_shortcode('[woocommerce_checkout]');echo '</body></html>';exit;
+    }
+}
 add_filter('plugins_url',static function ($url,$relative,$plugin) { return str_ends_with($plugin,'kniferevive-agent-commerce.php') ? WP_HOME.'/wp-content/plugins/kniferevive-agent-commerce'.($relative?'/'.$relative:'') : $url; },10,3);
 add_filter('pre_http_request',static function ($pre,$args,$url) {
     if (!str_starts_with($url,'https://api.stripe.com/')) return $pre;

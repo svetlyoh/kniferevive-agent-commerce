@@ -1,5 +1,17 @@
 # Payments
 
+## Native marketplace listings
+
+Use the listing reference for private intents/quotes and protected buyer review.
+The accepted cart goes to first-party WooCommerce checkout. Its actual native
+gateway owns payment, webhooks, refunds and seller payouts. The adapter creates
+no Stripe Checkout session or Lightning invoice for marketplace sellers. Google
+Pay/Lightning is conditional on the native gateway and device. Use scoped status;
+`refund_recorded` is a WooCommerce record, not independently proven reimbursement.
+Sharpening SKU payment remains `not_booked`. Do not automate approval or payment.
+
+The remaining sections describe the separately enabled operator-service flow.
+
 All browsing and quoting is free. The merchant creates payable artifacts only
 after customer consent and server reservation. Never send a shopper's payment
 credentials to this API.

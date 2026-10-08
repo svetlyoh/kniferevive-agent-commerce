@@ -184,9 +184,18 @@ final class Store {
         global $wpdb;
         return $wpdb->get_var($wpdb->prepare('SELECT id FROM '.self::table('records')." WHERE kind='attempt' AND owner=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.purchase_hash'))=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.payment_state')) IN ('creating','unknown','pending','review_required') LIMIT 1",$owner,$purchaseHash));
     }
+    public static function unresolvedListing(string $owner,string $hash): ?string {
+        global $wpdb;
+        return $wpdb->get_var($wpdb->prepare('SELECT id FROM '.self::table('records')." WHERE kind='listing' AND owner=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.purchase_hash'))=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.handoff_state')) IN ('preparing_cart','cart_ready','order_linked') LIMIT 1",$owner,$hash));
+    }
     public static function pruneEphemeral(): void {
         global $wpdb;
-        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind IN ('rate','session','quote','consent') AND expires<%d",time()-86400));
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind IN ('rate','session','quote','consent','listing_quote') AND expires<%d",time()-86400));
+        // Abandoned review-only PII expires; issued/interrupted financial evidence never does.
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='listing' AND expires<%d
+            AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.handoff_state'))='review'
+            AND (JSON_EXTRACT(data,'$.order_id') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.order_id'))='null')
+            AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(data,'$.creation_started')),'false')='false'",time()-86400));
         // Checkout, event, idempotency, and refund evidence is retained for operator reconciliation.
     }
 }

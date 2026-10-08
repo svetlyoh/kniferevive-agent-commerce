@@ -57,10 +57,49 @@ S["CatalogProduct"] = obj({
 S["Catalog"] = obj({"schema_version": string, "items": array(ref("CatalogProduct")), "page": integer, "per_page": integer, "total": integer, "pages": integer, "fetched_at": string, "cache_ttl_seconds": integer}, ["items", "page", "total"])
 S["Capabilities"] = {"type": "object", "required": ["schema_version", "merchant", "payment_rails", "sharpening", "technology"], "properties": {"schema_version": string, "merchant": string, "payment_rails": array(string), "sharpening": {"type": "object"}, "technology": {"type": "object"}}, "additionalProperties": True}
 paths = {}
+
+nullable = {"type": ["string", "null"]}
+nullable_minor = {"type": ["integer", "null"], "minimum": 0}
+S["ListingReturnPolicy"] = obj({"source": {"const": "native_product_return_policy"}, "name": string, "label": string, "description": string, "type": string, "days": integer, "fee_terms": string}, ["source", "name", "label", "description", "type", "days", "fee_terms"])
+S["Listing"] = obj({
+    "product_id": integer, "title": string, "type": string, "canonical_url": string,
+    "categories": array(string), "seller": obj({"id": integer, "display_name": string}, ["id", "display_name"]),
+    "condition": nullable, "condition_verification": {"const": "seller_claim"}, "currency": string,
+    "unit_price_minor": nullable_minor, "price_status": string, "stock_status": string,
+    "available_quantity": {"type": ["integer", "null"]}, "inventory_reserved": {"const": False},
+    "checkout_eligibility": {"enum": ["handoff_only", "handoff_disabled", "unavailable", "unsupported_variation", "requires_selection", "seller_disabled", "needs_manual_review"]},
+    "direct_payment_enabled": {"const": False},
+    "variations": array(obj({"variation_id": integer, "attributes": {"type": "object", "additionalProperties": string}, "in_stock": {"type": "boolean"}, "checkout_eligibility": {"const": "unsupported_variation"}}, ["variation_id", "attributes", "in_stock", "checkout_eligibility"])),
+    "fulfillment_type": {"enum": ["service", "shipping", "virtual"]}, "fulfillment_note": nullable,
+    "policy_url": nullable, "return_policy_url": nullable, "return_policy": {"anyOf": [ref("ListingReturnPolicy"), {"type": "null"}]}, "updated_at": nullable
+}, ["product_id", "canonical_url", "seller", "checkout_eligibility", "direct_payment_enabled", "inventory_reserved"])
+S["Listings"] = obj({"schema_version": string, "items": array(ref("Listing")), "page": integer, "per_page": integer, "total": integer, "pages": integer, "fetched_at": string}, ["schema_version", "items", "page", "per_page", "total", "pages", "fetched_at"])
+S["ListingInput"] = obj({"items": S["QuoteInput"]["properties"]["items"], "coupons": {"type": "array", "items": string, "maxItems": 5}, "source": {"type": "string", "maxLength": 80}}, ["items"])
+S["ListingQuoteInput"] = obj({"billing": ref("Address"), "shipping": ref("Address"), "email": {"type": "string", "format": "email"}, "payment_method": string, "shipping_methods": {"type": "array", "items": string, "maxItems": 10}})
+S["ListingQuote"] = obj({
+    "currency": {"const": "USD"},
+    "items": array(obj({"product_id": integer, "quantity": integer, "listing": ref("Listing"), "subtotal_minor": integer, "total_minor": integer, "tax_minor": integer}, ["product_id", "quantity", "listing"])),
+    "total_minor": nullable_minor, "estimate_only": {"type": "boolean"}, "reason": nullable,
+    "shipping_rates": array(obj({"package_index": integer, "selected": nullable, "options": array(obj({"id": string, "label": string, "cost_minor": integer, "tax_minor": integer}, ["id", "label", "cost_minor", "tax_minor"]))}, ["package_index", "selected", "options"])),
+    "fees": array(obj({"name": string, "total_minor": integer, "tax_minor": integer}, ["name", "total_minor", "tax_minor"])),
+    "tax_minor": nullable_minor, "shipping_minor": nullable_minor, "discount_minor": nullable_minor,
+    "payment_methods": array(string), "payment_method": string, "policy_url": string, "policy_version": string,
+    "return_policy_url": string, "quote_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+}, ["currency", "items", "total_minor", "estimate_only", "reason", "shipping_rates", "fees", "tax_minor", "shipping_minor", "discount_minor", "payment_methods", "policy_url", "return_policy_url"])
+S["ListingStatus"] = obj({
+    "intent_id": opaque, "handoff_state": {"enum": ["review", "preparing_cart", "cart_ready", "order_linked"]},
+    "payment_state": {"enum": ["not_started", "pending", "paid", "refund_recorded", "cancelled", "needs_review"]},
+    "payment_verification": {"enum": ["none", "native_gateway_order_event"]}, "fulfillment_state": string,
+    "woocommerce_status": nullable, "scheduling_state": {"enum": ["not_booked", "not_applicable"]},
+    "inventory_reserved_at_quote": {"const": False}, "direct_payment_enabled": {"const": False},
+    "next_action": string, "status_url": string
+}, ["intent_id", "handoff_state", "payment_state", "payment_verification", "fulfillment_state", "woocommerce_status", "scheduling_state", "inventory_reserved_at_quote", "direct_payment_enabled", "next_action", "status_url"])
+S["ListingIntent"] = obj({**S["ListingStatus"]["properties"], "expires_at": string, "quote_expires_at": nullable, "review_url": string, "quote": {"anyOf": [ref("ListingQuote"), {"type": "null"}]}}, [*S["ListingStatus"]["required"], "expires_at", "quote_expires_at", "review_url", "quote"])
 def route(path, method, operation, output=None, body=None, private=False, idem=False, query=()):
     op = {"operationId": operation, "responses": {"200": {"description": "Successful response", "content": {"application/json": {"schema": ref(output) if output else {"type": "object"}}}}, "default": {"description": "Structured error", "content": {"application/json": {"schema": ref("Error")}}}}, "security": [{"ShopperSession": []}] if private else []}
     params = []
     if "{id}" in path: params.append({"name": "id", "in": "path", "required": True, "schema": opaque})
+    if "{product_id}" in path: params.append({"name": "product_id", "in": "path", "required": True, "schema": {"type": "integer", "minimum": 1}})
     for name, schema, required in query: params.append({"name": name, "in": "query", "required": required, "schema": schema})
     if idem: params.append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "pattern": "^[A-Za-z0-9:_-]{12,128}$"}})
     if params: op["parameters"] = params
@@ -69,6 +108,12 @@ def route(path, method, operation, output=None, body=None, private=False, idem=F
 route("/capabilities", "GET", "capabilities", "Capabilities")
 route("/catalog", "GET", "catalog", "Catalog", query=[("category", {"enum": ["technology", "sharpening"]}, False), ("search", string, False), ("page", {"type": "integer", "minimum": 1, "maximum": 100}, False), ("per_page", {"type": "integer", "minimum": 1, "maximum": 20}, False)])
 route("/service-area", "GET", "area", query=[("postal_code", postal, True)])
+route("/listings", "GET", "listings", "Listings", query=[("search", string, False), ("category", string, False), ("seller", {"type": "integer", "minimum": 1}, False), ("page", {"type": "integer", "minimum": 1, "maximum": 100}, False), ("per_page", {"type": "integer", "minimum": 1, "maximum": 100}, False)])
+route("/listings/{product_id}", "GET", "listing", "Listing")
+route("/listing-checkouts", "POST", "listingCreate", "ListingIntent", "ListingInput", True, True)
+route("/listing-checkouts/{id}", "GET", "listingGet", "ListingIntent", private=True)
+route("/listing-checkouts/{id}/quote", "POST", "listingQuote", "ListingIntent", "ListingQuoteInput", True, True)
+route("/listing-checkouts/{id}/status", "GET", "listingStatus", "ListingStatus", private=True)
 route("/availability", "GET", "availability", query=[("postal_code", postal, True), ("kind", {"enum": ["customer_dropoff", "customer_collection", "courier_pickup", "courier_delivery"]}, False)])
 route("/openapi", "GET", "openapi")
 route("/sessions", "POST", "session", "Session", "", idem=True)
@@ -81,7 +126,7 @@ route("/orders/{id}", "GET", "statusOrder", "Status", private=True)
 route("/orders/{id}/change-requests", "POST", "change", body="ChangeInput", private=True, idem=True)
 route("/stripe/webhook", "POST", "webhook")
 paths["/stripe/webhook"]["post"]["description"] = "Stripe-Signature on the unmodified raw request body is mandatory. This is a processor callback, not a shopper mutation."
-contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.0.0", "description": "Local release candidate. Verify deployed capabilities before use."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}}, "schemas": S}}
+contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.1.0", "description": "Local release candidate. Verify deployed capabilities before use."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}}, "schemas": S}}
 payload = json.dumps(contract, indent=2) + "\n"
 for file in [ROOT / "openapi/kniferevive-agent-v1.yaml", ROOT / "wordpress/kniferevive-agent-commerce/assets/openapi.json"]:
     file.parent.mkdir(parents=True, exist_ok=True)

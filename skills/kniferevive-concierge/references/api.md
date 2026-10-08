@@ -7,8 +7,10 @@ Only capabilities returned by the deployed service are actionable.
 1. `GET /capabilities`, `GET /catalog?category=technology|sharpening`, and
    `GET /service-area?postal_code=94110` require no login or secrets. Availability
    is `GET /availability?postal_code=94110`, optionally filtered by `kind`.
-2. Technology results use `existing_woocommerce_checkout`. Open the canonical
-   product page for its existing checkout; the adapter does not create tech orders.
+2. Legacy technology results use `existing_woocommerce_checkout`. Candidate 0.2.0
+   additionally exposes `/listings` across published categories, and native buyer
+   handoff when enabled. See [listing checkout](listing-checkout.md) for its six
+   separate routes. No marketplace provider sessions are created by the adapter.
 3. To quote supported services, create a private guest session with
    `POST /sessions`, JSON `{}`, and a unique `Idempotency-Key` of 12–128 letters,
    digits, colons, underscores, or hyphens. Retain its returned session token

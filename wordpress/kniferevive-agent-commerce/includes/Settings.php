@@ -6,18 +6,21 @@ final class Settings {
         return ['enabled' => false, 'pricing_verified' => false, 'stripe_enabled' => false, 'stripe_live' => false, 'live_verified' => false, 'stripe_use_woocommerce_keys' => false,
             'lightning_enabled' => false, 'pending_scheduling' => false, 'technology_category' => 'technology',
             'merchant_ids' => [], 'services' => [], 'postal_codes' => [], 'location' => '', 'policy_url' => '', 'return_policy_url' => '',
-            'policy_version' => '', 'slots' => [], 'transport' => [], 'transport_round_trip_minor' => null, 'max_minor' => 10000];
+            'policy_version' => '', 'slots' => [], 'transport' => [], 'transport_round_trip_minor' => null, 'max_minor' => 10000,
+            'listing_handoff_enabled'=>false,'listing_pricing_verified'=>false,'listing_live_verified'=>false,'listing_gateway_ids'=>[],
+            'listing_policy_url'=>'','listing_policy_version'=>'','listing_services'=>[],'listing_max_minor'=>100000,
+            'gateway_evidence'=>[]];
     }
     public static function get(): array { return array_replace(self::defaults(), (array)get_option('krev_agent_settings', [])); }
     public static function validate(array $s): array {
         Domain::fields($s, array_keys(self::defaults()));
         $s = array_replace(self::defaults(), $s);
-        foreach (['enabled', 'pricing_verified', 'stripe_enabled', 'stripe_live', 'live_verified', 'stripe_use_woocommerce_keys', 'lightning_enabled', 'pending_scheduling'] as $key) {
+        foreach (['enabled', 'pricing_verified', 'stripe_enabled', 'stripe_live', 'live_verified', 'stripe_use_woocommerce_keys', 'lightning_enabled', 'pending_scheduling','listing_handoff_enabled','listing_pricing_verified','listing_live_verified'] as $key) {
             if (!is_bool($s[$key])) Domain::fail('INVALID_SETTINGS', 'Settings flags must be booleans.');
         }
-        foreach (['location', 'policy_version', 'technology_category'] as $key) $s[$key] = Domain::text($s[$key], 300);
+        foreach (['location', 'policy_version', 'technology_category','listing_policy_version'] as $key) $s[$key] = Domain::text($s[$key], 300);
         if (!preg_match('/^[a-z0-9-]+$/D', $s['technology_category'])) Domain::fail('INVALID_SETTINGS', 'Use a category slug.');
-        foreach (['policy_url', 'return_policy_url'] as $key) {
+        foreach (['policy_url', 'return_policy_url','listing_policy_url'] as $key) {
             $s[$key] = Domain::text($s[$key], 500);
             if ($s[$key] && !Domain::httpsHost($s[$key], 'kniferevive.com')) Domain::fail('INVALID_SETTINGS', 'Policy links must use kniferevive.com HTTPS.');
         }
@@ -60,6 +63,22 @@ final class Settings {
             }
         }
         Domain::integer($s['max_minor'], 1, 1000000);
+        Domain::integer($s['listing_max_minor'],1,1000000);
+        foreach(['listing_gateway_ids','listing_services','gateway_evidence'] as $key)if(!is_array($s[$key]) || !array_is_list($s[$key]) || count($s[$key])>100)Domain::fail('INVALID_SETTINGS','Invalid listing settings collection.');
+        foreach($s['listing_gateway_ids'] as $id)if(!is_string($id) || !preg_match('/^[a-z0-9_-]{1,80}$/D',$id) || $id==='krev_agent_checkout')Domain::fail('INVALID_SETTINGS','Use native gateway IDs; the service adapter cannot pay marketplace listings.');
+        $seen=[];foreach($s['listing_services'] as $terms){
+            Domain::fields($terms,['product_id','terms_url','fulfillment_note','policy_version','native_fulfillment_verified'],['product_id','terms_url','fulfillment_note','policy_version','native_fulfillment_verified']);
+            Domain::integer($terms['product_id'],1,PHP_INT_MAX);
+            if(isset($seen[$terms['product_id']]))Domain::fail('INVALID_SETTINGS','Listing service approvals must be unique.');$seen[$terms['product_id']]=true;
+            if(!is_bool($terms['native_fulfillment_verified']) || !Domain::httpsHost(Domain::text($terms['terms_url'],500),'kniferevive.com') || !Domain::text($terms['fulfillment_note'],1000) || !Domain::text($terms['policy_version'],100))Domain::fail('INVALID_SETTINGS','Each approved native service needs reviewed public terms, fulfillment instructions and a version.');
+        }
+        foreach($s['gateway_evidence'] as $e){
+            Domain::fields($e,['gateway_id','environment','state','checked_at','reference'],['gateway_id','environment','state','checked_at','reference']);
+            if(!preg_match('/^[a-z0-9_-]{1,80}$/D',(string)$e['gateway_id']) || !in_array($e['environment'],['test','live'],true) || !in_array($e['state'],['disabled','configured_test','test_payment_verified','live_webhook_configured','live_payment_verified','needs_operator_review'],true))Domain::fail('INVALID_SETTINGS','Invalid gateway evidence state.');
+            Domain::integer($e['checked_at'],0,time());
+            // Retain only a redacted operator reference, never provider IDs or credentials.
+            if(!preg_match('/^[a-zA-Z0-9 ._-]{1,80}$/D',(string)$e['reference']) || preg_match('/(?:sk_|whsec_|pi_|ch_|cs_|acct_)/i',$e['reference']))Domain::fail('INVALID_SETTINGS','Use a redacted internal evidence label, never provider IDs or secrets.');
+        }
         return $s;
     }
     public static function operational(): bool {
@@ -123,6 +142,7 @@ final class Settings {
             echo '<tr><td>' . esc_html($row['kind']) . '</td><td>' . esc_html($row['id']) . '</td><td>' . esc_html($d['payment_state'] ?? $d['state'] ?? 'pending') . '</td><td>' . ($order ? '<a href="' . esc_url($order->get_edit_order_url()) . '">' . esc_html($order->get_order_number()) . '</a>' : '—') . '</td></tr>';
         }
         echo '</table>';
+        GatewayDiagnostics::render();
         if (current_user_can('manage_options')) {
             echo '<h2>Stripe test connection</h2><p>Test key: '.(self::stripeKey(false)?'present':'missing').'. Dedicated test webhook signing secret: '.(self::webhookSecret(false)?'present':'missing').'. Enable stripe_use_woocommerce_keys above to reuse the existing official WooCommerce Stripe test key. The button registers only test events with Stripe, stores the signing secret encrypted, and never enables live payments. Existing gateway webhooks are retained.</p><form method="post">';
             wp_nonce_field('krev_agent_test_webhook');

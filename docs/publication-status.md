@@ -42,3 +42,7 @@ Released source commit: `e69fb02c00eb44ff73841124ef13ed5d081f609f`, skill path `
 The exact scanner snapshot, file hashes, card/provenance limitation, audit URL and report archive hash are recorded in [security-scan-0.1.0.json](security-scan-0.1.0.json). Later documentation commits do not change the immutable published skill version or its linked release commit.
 
 At the time of the initial publication, the merchant plugin was inactive in Local Sites. Subsequent backend setup is recorded above and in merchant setup evidence; publication itself does not prove working checkout. The skill must check capabilities and use the merchant pages on disabled capabilities.
+
+## Unpublished native listing candidate — 8 October 2026
+
+Source plugin/skill 0.2.0 is a review candidate with disabled-by-default native handoff. Installed backend remains 0.1.3 and the registry skill remains 0.1.2. No 0.2.0 tag, GitHub release, ClawHub publication, generated card or external security certification was created. The earlier audit does not certify these changes. See listing-checkout-release-0.2.0.md for tested behavior and outstanding processor/staging proof.

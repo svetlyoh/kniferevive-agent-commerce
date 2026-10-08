@@ -4,6 +4,7 @@ defined('ABSPATH') || exit;
 final class Plugin {
     public static function boot(): void {
         if (!class_exists('WooCommerce')) return;
+        ListingCheckout::boot();
         add_action('rest_api_init',[Api::class,'register']);
         add_action('template_redirect',[Frontend::class,'render'],0);
         add_action('admin_menu',static function () { add_submenu_page('woocommerce','Agent Commerce','Agent Commerce','manage_woocommerce','krev-agent-commerce',[Settings::class,'page']); });

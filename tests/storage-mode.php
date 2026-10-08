@@ -15,4 +15,5 @@ for ($batch=0;$batch<100;$batch++) {
 if ($sync->has_orders_pending_sync()) throw new RuntimeException('Storage mode unchanged: synchronization remains pending.');
 update_option('woocommerce_custom_orders_table_enabled',$mode==='hpos'?'yes':'no');
 if (get_option('woocommerce_custom_orders_table_enabled')!==($mode==='hpos'?'yes':'no')) throw new RuntimeException('Storage switch rejected.');
-echo "Synthetic database set to $mode. Run tests in a fresh process.\n";
+if(($argv[3]??'')==='off')update_option('woocommerce_custom_orders_table_data_sync_enabled','no');
+echo "Synthetic database set to $mode; sync ".get_option('woocommerce_custom_orders_table_data_sync_enabled').". Run tests in a fresh process.\n";

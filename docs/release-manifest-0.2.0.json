@@ -1,0 +1,155 @@
+{
+  "version": "0.2.0",
+  "components": {
+    "kniferevive-agent-commerce-0.2.0.zip": {
+      "sha256": "9d3bec72bfb62729107e96ff4e25188ffb17f54f76cedb95e4850550523baea4",
+      "files": [
+        {
+          "path": "kniferevive-agent-commerce/assets/AI.md",
+          "sha256": "a6258e31e3556afee7f8feb2f1c78370f540adf623aff9f22c3252996a871e97",
+          "bytes": 6589
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/openapi.json",
+          "sha256": "03cfc698e27f3cc25881726c02eba7b9fe1835d91860a9fa58fee2424c6c8cdc",
+          "bytes": 57442
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/storefront.css",
+          "sha256": "c498f02a04a2de4af1969b7d1f8c512d3cb0224cd2a59d1b576d6d99e8d9652c",
+          "bytes": 739
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/storefront.js",
+          "sha256": "27370ad29f27959659d63d921401ca375ae693b731ba7dfdcbd7e56c5154422a",
+          "bytes": 1163
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Api.php",
+          "sha256": "960965a86bfdfd9745f9b5ec5da586dc95fbdd5a600e6ac1a0af9d4591826941",
+          "bytes": 14621
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Commerce.php",
+          "sha256": "b1eebd04b43dbd34cefdf7071a39731faf8ee57d1375e3c8f5b1f77e13963df3",
+          "bytes": 25274
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Domain.php",
+          "sha256": "5b6de69f3d6a406dbaddf2d8955a7846a99d3b0ab215a9f8f02bed5a055d6984",
+          "bytes": 6298
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Frontend.php",
+          "sha256": "89bfece61db51d4ab7ff8b9f4b48d3cda37ef2f9d5865a753c5ab0cc75b5c725",
+          "bytes": 10241
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Gateway.php",
+          "sha256": "1195a996885c1fac76cafa5455341b00f1251381bd95bc090c90dbe7d9c4786d",
+          "bytes": 732
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/GatewayDiagnostics.php",
+          "sha256": "598292d089a728b913d6827b9042e3350d013368eab66fe03d0d6d6cb1142b9b",
+          "bytes": 6866
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingCart.php",
+          "sha256": "2be3e500fa9d71978e5e31d9e779e286640c4b7abebe644d9345f267175010ac",
+          "bytes": 689
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingCheckout.php",
+          "sha256": "3cd9cf0c146a702025ee80f987180ee5c17de8ffb186f965aa2bfb32d38d5fae",
+          "bytes": 36820
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingFrontend.php",
+          "sha256": "6bf8e1611249a0d411765783dc297fdc89f0101c0102ec772f4c6ae3364bfb85",
+          "bytes": 10384
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Payments.php",
+          "sha256": "9a69f977c797eb1c2b0e1d9221fa79b7fcb177746c77dd64c9171bb0bfd85952",
+          "bytes": 19552
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Plugin.php",
+          "sha256": "89cdce52e4eca8955fed4313232ad8eed262cd0b691370493b1ad330d1881fac",
+          "bytes": 1561
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/QuoteCart.php",
+          "sha256": "794ed2021cc9a4ba9f031223e801753c6408926e4b0e67983c77445af93c92e8",
+          "bytes": 1101
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Settings.php",
+          "sha256": "7e33107af1a8284909679e9fff21f3023d85632001a895c8d94cde183c4add10",
+          "bytes": 15223
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Store.php",
+          "sha256": "680bf10c6bfdf4d127502d52532eb0ac52b2bdba2eb81f07d00c30b232fe3e03",
+          "bytes": 13490
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/StripeSetup.php",
+          "sha256": "9d8062e75428d713b554b14a0ea1c06d3273a787c6037d086cb0583698f6208c",
+          "bytes": 4947
+        },
+        {
+          "path": "kniferevive-agent-commerce/kniferevive-agent-commerce.php",
+          "sha256": "b8cd4b5627cf052fbe837eebfe17e60ec35ad239d557622af083de1183825148",
+          "bytes": 1108
+        },
+        {
+          "path": "kniferevive-agent-commerce/LICENSE",
+          "sha256": "dec703cdb49042ca367f71c3982dee4552ffef395225f1fe9f14d29a4a0cb0ff",
+          "bytes": 19519
+        }
+      ]
+    },
+    "kniferevive-concierge-0.2.0.zip": {
+      "sha256": "06226ee509e96049c162fa0eaf4485a852af06090b9878320035b460692cda9e",
+      "files": [
+        {
+          "path": "kniferevive-concierge/LICENSE",
+          "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+          "bytes": 919
+        },
+        {
+          "path": "kniferevive-concierge/references/api.md",
+          "sha256": "6322a3da9a2f407421815d23997334c5dfb6ce5595dbefbc18578419eb9d6c8b",
+          "bytes": 3227
+        },
+        {
+          "path": "kniferevive-concierge/references/installation.md",
+          "sha256": "86b9ab9e04f147c7d5e650681ee8aa8a855ff34dbf499526fe4d9c507d6bca7b",
+          "bytes": 8273
+        },
+        {
+          "path": "kniferevive-concierge/references/listing-checkout.md",
+          "sha256": "a2b7a750976e073969779b3caa8e3139f52729180f821589abda0043115aab07",
+          "bytes": 3977
+        },
+        {
+          "path": "kniferevive-concierge/references/payments.md",
+          "sha256": "7b7a2b9f707613615ec146341dc64550a74055a8459edf44410a1bbb77497fff",
+          "bytes": 3125
+        },
+        {
+          "path": "kniferevive-concierge/references/sharpening.md",
+          "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e",
+          "bytes": 2128
+        },
+        {
+          "path": "kniferevive-concierge/SKILL.md",
+          "sha256": "fea873fb94e7d7e45990d65bd88618a6c54000625817b1278a6bc1c1ad983d8e",
+          "bytes": 5903
+        }
+      ]
+    }
+  }
+}

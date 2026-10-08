@@ -7,6 +7,10 @@ final class Api {
         foreach ([
             '/capabilities'=>['GET','capabilities'], '/catalog'=>['GET','catalog'], '/service-area'=>['GET','area'], '/availability'=>['GET','availability'],
             '/openapi'=>['GET','openapi'], '/sessions'=>['POST','session'], '/sessions/attach'=>['POST','attach'], '/quotes'=>['POST','quote'],
+            '/listings'=>['GET','listings'],'/listings/(?P<product_id>[0-9]{1,10})'=>['GET','listing'],
+            '/listing-checkouts'=>['POST','listingCreate'],'/listing-checkouts/(?P<id>[a-f0-9]{32})'=>['GET','listingGet'],
+            '/listing-checkouts/(?P<id>[a-f0-9]{32})/quote'=>['POST','listingQuote'],
+            '/listing-checkouts/(?P<id>[a-f0-9]{32})/status'=>['GET','listingStatus'],
             '/quotes/(?P<id>[a-f0-9]{32})'=>['GET','getQuote'], '/checkout-attempts'=>['POST','attempt'],
             '/checkout-attempts/(?P<id>[a-f0-9]{32})'=>['GET','status'], '/orders/(?P<id>[a-f0-9]{32})'=>['GET','status'],
             '/orders/(?P<id>[a-f0-9]{32})/change-requests'=>['POST','change'], '/stripe/webhook'=>['POST','webhook']
@@ -92,10 +96,14 @@ final class Api {
     }
     public static function capabilities($request): array {
         $s=Settings::get(); $rails=Settings::rails();
-        return ['schema_version'=>'1.0','adapter_version'=>VERSION,'merchant'=>'KnifeRevive','merchant_origin'=>'https://kniferevive.com',
+        return ['schema_version'=>'1.1','adapter_version'=>VERSION,'merchant'=>'KnifeRevive','merchant_origin'=>'https://kniferevive.com',
             'discovery'=>['anonymous'=>true,'catalog'=>true,'quote_requires_private_session'=>true],
             'sharpening'=>['status'=>Settings::operational()?'configured':'unconfigured','direct_checkout'=>(bool)$rails,'booking_mode'=>$s['slots']?'scheduled':($s['pending_scheduling']?'pending_scheduling':'unconfigured')],
             'technology'=>['catalog'=>true,'direct_checkout'=>false,'checkout_mode'=>'existing_woocommerce_checkout'],
+            'listings'=>['discovery'=>true,'categories'=>'all_published','handoff_state'=>ListingCheckout::enabled()?'handoff_enabled':'unavailable',
+                'checkout_mode'=>'buyer_completed_native_woocommerce','direct_payment_enabled'=>false,'simple_products'=>true,'variations'=>'unsupported_variation',
+                'configured_gateway_ids'=>$s['listing_gateway_ids'],'gateway_availability'=>'validated_per_native_quote',
+                'multi_seller'=>'separate_buyer_review_required','quote_reserves_stock'=>false,'service_payment_does_not_book_appointment'=>true],
             'payment_rails'=>$rails,'google_pay'=>['availability'=>'conditional_in_stripe_checkout','autonomous_spending'=>false],
             'stripe_environment'=>$s['stripe_live']?'live':'test','handoff_hosts'=>['kniferevive.com','checkout.stripe.com'],
             'policy_url'=>$s['policy_url']?:null,'return_policy_url'=>$s['return_policy_url']?:null,'openapi_url'=>rest_url(self::NS.'/openapi'),
@@ -150,5 +158,14 @@ final class Api {
         return ['request_id'=>$r['id'],'state'=>'requested','refund_state'=>'not_issued','next_action'=>'merchant_review'];
     }
     public static function webhook($request): array { return Payments::webhook($request->get_body(),(string)$request->get_header('Stripe-Signature')); }
+    public static function listings($request): array {
+        $args=$request->get_query_params();foreach(['page','per_page','seller'] as $key)if(isset($args[$key])){if(!ctype_digit((string)$args[$key]))Domain::fail('INVALID_REQUEST','Invalid numeric filter.');$args[$key]=(int)$args[$key];}
+        return ListingCheckout::catalog($args);
+    }
+    public static function listing($request): array { return ListingCheckout::product((int)$request['product_id']); }
+    public static function listingCreate($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::create(self::body($request),$owner,(string)$request->get_header('Idempotency-Key')),$owner); }
+    public static function listingGet($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::get($request['id'],$owner,true),$owner); }
+    public static function listingQuote($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::quote($request['id'],self::body($request),$owner,(string)$request->get_header('Idempotency-Key')),$owner); }
+    public static function listingStatus($request): array { return ListingCheckout::status($request['id'],self::owner($request)); }
     public static function openapi($request): array { return json_decode(file_get_contents(dirname(__DIR__).'/assets/openapi.json'),true,64,JSON_THROW_ON_ERROR); }
 }

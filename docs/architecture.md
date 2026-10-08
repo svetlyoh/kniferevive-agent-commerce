@@ -32,3 +32,11 @@ Stripe session expiry is 35 minutes, with a 40-minute appointment hold. Lightnin
 - No AP2, ACP, Link wallet, MPP, L402, x402, scheduling-provider integration, gift-card wallet, or autonomous Google account charge is claimed.
 - Private guest status access lasts two hours. Long-term account history/recovery follows the existing merchant service rather than a new unscoped recovery API.
 - Registry publication and the actual ClawHub audit remain future release work.
+
+## Candidate 0.2.0 native marketplace flow
+
+`/listings` discovers published categories; private `/listing-checkouts` records prepare a selection without a native order or stock hold. A disposable native cart runs existing pricing, tax, shipping, coupon, fee and seller rules. Missing destination/rate is an estimate with null total. The buyer's protected review POST binds an empty WC browser cart to the accepted quote and leads into native checkout. Existing carts/pending orders block replacement.
+
+Classic create-order and Checkout Block prepayment/processed hooks validate quote expiry, current price/stock/seller/policy, identity, addresses, gateway, exact items/total and browser binding. WC's reservation and the original gateway own final stock/payment. Native Dokan and Connect hooks keep commissions, transfers, refunds and notifications; this adapter never creates a marketplace Stripe session or transfer. Native paid-event/transaction evidence informs private status, with payment, fulfillment and scheduling separate. Services remain not_booked here.
+
+Durable phases review/preparing_cart/cart_ready/order_linked and creation_started prevent another order after an interrupted operation. A merchant-only recovery helper can bind exactly one existing matching native order. No public order keys or recovery writes are exposed. See the 0.2.0 runbook and acceptance checklist for configuration, limitations and rollback.
