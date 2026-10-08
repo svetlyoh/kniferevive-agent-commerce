@@ -12,8 +12,8 @@ service workflow must not hide an enabled unpaid booking request option.
 1. `GET /capabilities`, `GET /catalog?category=technology|sharpening`, and
    `GET /service-area?postal_code=94110` require no login or secrets. Availability
    is `GET /availability?postal_code=94110`, optionally filtered by `kind`.
-2. Legacy technology results use `existing_woocommerce_checkout`. Candidate 0.2.0
-   additionally exposes `/listings` across published categories, and native buyer
+2. Legacy technology results use `existing_woocommerce_checkout`. Marketplace
+   discovery uses `/listings` across published categories, and native buyer
    handoff when enabled. See [listing checkout](listing-checkout.md) for its six
    separate routes. No marketplace provider sessions are created by the adapter.
 3. To quote supported services, create a private guest session with
@@ -55,5 +55,5 @@ Booking-specific routes accept the private `X-Krev-Booking` capability returned
 with a draft, independently of the general two-hour shopper token. See
 [Booking requests](booking.md) for its narrow scope and expiry. Use JSON Accept;
 if the host HTTP tool supports an identifying User-Agent, identify this merchant
-client honestly (e.g. KnifeRevive-Concierge/0.4.0). A hosting challenge or non-JSON
+client honestly (e.g. KnifeRevive-Concierge/0.4.2). A hosting challenge or non-JSON
 response is not an API result. Use the human booking page; never bypass the challenge.

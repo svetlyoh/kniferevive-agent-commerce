@@ -1,5 +1,12 @@
 # Changelog
 
+## Skill 0.4.2 — October 8, 2026
+
+- Updated the portable skill for consent-scoped unpaid booking receipts and native seller-order facts, keeping request, confirmation and payment states separate.
+- Clarified daily capacity as jobs rather than knife count and added the direct human booking fallback for unavailable/challenged APIs.
+- Updated versioned installation references and removed duplicate stale candidate notices. Merchant paid gates and wallet authority are unchanged.
+- Registry publication and exact-version audit are tracked in `docs/skill-publication-0.4.2.md`.
+
 ## Candidate 0.2.0 native listing handoff — October 8, 2026
 
 - Added all-category published listings, private expiring/idempotent intents, canonical native WC quotes and CSRF-protected buyer review into existing checkout.

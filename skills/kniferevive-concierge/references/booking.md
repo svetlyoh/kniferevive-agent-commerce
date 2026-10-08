@@ -7,6 +7,10 @@ definitions, location, open hours, modes, pickup coverage and payment readiness.
 GET `/booking-availability` supplies Pacific-time service days. A null capacity
 means unknown availability, not unlimited jobs. These days are request windows;
 they become reserved only through actual merchant confirmation.
+Capacity counts booking jobs, not the number of knives in a job. Use live
+remaining capacity; do not hard-code the merchant's daily limit or treat an
+unpaid order as a reservation. A linked unpaid drop-off request can appear in
+the seller's Local Pickup list before the service day is confirmed.
 
 GET `/booking-coverage?postal_code=94565` classifies an exact five-digit ZIP.
 Pickup and prepayment are offered only in Contra Costa and Santa Clara counties.
@@ -67,6 +71,9 @@ the returned `review_url` to the human to complete contact details and explicitl
 submit the booking request. Do not submit that first-party form for the customer.
 The public human booking page is returned in `booking.booking_url` and works
 without skill installation.
+If the API is missing, challenged or returns non-JSON, send the customer to
+`https://kniferevive.com/?krev_agent=booking`. Do not bypass the hosting challenge
+or scrape the merchant's private dashboard to create a request.
 
 GET `/bookings/{id}` reports `draft`, `requested`, `confirmed` or `cancelled` and a
 separate `payment_state`. Say "booking requested; awaiting KnifeRevive confirmation"

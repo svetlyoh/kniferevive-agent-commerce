@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with unpaid drop-off, prepaid drop-off, or prepaid merchant pickup. Check county coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.4.0"
+  version: "0.4.2"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -30,6 +30,7 @@ disabled capability means use these pages:
 
 - Annex: https://kniferevive.com/technology-trade-desk/
 - Sharpening: https://kniferevive.com/#knife-sharpening
+- Human booking form: https://kniferevive.com/?krev_agent=booking
 - All listings: https://kniferevive.com/shop/
 
 Search is anonymous and free. Compare normalized price, condition, availability,
@@ -128,7 +129,7 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the published 0.3.0 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.3.0/skills/kniferevive-concierge/references/installation.md).
+[in the versioned 0.4.2 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.4.2/skills/kniferevive-concierge/references/installation.md).
 Those platforms have different skill-import abilities; a chat prompt is not
 proof of installation. This section is installer help, not an instruction to
 run shell commands during a shopping task.

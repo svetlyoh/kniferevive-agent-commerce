@@ -1,10 +1,10 @@
 # KnifeRevive Agent Commerce
 
-A merchant storefront skill and WooCommerce adapter. **Plugin/skill 0.3.0** adds sharpening booking requests, unpaid/prepaid drop-off and prepaid pickup choices, exact ZIP coverage, merchant confirmation and shared capacity. An explicitly authorized host wallet can pay a scoped existing native Lightning invoice when separately verified/enabled. Native order/invoice preparation still requires buyer checkout. WooCommerce/Dokan remains authoritative for pricing, gateway settlement and seller accounting.
+A merchant storefront skill and WooCommerce adapter. **Agent Commerce 0.4.2** is deployed with owner-approved unpaid sharpening orders, seller-scoped request review, native Local Pickup booking cards and a daily-capacity control. The **0.4.2 skill release** documents separate contact/payment authorization, requested-day confirmation and scoped native-order status. Prepaid preferences and authorized-wallet workflows remain subject to live merchant readiness. WooCommerce/Dokan remains authoritative for pricing, gateway settlement and seller accounting.
 
-Installed/published versions and payment gates are recorded in the [booking release record](docs/booking-release-0.3.0.md). A deployed version does not prove payments are enabled. Real payment, seller settlement/refund and merchant capacity/policy checks remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md), [native checkout runbook](docs/listing-checkout-runbook-0.2.0.md), and [booking operator instructions](docs/booking-release-0.3.0.md).
+Installed/published versions and payment gates are recorded in [publication status](docs/publication-status.md), [0.4.2 skill evidence](docs/skill-publication-0.4.2.md) and [live seller visibility/capacity evidence](docs/seller-booking-visibility-0.4.2.md). A release does not enable payments. Real payment, seller settlement/refund and policy checks remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md) and [native checkout runbook](docs/listing-checkout-runbook-0.2.0.md).
 
-[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.3.0](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.3.0) · [Prior 0.1.2 security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2)
+[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.4.2](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.4.2) · [0.4.2 audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.4.2)
 
 ## Install with OpenClaw
 
@@ -26,10 +26,10 @@ workspace directory. This is a registry download; use the native commands above
 for an active OpenClaw workspace. Published version example:
 
 ```sh
-clawhub install @svetlyoh/kniferevive-concierge --version 0.1.2
+clawhub install @svetlyoh/kniferevive-concierge --version 0.4.2
 ```
 
-Version 0.1.2 registry security is clean/benign and the public security audit shows Pass. Separate verification currently reports `card.missing`; server-resolved GitHub import provenance remains unavailable. The earlier 0.1.1 card became available on an October 8 recheck, but that does not establish a card for 0.1.2. See [installation validation](docs/installation-validation-0.1.2.md) and version-specific evidence. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
+Check the [exact-version publication evidence](docs/skill-publication-0.4.2.md) for audit results, warnings and provenance limits. Earlier passes do not certify a new version. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
 
 ## Components
 
