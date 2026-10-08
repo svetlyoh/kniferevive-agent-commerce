@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "components": {
     "kniferevive-agent-commerce-0.2.0.zip": {
-      "sha256": "9d3bec72bfb62729107e96ff4e25188ffb17f54f76cedb95e4850550523baea4",
+      "sha256": "228da47df3df397c886420255d412fb72d1b33ef25974762c7fb1db2aa8522b5",
       "files": [
         {
           "path": "kniferevive-agent-commerce/assets/AI.md",
@@ -26,8 +26,8 @@
         },
         {
           "path": "kniferevive-agent-commerce/includes/Api.php",
-          "sha256": "960965a86bfdfd9745f9b5ec5da586dc95fbdd5a600e6ac1a0af9d4591826941",
-          "bytes": 14621
+          "sha256": "2af1348e97345fbb4659f9cead6b245080fda269dc0f219da05cf0f0c9b1c50a",
+          "bytes": 14629
         },
         {
           "path": "kniferevive-agent-commerce/includes/Commerce.php",

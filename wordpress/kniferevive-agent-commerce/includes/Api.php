@@ -167,5 +167,5 @@ final class Api {
     public static function listingGet($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::get($request['id'],$owner,true),$owner); }
     public static function listingQuote($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::quote($request['id'],self::body($request),$owner,(string)$request->get_header('Idempotency-Key')),$owner); }
     public static function listingStatus($request): array { return ListingCheckout::status($request['id'],self::owner($request)); }
-    public static function openapi($request): array { return json_decode(file_get_contents(dirname(__DIR__).'/assets/openapi.json'),true,64,JSON_THROW_ON_ERROR); }
+    public static function openapi($request): array { return (array)json_decode(file_get_contents(dirname(__DIR__).'/assets/openapi.json'),false,64,JSON_THROW_ON_ERROR); }
 }

@@ -25,7 +25,7 @@ The brief's full real-payment definition of done has **not** been demonstrated.
 Exact local archives (SHA-256):
 
 - `kniferevive-agent-commerce-0.2.0.zip`:
-  `9d3bec72bfb62729107e96ff4e25188ffb17f54f76cedb95e4850550523baea4`
+  `228da47df3df397c886420255d412fb72d1b33ef25974762c7fb1db2aa8522b5`
 - `kniferevive-concierge-0.2.0.zip`:
   `06226ee509e96049c162fa0eaf4485a852af06090b9878320035b460692cda9e`
 
@@ -169,14 +169,13 @@ contains the administrator-only original-order binding recovery method.
 
 ## Reusable capabilities announcement
 
-KnifeRevive Concierge helps shoppers discover KnifeRevive listings and SF Bay Area
-sharpening services using current merchant capabilities and original listing links.
-Version 0.2.0 is a tested source candidate that adds private, buyer-reviewed native
-WooCommerce checkout preparation across eligible published categories, with seller
-attribution and native shipping, taxes, fees, discounts and return terms. The
-installed adapter is still 0.1.3 and the published skill is 0.1.2; the new listing
-handoff is not live and remains disabled until real Stripe test payments, seller
-accounting/refunds and production staging pass. Buyers authorize payment through
-the existing gateway; Google Pay and Lightning depend on actual enabled gateway
-support, and direct marketplace agent charging is disabled. Sharpening payment
-never implies a confirmed appointment, pickup or return window.
+KnifeRevive Concierge discovers published KnifeRevive listings and SF Bay Area
+sharpening services. Merchant backend 0.2.0 is deployed: anonymous listing discovery,
+individual sharpening products and contract 1.1.0 are accessible. Private native
+checkout preparation is implemented but disabled pending real gateway payment/refund
+verification, native pricing and service fulfillment approval. The published skill
+is still 0.1.2; skill 0.2.0 has no new ClawHub audit or publication. Buyers authorize
+payment through the existing checkout, and payment never confirms an appointment.
+Google Pay and Lightning require verified support from the enabled native gateways.
+
+Deployment verification: [8 October 2026](listing-checkout-deployment-2026-10-08.md).

@@ -1,9 +1,10 @@
 # Native listing checkout audit — 8 October 2026
 
 Candidate: merchant adapter **0.2.0**, portable skill **0.2.0**, API contract **1.1.0**.
-Installed local and production adapter: **0.1.3**, verified before modifications.
-Published skill: **0.1.2**. Candidate is not deployed or published. No live/test
-processor purchase was initiated during this implementation.
+Production adapter: **0.2.0**, deployed 8 October 2026 with listing handoff disabled.
+Local adapter: **0.1.3**. Published skill: **0.1.2**; skill 0.2.0 is unpublished.
+See [deployment verification](listing-checkout-deployment-2026-10-08.md) for the
+post-install checks. No real processor purchase or refund was initiated.
 
 ## Verified inventory and differences
 
@@ -26,7 +27,7 @@ authenticated Plugins screen and read-only Stripe/Connect settings UI.
 | Native Lightning | 0.1.13 inactive | 0.1.13 active | Activation alone does not prove settlement |
 | Conditional Extra Fees | 1.1.67 active | 1.1.67 active | Actual calculator included in fenced tests |
 | WooCommerce Tax | 3.6.12 active | 3.7.1 active | Automated production tax parity not tested |
-| Agent Commerce | 0.1.3 active | 0.1.3 active | Candidate source is 0.2.0; no installation performed |
+| Agent Commerce | 0.1.3 active | 0.2.0 active | Deployed with native listing checkout gates off |
 
 Local enabled gateway objects were `stripe` (UPE) and `stripe_link`, both reporting
 live mode. Existing test/live secret and signing-secret presence was observed as
