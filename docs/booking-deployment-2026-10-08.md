@@ -61,4 +61,6 @@ back. Follow the [booking runbook](booking-release-0.3.0.md).
 Exact archive hashes and sanitized live observations are in
 [deployment results](booking-deployment-2026-10-08.json); file-by-file hashes are in
 [release manifest](release-manifest-0.3.0.json). Publication and new-version audit
-results must be recorded after the registry processes the submitted skill.
+results are recorded in [publication evidence](booking-publication-0.3.0.md):
+0.3.0 is published, the audit outcome is Pass, and three static-scanner warnings
+remain disclosed.
