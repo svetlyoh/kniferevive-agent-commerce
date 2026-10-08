@@ -1,5 +1,15 @@
 # Publication status
 
+## Current skill version 0.1.1 — October 7, 2026
+
+The public listing is **KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech**. Authored categories are **Finance** (shopping/commerce) and **Lifestyle** (cooking/home), replacing Uncategorized/Other. Topics: `knife-sharpening`, `sf-bay-area`, `ai-tech`, `shopping`. The public page and registry latest tag both show **0.1.1**.
+
+[Listing](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Skill ZIP and manifest](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.1) · [Version-specific audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.1). The security audit reports **Pass**, registry security is **clean / benign, high confidence**, and static analysis reports no suspicious patterns. All five registry file hashes match source commit `4ec141b`; the retained scan archive hash and exact verification are in [security-scan-0.1.1.json](security-scan-0.1.1.json).
+
+The separate generated Skill Card remains missing (`card.missing`), and server-resolved import provenance remains unavailable; full verification/certification is not claimed. Merchant consent, privacy, capability checks and payment safeguards are unchanged. Backend 0.1.3 is installed locally and on production with a dedicated test webhook; agent payments/courier bookings remain disabled pending operational facts and actual processor verification.
+
+## Historical initial publication: 0.1.0
+
 Owner authorization: October 7, 2026, to push the source to GitHub and publish the skill on ClawHub using the owner's GitHub sign-in.
 
 GitHub and ClawHub authentication both identify publisher `svetlyoh`.
@@ -19,4 +29,4 @@ Released source commit: `e69fb02c00eb44ff73841124ef13ed5d081f609f`, skill path `
 
 The exact scanner snapshot, file hashes, card/provenance limitation, audit URL and report archive hash are recorded in [security-scan-0.1.0.json](security-scan-0.1.0.json). Later documentation commits do not change the immutable published skill version or its linked release commit.
 
-The merchant plugin remains inactive in Local Sites. No production backend activation or real payment is part of publication. Live API checkout capabilities remain unverified; the skill must check capability responses and use the existing merchant pages on failure or disabled capability.
+At the time of the initial publication, the merchant plugin was inactive in Local Sites. Subsequent backend setup is recorded above and in merchant setup evidence; publication itself does not prove working checkout. The skill must check capabilities and use the merchant pages on disabled capabilities.
