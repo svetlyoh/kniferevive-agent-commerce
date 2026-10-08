@@ -1,9 +1,15 @@
 # Publication status
 
-## Current published skill 0.3.0; plugin 0.4.2 deployed
+## Current published skill 0.4.2; plugin 0.4.2 deployed
 
-The newest verified publication is [0.3.0](booking-publication-0.3.0.md), including
-its generated card and disclosed audit warnings. The incremental **plugin** 0.4.0
+The newest publication is [0.4.2](skill-publication-0.4.2.md), published after the
+owner's explicit request. Its public audit shows Pass, clean/benign security and
+no registry warnings; all eight registry and isolated-install source hashes
+match the immutable GitHub release. Full verification separately reports
+`card.missing`; generated-card and server-resolved provenance remain unavailable.
+VirusTotal/SkillSpector reports are null rather than completed passing checks.
+The previous [0.3.0](booking-publication-0.3.0.md) card/audit evidence is historical.
+The incremental **plugin** 0.4.0
 was deployed after owner approval and [patched to 0.4.1](booking-patch-0.4.1.md),
 with [owner-approved unpaid order creation now enabled](booking-live-unpaid-0.4.1-2026-10-08.md).
 The [0.4.2 visibility/capacity patch](seller-booking-visibility-0.4.2.md) adds
@@ -15,7 +21,7 @@ notifications accepted by the mailer. The owner reports inbox arrival; the
 connected mailbox verifies a seller message for that new reference. Three
 distinct recipient inbox receipts and the owning-seller live login remain
 unverified. The test remains requested and unpaid. The
-0.4.0 **skill** has no ClawHub submission or audit; no payment activation occurred.
+unpublished 0.4.0 **skill** candidate is superseded by 0.4.2; no payment activation occurred.
 See [deployment observations](booking-deployment-0.4.0-2026-10-08.md) and
 [incident and readiness notes](incremental-booking-0.4.0.md).
 Older sections below are retained as historical evidence.
