@@ -1,7 +1,9 @@
 # Incremental booking candidate 0.4.0 — October 8, 2026
 
-**Local implementation for review. Not deployed, released or published to ClawHub.**
-Baseline: deployed 0.3.0, source e7e807a on existing draft PR #2. No theme/core,
+**Plugin deployed October 8 after owner approval; order creation remains gated.
+Skill 0.4.0 is not released or published to ClawHub.**
+See [production observations and remaining acceptance](booking-deployment-0.4.0-2026-10-08.md).
+Implementation baseline: 0.3.0, source e7e807a on existing draft PR #2. No theme/core,
 gateway credential, Stripe mode, seller ownership, ListLab or WhatsApp integration
 was changed. The new unpaid order bridge defaults to disabled. Existing paid-flow
 readiness remains off in production. The owner's instruction to follow the
@@ -101,7 +103,9 @@ clients that prefilled those fields must move contact sharing to the human form;
 existing private booking links and scoped headers remain supported. Publish this
 change explicitly when releasing, rather than describing it as wholly additive.
 
-Owner decisions pending:
+The owner subsequently approved deployment and order-at-submit timing, which is
+saved with verification false and no offline method selected. The other decisions
+and production verification below remain pending:
 
 1. Create unpaid orders on submission (recommended for this incident) or after
    confirmation? Approve pending status, no pre-confirmation stock reservation,
@@ -172,5 +176,6 @@ and mail intercepted. Recorded evidence and limits are in
 [the manifest](release-manifest-0.4.0.json).
 
 A passing local suite is not a production booking, mailbox delivery, payment or
-ClawHub audit result. The source is for review in existing draft PR #2; deployment,
-historical repair and registry publication are still pending approval.
+ClawHub audit result. The source is in existing draft PR #2. Plugin deployment is
+recorded separately; order-bridge enablement, historical repair and registry
+publication remain pending their respective approvals and verification.
