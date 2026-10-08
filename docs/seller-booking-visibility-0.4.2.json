@@ -1,0 +1,596 @@
+{
+  "date": "2026-10-08",
+  "status": "deployed_owner_approved",
+  "plugin_version": "0.4.2",
+  "seller_orders_version": "1.1.5",
+  "seller_orders_schema_version": "1.1.4",
+  "reference": "13a320ac5e0f014c4ab89356c6f4209e",
+  "native_order": 2980,
+  "booking_state": "requested",
+  "order_state": "pending",
+  "payment_state": "not_started",
+  "native_total": "7.65",
+  "currency": "USD",
+  "capacity": {
+    "before": null,
+    "after": 4,
+    "changed_keys": [
+      "booking_daily_capacity"
+    ],
+    "dedicated_form_post_verified": true,
+    "jobs_not_knives": true,
+    "timezone": "America/Los_Angeles"
+  },
+  "retained_readiness": {
+    "booking_order_timing": "on_submit",
+    "booking_order_verified": true,
+    "booking_offline_gateway_id": "cod",
+    "listing_handoff_enabled": false,
+    "listing_pricing_verified": false,
+    "listing_live_verified": false,
+    "booking_wallet_verified": false
+  },
+  "live_observations": {
+    "single_local_pickup_card": true,
+    "native_items_quantity_total": true,
+    "no_card_horizontal_overflow": true,
+    "review_link_authenticated_and_focused": true,
+    "administrator_native_woo_link": true,
+    "confirmation_control_enabled": true,
+    "test_not_confirmed_as_real_appointment": true,
+    "new_booking_order_charge_or_mail_retry_issued": false,
+    "source_readback": [
+      {
+        "file": "kniferevive-agent-commerce/kniferevive-agent-commerce.php",
+        "matches": true
+      },
+      {
+        "file": "kniferevive-agent-commerce/includes/BookingSeller.php",
+        "matches": true
+      },
+      {
+        "file": "kniferevive-agent-commerce/includes/Settings.php",
+        "matches": true
+      },
+      {
+        "file": "kniferevive-seller-orders/kniferevive-seller-orders.php",
+        "matches": true
+      },
+      {
+        "file": "kniferevive-seller-orders/includes/class-krev-orders-endpoints.php",
+        "matches": true
+      },
+      {
+        "file": "kniferevive-seller-orders/includes/class-krev-orders-plugin.php",
+        "matches": true
+      },
+      {
+        "file": "kniferevive-seller-orders/templates/seller-orders.php",
+        "matches": true
+      }
+    ]
+  },
+  "tests": {
+    "matrix": [
+      {
+        "sync": "on",
+        "result": "PASS",
+        "assertions": 87,
+        "mode": "legacy"
+      },
+      {
+        "sync": "off",
+        "result": "PASS",
+        "assertions": 87,
+        "mode": "legacy"
+      },
+      {
+        "sync": "on",
+        "result": "PASS",
+        "assertions": 87,
+        "mode": "hpos"
+      },
+      {
+        "sync": "off",
+        "result": "PASS",
+        "assertions": 87,
+        "mode": "hpos"
+      }
+    ],
+    "assertions": 348,
+    "php_syntax_files": 31,
+    "stack": "real installed WooCommerce/Dokan plus captured production Seller Orders baseline and overlay",
+    "database": "fenced synthetic database on loopback port 11019",
+    "mail_processor_evidence": "synthetic and intercepted",
+    "layout_refinement": "one card class removed after matrix; syntax and live visual/DOM verification passed"
+  },
+  "mail_evidence": {
+    "owner_reports_inbox_arrival": true,
+    "connected_mailbox_new_reference_seller_message_verified": true,
+    "three_distinct_recipient_inbox_receipts_verified": false,
+    "earlier_booking_mail_is_different_reference": true
+  },
+  "limits": [
+    "Actual owning-seller live browser login not available; seller scoping tested with synthetic enabled seller accounts.",
+    "Existing inbox scans latest 500 booking records and returns up to 50 authorized rows.",
+    "No new ClawHub publication/audit, delegated wallet/card activation, provider charge/refund, callback or historical booking recovery.",
+    "Anonymous REST retains previously observed hosting challenge."
+  ],
+  "packages": {
+    "agent": {
+      "sha256": "c69ef7178430935fe295494a2b56e9906ef35a422a1874b66c04bd76fc6665b3",
+      "files": [
+        {
+          "path": "kniferevive-agent-commerce/assets/AI.md",
+          "sha256": "93a03522caf448ce6f89a872fce933aa59ca0614577337f516989299abc74f0b",
+          "bytes": 10218
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/booking-coverage.json",
+          "sha256": "1e4efb4f1ae2a4400457c066e819f2c1f28b91f2f2a45531d09a0b7b05531b93",
+          "bytes": 274251
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/booking.js",
+          "sha256": "74b21a426203b1c83be046179a0ae8b0740025ee2ca216409fdd280a5dc55f4b",
+          "bytes": 4902
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/openapi.json",
+          "sha256": "054b1425f9d15992f99662ac960943da942f2e7f330a048b60ffda20f0af066c",
+          "bytes": 82122
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/storefront.css",
+          "sha256": "e8565c8bbf3da8d923864160b034bb6835d9a226216a74b0c3ca85f68985dd2e",
+          "bytes": 4196
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/storefront.js",
+          "sha256": "a506e07ba4c1a1ce7a6335918f2fa2f5aebb59425bca1e53703dbb95f5accdb8",
+          "bytes": 1375
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Api.php",
+          "sha256": "7d9cdcc575b9cf7ddd37436871ffa4b2a530e2cc1e9b36d733e6416050e94bcd",
+          "bytes": 18248
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Booking.php",
+          "sha256": "6b670878cbb3e6e9805fb9b89ccc00504ff6802a5669a9d3a60251e138244f39",
+          "bytes": 33775
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingAuthorization.php",
+          "sha256": "f5be0684392456a9e1ae2d9fce8c81a61790477fb4b530cfe10664b81e80cc3d",
+          "bytes": 2315
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingCoverage.php",
+          "sha256": "9198929508487161662b1f2472634e06ef2caf00ea21bbe62f395a6f6f47f2d2",
+          "bytes": 3254
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingEvents.php",
+          "sha256": "aecb71fb0647d21213a6568818a48f50c691519ac7104204ed7afdc1f5542e14",
+          "bytes": 3196
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingFrontend.php",
+          "sha256": "b618ffbf7c2bd5121e0d33dfb66c5607d5d298f6e35201f59c79db6213dc7fb5",
+          "bytes": 19975
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingOrderBridge.php",
+          "sha256": "64dd8e561743aa1a49b4a268bf4b631d13fda8c08ba09db5750220b7c6cef9dd",
+          "bytes": 8921
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingOutbox.php",
+          "sha256": "4f451ce5cb1b82a27d060e3647502683a50c6c16c33681deb07debae7250b17c",
+          "bytes": 12077
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingSeller.php",
+          "sha256": "8d535272548cb10b53787c04b6b374f24ad9ed71705826610ed7ec50d1911415",
+          "bytes": 7767
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Commerce.php",
+          "sha256": "b1eebd04b43dbd34cefdf7071a39731faf8ee57d1375e3c8f5b1f77e13963df3",
+          "bytes": 25274
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Domain.php",
+          "sha256": "5b6de69f3d6a406dbaddf2d8955a7846a99d3b0ab215a9f8f02bed5a055d6984",
+          "bytes": 6298
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Frontend.php",
+          "sha256": "c7887cedb65c2b6de7389a7d26b12331f5524f0fb3a830cadd0f400fed8fb1c9",
+          "bytes": 9622
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Gateway.php",
+          "sha256": "1195a996885c1fac76cafa5455341b00f1251381bd95bc090c90dbe7d9c4786d",
+          "bytes": 732
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/GatewayDiagnostics.php",
+          "sha256": "598292d089a728b913d6827b9042e3350d013368eab66fe03d0d6d6cb1142b9b",
+          "bytes": 6866
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingCart.php",
+          "sha256": "2be3e500fa9d71978e5e31d9e779e286640c4b7abebe644d9345f267175010ac",
+          "bytes": 689
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingCheckout.php",
+          "sha256": "21013134bb1c72c6dbfa877d481e37d51ba0982fd8b0bb21805719b396f7136d",
+          "bytes": 38409
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingFrontend.php",
+          "sha256": "785436c9e280bd84330aae20c631f91a8094dbe4408fd7e645b8b6e7c13830ae",
+          "bytes": 9722
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Payments.php",
+          "sha256": "9a69f977c797eb1c2b0e1d9221fa79b7fcb177746c77dd64c9171bb0bfd85952",
+          "bytes": 19552
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Plugin.php",
+          "sha256": "ec6fef0b5e78abe9b775fb2be37fd5bc17fb600bf999aac4e15a0708cd23cf69",
+          "bytes": 1761
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/PrivateBrand.php",
+          "sha256": "d5f93e06eb4b9c3423397412420d2efba5c969d3385200bb3094454af8baf95f",
+          "bytes": 5355
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/QuoteCart.php",
+          "sha256": "794ed2021cc9a4ba9f031223e801753c6408926e4b0e67983c77445af93c92e8",
+          "bytes": 1101
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Settings.php",
+          "sha256": "43ccc65ba974d6a285f7f397d4518c2cdd410be85395423327fb7cbe1e0ace6a",
+          "bytes": 20267
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Store.php",
+          "sha256": "90009bdf4d2beb63639c726e2df27c55d757da9e3331501192f096d318296433",
+          "bytes": 14118
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/StripeSetup.php",
+          "sha256": "9d8062e75428d713b554b14a0ea1c06d3273a787c6037d086cb0583698f6208c",
+          "bytes": 4947
+        },
+        {
+          "path": "kniferevive-agent-commerce/kniferevive-agent-commerce.php",
+          "sha256": "c987d436ce884805a5d37144436f3467730f55b19061e7e05ffbc88f6e11cf7a",
+          "bytes": 1270
+        },
+        {
+          "path": "kniferevive-agent-commerce/LICENSE",
+          "sha256": "dec703cdb49042ca367f71c3982dee4552ffef395225f1fe9f14d29a4a0cb0ff",
+          "bytes": 19519
+        }
+      ]
+    },
+    "seller_candidate": {
+      "sha256": "5f9cf85e8f94bb87b8f80cf1ed6977727a4afa9d9af98c88d9ec3581f8eb2352",
+      "files": [
+        {
+          "path": "kniferevive-seller-orders/README.md",
+          "sha256": "7aeb41a14cce342c56596777a7655f379855d0d8fe23f4c82ec491213c841625",
+          "bytes": 2420
+        },
+        {
+          "path": "kniferevive-seller-orders/assets/css/seller-orders.css",
+          "sha256": "f3c751dbb521656b05a85d06bfcc79d1d7812184375d89961ca72ffd629e7863",
+          "bytes": 7851
+        },
+        {
+          "path": "kniferevive-seller-orders/assets/js/seller-orders.js",
+          "sha256": "28d2a91235f253f2cd3cd8da38a61644d6138870c3b8078430d3036ab4a05ac4",
+          "bytes": 8193
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-actions.php",
+          "sha256": "6c635179bc5ac8f26c111d6e7457cfddaf35e0310c20f474d7f403cdd3e89ee1",
+          "bytes": 2231
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-endpoints.php",
+          "sha256": "732ecd9c1bc7c8c14d8643ded30caba41ffcc9011198613d96b0117b11c9e318",
+          "bytes": 6710
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-permissions.php",
+          "sha256": "7fb0ba8595aed7043c8a8af4803e57bbc76b9b102fc29772f4dfc6330bc6e635",
+          "bytes": 2595
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-plugin.php",
+          "sha256": "71dc2e024e55e10bc428a34aa2ed14e11f9222f119c4f866e008b61b538c8aa4",
+          "bytes": 2471
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-query.php",
+          "sha256": "537a9a7a2f89c57a0fc8ea441770aea2ad7d136e4e5a8a960c6987c820a30e83",
+          "bytes": 10247
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-reader.php",
+          "sha256": "37a3eca3319bda015f90695c37e2dbd31f5ce222ca5d7b4bf9658c8874c096f3",
+          "bytes": 4805
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-rest.php",
+          "sha256": "a5aee12b05d7fe32b66729b34f64ec5cff751549d7b7e897526dfac1d487018d",
+          "bytes": 14287
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-refunds.php",
+          "sha256": "b0bf7f177e3ba0da50335f86d68f3dfedd48fc19e11dfef6d16c8410f27dd865",
+          "bytes": 3098
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-return-permissions.php",
+          "sha256": "c5fdc7fb3eed780f130d1357490c9f6944aec1af02b60c4020da7efd90a6daed",
+          "bytes": 700
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-returns.php",
+          "sha256": "3d4cfbe5947742da31f159dc2961069831ee25d1a9c22b972ff6a22c6dc9bbc5",
+          "bytes": 13866
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-sharpening-assets.php",
+          "sha256": "cf83d284c659f5607989bd37bc5f96cb0db600ffefa5a9234395b17e382f14bf",
+          "bytes": 1268
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-sharpening-orders.php",
+          "sha256": "0b32e6a0271df4b363f839085beae842fede0abcc80058f639290a2e30ae28c5",
+          "bytes": 2391
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-sharpening-workflow.php",
+          "sha256": "068b3f9d81bca5eee2eb42d8c5b30e7edf20f30c5133e5a4615a7edeacba56e9",
+          "bytes": 6826
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-shipment-tracking.php",
+          "sha256": "ab4283832ddde17d8cb6516630ba9da5f25b6a5c5ae13ef087c10733a27f67aa",
+          "bytes": 1630
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-shipping-policies.php",
+          "sha256": "66884bc0689806fb1abb7a3247b25ad47a08ccb96118388960612524acef9c24",
+          "bytes": 9248
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-shipping-reader.php",
+          "sha256": "9e70d0fe79e7e043103a4176c61c7a538dc0ee2d2aa6bb7c1f6123f992ed8d75",
+          "bytes": 1967
+        },
+        {
+          "path": "kniferevive-seller-orders/kniferevive-seller-orders.php",
+          "sha256": "c069110d7cd1ebd1476f37579c211bd56d3a8dc0378b229b1864559808db6417",
+          "bytes": 1965
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/order-earnings.php",
+          "sha256": "7c4198767d7c12f668bcf5d2d1664ccaaf75305f3fd7612b5ed0b0509af389ca",
+          "bytes": 1288
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/return-detail.php",
+          "sha256": "ff9a0bd9f09ec92f1e6afce59fa1921b51e37870eaed712582905f756c8dbe85",
+          "bytes": 2771
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/return-request.php",
+          "sha256": "765d632bb2a56adfd01c3e7c3195cb0959bb2b41313d9244a9d1c3a629b2c746",
+          "bytes": 1550
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/seller-order-detail.php",
+          "sha256": "93e98978349ff04b8915487bdf520cb959f42538c1e9ea960d1e0b6f473960d5",
+          "bytes": 4465
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/seller-orders.php",
+          "sha256": "bfb93f8125383f0cb28029dab970b1556813088835a22979002cd15c9549cd93",
+          "bytes": 7561
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/sharpening-order-detail.php",
+          "sha256": "f7edb629696594a3aee613cfe14beac287e6301bfd1db29092a7619e7c007a9d",
+          "bytes": 3775
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/sharpening-orders.php",
+          "sha256": "64b8e1ae12116e716121880a7c6fd9c337bcc8cef3fe5ca160200ed74fecd2e2",
+          "bytes": 1597
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/shipping-policies.php",
+          "sha256": "e3c1187f85e5588617e575bded5310c96279ee578a20a4ee959c41b9b94fc6fb",
+          "bytes": 1589
+        },
+        {
+          "path": "kniferevive-seller-orders/tests/run-pickup-unit.php",
+          "sha256": "51e625819a9e7c7097821d99f287991af62a9073d297aff5aafef8e2ea3ada83",
+          "bytes": 2265
+        },
+        {
+          "path": "kniferevive-seller-orders/tests/run-static.php",
+          "sha256": "4027bbf2f6ea308434b6cad84411e793c690945f8707b2f2f863fa3cb7d6886e",
+          "bytes": 5079
+        }
+      ]
+    },
+    "seller_rollback": {
+      "sha256": "e8ccfc1d126d22aa7c11cf4e1aef20d55a119317cd6078624e418339cab2de44",
+      "files": [
+        {
+          "path": "kniferevive-seller-orders/README.md",
+          "sha256": "7aeb41a14cce342c56596777a7655f379855d0d8fe23f4c82ec491213c841625",
+          "bytes": 2420
+        },
+        {
+          "path": "kniferevive-seller-orders/assets/css/seller-orders.css",
+          "sha256": "f3c751dbb521656b05a85d06bfcc79d1d7812184375d89961ca72ffd629e7863",
+          "bytes": 7851
+        },
+        {
+          "path": "kniferevive-seller-orders/assets/js/seller-orders.js",
+          "sha256": "28d2a91235f253f2cd3cd8da38a61644d6138870c3b8078430d3036ab4a05ac4",
+          "bytes": 8193
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-actions.php",
+          "sha256": "6c635179bc5ac8f26c111d6e7457cfddaf35e0310c20f474d7f403cdd3e89ee1",
+          "bytes": 2231
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-endpoints.php",
+          "sha256": "0113d7bc9a1b819c02d8c012d0c52bd8db803cb640f73945dc42c61c86e50e7c",
+          "bytes": 6018
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-permissions.php",
+          "sha256": "7fb0ba8595aed7043c8a8af4803e57bbc76b9b102fc29772f4dfc6330bc6e635",
+          "bytes": 2595
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-plugin.php",
+          "sha256": "3974ac734797d87a6f32951d7ce54321fa1f1a609c9fbed60595a3c5ed80beb7",
+          "bytes": 2457
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-query.php",
+          "sha256": "537a9a7a2f89c57a0fc8ea441770aea2ad7d136e4e5a8a960c6987c820a30e83",
+          "bytes": 10247
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-reader.php",
+          "sha256": "37a3eca3319bda015f90695c37e2dbd31f5ce222ca5d7b4bf9658c8874c096f3",
+          "bytes": 4805
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-orders-rest.php",
+          "sha256": "a5aee12b05d7fe32b66729b34f64ec5cff751549d7b7e897526dfac1d487018d",
+          "bytes": 14287
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-refunds.php",
+          "sha256": "b0bf7f177e3ba0da50335f86d68f3dfedd48fc19e11dfef6d16c8410f27dd865",
+          "bytes": 3098
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-return-permissions.php",
+          "sha256": "c5fdc7fb3eed780f130d1357490c9f6944aec1af02b60c4020da7efd90a6daed",
+          "bytes": 700
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-returns.php",
+          "sha256": "3d4cfbe5947742da31f159dc2961069831ee25d1a9c22b972ff6a22c6dc9bbc5",
+          "bytes": 13866
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-sharpening-assets.php",
+          "sha256": "cf83d284c659f5607989bd37bc5f96cb0db600ffefa5a9234395b17e382f14bf",
+          "bytes": 1268
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-sharpening-orders.php",
+          "sha256": "0b32e6a0271df4b363f839085beae842fede0abcc80058f639290a2e30ae28c5",
+          "bytes": 2391
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-sharpening-workflow.php",
+          "sha256": "068b3f9d81bca5eee2eb42d8c5b30e7edf20f30c5133e5a4615a7edeacba56e9",
+          "bytes": 6826
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-shipment-tracking.php",
+          "sha256": "ab4283832ddde17d8cb6516630ba9da5f25b6a5c5ae13ef087c10733a27f67aa",
+          "bytes": 1630
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-shipping-policies.php",
+          "sha256": "66884bc0689806fb1abb7a3247b25ad47a08ccb96118388960612524acef9c24",
+          "bytes": 9248
+        },
+        {
+          "path": "kniferevive-seller-orders/includes/class-krev-shipping-reader.php",
+          "sha256": "9e70d0fe79e7e043103a4176c61c7a538dc0ee2d2aa6bb7c1f6123f992ed8d75",
+          "bytes": 1967
+        },
+        {
+          "path": "kniferevive-seller-orders/kniferevive-seller-orders.php",
+          "sha256": "77d02f90ad98e230980ee045cbaa5693686c8c5c5f7e9674bc825562da8cd11d",
+          "bytes": 1826
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/order-earnings.php",
+          "sha256": "7c4198767d7c12f668bcf5d2d1664ccaaf75305f3fd7612b5ed0b0509af389ca",
+          "bytes": 1288
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/return-detail.php",
+          "sha256": "ff9a0bd9f09ec92f1e6afce59fa1921b51e37870eaed712582905f756c8dbe85",
+          "bytes": 2771
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/return-request.php",
+          "sha256": "765d632bb2a56adfd01c3e7c3195cb0959bb2b41313d9244a9d1c3a629b2c746",
+          "bytes": 1550
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/seller-order-detail.php",
+          "sha256": "93e98978349ff04b8915487bdf520cb959f42538c1e9ea960d1e0b6f473960d5",
+          "bytes": 4465
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/seller-orders.php",
+          "sha256": "4d3de6c0ee6969cb0948f5de7a4ccb070264f2daea9d8e1d3fa7452677da35ed",
+          "bytes": 5996
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/sharpening-order-detail.php",
+          "sha256": "f7edb629696594a3aee613cfe14beac287e6301bfd1db29092a7619e7c007a9d",
+          "bytes": 3775
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/sharpening-orders.php",
+          "sha256": "64b8e1ae12116e716121880a7c6fd9c337bcc8cef3fe5ca160200ed74fecd2e2",
+          "bytes": 1597
+        },
+        {
+          "path": "kniferevive-seller-orders/templates/shipping-policies.php",
+          "sha256": "e3c1187f85e5588617e575bded5310c96279ee578a20a4ee959c41b9b94fc6fb",
+          "bytes": 1589
+        },
+        {
+          "path": "kniferevive-seller-orders/tests/run-pickup-unit.php",
+          "sha256": "51e625819a9e7c7097821d99f287991af62a9073d297aff5aafef8e2ea3ada83",
+          "bytes": 2265
+        },
+        {
+          "path": "kniferevive-seller-orders/tests/run-static.php",
+          "sha256": "4027bbf2f6ea308434b6cad84411e793c690945f8707b2f2f863fa3cb7d6886e",
+          "bytes": 5079
+        }
+      ]
+    }
+  }
+}

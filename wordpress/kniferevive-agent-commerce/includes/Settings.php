@@ -121,9 +121,21 @@ final class Settings {
         if ($s['lightning_enabled'] && $s['live_verified'] && class_exists('KnifeRevive\\Lightning\\Settings') && \KnifeRevive\Lightning\Settings::get('accept', 'no') === 'yes') $rails[] = 'lightning';
         return $rails;
     }
+    public static function saveDailyCapacity(int $capacity): void {
+        if(!current_user_can('manage_woocommerce'))Domain::fail('FORBIDDEN','Only a WooCommerce administrator can change booking capacity.',403);
+        Domain::integer($capacity,1,200);$s=self::get();$s['booking_daily_capacity']=$capacity;
+        update_option('krev_agent_settings',self::validate($s),false);
+    }
     public static function page(): void {
         if (!current_user_can('manage_woocommerce')) return;
         $notice = '';
+        if(isset($_POST['krev_booking_capacity_save'])){
+            check_admin_referer('krev_booking_capacity');
+            try{$capacity=(string)wp_unslash($_POST['booking_daily_capacity']??'');
+                if(!preg_match('/^[0-9]+$/D',$capacity))Domain::fail('INVALID_SETTINGS','Daily capacity must be a whole number from 1 to 200.');
+                self::saveDailyCapacity((int)$capacity);$notice='Daily sharpening capacity saved. This limit counts jobs per open day, not knives. Existing confirmed bookings are retained.';
+            }catch(\Throwable $e){$notice=$e instanceof Fault?$e->getMessage():'Daily capacity could not be saved.';}
+        }
         if (isset($_POST['krev_agent_test_webhook']) && current_user_can('manage_options')) {
             check_admin_referer('krev_agent_test_webhook');
             try { StripeSetup::testWebhook(); $notice='Dedicated Stripe test webhook configured. New payments remain controlled by the settings below.'; }
@@ -151,7 +163,9 @@ final class Settings {
                 $notice = 'Settings saved. Capacity is jobs per window. Existing payment attempts are retained.';
             } catch (\Throwable $e) { $notice = $e instanceof Fault ? $e->getMessage() : 'Settings could not be saved. Check JSON and database readiness.'; }
         }
-        echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>Merchant courier pricing: $7.99 per trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax. Configure each courier leg fee_minor as 799. transport_round_trip_minor may be 1598 for both trips; null sums separate trip prices. The combined total can be staged while courier coverage and tax treatment remain unconfigured.</p><form method="post">';
+        echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><h2 id="daily-sharpening-capacity">Daily sharpening capacity</h2><p>Maximum confirmed jobs per open day in America/Los_Angeles. A job may contain several knives. Requested days still need merchant confirmation. Lowering the limit does not cancel existing confirmed jobs.</p><form method="post">';
+        wp_nonce_field('krev_booking_capacity');
+        echo '<label for="booking_daily_capacity">Jobs per open day</label> <input id="booking_daily_capacity" name="booking_daily_capacity" type="number" min="1" max="200" step="1" required value="'.esc_attr((string)(self::get()['booking_daily_capacity']??'')).'"> <button class="button button-primary" name="krev_booking_capacity_save">Save daily capacity</button></form><h2>Advanced settings</h2><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>Merchant courier pricing: $7.99 per trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax. Configure each courier leg fee_minor as 799. transport_round_trip_minor may be 1598 for both trips; null sums separate trip prices. The combined total can be staged while courier coverage and tax treatment remain unconfigured.</p><form method="post">';
         wp_nonce_field('krev_agent_settings');
         echo '<textarea name="settings" rows="28" style="width:100%;font-family:monospace">' . esc_textarea(wp_json_encode(self::get(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea><p><button class="button button-primary" name="krev_agent_save">Save validated settings</button></p></form><p>Stripe secrets use server constants, never this form or the public skill. Google Pay availability is decided by Stripe checkout and the customer device. Review retained attempts and change requests below; process refunds through existing merchant workflows.</p><table class="widefat"><tr><th>Type</th><th>Reference</th><th>State</th><th>WooCommerce order</th></tr>';
         foreach (Store::backlog(100) as $row) {

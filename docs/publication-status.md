@@ -1,14 +1,20 @@
 # Publication status
 
-## Current published skill 0.3.0; plugin 0.4.1 deployed
+## Current published skill 0.3.0; plugin 0.4.2 deployed
 
 The newest verified publication is [0.3.0](booking-publication-0.3.0.md), including
 its generated card and disclosed audit warnings. The incremental **plugin** 0.4.0
 was deployed after owner approval and [patched to 0.4.1](booking-patch-0.4.1.md),
 with [owner-approved unpaid order creation now enabled](booking-live-unpaid-0.4.1-2026-10-08.md).
+The [0.4.2 visibility/capacity patch](seller-booking-visibility-0.4.2.md) adds
+the linked request to the custom Seller Orders → Local Pickup screen and a
+dedicated daily-capacity control. Owner-approved capacity is 4 jobs per open day.
+Seller Orders 1.1.5 is a four-file overlay against its live 1.1.4 baseline.
 One marked live request created pending Local pickup order #2980 and three
-notifications accepted by the mailer. Actual inbox receipt and the owning-seller
-login remain unverified. The
+notifications accepted by the mailer. The owner reports inbox arrival; the
+connected mailbox verifies a seller message for that new reference. Three
+distinct recipient inbox receipts and the owning-seller live login remain
+unverified. The test remains requested and unpaid. The
 0.4.0 **skill** has no ClawHub submission or audit; no payment activation occurred.
 See [deployment observations](booking-deployment-0.4.0-2026-10-08.md) and
 [incident and readiness notes](incremental-booking-0.4.0.md).

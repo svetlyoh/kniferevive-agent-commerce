@@ -63,6 +63,34 @@ bridgeCheck(!$order->needs_payment(),'offline request has no premature pay-for-o
 wc_reduce_stock_levels($order->get_id());bridgeCheck(wc_get_product($p->get_id())->get_stock_quantity()===20,'unconfirmed order cannot reduce product stock');
 bridgeCheck(Booking::remaining($date)===$beforeCapacity,'native order creation does not reserve booking capacity');
 bridgeCheck(BookingOrderBridge::ensure($row['id'])->get_id()===$order->get_id(),'order retry reuses original native order');
+// The custom first-party Seller Orders UI is distinct from native Dokan Orders.
+wp_set_current_user($vendor);$beforeSends=count($sent);$beforeJobs=count(BookingOutbox::jobs($row['id']));$beforeEvents=Booking::response($row)['events'];
+$cards=BookingSeller::appointments([],'local-pickup');$mine=array_values(array_filter($cards,static fn($c)=>$c['order_id']===$order->get_id()));
+bridgeCheck(count($mine)===1 && $mine[0]['date']===$date && $mine[0]['state']==='Requested — confirmation required','owning seller sees requested native booking under Local Pickup');
+bridgeCheck($mine[0]['items']===['Large Knife Sharpening × 1'] && str_contains($mine[0]['total'],'7.00') && $mine[0]['payment']==='Unpaid — pay at drop-off','appointment card preserves native service quantity and unpaid total');
+bridgeCheck(!str_contains(json_encode($mine),'customer@example.invalid') && !str_contains(json_encode($mine),'booking_access=') && str_contains($mine[0]['review_url'],'booking='.$row['id']),'card links to authenticated booking review without customer PII or private token');
+bridgeCheck(count(BookingOrderBridge::findOrders($row['id']))===1 && count($sent)===$beforeSends && count(BookingOutbox::jobs($row['id']))===$beforeJobs && Booking::response($row)['events']===$beforeEvents,'listing cards creates no orders, notifications, events or payments');
+bridgeCheck(BookingSeller::appointments([],'needs-fulfillment')===[] && BookingSeller::appointments([],'returns')===[],'booking cards cannot enter merchandise fulfillment or returns');
+wp_set_current_user($other);bridgeCheck(BookingSeller::appointments([],'local-pickup')===[],'foreign seller cannot see appointment cards');
+wp_set_current_user(0);bridgeCheck(BookingSeller::appointments([],'local-pickup')===[],'logged-out visitor cannot see appointment cards');
+wp_set_current_user($vendor);update_user_meta($vendor,'dokan_enable_selling','no');bridgeCheck(BookingSeller::appointments([],'local-pickup')===[],'disabled seller cannot see appointment cards');update_user_meta($vendor,'dokan_enable_selling','yes');
+$order->update_meta_data('_dokan_vendor_id',$other);$order->save();bridgeCheck(BookingSeller::appointments([],'local-pickup')===[],'mismatched native seller attribution suppresses card');$order->update_meta_data('_dokan_vendor_id',$vendor);$order->save();
+$shipping[0]->set_method_id('flat_rate');$shipping[0]->save();bridgeCheck(BookingSeller::appointments([],'local-pickup')===[],'non-local shipping cannot appear as local pickup');$shipping[0]->set_method_id('local_pickup');$shipping[0]->save();
+wp_update_post(['ID'=>$p->get_id(),'post_author'=>$other]);bridgeCheck(BookingSeller::appointments([],'local-pickup')===[],'transferred service ownership cannot expose the prior seller booking');wp_update_post(['ID'=>$p->get_id(),'post_author'=>$vendor]);
+$s['booking_daily_capacity']=null;update_option('krev_agent_settings',Settings::validate($s),false);bridgeReject(static fn()=>Booking::confirm($row['id']),'CAPACITY_UNCONFIGURED');
+bridgeCheck(Store::get($row['id'])['data']['booking_state']==='requested' && BookingSeller::appointments([],'local-pickup')[0]['state']==='Requested — confirmation required','missing capacity cannot produce a false confirmed card');$s['booking_daily_capacity']=10;update_option('krev_agent_settings',Settings::validate($s),false);
+if(getenv('KREV_SELLER_ORDERS_CANDIDATE')==='1'){
+    $tab='local-pickup';$page=1;$_GET['tab']=$tab;ob_start();(new KREV_Orders_Endpoints())->seller_orders();$html=ob_get_clean();unset($_GET['tab']);
+    bridgeCheck(substr_count($html,'Sharpening booking · Order #'.$order->get_order_number())===1 && !str_contains($html,'No seller orders match this filter.'),'actual production-baseline endpoint renders one card instead of an empty state');
+    wp_set_current_user($admin);$_GET['tab']=$tab;ob_start();(new KREV_Orders_Endpoints())->seller_orders();$adminHtml=ob_get_clean();unset($_GET['tab']);
+    bridgeCheck(substr_count($adminHtml,'Sharpening booking · Order #'.$order->get_order_number())===1 && !str_contains($adminHtml,'Knife Sharpening #'.$order->get_order_number()),'operator view replaces duplicate legacy sharpening row');
+    $appointment_cards=[$mine[0]];$appointment_cards[0]['items']=['<script>alert("unsafe")</script>'];$result=(object)['orders'=>[],'max_num_pages'=>0];$sharpening_result=null;
+    ob_start();include KREV_ORDERS_PATH.'templates/seller-orders.php';$escaped=ob_get_clean();bridgeCheck(!str_contains($escaped,'<script>') && str_contains($escaped,'&lt;script&gt;'),'appointment service titles are escaped in actual deployed template');
+}
+wp_set_current_user($admin);$capacitySnapshot=Settings::get();Settings::saveDailyCapacity(4);$capacitySaved=Settings::get();$capacitySnapshot['booking_daily_capacity']=4;
+bridgeCheck($capacitySaved===$capacitySnapshot,'dedicated capacity control changes only the daily limit');
+bridgeReject(static fn()=>Settings::saveDailyCapacity(0),'INVALID_REQUEST');bridgeReject(static fn()=>Settings::saveDailyCapacity(201),'INVALID_REQUEST');
+wp_set_current_user($vendor);bridgeReject(static fn()=>Settings::saveDailyCapacity(4),'FORBIDDEN');wp_set_current_user($admin);Settings::saveDailyCapacity(10);
 $events=Booking::response($row)['events'];bridgeCheck(count($events)===2 && count(array_filter($events,static fn($e)=>$e['type']==='woocommerce.order_created'))===1,'native order event emitted once after seller validation');
 $d=$row['data'];unset($d['unpaid_order_id']);Store::update($row['id'],$d);bridgeCheck(BookingOrderBridge::ensure($row['id'])->get_id()===$order->get_id(),'crash between native save and booking link recovers same order');
 $d=Store::get($row['id'])['data'];$d['address_consent']['expires_at']=time()-1;Store::update($row['id'],$d);bridgeReject(static fn()=>BookingOrderBridge::ensure($row['id']),'ADDRESS_AUTHORIZATION_REQUIRED');

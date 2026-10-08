@@ -28,7 +28,14 @@ require_once ABSPATH.'wp-includes/plugin.php';
 if(getenv('KREV_BOOKING_UI')==='1')add_filter('upload_dir',static function($u){$u['basedir']=dirname(__DIR__).'/.runtime/ui-media';$u['baseurl']=WP_HOME.'/fixture-media';$u['path']=$u['basedir'];$u['url']=$u['baseurl'];$u['subdir']='';return $u;});
 add_filter('pre_wp_mail',static fn()=>true,PHP_INT_MAX);
 if (getenv('KREV_LISTING_TEST_STACK')==='1') {
-    add_filter('option_active_plugins',static fn()=>['woocommerce/woocommerce.php','woocommerce-gateway-stripe/woocommerce-gateway-stripe.php','dokan-lite/dokan.php','dokan-pro/dokan-pro.php','kniferevive-stripe-connect/kniferevive-stripe-connect.php','kniferevive-seller-orders/kniferevive-seller-orders.php','kniferevive-seller-commissions/kniferevive-seller-commissions.php','kniferevive-return-policies/kniferevive-return-policies.php','conditional-extra-fees-for-woocommerce/conditional-fees-rule-woocommerce.php']);
+    add_filter('option_active_plugins',static function(){
+        $plugins=['woocommerce/woocommerce.php','woocommerce-gateway-stripe/woocommerce-gateway-stripe.php','dokan-lite/dokan.php','dokan-pro/dokan-pro.php','kniferevive-stripe-connect/kniferevive-stripe-connect.php','kniferevive-seller-orders/kniferevive-seller-orders.php','kniferevive-seller-commissions/kniferevive-seller-commissions.php','kniferevive-return-policies/kniferevive-return-policies.php','conditional-extra-fees-for-woocommerce/conditional-fees-rule-woocommerce.php'];
+        return getenv('KREV_SELLER_ORDERS_CANDIDATE')==='1'?array_values(array_diff($plugins,['kniferevive-seller-orders/kniferevive-seller-orders.php'])):$plugins;
+    });
+    if(getenv('KREV_SELLER_ORDERS_CANDIDATE')==='1')add_action('muplugins_loaded',static function(){
+        if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Candidate plugin sandbox fence failed.');
+        require dirname(__DIR__).'/.runtime/seller-booking-visibility-20261008/candidate/kniferevive-seller-orders/kniferevive-seller-orders.php';
+    });
     add_filter('pre_option_woocommerce_stripe_settings',static fn()=>['enabled'=>'no','testmode'=>'yes']);
 }
 if (($argv[2]??'')==='install') define('WP_INSTALLING',true);
