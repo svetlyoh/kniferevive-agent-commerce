@@ -1,8 +1,14 @@
 # Changelog
 
+## 0.1.3 per-trip correction — October 7, 2026
+
+- Corrected merchant courier price to $7.99 for each merchant trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax.
+- Updated administrator instructions and merchant setup records. Combined total is staged as 1598 cents; courier transport and agent payments remain disabled pending operational facts.
+- Five additional pricing assertions verify both fee lines, either one-way trip and summation without an override (91 assertions per WooCommerce storage mode).
+
 ## 0.1.2 courier pricing — October 7, 2026
 
-- Optional exact combined pickup/return delivery total, with deterministic integer-cent allocation. The confirmed merchant price is $7.99 combined, $4.00 for one merchant trip, and $0 courier fee for customer drop-off plus collection; applicable taxes remain separate.
+- Optional exact combined pickup/return delivery total, with deterministic integer-cent allocation. The then-confirmed merchant price was $7.99 combined and $4.00 for one trip; this was superseded by the owner's per-trip correction in 0.1.3.
 - Validation rejects incomplete courier configuration, incompatible tax treatment, and combined prices exceeding separate trips. Null preserves existing per-leg pricing; a confirmed price can be staged without enabling courier transport.
 - Eleven added behavioral assertions pass in each WooCommerce storage mode (86 per mode). Address verification and payment enablement gates remain intact.
 
