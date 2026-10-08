@@ -6,13 +6,30 @@ A local release candidate implementing the KnifeRevive Concierge storefront skil
 
 [Get the skill on ClawHub](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Download the release](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.1) · [Security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.1)
 
-Install the published skill with the ClawHub CLI:
+## Install with OpenClaw
+
+From an already installed OpenClaw environment, in a Linux terminal or Windows
+PowerShell:
+
+```text
+openclaw skills install @svetlyoh/kniferevive-concierge
+openclaw skills check
+```
+
+See [Installation and agent prompts](skills/kniferevive-concierge/references/installation.md)
+for workspace/shared installation, WSL guidance, and separate Meta Muse, Grok Bot
+and OpenAI dot adoption prompts. Muse Code is a separate developer-tool pathway.
+A prompt does not prove native installation or authorize payment.
+
+The ClawHub CLI also supports downloading a registry skill into its selected
+workspace directory. This is a registry download; use the native commands above
+for an active OpenClaw workspace. Existing published version example:
 
 ```sh
 clawhub install @svetlyoh/kniferevive-concierge --version 0.1.1
 ```
 
-The observed ClawHub security result is clean/benign with no warnings. Its separate Skill Card verification currently reports `card.missing`; full card/provenance verification is therefore not claimed. See the version-specific evidence before deciding to install.
+Version 0.1.1 registry security is clean/benign and, rechecked October 8, 2026, generated-card verification passes. The earlier `card.missing` result was transient; server-resolved GitHub import provenance remains unavailable. See the version-specific evidence before deciding to install. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
 
 ## Components
 

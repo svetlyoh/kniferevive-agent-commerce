@@ -1,5 +1,12 @@
 # Changelog
 
+## Skill 0.1.2 installation documentation — October 8, 2026
+
+- Added Linux terminal and Windows PowerShell OpenClaw installation/readiness instructions, shared installation and WSL guidance.
+- Added separate Meta Muse personal-agent, Grok Bot private-skill and OpenAI dot adoption prompts, with a clearly separate Muse Code local-skill alternative.
+- Linked human-facing installation guidance from SKILL.md and README; distinguished native OpenClaw installation from ClawHub CLI downloads and registry-generated Skill Cards.
+- Shopping, quoting, consent, payment, booking and merchant backend behavior unchanged. No native installation/adoption on third-party platforms is claimed.
+
 ## 0.1.3 per-trip correction — October 7, 2026
 
 - Corrected merchant courier price to $7.99 for each merchant trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax.

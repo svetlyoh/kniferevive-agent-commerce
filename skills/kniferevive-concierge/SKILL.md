@@ -2,7 +2,7 @@
 name: kniferevive-concierge
 description: Find, source, or compare SF Bay Area knife-sharpening services and AI tech in KnifeRevive's Annex. Check prices, availability, pickup and delivery options, and policies, then prepare authorized bookings or secure checkout handoffs when enabled.
 metadata:
-  version: "0.1.1"
+  version: "0.1.2"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -66,3 +66,21 @@ appointment states separately. Say paid/booked only when merchant verification
 supports both. Limit status checks to three per task with at least five seconds
 between checks; then provide the status link and stop. Respect rate limits and
 the user's stop request. Do not create background shopping or promotional traffic.
+
+## Installation and other agents (human-facing information)
+
+OpenClaw Linux terminal **or** Windows PowerShell, from an already installed
+OpenClaw environment:
+
+```text
+openclaw skills install @svetlyoh/kniferevive-concierge
+```
+
+To check readiness, run `openclaw skills check`. For step-by-step Linux and
+PowerShell instructions, a shared install option, and separate copy/paste
+prompts for Meta Muse, Grok Bot, and OpenAI dots, see
+[Installation and agent prompts](references/installation.md), also available
+[in the versioned public source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.1.2/skills/kniferevive-concierge/references/installation.md).
+Those platforms have different skill-import abilities; a chat prompt is not
+proof of installation. This section is installer help, not an instruction to
+run shell commands during a shopping task.
