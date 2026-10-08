@@ -47,10 +47,12 @@ Idempotency-Key:
 ```
 
 IDs and dates are examples; discover actual services and an available future day.
-Optional `customer` (name/email/phone), `pickup_address` and short `notes` may be
-prefilled only when the customer authorized sending them to KnifeRevive. Prefer
-the private human review for contact details. Never put addresses or session tokens
-in public URLs. The opaque review URL's session fragment is private.
+Draft creation accepts service choices and optional short service `notes`, not
+`customer` or `pickup_address`. The human enters and approves sharing these on
+the private first-party form. Do not put PII in service notes. Never put addresses or session tokens
+in public URLs. New choice-only draft links carry an opaque, 30-minute referral
+bound to the originating shopper scope. It grants no access to a submitted
+booking. Contact-bearing legacy drafts still use a private capability fragment.
 Keep `booking_access_token` private and send it as `X-Krev-Booking` only to this
 booking's documented routes. It covers this booking through the service date
 plus one day (maximum 31 days); it cannot access unrelated shopping routes.
@@ -71,6 +73,23 @@ separate `payment_state`. Say "booking requested; awaiting KnifeRevive confirmat
 after submission. Only `appointment_confirmed=true` supports "booked". Pickup
 cannot be confirmed without approved coverage/address. Return timing is arranged
 separately; do not promise same-day completion or delivery.
+
+Contact sharing is independent of payment: inspect `address_authorization` and
+`payment_authorization`. Missing, revoked, expired or changed-selection grants
+require the private first-party review. A purchase review (`authorized_for_quote`)
+does not prove card authentication, wallet authority or settlement. Host wallet
+authorization remains unknown to this portable API; delegated cards are unsupported.
+
+`events` is a bounded, PII-free fact history on the existing scoped GET. A
+`booking.request_received` event proves only that the request was persisted.
+`woocommerce.order_created` appears only after a real native order is verified
+for its Dokan seller. Read current `order_reference` and `order_state`; if null,
+say "No WooCommerce order has been created yet." An unpaid order is not a
+confirmed appointment or verified payment. Order creation is off unless live
+`booking_creates_woocommerce_order` reports enabled, with approved timing.
+Use the existing limit of three checks at least five seconds apart, then return
+the human status link. `agent_event_push_supported=false` means no inbound bot
+notification; never promise the bot will message the customer automatically.
 
 For a confirmed prepaid booking, POST `/bookings/{id}/checkout` with `{}` only if
 live `prepayment_enabled=true`. It returns the original protected native listing

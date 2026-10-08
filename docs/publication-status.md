@@ -1,5 +1,13 @@
 # Publication status
 
+## Current published skill 0.3.0; local candidate 0.4.0
+
+The newest verified publication is [0.3.0](booking-publication-0.3.0.md), including
+its generated card and disclosed audit warnings. The incremental 0.4.0 work is a
+local review candidate only: no ClawHub submission, audit, deployment or payment
+activation. See [incident and readiness notes](incremental-booking-0.4.0.md).
+Older sections below are retained as historical evidence.
+
 ## Current skill version 0.1.2 — October 8, 2026
 
 Documentation-only installation/onboarding release, published under the owner's existing GitHub/ClawHub authorization. [GitHub release and ZIP](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.2), [public listing](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge), and [version-specific security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2) are live. Registry latest and the public Versions view show 0.1.2. The exact title, Finance/Lifestyle categories, topics and publisher remain unchanged.

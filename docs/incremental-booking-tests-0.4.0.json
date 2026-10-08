@@ -1,0 +1,283 @@
+{
+  "version": "0.4.0",
+  "status": "review_candidate_not_deployed",
+  "baseline": "e7e807a / production 0.3.0",
+  "date": "2026-10-08",
+  "environment": "fenced krev_agent_sandbox on loopback MySQL 11019; no production wp-config",
+  "theme": "Actual kniferevive child theme of Twenty Twenty-Four",
+  "matrix": [
+    {
+      "result": "Synthetic database set to legacy; sync yes. Run tests in a fresh process.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "storage-legacy"
+    },
+    {
+      "result": "75 listing checkout assertions passed.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "listing-legacy"
+    },
+    {
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-legacy"
+    },
+    {
+      "result": "67 booking bridge assertions passed. Email and processor evidence is synthetic only.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-bridge-legacy"
+    },
+    {
+      "result": "91 behavioral assertions passed. External requests and customer emails were blocked.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "operator-regression-legacy"
+    },
+    {
+      "result": "Synthetic database set to legacy; sync no. Run tests in a fresh process.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "storage-legacy-no-sync"
+    },
+    {
+      "result": "75 listing checkout assertions passed.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "listing-legacy-no-sync"
+    },
+    {
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-legacy-no-sync"
+    },
+    {
+      "result": "67 booking bridge assertions passed. Email and processor evidence is synthetic only.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-bridge-legacy-no-sync"
+    },
+    {
+      "result": "Synthetic database set to hpos; sync yes. Run tests in a fresh process.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "storage-hpos"
+    },
+    {
+      "result": "75 listing checkout assertions passed.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "listing-hpos"
+    },
+    {
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-hpos"
+    },
+    {
+      "result": "67 booking bridge assertions passed. Email and processor evidence is synthetic only.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-bridge-hpos"
+    },
+    {
+      "result": "91 behavioral assertions passed. External requests and customer emails were blocked.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "operator-regression-hpos"
+    },
+    {
+      "result": "Synthetic database set to hpos; sync no. Run tests in a fresh process.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "storage-hpos-no-sync"
+    },
+    {
+      "result": "75 listing checkout assertions passed.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "listing-hpos-no-sync"
+    },
+    {
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-hpos-no-sync"
+    },
+    {
+      "result": "67 booking bridge assertions passed. Email and processor evidence is synthetic only.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "booking-bridge-hpos-no-sync"
+    },
+    {
+      "result": "16 merchant setup assertions passed; all processor requests were fixtures.",
+      "state": "PASS",
+      "processor_evidence": "synthetic only",
+      "label": "stripe-setup-regression"
+    }
+  ],
+  "browser_facts": [
+    {
+      "booking_reference": "03122efdb2588d54f691485d98c701c9",
+      "booking_state": "requested",
+      "payment_state": "not_started",
+      "order_reference": "1854",
+      "order_state": "pending",
+      "order_count": 1,
+      "native_total": "14.00",
+      "seller_earning": 14,
+      "local_pickup": true,
+      "merchant_trip_fee_minor": 0,
+      "recipient_jobs": [
+        {
+          "role": "admin",
+          "state": "pending"
+        },
+        {
+          "role": "seller",
+          "state": "pending"
+        },
+        {
+          "role": "customer",
+          "state": "pending"
+        }
+      ],
+      "event_types": [
+        "booking.request_received",
+        "woocommerce.order_created"
+      ]
+    },
+    {
+      "booking_reference": "b9b719498be46b295883e267bd8ce781",
+      "booking_state": "requested",
+      "payment_state": "not_started",
+      "order_reference": "1855",
+      "order_state": "pending",
+      "order_count": 1,
+      "native_total": "7.00",
+      "seller_earning": 7,
+      "local_pickup": true,
+      "merchant_trip_fee_minor": 0,
+      "recipient_jobs": [
+        {
+          "role": "customer",
+          "state": "pending"
+        },
+        {
+          "role": "seller",
+          "state": "pending"
+        },
+        {
+          "role": "admin",
+          "state": "pending"
+        }
+      ],
+      "event_types": [
+        "booking.request_received",
+        "woocommerce.order_created"
+      ]
+    },
+    {
+      "booking_reference": "1b9274541fcda2eb56a6eea2399c3eba",
+      "booking_state": "requested",
+      "payment_state": "not_started",
+      "order_reference": "1856",
+      "order_state": "pending",
+      "order_count": 1,
+      "native_total": "7.00",
+      "seller_earning": 7,
+      "local_pickup": true,
+      "merchant_trip_fee_minor": 0,
+      "recipient_jobs": [
+        {
+          "role": "seller",
+          "state": "pending"
+        },
+        {
+          "role": "admin",
+          "state": "pending"
+        },
+        {
+          "role": "customer",
+          "state": "pending"
+        }
+      ],
+      "event_types": [
+        "booking.request_received",
+        "woocommerce.order_created"
+      ]
+    }
+  ],
+  "browser_checks": {
+    "actual_logo": true,
+    "theme_font_and_weight": true,
+    "script_blocked_form_submission": true,
+    "server_email_error_and_autofocus": true,
+    "preserved_quantities_date_postal_name": true,
+    "one_postal_field": true,
+    "mobile_viewport_width": 390,
+    "mobile_scroll_width": 390,
+    "mobile_main_width": 366,
+    "mobile_step_columns": 2,
+    "referral_human_submission": true,
+    "referral_after_submit_no_grant_without_cookie": true,
+    "receipt_reload_original_order": true,
+    "actual_dokan_orders_template": true,
+    "native_seller_inbox": true
+  },
+  "additional_checks": [
+    "PHP plugin syntax",
+    "JavaScript syntax",
+    "Skill Creator validator",
+    "14 actual response payloads match OpenAPI",
+    "generated AI.md/OpenAPI parity",
+    "REST serialization preserves JSON object shapes"
+  ],
+  "limitations": [
+    "No production repair/deployment",
+    "No real emails, inbox receipt or provider bounce testing",
+    "No production worker execution verification",
+    "No Stripe mode change, processor charge/refund or Lightning send",
+    "No delegated host card/address/payment integration",
+    "No registered callback host; push disabled",
+    "No 0.4.0 ClawHub submission/audit",
+    "Not WCAG certification or complete assistive-technology audit"
+  ],
+  "screenshots": [
+    {
+      "path": "docs/screenshots/booking-error-0.4.0.jpg",
+      "sha256": "a48f5798abd64d400db30176b122a345bdaf2d3eec77e326521b2c986339043f",
+      "content": "synthetic local customer/order only"
+    },
+    {
+      "path": "docs/screenshots/booking-mobile-0.4.0.jpg",
+      "sha256": "07a40a7c839d4601018a6b913ce516cb4d44c603e242fadd01f21b28bdb36e95",
+      "content": "synthetic local customer/order only"
+    },
+    {
+      "path": "docs/screenshots/booking-referral-receipt-0.4.0.jpg",
+      "sha256": "82ffa039fa4c155f99e4a2aacbef5eaae1a038a24b6a9409f4e0200da71dd2ac",
+      "content": "synthetic local customer/order only"
+    },
+    {
+      "path": "docs/screenshots/booking-request-0.4.0.jpg",
+      "sha256": "b04b867141e3ca0221e52b5d1b03f07db103fa253790cbf4f6e42458455fb14a",
+      "content": "synthetic local customer/order only"
+    },
+    {
+      "path": "docs/screenshots/seller-inbox-0.4.0.jpg",
+      "sha256": "f21b9c1a218dcf0a6e13d09815c3929126e11d30f1c605c6b108f796a56ff99a",
+      "content": "synthetic local customer/order only"
+    },
+    {
+      "path": "docs/screenshots/seller-orders-0.4.0.jpg",
+      "sha256": "a60bb148e43e19e9af77e15987f2ad1903cc003d374e794ce7a30d5acf6e2f15",
+      "content": "synthetic local customer/order only"
+    }
+  ]
+}

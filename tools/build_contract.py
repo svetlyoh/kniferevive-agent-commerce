@@ -61,6 +61,23 @@ S["BookingInput"] = obj({"items": S["QuoteInput"]["properties"]["items"], "mode"
 S["Booking"] = obj({"booking_id": opaque, "booking_state": {"enum": ["draft", "requested", "confirmed", "cancelled"]}, "payment_state": string, "mode": string, "items": array(obj({"product_id": integer, "title": string, "quantity": integer, "unit_price_minor": integer}, ["product_id", "title", "quantity", "unit_price_minor"])), "preferred_window": obj({"date": string, "start_at": string, "end_at": string, "timezone": string}, ["date", "start_at", "end_at", "timezone"]), "return_mode": string, "location": string, "currency": string, "service_subtotal_minor": integer, "merchant_trip_fee_minor": integer, "estimated_subtotal_minor": integer, "total_minor": {"type": "null"}, "estimate_only": {"const": True}, "prepayment_enabled": {"type": "boolean"}, "policy_url": {"type": ["string", "null"]}, "review_url": string, "status_url": string, "appointment_confirmed": {"type": "boolean"}, "refund_state": {"const": "not_issued"}, "expires_at": string}, ["booking_id", "booking_state", "payment_state", "mode", "items", "preferred_window", "estimated_subtotal_minor", "total_minor", "estimate_only", "review_url", "status_url", "appointment_confirmed", "refund_state"])
 S["BookingCoverage"] = obj({"postal_code": postal, "coverage_state": {"enum": ["eligible", "bay_area_dropoff_only", "outside_bay_area", "address_review_required"]}, "service_available": {"type": "boolean"}, "pickup_eligible": {"type": "boolean"}, "prepayment_eligible": {"type": "boolean"}, "address_review_required": {"type": "boolean"}, "counties": array(string), "message": string, "source_url": string, "geography_vintage": string}, ["postal_code", "coverage_state", "service_available", "pickup_eligible", "prepayment_eligible", "address_review_required", "message"])
 S["Booking"]["properties"].update({"coverage": ref("BookingCoverage"), "direct_wallet_enabled": {"const": False}, "booking_access_token": string})
+# Portable draft creation accepts service choices only; contact sharing is a protected human POST.
+for pii_field in ("customer", "pickup_address"):
+    S["BookingInput"]["properties"].pop(pii_field)
+S["BookingEvent"] = obj({
+    "schema_version": {"const": "1"}, "event_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "type": {"enum": ["booking.request_received", "woocommerce.order_created", "booking.confirmed", "booking.cancelled", "payment.verified", "refund.review_required"]},
+    "booking_reference": opaque, "correlation_id": {"type": ["string", "null"]}, "order_reference": {"type": ["string", "null"]},
+    "booking_state": S["Booking"]["properties"]["booking_state"], "order_state": {"type": ["string", "null"]},
+    "payment_state": string, "merchant_confirmation_required": {"type": "boolean"}, "occurred_at": {"type": "string", "format": "date-time"}
+}, ["schema_version", "event_id", "type", "booking_reference", "order_reference", "booking_state", "order_state", "payment_state", "merchant_confirmation_required", "occurred_at"])
+S["Booking"]["properties"].update({
+    "order_reference": {"type": ["string", "null"]}, "order_state": {"type": ["string", "null"]}, "order_bridge_state": string,
+    "events": array(ref("BookingEvent")),
+    "address_authorization": {"enum": ["unknown", "needs_user", "granted_for_order", "expired", "revoked", "merchant_review_required"]},
+    "payment_authorization": {"enum": ["unknown", "needs_user", "authorized_for_quote", "expired", "revoked", "unsupported"]},
+    "delegated_card_authorization": {"const": "unsupported"}, "host_wallet_authorization": {"const": "unknown"}
+})
 S["WalletInvoice"] = obj({"booking_id": opaque, "state": {"enum": ["settled", "awaiting-payment"]}, "payable": {"type": "boolean"}, "bolt11": {"type": ["string", "null"]}, "amount_sat": integer, "amount_msat": integer, "payment_hash": string, "network": {"const": "bc"}, "fiat_minor": integer, "currency": {"const": "USD"}, "expires_at": integer, "wallet_authorization_required": {"const": True}, "status_url": string}, ["booking_id", "state", "payable", "bolt11"])
 
 nullable = {"type": ["string", "null"]}
@@ -144,7 +161,7 @@ route("/orders/{id}", "GET", "statusOrder", "Status", private=True)
 route("/orders/{id}/change-requests", "POST", "change", body="ChangeInput", private=True, idem=True)
 route("/stripe/webhook", "POST", "webhook")
 paths["/stripe/webhook"]["post"]["description"] = "Stripe-Signature on the unmodified raw request body is mandatory. This is a processor callback, not a shopper mutation."
-contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.2.0", "description": "Verify deployed capabilities before use. Booking requests and payment are independent."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}, "BookingAccess": {"type": "apiKey", "in": "header", "name": "X-Krev-Booking"}}, "schemas": S}}
+contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.3.0", "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}, "BookingAccess": {"type": "apiKey", "in": "header", "name": "X-Krev-Booking"}}, "schemas": S}}
 payload = json.dumps(contract, indent=2) + "\n"
 for file in [ROOT / "openapi/kniferevive-agent-v1.yaml", ROOT / "wordpress/kniferevive-agent-commerce/assets/openapi.json"]:
     file.parent.mkdir(parents=True, exist_ok=True)

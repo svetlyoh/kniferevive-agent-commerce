@@ -129,12 +129,13 @@ payment/fulfillment/scheduling states without order keys, PII or processor IDs.
 `not_booked`. After uncertainty, resume the original checkout/status; do not
 start another charge. Real processor verification remains a launch requirement.
 
-## Sharpening bookings (0.3.0)
+## Sharpening bookings (0.4.0 local candidate; check deployed capabilities)
 
 Check `booking.enabled`, `/booking-options`, `/booking-availability` and
 `/booking-coverage?postal_code=94565` independently of the legacy service adapter.
-POST `/bookings` accepts items, mode, preferred_date and postal_code; optional
-authorized contact/address fields can prefill a private human review. It creates
+POST `/bookings` accepts items, mode, preferred_date and postal_code; contact and
+address fields are rejected. The human supplies and approves sharing them on
+the protected review form. It creates
 a draft, not a reservation or charge. Human submission requests merchant review.
 Modes: unpaid customer drop-off, prepaid customer drop-off, prepaid merchant
 pickup. Merchant trips cost the configured fee per leg (owner pricing $7.99).
@@ -154,3 +155,15 @@ verified/enabled. Native checkout must first prepare the order/invoice; autonomo
 order creation remains disabled. Independently verify invoice/recipient/amount,
 authorization and fee ceilings; never provision a wallet or retry an uncertain
 send. Native settlement and appointment confirmation remain separate states.
+
+Local candidate 0.4.0 also reports independent `address_authorization` and
+`payment_authorization`, native `order_reference`/`order_state` and a bounded
+PII-free `events` history. New service-only handoffs use expiring opaque referrals;
+these never authorize access to a submitted booking. Purchase review is not
+provider authentication or host wallet authority. No delegated card or universal
+host address integration is supported. A live `booking_creates_woocommerce_order`
+capability and `unpaid_order_timing` describe the separately approved unpaid local
+pickup bridge; otherwise the seller inbox receives a request with no native order.
+Poll the original booking at most three times, at least five seconds apart, then
+use the human status page. `agent_event_push_supported=false`; no portable skill
+can receive unsolicited inbound chat notifications by itself.

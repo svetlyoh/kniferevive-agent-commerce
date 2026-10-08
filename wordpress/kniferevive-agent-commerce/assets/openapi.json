@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "KnifeRevive Agent Commerce",
-    "version": "1.2.0",
-    "description": "Verify deployed capabilities before use. Booking requests and payment are independent."
+    "version": "1.3.0",
+    "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review."
   },
   "servers": [
     {
@@ -2155,29 +2155,6 @@
               "courier_delivery"
             ]
           },
-          "customer": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "phone": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "name",
-              "email"
-            ],
-            "additionalProperties": false
-          },
-          "pickup_address": {
-            "$ref": "#/components/schemas/Address"
-          },
           "notes": {
             "type": "string",
             "maxLength": 500
@@ -2325,6 +2302,53 @@
           },
           "booking_access_token": {
             "type": "string"
+          },
+          "order_reference": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "order_state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "order_bridge_state": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingEvent"
+            }
+          },
+          "address_authorization": {
+            "enum": [
+              "unknown",
+              "needs_user",
+              "granted_for_order",
+              "expired",
+              "revoked",
+              "merchant_review_required"
+            ]
+          },
+          "payment_authorization": {
+            "enum": [
+              "unknown",
+              "needs_user",
+              "authorized_for_quote",
+              "expired",
+              "revoked",
+              "unsupported"
+            ]
+          },
+          "delegated_card_authorization": {
+            "const": "unsupported"
+          },
+          "host_wallet_authorization": {
+            "const": "unknown"
           }
         },
         "required": [
@@ -2395,6 +2419,81 @@
           "prepayment_eligible",
           "address_review_required",
           "message"
+        ],
+        "additionalProperties": false
+      },
+      "BookingEvent": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "const": "1"
+          },
+          "event_id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "type": {
+            "enum": [
+              "booking.request_received",
+              "woocommerce.order_created",
+              "booking.confirmed",
+              "booking.cancelled",
+              "payment.verified",
+              "refund.review_required"
+            ]
+          },
+          "booking_reference": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+          },
+          "correlation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "order_reference": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "booking_state": {
+            "enum": [
+              "draft",
+              "requested",
+              "confirmed",
+              "cancelled"
+            ]
+          },
+          "order_state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payment_state": {
+            "type": "string"
+          },
+          "merchant_confirmation_required": {
+            "type": "boolean"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "schema_version",
+          "event_id",
+          "type",
+          "booking_reference",
+          "order_reference",
+          "booking_state",
+          "order_state",
+          "payment_state",
+          "merchant_confirmation_required",
+          "occurred_at"
         ],
         "additionalProperties": false
       },

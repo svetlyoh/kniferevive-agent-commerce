@@ -1,5 +1,12 @@
 # Payments
 
+Contact/address sharing and payment authority are separate. The private first-party
+form obtains booking-specific sharing approval; installing a skill or being logged
+in provides neither. A saved native card/token still requires the human's eligible
+provider confirmation. Delegated card spending is unsupported. Host wallet grants
+are unknown unless a supported independent wallet interface verifies their scope.
+Never interpret merchant acceptance flags or quote approval as wallet authority.
+
 ## Native marketplace listings
 
 Use the listing reference for private intents/quotes and protected buyer review.

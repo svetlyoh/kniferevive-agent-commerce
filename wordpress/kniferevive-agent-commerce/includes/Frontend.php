@@ -13,12 +13,10 @@ final class Frontend {
             readfile(dirname(__DIR__).'/assets/AI.md'); exit;
         }
         if (!isset($_GET['krev_agent'])) return;
-        nocache_headers(); header('Referrer-Policy: no-referrer'); header('X-Robots-Tag: noindex, nofollow, noarchive');
-        header('X-Content-Type-Options: nosniff');
-        header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+        PrivateBrand::headers();
         $base=plugin_dir_url(FILE).'assets/';
         $heading=($_GET['krev_agent']??'')==='status'?'Payment and appointment status':'Review your service';
-        echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.esc_html($heading).' | KnifeRevive</title><link rel="stylesheet" href="'.esc_url($base.'storefront.css').'"></head><body><main data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"><p>KnifeRevive</p><h1>'.esc_html($heading).'</h1><div id="session-status" role="status"></div>';
+        PrivateBrand::start($heading,'data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"');echo '<h1>'.esc_html($heading).'</h1>';
         try {
             $owner=Api::owner();
             $view=Domain::text((string)wp_unslash($_GET['krev_agent']),20);
@@ -29,7 +27,7 @@ final class Frontend {
             $message=$e instanceof Fault?$e->getMessage():'This request could not be completed. Check the original attempt before trying another payment.';
             echo '<p>'.esc_html($message).'</p><p>Use your private review link or contact KnifeRevive through the site.</p>';
         }
-        echo '<p><a href="'.esc_url(home_url('/#knife-sharpening')).'">KnifeRevive sharpening</a></p></main><script src="'.esc_url($base.'storefront.js').'" defer></script></body></html>'; exit;
+        echo '<p><a href="'.esc_url(home_url('/#knife-sharpening')).'">KnifeRevive sharpening</a></p>';PrivateBrand::end();exit;
     }
     private static function review(string $owner): void {
         $id=(string)wp_unslash($_GET['quote']??'');

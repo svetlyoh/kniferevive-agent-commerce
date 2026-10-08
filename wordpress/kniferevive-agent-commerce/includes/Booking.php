@@ -2,7 +2,7 @@
 namespace KnifeRevive\AgentCommerce;
 defined('ABSPATH') || exit;
 
-/** Booking requests do not create orders, invoices or payments. */
+/** Requests never charge. An independently approved bridge may create one unpaid drop-off order. */
 final class Booking {
     public const MODES = ['pay_later_dropoff','prepaid_dropoff','prepaid_pickup'];
     public static function accessToken(array $row): string {
@@ -107,13 +107,14 @@ final class Booking {
         if(!in_array($input['mode'],self::MODES,true))Domain::fail('INVALID_REQUEST','Choose an offered booking option.');
         $input['preferred_date']=Domain::text($input['preferred_date'],10);self::day($input['preferred_date']);
         if(!is_array($input['items']) || !array_is_list($input['items']) || !$input['items'] || count($input['items'])>10)Domain::fail('INVALID_REQUEST','Choose service items.');
-        $allowed=array_column(Settings::get()['booking_services'],'product_id');$seen=[];$count=0;
+        $allowed=array_column(Settings::get()['booking_services'],'product_id');$seen=[];$count=0;$sellers=[];
         foreach($input['items'] as $item){
             if(!is_array($item))Domain::fail('INVALID_REQUEST','Invalid service item.');
             Domain::fields($item,['product_id','quantity'],['product_id','quantity']);$id=Domain::integer($item['product_id'],1,PHP_INT_MAX);$count+=Domain::integer($item['quantity'],1,30);
             $p=wc_get_product($id);
             if(isset($seen[$id]) || $count>50 || !in_array($id,$allowed,true) || !$p || $p->get_price()==='' || get_woocommerce_currency()!=='USD' || wc_get_price_decimals()!==2 || $p->get_status()!=='publish' || $p->get_catalog_visibility()==='hidden' || !$p->is_type('simple') || !Commerce::isService($p) || ($buyerContext && !$p->is_purchasable()) || !$p->is_in_stock() || !$p->has_enough_stock($item['quantity']))Domain::fail('SERVICE_UNAVAILABLE','A requested sharpening service is unavailable.');
             $seller=(int)get_post_field('post_author',$id);
+            $sellers[$seller]=true;if(count($sellers)>1)Domain::fail('MULTIPLE_SELLERS','Request each service seller separately.');
             if(!get_userdata($seller) || (function_exists('dokan_is_user_seller') && (dokan_is_user_seller($seller)?!dokan_is_seller_enabled($seller):!user_can($seller,'manage_woocommerce'))))Domain::fail('SERVICE_UNAVAILABLE','The service seller is unavailable.');
             $seen[$id]=true;
         }
@@ -143,8 +144,21 @@ final class Booking {
         return Store::idempotent($owner,'booking-create',$key,$input,static function()use($input,$owner){
             if(self::remaining($input['preferred_date'])===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
             $snapshot=[];foreach($input['items'] as $item){$p=ListingCheckout::product($item['product_id']);$snapshot[]=['product_id'=>$p['product_id'],'title'=>$p['title'],'quantity'=>$item['quantity'],'unit_price_minor'=>$p['unit_price_minor']];}
-            $id=Domain::id();Store::put($id,'booking',$owner,time()+1800,['input'=>$input,'access_expires'=>min(time()+31*86400,strtotime(self::day($input['preferred_date'])['end_at'])+86400),'catalog_snapshot'=>$snapshot,'preferred_window'=>self::day($input['preferred_date']),'booking_state'=>'draft','submitted_at'=>null,'confirmed_at'=>null,'pickup_verified'=>false,'listing_intent'=>null,'payment_state'=>'not_started']);return Store::get($id);
+            $id=Domain::id();$referral=Domain::id();Store::put($referral,'booking_referral',$id,time()+1800,['session_owner'=>$owner]);
+            Store::put($id,'booking',$owner,time()+1800,['input'=>$input,'referral_id'=>$referral,'seller_id'=>(int)get_post_field('post_author',$input['items'][0]['product_id']),'access_expires'=>min(time()+31*86400,strtotime(self::day($input['preferred_date'])['end_at'])+86400),'catalog_snapshot'=>$snapshot,'preferred_window'=>self::day($input['preferred_date']),'booking_state'=>'draft','submitted_at'=>null,'confirmed_at'=>null,'pickup_verified'=>false,'listing_intent'=>null,'payment_state'=>'not_started']);return Store::get($id);
         });
+    }
+    /** Referral exposes only a new service-choice draft. It is not later status authorization. */
+    public static function referral(string $id): array {
+        if(!Domain::validId($id))Domain::fail('NOT_FOUND','Booking referral unavailable.',404);
+        $ref=Store::get($id,'booking_referral');if((int)$ref['expires']<time())Domain::fail('BOOKING_EXPIRED','This booking referral expired. Prepare a fresh draft.',410);
+        $row=Store::get($ref['owner'],'booking');
+        if(($row['data']['referral_id']??'')!==$id || $ref['data']['session_owner']!==$row['owner'])Domain::fail('NOT_FOUND','Booking referral unavailable.',404);
+        if($row['data']['booking_state']!=='draft'){
+            // A used referral cannot read any persisted customer request without its independent cookie/capability.
+            if(Api::bookingOwner($row['id'])!==$row['owner'])Domain::fail('AUTHORIZATION_REQUIRED','Use your private booking status page.',401);
+        }elseif(isset($row['data']['input']['customer']) || isset($row['data']['input']['pickup_address']))Domain::fail('AUTHORIZATION_REQUIRED','Use the original private review link for this contact-bearing draft.',401);
+        return $row;
     }
     public static function get(string $id,string $owner): array {
         if(!Domain::validId($id))Domain::fail('NOT_FOUND','Booking unavailable.',404);
@@ -153,26 +167,29 @@ final class Booking {
         if($row['data']['booking_state']==='draft' && (int)$row['expires']<time())Domain::fail('BOOKING_EXPIRED','The booking draft expired.',410);
         return $row;
     }
-    public static function submit(string $id,string $owner,array $contact): array {
+    public static function submit(string $id,string $owner,array $contact,bool $firstPartyConsent=false): array {
+        if(!$firstPartyConsent)Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Approve sharing these contact and fulfillment details for this booking.',403);
         $row=Store::lock('booking:'.$id,static function()use($id,$owner,$contact){
             $row=self::get($id,$owner);$d=$row['data'];if($d['booking_state']!=='draft')return $row;
-            Domain::fields($contact,['customer','pickup_address','postal_code']);$input=self::normalize(array_replace($d['input'],$contact));$coverage=BookingCoverage::requireService($input);
+            Domain::fields($contact,['customer','pickup_address','postal_code','notes']);$input=self::normalize(array_replace($d['input'],$contact));$coverage=BookingCoverage::requireService($input);
             if(self::remaining($input['preferred_date'])===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
             if(empty($input['customer']))Domain::fail('INVALID_REQUEST','Contact details are required to request a booking.');
             if(($input['mode']==='prepaid_pickup' || $input['return_mode']==='courier_delivery') && empty($input['pickup_address']))Domain::fail('INVALID_REQUEST','Enter the address for the requested merchant trip.');
             if($coverage['address_review_required'] && empty($input['pickup_address']))Domain::fail('ADDRESS_REVIEW_REQUIRED','Enter your street address to confirm the county for this ZIP code.');
-            Store::transaction(static function()use($id,$d,$input){$d['input']=$input;$d['booking_state']='requested';$d['submitted_at']=time();Store::update($id,$d);
+            Store::transaction(static function()use($id,$d,$input,$row){$d['input']=$input;$d['booking_state']='requested';$d['submitted_at']=time();$proofRow=$row;$proofRow['data']=$d;$d['address_consent']=BookingAuthorization::grant($proofRow);Store::update($id,$d);
                 global $wpdb;if($wpdb->update(Store::table('records'),['expires'=>time()+90*86400],['id'=>$id])===false)Domain::fail('DATABASE_UNAVAILABLE','Booking persistence failed.',503);
+                $saved=Store::get($id,'booking');BookingEvents::record($saved,'booking.request_received');BookingOutbox::enqueue($saved,'requested');
             });
             return self::get($id,$owner);
         });
-        self::notify($id,'requested');return $row;
+        BookingOrderBridge::transition($id,'requested');self::notify($id,'requested');return self::get($id,$owner);
     }
     public static function confirm(string $id,bool $addressApproved=false): void {
-        if(!current_user_can('manage_woocommerce'))Domain::fail('FORBIDDEN','Merchant confirmation is required.',403);
+        if(!BookingSeller::can(Store::get($id,'booking')))Domain::fail('FORBIDDEN','The service seller must confirm this request.',403);
         Store::lock('booking:'.$id,static function()use($id,$addressApproved){Store::transaction(static function()use($id,$addressApproved){
             $row=Store::get($id,'booking');$d=$row['data'];if($d['booking_state']==='confirmed')return;
             if($d['booking_state']!=='requested')Domain::fail('INVALID_REQUEST','Only submitted requests can be confirmed.');
+            if(!in_array(BookingAuthorization::address($row),['granted_for_order','merchant_review_required'],true))Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','The customer must renew contact/fulfillment sharing consent.');
             // Confirming a request is not the merchant buying their own SKU.
             $input=self::normalize($d['input'],false);$day=self::day($input['preferred_date']);$s=Settings::get();
             if($s['booking_daily_capacity']===null)Domain::fail('CAPACITY_UNCONFIGURED','Set daily booking capacity before confirming reservations.');
@@ -187,15 +204,26 @@ final class Booking {
             if(self::remaining($day['date'],true)===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
             if($wpdb->insert(Store::table('holds'),['slot_id'=>$slot,'attempt_id'=>$id,'expires'=>strtotime($day['end_at']),'state'=>'confirmed'])!==1)Domain::fail('DATABASE_UNAVAILABLE','The booking could not be reserved.',503);
             $d['booking_state']='confirmed';$d['confirmed_at']=time();$d['pickup_verified']=$courier;$d['coverage_verified']=$addressApproved || !$coverage['address_review_required'];$d['window']=$day;Store::update($id,$d);
+            $saved=Store::get($id,'booking');BookingEvents::record($saved,'booking.confirmed');BookingOutbox::enqueue($saved,'confirmed');
         });});
+        BookingOrderBridge::transition($id,'confirmed');
+        $linked=BookingOrderBridge::linked(Store::get($id,'booking'));if($linked){$linked->update_meta_data('_krev_booking_confirmation','confirmed');$linked->save();}
         self::notify($id,'confirmed');
     }
     public static function cancel(string $id,string $owner): array {
-        return Store::lock('booking:'.$id,static function()use($id,$owner){return Store::transaction(static function()use($id,$owner){$row=self::get($id,$owner);$d=$row['data'];Store::release($id);$d['booking_state']='cancelled';Store::update($id,$d);return self::get($id,$owner);});});
+        return Store::lock('booking:'.$id,static function()use($id,$owner){return Store::transaction(static function()use($id,$owner){$row=self::get($id,$owner);$d=$row['data'];Store::release($id);$d['booking_state']='cancelled';if(isset($d['address_consent']))$d['address_consent']['revoked_at']=time();Store::update($id,$d);$saved=self::get($id,$owner);BookingEvents::record($saved,'booking.cancelled');return $saved;});});
+    }
+    public static function shareConsent(string $id,string $owner,bool $approved): void {
+        if(!$approved)Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Approve sharing contact/fulfillment details.',403);
+        Store::lock('booking:'.$id,static function()use($id,$owner){$r=self::get($id,$owner);if($r['data']['booking_state']==='cancelled')Domain::fail('INVALID_REQUEST','A cancelled request cannot renew consent.');$d=$r['data'];$d['address_consent']=BookingAuthorization::grant($r);Store::update($id,$d);});
+    }
+    public static function revokeConsent(string $id,string $owner): void {
+        Store::lock('booking:'.$id,static function()use($id,$owner){$r=self::get($id,$owner);$d=$r['data'];if(isset($d['address_consent']))$d['address_consent']['revoked_at']=time();else $d['address_consent']=['revoked_at'=>time()];Store::update($id,$d);});
     }
     public static function paymentSelection(string $id): array {
         $row=Store::get($id,'booking');$d=$row['data'];$input=$d['input'];
         if(!self::prepaymentEnabled() || $d['booking_state']!=='confirmed' || $input['mode']==='pay_later_dropoff')Domain::fail('BOOKING_PREPAYMENT_DISABLED','Prepayment requires a confirmed booking and verified native checkout.',503);
+        if(BookingAuthorization::address($row)!=='granted_for_order')Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Fulfillment sharing authorization must be current.');
         $coverage=BookingCoverage::requireService($input);
         if(!$coverage['prepayment_eligible'] || empty($d['coverage_verified']))Domain::fail('ADDRESS_REVIEW_REQUIRED','Prepayment requires verified Contra Costa or Santa Clara county coverage.');
         if(($input['mode']==='prepaid_pickup' || $input['return_mode']==='courier_delivery') && !$d['pickup_verified'])Domain::fail('ADDRESS_REVIEW_REQUIRED','Pickup address needs merchant approval.');
@@ -231,17 +259,7 @@ final class Booking {
         if($selection['fee_minor'])$cart->add_fee('KnifeRevive merchant transport',Domain::decimal($selection['fee_minor']),Settings::get()['booking_transport_taxable'],Settings::get()['booking_transport_tax_class']);
     }
     private static function notify(string $id,string $stage): void {
-        $payload=Store::lock('booking:'.$id,static function()use($id,$stage){
-            $row=Store::get($id,'booking');$d=$row['data'];$key='notified_'.$stage;
-            if($d['booking_state']!==$stage || !empty($d[$key]))return null;
-            // Mark before sending: an uncertain mail result must not send duplicates.
-            $d[$key]=true;Store::update($id,$d);$i=$d['input'];
-            $subject='KnifeRevive booking '.$stage.' — '.$i['preferred_date'];
-            $message='Your sharpening booking is '.$stage.'. Reference: '.$id."\nRequested service day: ".$i['preferred_date']." (Pacific time).\n".
-                ($stage==='confirmed'?'KnifeRevive has confirmed the service day.':'This is a request; wait for KnifeRevive confirmation before travelling.')."\nNo online payment was made by submitting this request. Return timing is arranged separately.\nPrivate booking link: ".add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/')).'#booking_access='.self::accessToken($row)."\nContact: ".Settings::get()['booking_phone'];
-            return [$i['customer']['email'],$subject,$message];
-        });
-        if($payload){wp_mail($payload[0],$payload[1],$payload[2]);wp_mail(get_option('admin_email'),$payload[1],'Review booking reference '.$id.' in WooCommerce → Agent Commerce.');}
+        BookingOutbox::schedule($id);
     }
     public static function response(array $row): array {
         $d=$row['data'];$input=$d['input'];$items=$d['catalog_snapshot'];$subtotal=0;
@@ -249,12 +267,18 @@ final class Booking {
         $fee=Settings::get()['booking_trip_fee_minor']*(($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0));
         $payment='not_started';if($d['listing_intent'])$payment=ListingCheckout::status($d['listing_intent'],$d['checkout_owner']??$row['owner'])['payment_state'];
         $url=add_query_arg(['krev_agent'=>'booking','booking'=>$row['id']],home_url('/'));
+        $order=BookingOrderBridge::linked($row)??BookingEvents::nativeOrder($row);
+        BookingEvents::observe($row);
         return ['booking_id'=>$row['id'],'booking_state'=>$d['booking_state'],'payment_state'=>$payment,'mode'=>$input['mode'],'items'=>$items,'preferred_window'=>$d['window']??$d['preferred_window'],
             'return_mode'=>$input['return_mode'],'location'=>Settings::get()['booking_location'],'currency'=>get_woocommerce_currency(),'service_subtotal_minor'=>$subtotal,'merchant_trip_fee_minor'=>$fee,
             'estimated_subtotal_minor'=>$subtotal+$fee,'total_minor'=>null,'estimate_only'=>true,'prepayment_enabled'=>self::prepaymentEnabled() && BookingCoverage::check($input['postal_code'])['prepayment_eligible'],
             'coverage'=>BookingCoverage::check($input['postal_code']),'direct_wallet_enabled'=>false,
-            'policy_url'=>Settings::get()['booking_policy_url']?:null,'booking_access_token'=>self::accessToken($row),'review_url'=>$url.'#booking_access='.rawurlencode(self::accessToken($row)),'status_url'=>$url,
-            'appointment_confirmed'=>$d['booking_state']==='confirmed','refund_state'=>'not_issued','expires_at'=>gmdate('c',(int)$row['expires'])];
+            'policy_url'=>Settings::get()['booking_policy_url']?:null,'booking_access_token'=>self::accessToken($row),'review_url'=>$d['booking_state']==='draft' && !empty($d['referral_id']) && empty($input['customer']) && empty($input['pickup_address'])?add_query_arg(['krev_agent'=>'booking','referral'=>$d['referral_id']],home_url('/')):$url.'#booking_access='.rawurlencode(self::accessToken($row)),'status_url'=>$url,
+            'appointment_confirmed'=>$d['booking_state']==='confirmed','refund_state'=>'not_issued','expires_at'=>gmdate('c',(int)$row['expires']),
+            'order_reference'=>$order?(string)$order->get_order_number():null,'order_state'=>$order?$order->get_status():null,
+            'order_bridge_state'=>$d['order_bridge_state']??'not_created','events'=>BookingEvents::recent($row['id']),
+            'address_authorization'=>BookingAuthorization::address($row),'payment_authorization'=>BookingAuthorization::payment($row),
+            'delegated_card_authorization'=>'unsupported','host_wallet_authorization'=>'unknown'];
     }
     public static function admin(): void {
         if(!current_user_can('manage_woocommerce'))return;
@@ -263,14 +287,23 @@ final class Booking {
             check_admin_referer('krev_booking_confirm');
             try{self::confirm((string)wp_unslash($_POST['booking_id']??''),($_POST['pickup_verified']??'')==='yes');echo '<p>Booking confirmed. No payment was initiated.</p>';}catch(\Throwable $e){echo '<p>'.esc_html($e instanceof Fault?$e->getMessage():'Booking confirmation needs review.').'</p>';}
         }
+        if(isset($_POST['krev_booking_order_reconcile'])){
+            check_admin_referer('krev_booking_order_reconcile');
+            try{BookingOrderBridge::reconcile((string)wp_unslash($_POST['booking_id']??''),($_POST['order_confirm']??'')==='yes');echo '<p>Original unpaid native order reconciled. No payment was taken.</p>';}
+            catch(\Throwable $e){echo '<p>'.esc_html($e instanceof Fault?$e->getMessage():'The original order needs review.').'</p>';}
+        }
         global $wpdb;$rows=$wpdb->get_results('SELECT * FROM '.Store::table('records')." WHERE kind='booking' AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.booking_state')) IN ('requested','confirmed') ORDER BY updated DESC LIMIT 50",ARRAY_A);
-        foreach($rows as $row){$d=json_decode($row['data'],true);$i=$d['input'];echo '<section><h3>'.esc_html($i['preferred_date'].' · '.$i['mode'].' · '.$d['booking_state']).'</h3><p>Reference: '.esc_html($row['id']).'</p>';
+        foreach($rows as $row){$d=json_decode($row['data'],true);$row['data']=$d;$i=$d['input'];echo '<section><h3>'.esc_html($i['preferred_date'].' · '.$i['mode'].' · '.$d['booking_state']).'</h3><p>Reference: '.esc_html($row['id']).'</p>';
             foreach($i['items'] as $item){$p=wc_get_product($item['product_id']);echo '<p>'.esc_html(($p?$p->get_name():'Unavailable service').' × '.$item['quantity']).'</p>';}
             echo '<p>'.esc_html(implode(' · ',$i['customer']??[])).'</p><p>'.esc_html($i['notes']).'</p>';
             echo '<p>Service ZIP: '.esc_html($i['postal_code']).'</p>';
+            $linked=BookingOrderBridge::linked($row);echo '<p>Native order: '.($linked?'<a href="'.esc_url($linked->get_edit_order_url()).'">'.esc_html($linked->get_order_number()).'</a>':'none').'. Bridge: '.esc_html($d['order_bridge_state']??'not_created').'. '.esc_html($d['order_bridge_error']??'').'</p>';
+            echo '<p>Address/contact authorization: '.esc_html(BookingAuthorization::address($row)).'</p>';
+            if($i['mode']==='pay_later_dropoff' && BookingOrderBridge::enabled()){echo '<form method="post">';wp_nonce_field('krev_booking_order_reconcile');echo '<input type="hidden" name="booking_id" value="'.esc_attr($row['id']).'"><label><input type="checkbox" name="order_confirm" value="yes" required> Reconcile this original booking into one unpaid seller order. No charge; check existing native orders first.</label><button name="krev_booking_order_reconcile" class="button">Reconcile original unpaid order</button></form>';}
             if(isset($i['pickup_address']))echo '<p>Address for county review or merchant trip: '.esc_html(implode(', ',$i['pickup_address'])).'</p>';
             if($d['booking_state']==='requested'){echo '<form method="post">';wp_nonce_field('krev_booking_confirm');echo '<input type="hidden" name="booking_id" value="'.esc_attr($row['id']).'"><label><input type="checkbox" name="pickup_verified" value="yes"> I verified this street address is in the approved county (Contra Costa or Santa Clara for prepayment or merchant trips; SF Bay Area for unpaid drop-off)</label><button name="krev_booking_confirm" class="button">Confirm requested service day</button></form>';}
             echo '</section>';
         }
+        BookingOutbox::admin();
     }
 }

@@ -106,7 +106,7 @@ final class Api {
         return ['schema_version'=>'1.1','adapter_version'=>VERSION,'merchant'=>'KnifeRevive','merchant_origin'=>'https://kniferevive.com',
             'discovery'=>['anonymous'=>true,'catalog'=>true,'quote_requires_private_session'=>true],
             'sharpening'=>['status'=>Settings::operational()?'configured':'unconfigured','direct_checkout'=>(bool)$rails,'booking_mode'=>$s['slots']?'scheduled':($s['pending_scheduling']?'pending_scheduling':'unconfigured')],
-            'booking'=>['enabled'=>Booking::enabled(),'options_url'=>rest_url(self::NS.'/booking-options'),'coverage_url'=>rest_url(self::NS.'/booking-coverage'),'booking_url'=>add_query_arg('krev_agent','booking',home_url('/')),'confirmation'=>'merchant_confirmation_required','prepayment_enabled'=>Booking::prepaymentEnabled(),'authorized_wallet_payment_enabled'=>Booking::walletEnabled(),'direct_wallet_enabled'=>false],
+            'booking'=>['enabled'=>Booking::enabled(),'options_url'=>rest_url(self::NS.'/booking-options'),'coverage_url'=>rest_url(self::NS.'/booking-coverage'),'booking_url'=>add_query_arg('krev_agent','booking',home_url('/')),'confirmation'=>'merchant_confirmation_required','prepayment_enabled'=>Booking::prepaymentEnabled(),'authorized_wallet_payment_enabled'=>Booking::walletEnabled(),'direct_wallet_enabled'=>false,'agent_event_push_supported'=>false,'agent_event_polling_supported'=>true,'booking_creates_woocommerce_order'=>BookingOrderBridge::enabled(),'unpaid_order_timing'=>$s['booking_order_timing'],'delegated_card_authorization_supported'=>false,'host_address_grants_supported'=>false],
             'technology'=>['catalog'=>true,'direct_checkout'=>false,'checkout_mode'=>'existing_woocommerce_checkout'],
             'listings'=>['discovery'=>true,'categories'=>'all_published','handoff_state'=>ListingCheckout::enabled()?'handoff_enabled':'unavailable',
                 'checkout_mode'=>'buyer_completed_native_woocommerce','direct_payment_enabled'=>false,'simple_products'=>true,'variations'=>'unsupported_variation',
@@ -179,7 +179,7 @@ final class Api {
     public static function bookingOptions($request): array { return Booking::options(); }
     public static function bookingCoverage($request): array { return BookingCoverage::check(Domain::text($request->get_param('postal_code'),10)); }
     public static function bookingAvailability($request): array { return Booking::availability(); }
-    public static function bookingCreate($request): array { return Booking::response(Booking::create(self::body($request),self::owner($request),(string)$request->get_header('Idempotency-Key'))); }
+    public static function bookingCreate($request): array { $input=self::body($request);Domain::fields($input,['items','mode','preferred_date','return_mode','postal_code','notes'],['items','mode','preferred_date','postal_code']);return Booking::response(Booking::create($input,self::owner($request),(string)$request->get_header('Idempotency-Key'))); }
     public static function bookingOwner(string $id,$request=null): string {
         $token=$request?(string)$request->get_header('X-Krev-Booking'):'';
         if(!$token && str_starts_with((string)($_COOKIE['krev_booking_access']??''),$id.'.'))$token=(string)wp_unslash($_COOKIE['krev_booking_access']);

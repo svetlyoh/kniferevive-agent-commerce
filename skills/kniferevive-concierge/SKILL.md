@@ -1,8 +1,9 @@
 ---
 name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with unpaid drop-off, prepaid drop-off, or prepaid merchant pickup. Check county coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
+license: MIT-0. See LICENSE.
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -56,6 +57,22 @@ limited to Contra Costa and Santa Clara counties. Other Bay Area counties may
 request customer drop-off with payment at service. Relay the coverage message;
 cross-county or unknown ZIP codes need address review. Outside the Bay Area,
 do not create a sharpening booking or imply pickup is offered.
+
+Installing this skill supplies no address grant, saved-card permission, wallet
+authority or inbound chat callback. Contact sharing and payment approval are
+independent. Prepare only service choices through the portable booking API;
+the human approves contact/address sharing on the private first-party form.
+Treat host authorization as unknown unless an actual supported host interface
+provides an independently verifiable scoped grant. Delegated card spending is
+unsupported. Native checkout remains human-controlled.
+
+After human submission, poll the original scoped booking within the status-check
+limit below. `booking.request_received` means requested, awaiting confirmation.
+Only a non-null native `order_reference` or `woocommerce.order_created` supports
+"Unpaid WooCommerce order created; no payment was taken." Otherwise say
+"No WooCommerce order has been created yet." `booking_creates_woocommerce_order`
+and `unpaid_order_timing` are live capability facts, not promises. No push-back
+chat integration is advertised; a Markdown skill cannot receive messages.
 
 For separately enabled legacy scheduled prepaid sharpening, read [the service guide](references/sharpening.md). Check postal
 eligibility, service definitions, both handoff legs, and scheduling mode. Obtain
@@ -111,7 +128,7 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the versioned public source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.1.2/skills/kniferevive-concierge/references/installation.md).
+[in the published 0.3.0 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.3.0/skills/kniferevive-concierge/references/installation.md).
 Those platforms have different skill-import abilities; a chat prompt is not
 proof of installation. This section is installer help, not an instruction to
 run shell commands during a shopping task.

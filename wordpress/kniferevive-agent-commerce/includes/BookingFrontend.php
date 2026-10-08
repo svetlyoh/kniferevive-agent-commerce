@@ -3,81 +3,117 @@ namespace KnifeRevive\AgentCommerce;
 defined('ABSPATH') || exit;
 
 final class BookingFrontend {
+    private static array $errors=[];
+    private static array $values=[];
     public static function render(): never {
-        nocache_headers();header('Referrer-Policy: no-referrer');header('X-Robots-Tag: noindex, nofollow, noarchive');header('X-Content-Type-Options: nosniff');
-        header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
-        $message='';$row=null;$owner='';$id=(string)wp_unslash($_GET['booking']??'');
-        try {
-            if(!Booking::enabled() && !$id)Domain::fail('BOOKING_DISABLED','Booking requests are temporarily unavailable. Contact KnifeRevive.',503);
+        PrivateBrand::headers();$message='';$failed=false;$row=null;$owner='';$id=(string)wp_unslash($_GET['booking']??'');
+        try{
+            if(!Booking::enabled() && !$id)Domain::fail('BOOKING_DISABLED','Booking requests are temporarily unavailable. Contact support.',503);
             if($id){$owner=Api::bookingOwner($id);$row=Booking::get($id,$owner);}
+            elseif(isset($_GET['referral'])){$row=Booking::referral((string)wp_unslash($_GET['referral']));$id=$row['id'];$owner=$row['owner'];}
             if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
-                $post=wp_unslash($_POST);
-                if($id){ListingFrontend::authorizeForm($owner,$id,$post);}
-                else {
-                    if(!Api::firstPartyForm())Domain::fail('FORBIDDEN','Submit your request on the KnifeRevive booking page.',403);
-                    if(!wp_verify_nonce($post['csrf']??'','krev_booking_new'))Domain::fail('FORBIDDEN','Reload the booking form and try again.',403);
-                    $key=Domain::key($post['request_key']??'');$request=new \WP_REST_Request('POST');$request->set_header('Content-Type','application/json');$request->set_header('Idempotency-Key',$key);$request->set_body('{}');
-                    $session=Api::session($request);$owner=$session['session_id'];
-                    setcookie('krev_agent_session',$session['session_token'],['expires'=>strtotime($session['expires_at']),'path'=>'/','secure'=>is_ssl(),'httponly'=>true,'samesite'=>'Strict']);
-                    $items=[];foreach((array)($post['quantities']??[]) as $product=>$quantity){if(!ctype_digit((string)$product) || !ctype_digit((string)$quantity))Domain::fail('INVALID_REQUEST','Choose whole knife quantities.');if((int)$quantity>0)$items[]=['product_id'=>(int)$product,'quantity'=>(int)$quantity];}
-                    $row=Booking::create(['items'=>$items,'mode'=>$post['mode']??'','preferred_date'=>$post['preferred_date']??'','postal_code'=>$post['postcode']??'','return_mode'=>$post['return_mode']??'customer_collection','notes'=>$post['notes']??''],$owner,$key);$id=$row['id'];
-                }
+                $post=wp_unslash($_POST);self::$values=$post;
+                if($id)ListingFrontend::authorizeForm($owner,$id,$post);
+                elseif(!Api::firstPartyForm() || !wp_verify_nonce($post['csrf']??'','krev_booking_new'))Domain::fail('FORBIDDEN','The form expired. Reload before submitting.',403);
                 $action=$post['action']??'submit';
                 if($action==='checkout'){
                     if(($post['accept']??'')!=='yes')Domain::fail('AUTHORIZATION_REQUIRED','Choose to prepare your prepaid checkout.',403);
                     $intent=Booking::checkout($id,$owner);$response=ListingCheckout::response($intent,$intent['owner']);wp_safe_redirect($response['review_url'],303);exit;
                 }
-                if($action==='cancel'){$row=Booking::cancel($id,$owner);$message='Booking cancelled. No refund was issued; contact KnifeRevive about any payment.';}
+                if($action==='coverage'){$message=BookingCoverage::check((string)($post['postcode']??''))['message'];}
+                elseif($action==='cancel'){$row=Booking::cancel($id,$owner);$message='Booking cancelled. No refund or native order cancellation was issued; contact support about any linked order or payment.';}
+                elseif($action==='revoke'){Booking::revokeConsent($id,$owner);$row=Booking::get($id,$owner);$message='Sharing consent revoked. Existing service/order records are retained for reconciliation. Contact support to cancel the service.';}
+                elseif($action==='share'){Booking::shareConsent($id,$owner,($post['contact_share']??'')==='yes');$row=Booking::get($id,$owner);$message='Sharing consent renewed for this booking only.';}
                 elseif($action==='submit'){
-                    if(($post['accept']??'')!=='yes')Domain::fail('AUTHORIZATION_REQUIRED','Confirm that you want to send this booking request.',403);
-                    $contact=['postal_code'=>$post['postcode']??'','customer'=>['name'=>$post['name']??'','email'=>$post['email']??'','phone'=>$post['phone']??'']];
-                    if($row['data']['input']['mode']==='prepaid_pickup' || $row['data']['input']['return_mode']==='courier_delivery' || !empty($post['address_1'])){
-                        $contact['pickup_address']=['address_1'=>$post['address_1']??'','address_2'=>$post['address_2']??'','city'=>$post['city']??'','state'=>'CA','country'=>'US','postcode'=>$post['postcode']??''];
+                    self::validate($post);if(self::$errors)Domain::fail('INVALID_REQUEST','Check the highlighted fields. No booking was submitted.');
+                    if(!$row){
+                        $key=Domain::key($post['request_key']??'');$request=new \WP_REST_Request('POST');$request->set_header('Content-Type','application/json');$request->set_header('Idempotency-Key',$key);$request->set_body('{}');
+                        $session=Api::session($request);$owner=$session['session_id'];setcookie('krev_agent_session',$session['session_token'],['expires'=>strtotime($session['expires_at']),'path'=>'/','secure'=>is_ssl(),'httponly'=>true,'samesite'=>'Strict']);
+                        $items=[];foreach((array)($post['quantities']??[]) as $product=>$quantity){if(!ctype_digit((string)$product) || !ctype_digit((string)$quantity))Domain::fail('INVALID_REQUEST','Choose whole knife quantities.');if((int)$quantity>0)$items[]=['product_id'=>(int)$product,'quantity'=>(int)$quantity];}
+                        $row=Booking::create(['items'=>$items,'mode'=>$post['mode']??'','preferred_date'=>$post['preferred_date']??'','postal_code'=>$post['postcode']??'','return_mode'=>$post['return_mode']??'customer_collection','notes'=>$post['notes']??''],$owner,$key);$id=$row['id'];
                     }
-                    $row=Booking::submit($id,$owner,$contact);Booking::accessCookie($row);wp_safe_redirect(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/')),303);exit;
+                    $contact=['postal_code'=>$post['postcode']??'','notes'=>$post['notes']??'','customer'=>['name'=>$post['name']??'','email'=>$post['email']??'','phone'=>$post['phone']??'']];
+                    if($row['data']['input']['mode']==='prepaid_pickup' || $row['data']['input']['return_mode']==='courier_delivery' || !empty($post['address_1']))$contact['pickup_address']=['address_1'=>$post['address_1']??'','address_2'=>$post['address_2']??'','city'=>$post['city']??'','state'=>'CA','country'=>'US','postcode'=>$post['postcode']??''];
+                    $row=Booking::submit($id,$owner,$contact,true);Booking::accessCookie($row);wp_safe_redirect(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/')),303);exit;
                 }else Domain::fail('INVALID_REQUEST','Unknown booking action.');
             }
-        }catch(\Throwable $e){$message=$e instanceof Fault?$e->getMessage():'Your request needs review. Check the original booking before trying again.';}
-        $assets=plugin_dir_url(FILE).'assets/';$options=Booking::options();
-        echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Book knife sharpening | KnifeRevive</title><link rel="stylesheet" href="'.esc_url($assets.'storefront.css').'"></head><body><main data-booking-attach="'.esc_url(rest_url(Api::NS.'/bookings/'.$id.'/attach')).'" data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"><p>KnifeRevive</p><h1>Book knife sharpening</h1><div id="session-status" role="status"></div><p>'.esc_html($message).'</p><p>'.esc_html($options['location']).'</p><p>Friday–Saturday 9am–7pm · Sunday 10am–4pm · Pacific time</p><p>Request a service day below. KnifeRevive confirms availability and pickup arrangements. Return collection or delivery timing is arranged separately.</p>';
-        if($row)self::privateView($row,$owner);
-        elseif(!$id && Booking::enabled())self::newForm($options);
-        if($options['phone'])echo '<p>Questions? <a href="'.esc_attr('tel:'.preg_replace('/[^+0-9]/','',$options['phone'])).'">'.esc_html($options['phone']).'</a></p>';
-        echo '<p><a href="'.esc_url(home_url('/#knife-sharpening')).'">KnifeRevive sharpening</a></p></main><script src="'.esc_url($assets.'storefront.js').'" defer></script><script src="'.esc_url($assets.'booking.js').'" defer></script></body></html>';exit;
+        }catch(\Throwable $e){$failed=true;$message=$e instanceof Fault?$e->getMessage():'Your original request needs review. Check its status before trying again.';}
+        $options=Booking::options();
+        PrivateBrand::start('Book knife sharpening','data-booking-attach="'.esc_url(rest_url(Api::NS.'/bookings/'.$id.'/attach')).'" data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"');
+        echo '<p class="krev-eyebrow">SF Bay Area · sharpening services</p><h1>Book knife sharpening</h1><p>'.esc_html($options['location']).'</p><p>';
+        $hours=[];foreach($options['weekly_hours'] as $window)$hours[]=(['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][$window['weekday']]).' '.(new \DateTimeImmutable($window['open']))->format('g:i A').'–'.(new \DateTimeImmutable($window['close']))->format('g:i A');
+        echo esc_html(implode(' · ',$hours).' · Pacific time').'</p><p>Choose an intake day. KnifeRevive confirms availability; return timing is arranged separately.</p>';
+        if($message){echo '<div id="'.($failed?'form-errors':'form-message').'"'.($failed?' class="krev-alert" role="alert" tabindex="-1" autofocus':' role="status"').'><p>'.esc_html($message).'</p>';foreach(self::$errors as $field=>$error)echo '<p><a href="#field-'.esc_attr($field).'">'.esc_html($error).'</a></p>';echo '</div>';}
+        if($row)self::privateView($row,$owner,$options);elseif(!$id && Booking::enabled())self::newForm($options);
+        if($options['phone'])echo '<p><a href="'.esc_attr('tel:'.preg_replace('/[^+0-9]/','',$options['phone'])).'">Call '.esc_html($options['phone']).'</a></p>';
+        PrivateBrand::end(true);exit;
+    }
+    private static function validate(array $post): void {
+        if(!trim((string)($post['name']??'')))self::$errors['name']='Enter your name.';
+        if(!is_email((string)($post['email']??'')))self::$errors['email']='Enter a valid contact email.';
+        if(!preg_match('/^[0-9]{5}$/D',(string)($post['postcode']??'')))self::$errors['postcode']='Enter a five-digit service ZIP code.';
+        if(($post['contact_share']??'')!=='yes')self::$errors['contact_share']='Approve contact/address sharing for this booking.';
+        if(($post['accept']??'')!=='yes')self::$errors['accept']='Choose to send this unpaid booking request.';
+        if(isset($post['quantities']) && array_sum(array_map('intval',(array)$post['quantities']))<1)self::$errors['quantities']='Choose at least one knife.';
+    }
+    private static function field(string $name,string $label,string $type='text',bool $required=false,string $value=''): void {
+        $value=(string)(self::$values[$name]??$value);$error=self::$errors[$name]??null;
+        echo '<label for="field-'.esc_attr($name).'">'.esc_html($label).'</label><input id="field-'.esc_attr($name).'" name="'.esc_attr($name).'" type="'.esc_attr($type).'" maxlength="'.($name==='email'?254:150).'" value="'.esc_attr($value).'"'.($required?' required':'').($error?' aria-invalid="true" aria-describedby="error-'.esc_attr($name).'"':'').($name==='postcode'?' inputmode="numeric" pattern="[0-9]{5}" data-coverage="'.esc_url(rest_url(Api::NS.'/booking-coverage')).'"':'').'>';
+        if($error)echo '<p class="krev-field-error" id="error-'.esc_attr($name).'">'.esc_html($error).'</p>';
     }
     private static function newForm(array $options): void {
-        $postal=(string)wp_unslash($_GET['postal_code']??'');$coverage=null;
-        echo '<form method="get"><input type="hidden" name="krev_agent" value="booking"><label>Check your ZIP code<input name="postal_code" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required value="'.esc_attr($postal).'"></label><button>Check service coverage</button></form>';
-        if($postal){try{$coverage=BookingCoverage::check($postal);echo '<p role="status">'.esc_html($coverage['message']).'</p>';if($coverage['coverage_state']==='outside_bay_area')return;}catch(Fault $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}}
-        echo '<form method="post"><input type="hidden" name="csrf" value="'.esc_attr(wp_create_nonce('krev_booking_new')).'"><input type="hidden" name="request_key" value="'.esc_attr(Domain::id()).'">';
-        echo '<fieldset><legend>Your knives</legend>';
-        foreach($options['services'] as $p){echo '<label>'.esc_html($p['title'].' — $'.Domain::decimal($p['unit_price_minor'])).'<input type="number" name="quantities['.esc_attr((string)$p['product_id']).']" min="0" max="30" value="0"></label><p>'.esc_html($p['definition']).'</p>';}
-        echo '</fieldset><label>Booking option<select name="mode" required><option value="pay_later_dropoff">Drop off — pay at service, no online payment</option><option value="prepaid_dropoff"'.(($coverage && !$coverage['prepayment_eligible'])?' disabled':'').'>Prepay — customer drops off</option><option value="prepaid_pickup"'.(($coverage && !$coverage['prepayment_eligible'])?' disabled':'').'>Prepay — KnifeRevive picks up (+$'.esc_html(Domain::decimal($options['merchant_trip_fee_minor'])).')</option></select></label><label>Return option<select name="return_mode"><option value="customer_collection">Customer collects — no merchant trip fee</option><option value="courier_delivery"'.(($coverage && !$coverage['pickup_eligible'])?' disabled':'').'>KnifeRevive returns knives (+$'.esc_html(Domain::decimal($options['merchant_trip_fee_minor'])).'; prepaid requests)</option></select></label><label>Requested service day<select name="preferred_date" required><option value="">Choose an open day</option>';
-        foreach(Booking::availability()['days'] as $day)if($day['available_jobs']!==0)echo '<option value="'.esc_attr($day['date']).'">'.esc_html((new \DateTimeImmutable($day['start_at']))->format('l, M j').' · '.(new \DateTimeImmutable($day['start_at']))->format('g:i A').'–'.(new \DateTimeImmutable($day['end_at']))->format('g:i A')).'</option>';
-        echo '</select></label><label>Notes (optional)<input name="notes" maxlength="500"></label>';self::contact(['postal_code'=>$postal]);self::submitButton();echo '</form>';
-        self::paymentNotice();
+        $postal=(string)(self::$values['postcode']??wp_unslash($_GET['postal_code']??''));$coverage=null;
+        if($postal){try{$coverage=BookingCoverage::check($postal);}catch(Fault $e){}}
+        echo '<ol class="krev-steps" aria-label="Booking steps"><li>Knives</li><li>Service day &amp; handoff</li><li>Contact/address</li><li>Review &amp; request</li></ol>';
+        echo '<form method="post" data-booking-form><input type="hidden" name="csrf" value="'.esc_attr(wp_create_nonce('krev_booking_new')).'"><input type="hidden" name="request_key" value="'.esc_attr(self::$values['request_key']??Domain::id()).'">';
+        echo '<fieldset id="field-quantities"><legend>1. Your knives</legend>';
+        foreach($options['services'] as $p){$value=(string)(self::$values['quantities'][$p['product_id']]??'0');echo '<div class="krev-knife"><label for="knife-'.esc_attr((string)$p['product_id']).'">'.esc_html($p['title'].' — $'.Domain::decimal($p['unit_price_minor'])).'</label><input id="knife-'.esc_attr((string)$p['product_id']).'" type="number" name="quantities['.esc_attr((string)$p['product_id']).']" min="0" max="30" value="'.esc_attr($value).'" data-unit-minor="'.esc_attr((string)$p['unit_price_minor']).'"><p>'.esc_html($p['definition']).'</p></div>';}
+        if(isset(self::$errors['quantities']))echo '<p class="krev-field-error">'.esc_html(self::$errors['quantities']).'</p>';echo '</fieldset>';
+        echo '<fieldset><legend>2. Requested service day &amp; handoff</legend><label for="mode">Booking option</label><select id="mode" name="mode" required>';
+        foreach(['pay_later_dropoff'=>'Drop off — pay at service','prepaid_dropoff'=>'Customer drops off — prepaid preference','prepaid_pickup'=>'KnifeRevive picks up — prepaid preference (+$'.Domain::decimal($options['merchant_trip_fee_minor']).')'] as $value=>$label){$selected=(self::$values['mode']??'pay_later_dropoff')===$value;echo '<option value="'.esc_attr($value).'"'.($selected?' selected':'').($coverage && !$coverage['prepayment_eligible'] && $value!=='pay_later_dropoff'?' disabled':'').'>'.esc_html($label).'</option>';}
+        echo '</select><label for="return-mode">Return option</label><select id="return-mode" name="return_mode">';
+        foreach(['customer_collection'=>'Customer collects — no merchant trip fee','courier_delivery'=>'KnifeRevive returns knives (+$'.Domain::decimal($options['merchant_trip_fee_minor']).'; prepaid preference)'] as $value=>$label)echo '<option value="'.esc_attr($value).'"'.((self::$values['return_mode']??'customer_collection')===$value?' selected':'').($coverage && !$coverage['pickup_eligible'] && $value==='courier_delivery'?' disabled':'').'>'.esc_html($label).'</option>';
+        echo '</select><label for="preferred-date">Requested intake day</label><select id="preferred-date" name="preferred_date" required><option value="">Choose an open day</option>';
+        foreach(Booking::availability()['days'] as $day)if($day['available_jobs']!==0)echo '<option value="'.esc_attr($day['date']).'"'.((self::$values['preferred_date']??'')===$day['date']?' selected':'').'>'.esc_html((new \DateTimeImmutable($day['start_at']))->format('l, M j').' · '.(new \DateTimeImmutable($day['start_at']))->format('g:i A').'–'.(new \DateTimeImmutable($day['end_at']))->format('g:i A')).'</option>';
+        echo '</select><p>A requested day is not a confirmed appointment. Intake and return are separate.</p></fieldset>';
+        self::contact(['postal_code'=>$postal],$coverage);self::review($options);self::consent();echo '</form>';
     }
-    private static function contact(array $input): void {
-        echo '<label>Your service ZIP code<input name="postcode" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required value="'.esc_attr($input['postal_code']??'').'" data-coverage="'.esc_url(rest_url(Api::NS.'/booking-coverage')).'"></label><p id="coverage-status" role="status">Pickup and prepayment: Contra Costa and Santa Clara counties. Other SF Bay Area counties: customer drop-off with payment at service.</p>';
-        foreach(['name'=>'Your name','email'=>'Contact email','phone'=>'Phone (optional)'] as $field=>$label)echo '<label>'.esc_html($label).'<input name="'.esc_attr($field).'" type="'.($field==='email'?'email':'text').'" maxlength="'.($field==='email'?254:100).'" '.($field==='phone'?'':'required').' value="'.esc_attr($input['customer'][$field]??'').'"></label>';
-        echo '<fieldset><legend>Address for merchant trips or county review</legend><p>Required for pickup, return delivery, or a ZIP code crossing county boundaries. Otherwise, leave blank for customer drop-off and collection.</p>';
-        foreach(['address_1'=>'Street address','address_2'=>'Apartment (optional)','city'=>'City'] as $field=>$label)echo '<label>'.esc_html($label).'<input name="'.esc_attr($field).'" maxlength="150" value="'.esc_attr($input['pickup_address'][$field]??'').'"></label>';
-        echo '</fieldset>';
+    private static function contact(array $input,?array $coverage=null): void {
+        echo '<fieldset><legend>3. Contact &amp; service area</legend>';self::field('postcode','Service ZIP code','text',true,$input['postal_code']??'');
+        echo '<p id="coverage-status" role="status">'.esc_html($coverage['message']??'Pickup/prepayment: Contra Costa and Santa Clara counties. Other Bay Area counties: drop-off with payment at service.').'</p><button name="action" value="coverage" formnovalidate>Check service coverage</button>';
+        foreach(['name'=>'Your name','email'=>'Contact email','phone'=>'Phone (optional)'] as $field=>$label)self::field($field,$label,$field==='email'?'email':($field==='phone'?'tel':'text'),$field!=='phone',$input['customer'][$field]??'');
+        echo '<details data-address-fields data-address-review="'.(!empty($coverage['address_review_required'])?'true':'false').'"'.((($input['mode']??self::$values['mode']??'')==='prepaid_pickup' || ($input['return_mode']??self::$values['return_mode']??'')==='courier_delivery' || !empty($coverage['address_review_required']))?' open':'').'><summary>Pickup/delivery address or county review</summary><p>Complete this only for merchant trips or a ZIP requiring county review. For ordinary customer drop-off and collection, leave it blank.</p>';
+        foreach(['address_1'=>'Street address','address_2'=>'Apartment (optional)','city'=>'City'] as $field=>$label)self::field($field,$label,'text',false,$input['pickup_address'][$field]??'');
+        echo '</details>';self::field('notes','Notes (optional)','text',false,$input['notes']??'');echo '</fieldset>';
     }
-    private static function submitButton(): void {echo '<label><input type="checkbox" name="accept" value="yes" required> Send this booking request to KnifeRevive. No online payment now; the appointment awaits merchant confirmation.</label><button name="action" value="submit">Request booking — no payment now</button>';}
-    private static function paymentNotice(): void {echo '<p>Choosing prepayment records your preference. It does not charge you. Prepayment opens only after booking confirmation and checkout verification. Final fees and taxes must be reviewed before you authorize payment.</p>';}
-    private static function privateView(array $row,string $owner): void {
-        $s=Booking::response($row);$i=$row['data']['input'];
-        echo '<p>Reference: '.esc_html($row['id']).'</p><p><strong>Booking: '.esc_html($s['booking_state']).'</strong></p><p>Payment: '.esc_html($s['payment_state']).'</p><p>Requested service day: '.esc_html($i['preferred_date']).'</p><p>'.esc_html(match($i['mode']){'pay_later_dropoff'=>'Customer drop-off; pay at service.','prepaid_dropoff'=>'Customer drop-off; prepayment requested.','prepaid_pickup'=>'KnifeRevive pickup; prepayment requested.'}).'</p><ul>';
+    private static function review(array $options,?array $selection=null): void {
+        $quantities=self::$values['quantities']??array_column($selection['items']??[],'quantity','product_id');$subtotal=0;
+        foreach($options['services'] as $service)$subtotal+=$service['unit_price_minor']*max(0,min(30,(int)($quantities[$service['product_id']]??0)));
+        $trips=((self::$values['mode']??$selection['mode']??'')==='prepaid_pickup'?1:0)+((self::$values['return_mode']??$selection['return_mode']??'')==='courier_delivery'?1:0);$fee=$trips*$options['merchant_trip_fee_minor'];
+        echo '<fieldset class="krev-review" data-trip-minor="'.esc_attr((string)$options['merchant_trip_fee_minor']).'"><legend>4. Review &amp; request</legend><p id="booking-estimate" role="status">'.esc_html('Services: $'.Domain::decimal($subtotal).' · Merchant trips: $'.Domain::decimal($fee).' · Estimated subtotal: $'.Domain::decimal($subtotal+$fee).' USD, before taxes and other disclosed fees. No payment now.').'</p><p>Merchant trips cost $'.esc_html(Domain::decimal($options['merchant_trip_fee_minor'])).' each. Use Check service coverage to refresh the estimate after changing your choices.</p><p>This is an estimate before actual WooCommerce taxes and other disclosed fees. No online payment is taken by this form.</p>';
+        echo '<p class="krev-payment-notice">'.esc_html(Booking::prepaymentEnabled()?'Prepayment follows merchant confirmation and review of the final native checkout total.':'Prepayment not yet available. You may record a prepaid preference; this request does not charge you.').'</p>';
+        if(BookingOrderBridge::enabled())echo '<p>'.esc_html(Settings::get()['booking_order_timing']==='on_submit'?'For pay-at-service customer drop-off and collection, an unpaid seller order is prepared when you request the booking. The service day still needs confirmation.':'For pay-at-service customer drop-off and collection, an unpaid seller order is prepared after merchant confirmation.').'</p>';
+        else echo '<p>This request does not create a WooCommerce order. The seller reviews it in the sharpening request inbox.</p>';
+        if($options['policy_url'])echo '<p><a href="'.esc_url($options['policy_url']).'">Read service cancellation and refund terms</a></p>';else echo '<p>Contact support to clarify service/cancellation terms before requesting. A cancellation does not automatically issue a refund.</p>';echo '</fieldset>';
+    }
+    private static function consent(): void {
+        echo '<label class="krev-check" id="field-contact_share"><input type="checkbox" name="contact_share" value="yes" required> I approve sharing the contact details and any trip address entered here with KnifeRevive and this service seller to fulfill this booking only.</label><label class="krev-check" id="field-accept"><input type="checkbox" name="accept" value="yes" required> Send my booking request. No online payment now; the merchant must confirm the service day.</label><button name="action" value="submit" data-submit-booking>Request booking — no payment now</button>';
+    }
+    private static function privateView(array $row,string $owner,array $options): void {
+        $s=Booking::response($row);$i=$row['data']['input'];echo '<p>Booking reference: '.esc_html($row['id']).'</p><div class="krev-state"><p><strong>Booking: '.esc_html($s['booking_state']).'</strong></p><p>Payment: '.esc_html($s['payment_state']).'</p><p>WooCommerce order: '.esc_html($s['order_reference']??'not created yet').($s['order_state']?' · '.esc_html($s['order_state']):'').'</p></div><p>Requested day: '.esc_html($i['preferred_date']).' · Pacific time</p><p>'.esc_html($i['mode'].' · '.$i['return_mode']).'</p><ul>';
         foreach($s['items'] as $p)echo '<li>'.esc_html($p['title'].' × '.$p['quantity'].' — $'.Domain::decimal($p['unit_price_minor']*$p['quantity'])).'</li>';
-        echo '</ul><p>Merchant trips: $'.esc_html(Domain::decimal($s['merchant_trip_fee_minor'])).'</p><p>Estimated subtotal before taxes and other disclosed fees: $'.esc_html(Domain::decimal($s['estimated_subtotal_minor'])).' USD</p>';
-        if($s['policy_url'])echo '<p><a href="'.esc_url($s['policy_url']).'">Service and cancellation/refund terms</a></p>';
-        if($s['booking_state']==='draft'){echo '<form method="post" action="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$row['id']],home_url('/'))).'">';self::hidden($owner,$row['id']);self::contact($i);self::submitButton();echo '</form>';}
-        else {
-            echo '<p>'.esc_html($s['appointment_confirmed']?'KnifeRevive confirmed this service day.':'This request does not reserve a service day; wait for KnifeRevive confirmation.').'</p>';
-            if($s['booking_state']==='confirmed' && $i['mode']!=='pay_later_dropoff' && $s['prepayment_enabled']){echo '<form method="post">';self::hidden($owner,$row['id']);echo '<label><input type="checkbox" name="accept" value="yes" required> Prepare my secure checkout. I will review the final total and authorize payment there.</label><button name="action" value="checkout">Prepare prepaid checkout</button></form>';}
-            elseif($i['mode']!=='pay_later_dropoff')self::paymentNotice();
-            if(in_array($s['booking_state'],['requested','confirmed'],true)){echo '<form method="post">';self::hidden($owner,$row['id']);echo '<button name="action" value="cancel">Cancel booking (refund requires merchant review)</button></form>';}
+        echo '</ul><p>Merchant trips: $'.esc_html(Domain::decimal($s['merchant_trip_fee_minor'])).'</p><p>Estimated subtotal before taxes and fees: $'.esc_html(Domain::decimal($s['estimated_subtotal_minor'])).' USD</p>';
+        $order=BookingOrderBridge::linked($row);if($order){echo '<p>Native unpaid order total: '.wp_kses_post($order->get_formatted_order_total()).'</p><p>Fulfillment: customer drop-off and collection. No payment was taken by this booking form.</p>';}
+        if($s['booking_state']==='draft'){
+            echo '<p><a href="'.esc_url(add_query_arg('krev_agent','booking',home_url('/'))).'">Edit knives, requested day or handoff in a new draft</a>. This draft creates no order.</p><form method="post" action="'.esc_url(strtok($s['review_url'],'#')).'" data-booking-form>';self::hidden($owner,$row['id']);self::contact($i,$s['coverage']);self::review($options,$i);self::consent();echo '</form>';
+        }else{
+            echo '<p>'.esc_html($s['booking_state']==='cancelled'?'This booking was cancelled. Contact support about any linked order or payment.':($s['appointment_confirmed']?'KnifeRevive confirmed the service day. Return timing is arranged separately.':'KnifeRevive received this request; wait for merchant confirmation before travelling.')).'</p>';
+            if($s['booking_state']==='confirmed' && $i['mode']!=='pay_later_dropoff' && $s['prepayment_enabled']){echo '<form method="post">';self::hidden($owner,$row['id']);echo '<label><input type="checkbox" name="accept" value="yes" required> Prepare secure checkout; I will review the final total and approve payment there.</label><button name="action" value="checkout">Review final native checkout total</button></form>';}
+            elseif($i['mode']!=='pay_later_dropoff')echo '<p>Prepayment not yet available. No payment has been taken by this request.</p>';
+            if(in_array($s['booking_state'],['requested','confirmed'],true)){
+                echo '<form method="post">';self::hidden($owner,$row['id']);echo '<button name="action" value="cancel">Cancel request — refund requires merchant review</button></form>';
+                echo '<form method="post">';self::hidden($owner,$row['id']);if(in_array($s['address_authorization'],['unknown','needs_user','revoked','expired'],true))echo '<label><input type="checkbox" name="contact_share" value="yes" required> Approve sharing the existing booking contact/fulfillment details with KnifeRevive and this service seller for this booking only.</label><button name="action" value="share">Renew sharing permission</button>';else echo '<button name="action" value="revoke">Revoke contact/fulfillment sharing permission</button>';echo '</form>';
+            }
         }
     }
     private static function hidden(string $owner,string $id): void {echo '<input type="hidden" name="csrf" value="'.esc_attr(ListingFrontend::csrf($owner,$id,intdiv(time(),600))).'">';}

@@ -25,6 +25,7 @@ if (!$setupTest) {
 if (PHP_SAPI==='cli') { $_SERVER['HTTP_HOST']='localhost:11080'; $_SERVER['REQUEST_URI']='/'; $_SERVER['HTTP_ORIGIN']=WP_HOME; }
 $table_prefix='krev_sandbox_';
 require_once ABSPATH.'wp-includes/plugin.php';
+if(getenv('KREV_BOOKING_UI')==='1')add_filter('upload_dir',static function($u){$u['basedir']=dirname(__DIR__).'/.runtime/ui-media';$u['baseurl']=WP_HOME.'/fixture-media';$u['path']=$u['basedir'];$u['url']=$u['baseurl'];$u['subdir']='';return $u;});
 add_filter('pre_wp_mail',static fn()=>true,PHP_INT_MAX);
 if (getenv('KREV_LISTING_TEST_STACK')==='1') {
     add_filter('option_active_plugins',static fn()=>['woocommerce/woocommerce.php','woocommerce-gateway-stripe/woocommerce-gateway-stripe.php','dokan-lite/dokan.php','dokan-pro/dokan-pro.php','kniferevive-stripe-connect/kniferevive-stripe-connect.php','kniferevive-seller-orders/kniferevive-seller-orders.php','kniferevive-seller-commissions/kniferevive-seller-commissions.php','kniferevive-return-policies/kniferevive-return-policies.php','conditional-extra-fees-for-woocommerce/conditional-fees-rule-woocommerce.php']);

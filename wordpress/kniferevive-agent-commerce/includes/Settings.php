@@ -13,7 +13,8 @@ final class Settings {
             'booking_enabled'=>false,'booking_location'=>'','booking_phone'=>'','booking_services'=>[],
             'booking_weekly_hours'=>[],'booking_daily_capacity'=>null,'booking_pickup_postal_codes'=>[],
             'booking_trip_fee_minor'=>799,'booking_prepaid_enabled'=>false,'booking_policy_url'=>'','booking_policy_version'=>'',
-            'booking_transport_taxable'=>false,'booking_transport_tax_class'=>'','booking_wallet_enabled'=>false,'booking_wallet_verified'=>false];
+            'booking_transport_taxable'=>false,'booking_transport_tax_class'=>'','booking_wallet_enabled'=>false,'booking_wallet_verified'=>false,
+            'booking_order_timing'=>'disabled','booking_order_verified'=>false,'booking_offline_gateway_id'=>''];
     }
     public static function get(): array { return array_replace(self::defaults(), (array)get_option('krev_agent_settings', [])); }
     public static function validate(array $s): array {
@@ -85,6 +86,7 @@ final class Settings {
             if(!preg_match('/^[a-zA-Z0-9 ._-]{1,80}$/D',(string)$e['reference']) || preg_match('/(?:sk_|whsec_|pi_|ch_|cs_|acct_)/i',$e['reference']))Domain::fail('INVALID_SETTINGS','Use a redacted internal evidence label, never provider IDs or secrets.');
         }
         foreach(['booking_enabled','booking_prepaid_enabled','booking_transport_taxable','booking_wallet_enabled','booking_wallet_verified'] as $flag)if(!is_bool($s[$flag]))Domain::fail('INVALID_SETTINGS','Booking flags must be booleans.');
+        if(!is_bool($s['booking_order_verified']) || !in_array($s['booking_order_timing'],['disabled','on_submit','on_confirm'],true) || !in_array($s['booking_offline_gateway_id'],['','cod','bacs','cheque'],true))Domain::fail('INVALID_SETTINGS','Use an approved and tested unpaid-order timing and native offline method.');
         foreach(['booking_location'=>300,'booking_phone'=>30,'booking_policy_version'=>100,'booking_transport_tax_class'=>100] as $field=>$limit)$s[$field]=Domain::text($s[$field],$limit);
         $s['booking_policy_url']=Domain::text($s['booking_policy_url'],500);
         if($s['booking_policy_url'] && !Domain::httpsHost($s['booking_policy_url'],'kniferevive.com'))Domain::fail('INVALID_SETTINGS','Booking policies must use KnifeRevive HTTPS.');

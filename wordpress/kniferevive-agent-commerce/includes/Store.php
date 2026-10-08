@@ -190,7 +190,7 @@ final class Store {
     }
     public static function pruneEphemeral(): void {
         global $wpdb;
-        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind IN ('rate','session','quote','consent','listing_quote') AND expires<%d",time()-86400));
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind IN ('rate','session','quote','consent','listing_quote','booking_referral') AND expires<%d",time()-86400));
         // Abandoned review-only PII expires; issued/interrupted financial evidence never does.
         $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='listing' AND expires<%d
             AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.handoff_state'))='review'
@@ -198,6 +198,7 @@ final class Store {
             AND (JSON_EXTRACT(data,'$.selection.booking_id') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.selection.booking_id'))='null')
             AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(data,'$.creation_started')),'false')='false'",time()-86400));
         // Checkout, event, idempotency, and refund evidence is retained for operator reconciliation.
-        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='booking' AND expires<%d AND (JSON_EXTRACT(data,'$.listing_intent') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.listing_intent'))='null')",time()-86400));
+        // Submitted requests, order links and notification/event history need explicit retention review.
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='booking' AND expires<%d AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.booking_state'))='draft' AND (JSON_EXTRACT(data,'$.listing_intent') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.listing_intent'))='null')",time()-86400));
     }
 }

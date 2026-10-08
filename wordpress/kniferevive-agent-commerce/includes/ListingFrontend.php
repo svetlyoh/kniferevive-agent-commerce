@@ -9,8 +9,7 @@ final class ListingFrontend {
         if(!hash_equals(self::csrf($owner,$id,$bucket),$csrf) && !hash_equals(self::csrf($owner,$id,$bucket-1),$csrf))Domain::fail('FORBIDDEN','The review form expired.',403);
     }
     public static function render(): never {
-        nocache_headers();header('Referrer-Policy: no-referrer');header('X-Robots-Tag: noindex, nofollow, noarchive');header('X-Content-Type-Options: nosniff');
-        header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+        PrivateBrand::headers();
         $message='';$row=null;$owner='';$status=null;
         try {
             $owner=Api::owner();$id=(string)wp_unslash($_GET['intent']??'');if(!Domain::validId($id))Domain::fail('NOT_FOUND','Private intent unavailable.',404);
@@ -33,11 +32,12 @@ final class ListingFrontend {
             }
         }catch(\Throwable $e){$message=$e instanceof Fault?$e->getMessage():'The original checkout needs review. Do not retry an uncertain payment.';}
         $assets=plugin_dir_url(FILE).'assets/';
-        echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Review your listing checkout | KnifeRevive</title><link rel="stylesheet" href="'.esc_url($assets.'storefront.css').'"></head><body><main data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"><p>KnifeRevive</p><h1>Review your listing checkout</h1><div id="session-status" role="status"></div><p>'.esc_html($message).'</p>';
+        PrivateBrand::start('Review your listing checkout','data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"');
+        echo '<h1>Review your listing checkout</h1><p>'.esc_html($message).'</p>';
         if($status){
             echo '<p>Payment: '.esc_html($status['payment_state']).'</p><p>Fulfillment: '.esc_html($status['fulfillment_state']).'</p><p>Appointment: '.esc_html($status['scheduling_state']).'</p><p>Payment verification: '.esc_html($status['payment_verification']).'</p><p>Use your normal WooCommerce receipt/account and the merchant for refund, delivery or scheduling support.</p>';
         }elseif($row){self::review($row,$owner);}
-        echo '<p><a href="'.esc_url(wc_get_cart_url()).'">Review your existing cart</a></p><p><a href="'.esc_url(home_url('/shop/')).'">KnifeRevive listings</a></p></main><script src="'.esc_url($assets.'storefront.js').'" defer></script></body></html>';exit;
+        echo '<p><a href="'.esc_url(wc_get_cart_url()).'">Review your existing cart</a></p><p><a href="'.esc_url(home_url('/shop/')).'">KnifeRevive listings</a></p>';PrivateBrand::end();exit;
     }
     private static function review(array $row,string $owner): void {
         $d=$row['data'];$q=$d['quote'];
