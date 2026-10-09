@@ -2,7 +2,7 @@
   "version": "0.5.12",
   "components": {
     "kniferevive-concierge-0.5.12.zip": {
-      "sha256": "3e6e6a5dee54fcbfaca0aa3214ecfbe66ae25e61664b2820527c31e3cd80657b",
+      "sha256": "ab228adfdd722929bcf9fce449d2627652ba295ef62ef44955b02560cb9fcfe7",
       "files": [
         {
           "path": "kniferevive-concierge/LICENSE",
@@ -11,8 +11,8 @@
         },
         {
           "path": "kniferevive-concierge/references/api.md",
-          "sha256": "14e3ca9f319380db6035fdcb453cb1822f036ba0f62fb66faafdf84b9fa8e243",
-          "bytes": 4060
+          "sha256": "4f8422be4a49a99682154741fd069097fdb791d3c54fba6dc886da19a3e51abc",
+          "bytes": 4001
         },
         {
           "path": "kniferevive-concierge/references/booking.md",
@@ -21,8 +21,8 @@
         },
         {
           "path": "kniferevive-concierge/references/installation.md",
-          "sha256": "1d492febf295b8a18e8978d61b2c05f61bfa25515e8b66ffbf8658716efda787",
-          "bytes": 10527
+          "sha256": "33cc2b3159ea2a881e70cfb89567099909a197bb661e07573d48d7007343cd1a",
+          "bytes": 10408
         },
         {
           "path": "kniferevive-concierge/references/listing-checkout.md",
