@@ -1,12 +1,15 @@
 # Publication status
 
-## Current backend 0.5.2; published skill 0.4.2
+## Current backend 0.5.3; published skill 0.4.2
 
-Agent Commerce **0.5.2** and Seller Orders **1.1.6** are deployed with
+Agent Commerce **0.5.3** and Seller Orders **1.1.6** are deployed with
 owner-approved prepaid sharpening requests, native same-screen checkout,
 seller cancellation/refund receipt handling and an administrator pickup ZIP
 editor. Capacity remains 4. The [0.5.2 UX patch](booking-ux-0.5.2.md) adds prominent coverage confirmation,
 one-step payment preparation, separated controls and clearer pickup/return labels.
+The [0.5.3 payment recovery patch](booking-payment-resume-0.5.3.md) lets an independently
+authorized buyer resume the same unstarted checkout after returning through email
+or losing the original browser cart, with order, consent and capacity checks.
 See [the payment implementation runbook](prepaid-booking-0.5.1.md).
 Actual processor settlement and headless API access remain unverified; anonymous
 API traffic receives the hosting browser challenge. Lightning readiness remains

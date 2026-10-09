@@ -41,12 +41,21 @@ final class ListingFrontend {
     }
     public static function bookingReview(array $row,string $owner,array $values=[]): void {
         $d=$row['data'];$booking=Store::get($d['selection']['booking_id'],'booking');$input=$booking['data']['input'];
+        if(!in_array($booking['data']['booking_state'],['requested','confirmed'],true)){echo '<p>This booking is closed. Any payment already made needs a separate merchant refund review.</p>';return;}
         if($d['handoff_state']!=='review'){
-            echo '<p>Your secure payment screen is ready. Check the original order if you already paid.</p><p><a class="krev-primary-link" href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$booking['id'],'payment'=>'1'],home_url('/'))).'">Continue to secure payment</a></p>';return;
+            if($d['handoff_state']!=='cart_ready' || !empty($d['creation_started']) || !empty($d['order_id'])){echo '<p>An order may already exist. Check this booking’s original order or contact KnifeRevive before paying again.</p>';return;}
+            try{if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();ListingCheckout::bookingCart($booking);$ready=true;}catch(\Throwable $e){$ready=false;}
+            echo '<section class="krev-payment-next"><h2>Pick up where you left off</h2><p>Your booking is saved. No order has been linked yet. You’ll review the full total before approving payment.</p>';
+            if($ready)echo '<p><a class="krev-primary-link" href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$booking['id'],'payment'=>'1'],home_url('/'))).'">Continue to secure payment</a></p>';
+            else{
+                echo '<form method="post" action="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$booking['id'],'payment'=>'1'],home_url('/'))).'">';self::hidden($owner,$row['id']);
+                echo '<input type="hidden" name="action" value="resume"><label class="krev-check"><input type="checkbox" name="accept" value="yes" required> Continue with my saved booking and billing details in this browser. I’ll review the total before paying.</label><button class="krev-primary-action">Continue to secure payment</button></form>';
+            }
+            echo '</section>';return;
         }
         $c=$d['context'];$address=$c['billing']??$input['pickup_address']??['state'=>'CA','country'=>'US','postcode'=>$input['postal_code']];
         $complete=true;foreach(['address_1','city','state','postcode'] as $field)if(!trim((string)($values['billing_'.$field]??$address[$field]??'')))$complete=false;
-        echo '<section class="krev-payment-next"><h2>Next up: secure payment</h2><p>You’ll see the full total and choose your card or available wallet on the next screen. You only pay when you confirm there.</p><p><strong>Your knife journey:</strong> '.esc_html(BookingLifecycle::handoffLabel($input)).'. Merchant trips are charged separately; this is a local sharpening service, not parcel shipping.</p><form method="post" class="krev-payment-continue">';
+        echo '<section class="krev-payment-next"><h2>Next up: secure payment</h2><p>You’ll see the full total and choose your card or available wallet on the next screen. You only pay when you confirm there.</p><p><strong>Your knife journey:</strong> '.esc_html(BookingLifecycle::handoffLabel($input)).'. Merchant trips are charged separately; this is a local sharpening service, not parcel shipping.</p><form method="post" class="krev-payment-continue" action="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$booking['id']],home_url('/'))).'">';
         self::hidden($owner,$row['id']);echo '<input type="hidden" name="action" value="pay"><details'.(!$complete || $values?' open':'').'><summary>Check or edit billing details</summary><p>Your pickup address is prefilled when available. Change it here if your billing address is different.</p><label for="payment-receipt-email">Receipt email</label><input id="payment-receipt-email" name="email" type="email" autocomplete="email" maxlength="254" required value="'.esc_attr($values['email']??$c['email']??$input['customer']['email']).'"><fieldset><legend>Billing address</legend>';
         foreach(['address_1'=>'Street address','address_2'=>'Apartment (optional)','city'=>'City','state'=>'State code','postcode'=>'ZIP code'] as $field=>$label){
             $name='billing_'.$field;$value=$values[$name]??$address[$field]??'';

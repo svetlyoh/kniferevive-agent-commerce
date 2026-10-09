@@ -1,0 +1,230 @@
+{
+  "version": "0.5.3",
+  "components": {
+    "kniferevive-agent-commerce-0.5.3.zip": {
+      "sha256": "00428745d1bf47b1dae39fef3dbe4b27f9d929345dbde7398325400825b06754",
+      "files": [
+        {
+          "path": "kniferevive-agent-commerce/assets/AI.md",
+          "sha256": "0b7657f28dcd0a257d94181f2892e54efd7cd25d3e9d4494f5e96063e3b2ded1",
+          "bytes": 11279
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/booking-checkout.css",
+          "sha256": "bba969f11be21c092c361ff580bcf1659a285e0311d3b07270265630f7e9a17f",
+          "bytes": 4228
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/booking-coverage.json",
+          "sha256": "1e4efb4f1ae2a4400457c066e819f2c1f28b91f2f2a45531d09a0b7b05531b93",
+          "bytes": 274251
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/booking.js",
+          "sha256": "1650f7a316fc0e7f20370fcba04380bf35faed21621108149deefbb82fbcd0d5",
+          "bytes": 6274
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/openapi.json",
+          "sha256": "dc7bff6ab8c6aebb69bebff92258267aa618ed4a2df4b9107c5853898576aba9",
+          "bytes": 85106
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/storefront.css",
+          "sha256": "a846deb7e320c7d7db7d33e8cc764e34dd6eb1de1716f706829f561181e5297f",
+          "bytes": 5331
+        },
+        {
+          "path": "kniferevive-agent-commerce/assets/storefront.js",
+          "sha256": "a506e07ba4c1a1ce7a6335918f2fa2f5aebb59425bca1e53703dbb95f5accdb8",
+          "bytes": 1375
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Api.php",
+          "sha256": "7d9cdcc575b9cf7ddd37436871ffa4b2a530e2cc1e9b36d733e6416050e94bcd",
+          "bytes": 18248
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Booking.php",
+          "sha256": "31b51778cc22b4fb78cfff637a92076c5b4389d3280b17f77820d562dce95182",
+          "bytes": 37801
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingAuthorization.php",
+          "sha256": "f5be0684392456a9e1ae2d9fce8c81a61790477fb4b530cfe10664b81e80cc3d",
+          "bytes": 2315
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingCheckoutFrontend.php",
+          "sha256": "26a84627b96b42b9c476bd04c72fa9f4ab777fd64b62a2d5abae080a2b5e1add",
+          "bytes": 6990
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingCoverage.php",
+          "sha256": "b15cf947e508564436fc8a7b64e95ab2137343caa266810968b0591700b5e52f",
+          "bytes": 3930
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingEvents.php",
+          "sha256": "eec4ed9562daa01f7f845662e95701054bff238a57b41a64523dc2c7b32cd864",
+          "bytes": 3298
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingFrontend.php",
+          "sha256": "c707d3a5bb052e3b2080e4f6e7ffdc2ded274ea70e7946700bdd3b5b12404989",
+          "bytes": 24480
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingLifecycle.php",
+          "sha256": "68af708e5fe6e2980cb5a0c652c99e74603860dabda4dc2828e8c1997d213cf2",
+          "bytes": 15790
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingOrderBridge.php",
+          "sha256": "64dd8e561743aa1a49b4a268bf4b631d13fda8c08ba09db5750220b7c6cef9dd",
+          "bytes": 8921
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingOutbox.php",
+          "sha256": "4f451ce5cb1b82a27d060e3647502683a50c6c16c33681deb07debae7250b17c",
+          "bytes": 12077
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/BookingSeller.php",
+          "sha256": "fbac3846f87c8d9568023c1f9ab5dc50fd379b8fac08e5bf3348bc765cd04740",
+          "bytes": 10454
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Commerce.php",
+          "sha256": "b1eebd04b43dbd34cefdf7071a39731faf8ee57d1375e3c8f5b1f77e13963df3",
+          "bytes": 25274
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Domain.php",
+          "sha256": "5b6de69f3d6a406dbaddf2d8955a7846a99d3b0ab215a9f8f02bed5a055d6984",
+          "bytes": 6298
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Frontend.php",
+          "sha256": "4070b8166baaa60349d21ca0180538cd225dacd553eaf106b7d18d438951b837",
+          "bytes": 9785
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Gateway.php",
+          "sha256": "1195a996885c1fac76cafa5455341b00f1251381bd95bc090c90dbe7d9c4786d",
+          "bytes": 732
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/GatewayDiagnostics.php",
+          "sha256": "598292d089a728b913d6827b9042e3350d013368eab66fe03d0d6d6cb1142b9b",
+          "bytes": 6866
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingCart.php",
+          "sha256": "2be3e500fa9d71978e5e31d9e779e286640c4b7abebe644d9345f267175010ac",
+          "bytes": 689
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingCheckout.php",
+          "sha256": "a2be48f370b505b1c2d4088def02d39daf44e60209fa9b4efead3c328b64512a",
+          "bytes": 46950
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/ListingFrontend.php",
+          "sha256": "12ce3d0b6e9f437cd28eeaf1d2eddadfdfaa7fa9b18c3a513794ec32373b9685",
+          "bytes": 16647
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Payments.php",
+          "sha256": "9a69f977c797eb1c2b0e1d9221fa79b7fcb177746c77dd64c9171bb0bfd85952",
+          "bytes": 19552
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Plugin.php",
+          "sha256": "bf87d014d3f74fb23d63e646a40763a85f045ad8aa4bf45d2ce11e1aad82149a",
+          "bytes": 1786
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/PrivateBrand.php",
+          "sha256": "d5f93e06eb4b9c3423397412420d2efba5c969d3385200bb3094454af8baf95f",
+          "bytes": 5355
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/QuoteCart.php",
+          "sha256": "794ed2021cc9a4ba9f031223e801753c6408926e4b0e67983c77445af93c92e8",
+          "bytes": 1101
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Settings.php",
+          "sha256": "14793e163d696865f586f1fe83177a473b1038d7b96387ba8ceb131fa919df1c",
+          "bytes": 23092
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/Store.php",
+          "sha256": "9b310066166f7ea72227257e17900ef2467f7d4ce0b31e30709e1370d8eb943d",
+          "bytes": 14543
+        },
+        {
+          "path": "kniferevive-agent-commerce/includes/StripeSetup.php",
+          "sha256": "9d8062e75428d713b554b14a0ea1c06d3273a787c6037d086cb0583698f6208c",
+          "bytes": 4947
+        },
+        {
+          "path": "kniferevive-agent-commerce/kniferevive-agent-commerce.php",
+          "sha256": "3bf1a17c024390170fad033e48d1138ae4bd993b491e1ab11e8e265304d3b4c0",
+          "bytes": 1341
+        },
+        {
+          "path": "kniferevive-agent-commerce/LICENSE",
+          "sha256": "dec703cdb49042ca367f71c3982dee4552ffef395225f1fe9f14d29a4a0cb0ff",
+          "bytes": 19519
+        }
+      ]
+    },
+    "kniferevive-concierge-0.5.1.zip": {
+      "sha256": "dda5e1de643e3fd4530775fd3301002173fbf3bde56da495fc055d34b74bf528",
+      "files": [
+        {
+          "path": "kniferevive-concierge/LICENSE",
+          "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+          "bytes": 919
+        },
+        {
+          "path": "kniferevive-concierge/references/api.md",
+          "sha256": "01642aa1060d8a923cdc17b8650dcf27fb80ab3f352f86e028e9dc8f10ad517f",
+          "bytes": 4000
+        },
+        {
+          "path": "kniferevive-concierge/references/booking.md",
+          "sha256": "897114230424645a32f111743a741044312e44c38e9018ae0a48c53499ac0c14",
+          "bytes": 10835
+        },
+        {
+          "path": "kniferevive-concierge/references/installation.md",
+          "sha256": "d6c74eb9ba845587fe1191491b07b7dfa4a57da36130c87eb2aef113484b3ca4",
+          "bytes": 8460
+        },
+        {
+          "path": "kniferevive-concierge/references/listing-checkout.md",
+          "sha256": "a2b7a750976e073969779b3caa8e3139f52729180f821589abda0043115aab07",
+          "bytes": 3977
+        },
+        {
+          "path": "kniferevive-concierge/references/payments.md",
+          "sha256": "e70bf7d6cc28166ecbe6dd51c4ca2f5c60ed5701b6969a52ab5bcfd312e1d0d8",
+          "bytes": 4063
+        },
+        {
+          "path": "kniferevive-concierge/references/sharpening.md",
+          "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e",
+          "bytes": 2128
+        },
+        {
+          "path": "kniferevive-concierge/SKILL.md",
+          "sha256": "4d868115c9c4b89c7e0a614c1b4a470177151a6ec99e487d7874cdd468a13e4b",
+          "bytes": 8582
+        }
+      ]
+    }
+  }
+}

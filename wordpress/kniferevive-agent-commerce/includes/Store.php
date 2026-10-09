@@ -88,6 +88,11 @@ final class Store {
         global $wpdb;
         if ($wpdb->update(self::table('records'), ['data'=>Domain::canonical($data),'updated'=>time()], ['id'=>$id]) === false) Domain::fail('DATABASE_UNAVAILABLE', 'Cannot persist state.', 503, true);
     }
+    /** Refresh only an independently authorized, unstarted booking checkout. */
+    public static function refreshListing(string $id,array $data,int $expires): void {
+        global $wpdb;
+        if($wpdb->update(self::table('records'),['data'=>Domain::canonical($data),'expires'=>$expires,'updated'=>time()],['id'=>$id,'kind'=>'listing'])===false)Domain::fail('DATABASE_UNAVAILABLE','Cannot refresh checkout.',503);
+    }
     public static function idempotent(string $owner, string $op, string $key, array $input, callable $create): array {
         global $wpdb;
         $scope = Domain::digest([$owner,$op,Domain::key($key)]); $hash = Domain::digest($input);

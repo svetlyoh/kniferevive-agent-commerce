@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-08",
+  "deployed_plugin": "0.5.3",
+  "native_update": "Plugin updated successfully",
+  "readback": {
+    "ListingCheckout": true,
+    "BookingCheckoutFrontend": true
+  },
+  "tests": [
+    {
+      "suite": "listing-checkout",
+      "storage": "legacy",
+      "result": "75 listing checkout assertions passed.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking",
+      "storage": "legacy",
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking-lifecycle",
+      "storage": "legacy",
+      "result": "66 lifecycle assertions passed. No real payment, refund, or email was sent.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "listing-checkout",
+      "storage": "legacy-no-sync",
+      "result": "75 listing checkout assertions passed.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking",
+      "storage": "legacy-no-sync",
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking-lifecycle",
+      "storage": "legacy-no-sync",
+      "result": "66 lifecycle assertions passed. No real payment, refund, or email was sent.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "listing-checkout",
+      "storage": "hpos",
+      "result": "75 listing checkout assertions passed.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking",
+      "storage": "hpos",
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking-lifecycle",
+      "storage": "hpos",
+      "result": "66 lifecycle assertions passed. No real payment, refund, or email was sent.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "listing-checkout",
+      "storage": "hpos-no-sync",
+      "result": "75 listing checkout assertions passed.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking",
+      "storage": "hpos-no-sync",
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "evidence": "synthetic only"
+    },
+    {
+      "suite": "booking-lifecycle",
+      "storage": "hpos-no-sync",
+      "result": "66 lifecycle assertions passed. No real payment, refund, or email was sent.",
+      "evidence": "synthetic only"
+    }
+  ],
+  "browser": {
+    "original_booking_and_intent_preserved": true,
+    "native_checkout_forms": 1,
+    "total_minor": 1299,
+    "one_capacity_hold": true,
+    "order_created": false,
+    "payment_initiated": false,
+    "expired_quote_and_general_session": true,
+    "private_email_grant_attach": true
+  },
+  "live_anonymous_route": "private email link required; no personal details disclosed; stylesheet version 0.5.3",
+  "new_production_order_or_payment": false,
+  "capacity": 4,
+  "trip_fee_minor": 799,
+  "prepaid": true,
+  "pay_before_confirmation": true,
+  "pickup_limit_enabled": false,
+  "no_new_auth_token_or_scope": true,
+  "real_processor_or_refund_settlement": "unverified",
+  "hosting_rest_challenge": "unchanged",
+  "published_clawhub_skill": "0.4.2",
+  "sha256": "00428745d1bf47b1dae39fef3dbe4b27f9d929345dbde7398325400825b06754"
+}

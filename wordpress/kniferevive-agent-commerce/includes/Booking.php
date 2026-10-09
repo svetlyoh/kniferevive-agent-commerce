@@ -257,14 +257,18 @@ final class Booking {
         global $wpdb;return (bool)$wpdb->get_var($wpdb->prepare('SELECT attempt_id FROM '.Store::table('holds')." WHERE attempt_id=%s AND (state='confirmed' OR (state='held' AND expires>%d))",$id,time()));
     }
     /** Called under the booking lock. A payment hold is not merchant appointment confirmation. */
-    private static function reservePrepayment(array $row): void {
+    public static function renewUnstartedPaymentHold(array $row): void {
+        // Caller owns booking + listing locks and has ruled out every order/creation attempt.
+        if($row['data']['booking_state']==='requested')self::reservePrepayment($row,true);
+    }
+    private static function reservePrepayment(array $row,bool $renewUnstarted=false): void {
         $id=$row['id'];$d=$row['data'];$input=$d['input'];$s=Settings::get();
         if(!self::prepaymentEnabled() || $input['mode']==='pay_later_dropoff')Domain::fail('BOOKING_PREPAYMENT_DISABLED','Choose an available prepaid option.',503);
         $c=BookingCoverage::requireService($input);
         if(!$c['prepayment_eligible'] || $c['address_review_required'])Domain::fail('ADDRESS_REVIEW_REQUIRED','This ZIP needs merchant county review before payment.');
         if(!in_array(BookingAuthorization::address($row),['granted_for_order','merchant_review_required'],true))Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Approve sharing fulfillment details first.',403);
         if(self::activePrepaymentHold($id))return;
-        if(!empty($d['listing_intent']))Domain::fail('PAYMENT_UNRESOLVED','Check the original checkout; its payment hold expired. Do not start another payment.',409);
+        if(!empty($d['listing_intent']) && !$renewUnstarted)Domain::fail('PAYMENT_UNRESOLVED','Check the original checkout; its payment hold expired. Do not start another payment.',409);
         if($s['booking_daily_capacity']===null)Domain::fail('CAPACITY_UNCONFIGURED','Daily capacity is not configured.');
         $day=self::day($input['preferred_date']);
         Store::transaction(static function()use($id,$d,$s,$day){
@@ -272,7 +276,7 @@ final class Booking {
             if($wpdb->query($wpdb->prepare("INSERT INTO $table (id,capacity,start_at,end_at,kind,enabled) VALUES(%s,%d,%d,%d,'customer_dropoff',1) ON DUPLICATE KEY UPDATE capacity=VALUES(capacity),enabled=1",$slot,$s['booking_daily_capacity'],strtotime($day['start_at']),strtotime($day['end_at'])))===false)Domain::fail('DATABASE_UNAVAILABLE','Could not reserve the payment window.',503);
             $wpdb->get_row($wpdb->prepare("SELECT id FROM $table WHERE id=%s FOR UPDATE",$slot));
             if(self::remaining($day['date'],true)===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
-            if($wpdb->insert(Store::table('holds'),['slot_id'=>$slot,'attempt_id'=>$id,'expires'=>min(time()+1800,strtotime($day['end_at'])),'state'=>'held'])!==1)Domain::fail('DATABASE_UNAVAILABLE','Could not reserve payment capacity.',503);
+            if($wpdb->query($wpdb->prepare('INSERT INTO '.Store::table('holds')." (slot_id,attempt_id,expires,state) VALUES(%s,%s,%d,'held') ON DUPLICATE KEY UPDATE expires=VALUES(expires),state='held'",$slot,$id,min(time()+1800,strtotime($day['end_at']))))===false)Domain::fail('DATABASE_UNAVAILABLE','Could not reserve payment capacity.',503);
             $d['window']=$day;$d['prepayment_requested_at']=time();Store::update($id,$d);
         });
     }

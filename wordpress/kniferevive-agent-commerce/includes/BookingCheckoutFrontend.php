@@ -10,8 +10,30 @@ final class BookingCheckoutFrontend {
             if(!is_ssl() && wp_get_environment_type()!=='local')Domain::fail('FORBIDDEN','Secure checkout is required.',403);
             $owner=Api::bookingOwner($id);$booking=Booking::get($id,$owner);
             if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
+            if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
+                $post=wp_unslash($_POST);$original=Store::get($booking['data']['listing_intent']??'','listing');
+                ListingFrontend::authorizeForm($original['owner'],$original['id'],$post);
+                if(($post['action']??'')!=='resume' || ($post['accept']??'')!=='yes')Domain::fail('AUTHORIZATION_REQUIRED','Confirm your saved details before continuing.',403);
+                ListingCheckout::resumeBookingCart($id,$owner);
+                wp_safe_redirect(add_query_arg(['krev_agent'=>'booking','booking'=>$id,'payment'=>'1'],home_url('/')),303);exit;
+            }
             $intent=ListingCheckout::bookingCart($booking);
-        }catch(\Throwable $e){wp_die(esc_html($e instanceof Fault?$e->getMessage():'Review the original booking before paying.'),'Booking payment unavailable',['response'=>409,'back_link'=>true]);}
+        }catch(\Throwable $e){
+            PrivateBrand::headers();PrivateBrand::start('Continue your sharpening booking','data-booking-attach="'.esc_url(rest_url(Api::NS.'/bookings/'.$id.'/attach')).'" data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"');
+            echo '<h1>Let’s finish your booking</h1>';
+            if(isset($booking)){
+                echo '<p>Booking reference: '.esc_html($id).'</p><p>Your knife journey: '.esc_html(BookingLifecycle::handoffLabel($booking['data']['input'])).'</p>';
+                if($e instanceof Fault && !in_array($e->codeName,['CART_CONFLICT','INTENT_EXPIRED','SLOT_UNAVAILABLE'],true))echo '<p role="alert">'.esc_html($e->getMessage()).'</p>';
+                elseif(($_SERVER['REQUEST_METHOD']??'GET')==='POST')echo '<p role="alert">'.esc_html($e instanceof Fault?$e->getMessage():'Your original checkout needs merchant review.').'</p>';
+                if(Domain::validId($booking['data']['listing_intent']??'')){
+                    try{
+                        $original=Store::get($booking['data']['listing_intent'],'listing');
+                        if(($original['data']['selection']['booking_id']??'')===$id && $original['owner']===($booking['data']['checkout_owner']??$booking['owner']))ListingFrontend::bookingReview($original,$original['owner']);
+                    }catch(\Throwable $reviewError){echo '<p>Your saved checkout needs merchant review. Nothing was replaced or charged.</p>';}
+                }
+            }else echo '<p>Open the private booking link in your confirmation email to continue. A booking reference alone can’t unlock your personal details.</p>';
+            echo '<p><a href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/'))).'">Open my booking details</a></p>';PrivateBrand::end(true);exit;
+        }
         nocache_headers();header('Referrer-Policy: no-referrer');header('X-Robots-Tag: noindex, nofollow, noarchive');header('X-Content-Type-Options: nosniff');
         // This route uses the installed checkout's normal script/frame policy. The restricted
         // discovery form's self-only CSP would prevent Stripe tokenization and 3DS.

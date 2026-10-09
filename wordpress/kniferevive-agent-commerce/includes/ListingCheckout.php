@@ -270,7 +270,39 @@ final class ListingCheckout {
             || WC()->session->get('krev_listing_owner')!==$row['owner'] || empty($d['approved_at'])
             || !hash_equals($d['browser_binding']??'',self::browserBinding()) || !self::matchesCart($d['selection']))Domain::fail('CART_CONFLICT','Use the original booking payment browser. No cart was replaced.',409);
         if($d['handoff_state']!=='cart_ready' || !empty($d['order_id']))Domain::fail('PAYMENT_UNRESOLVED','Check the original order before another payment.',409);
+        if((int)$row['expires']<time() || ($d['quote_expires']??0)<time())Domain::fail('INTENT_EXPIRED','Your booking is saved. Refresh this unpaid checkout before paying.',410);
         Booking::paymentSelection($booking['id']);return $row;
+    }
+    /** Explicit buyer POST resumes one durable booking intent, never a payment or order. */
+    public static function resumeBookingCart(string $bookingId,string $owner): void {
+        if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
+        Store::lock('booking:'.$bookingId,static function()use($bookingId,$owner){
+            $booking=Booking::get($bookingId,$owner);$id=$booking['data']['listing_intent']??'';
+            Store::lock('listing:'.$id,static function()use($booking,$id){
+                $row=Store::get($id,'listing');$d=$row['data'];
+                $orderStates=array_merge(array_keys(wc_get_order_statuses()),['trash','checkout-draft']);
+                if(($d['selection']['booking_id']??'')!==$booking['id'] || $row['owner']!==($booking['data']['checkout_owner']??$booking['owner']))Domain::fail('FORBIDDEN','Use your private booking link.',403);
+                if(!in_array($booking['data']['booking_state'],['requested','confirmed'],true) || !in_array($d['handoff_state'],['review','cart_ready'],true)
+                    || !empty($d['order_id']) || !empty($d['creation_started']) || !empty($d['native_payment_observed'])
+                    || !empty($booking['data']['order_id']) || !empty($booking['data']['native_order_id'])
+                    || wc_get_orders(['limit'=>1,'status'=>$orderStates,'meta_key'=>'_krev_listing_intent','meta_value'=>$id])
+                    || wc_get_orders(['limit'=>1,'status'=>$orderStates,'meta_key'=>'_krev_service_booking','meta_value'=>$booking['id']]))Domain::fail('PAYMENT_UNRESOLVED','An order or payment may already exist. Review the original order with KnifeRevive; nothing was replaced.',409);
+                self::requireEnabled(true);
+                if(WC()->session->get('order_awaiting_payment') || WC()->session->get('store_api_draft_order'))Domain::fail('CART_CONFLICT','This browser has a pending order. Review it first; nothing was replaced.',409);
+                $ours=WC()->session->get('krev_listing_intent')===$id && WC()->session->get('krev_listing_owner')===$row['owner']
+                    && WC()->session->get('krev_booking_id')===$booking['id'] && hash_equals($d['browser_binding']??'',self::browserBinding()) && self::matchesCart($d['selection']);
+                if(!WC()->cart->is_empty() && !$ours)Domain::fail('CART_CONFLICT','This browser has another cart. Finish or clear it yourself, then return to this booking. Nothing was replaced.',409);
+                if($ours && (int)$row['expires']>=time() && ($d['quote_expires']??0)>=time() && Booking::activePrepaymentHold($booking['id'])){Booking::paymentSelection($booking['id']);return;}
+                Booking::renewUnstartedPaymentHold($booking);Booking::paymentSelection($booking['id']);
+                $fresh=self::price($d['selection'],$d['context']);
+                if($fresh['estimate_only'])Domain::fail('INVALID_REQUEST','Complete your billing details on the booking page first.');
+                // Only a verified copy of this unstarted cart can be cleared. Other carts are untouched.
+                if($ours)WC()->cart->empty_cart();
+                $d['quote']=$fresh;$d['quote_expires']=time()+600;$d['handoff_state']='review';
+                Store::refreshListing($id,$d,time()+1800);
+                self::handoff($id,$row['owner'],$fresh['quote_hash']);
+            });
+        });
     }
     /** Called only after the first-party form's CSRF + quote-bound buyer acceptance. */
     public static function handoff(string $id,string $owner,string $hash): string {
@@ -314,7 +346,15 @@ final class ListingCheckout {
     private static function nativeIntent(): ?array {
         $id=WC()->session?WC()->session->get('krev_listing_intent'):null;
         if(!$id)return null;
-        $owner=(string)WC()->session->get('krev_listing_owner');$row=self::get($id,$owner,true);
+        $owner=(string)WC()->session->get('krev_listing_owner');$row=Store::get($id,'listing',$owner);
+        // A refreshed booking uses its independent booking grant and browser binding.
+        // Never revive or extend the expired general shopper token.
+        if(empty($row['data']['selection']['booking_id']))$row=self::get($id,$owner,true);
+        else{
+            $booking=Store::get($row['data']['selection']['booking_id'],'booking');
+            if(($booking['data']['listing_intent']??'')!==$id || ($booking['data']['checkout_owner']??$booking['owner'])!==$owner
+                || WC()->session->get('krev_booking_id')!==$booking['id'])Domain::fail('FORBIDDEN','Use the original private booking checkout.',403);
+        }
         if(!hash_equals($row['data']['browser_binding']??'',self::browserBinding()))Domain::fail('FORBIDDEN','This intent belongs to a different checkout browser.',403);
         return $row;
     }
