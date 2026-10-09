@@ -8,12 +8,18 @@ final class Booking {
     /** Five selectable API choices; canonical storage keeps existing pickup/return fields. */
     public static function handoffOptions(): array {
         $s=Settings::get();
-        return [
+        $options=[
             ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect at shop · prepay','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
             ['mode'=>'prepaid_dropoff_delivery','return_mode'=>'courier_delivery','label'=>'You drop off · they deliver · prepay','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
             ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'They pick up from you · you collect at shop · prepay','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
             ['mode'=>'prepaid_pickup_delivery','return_mode'=>'courier_delivery','label'=>'They pick up + deliver · comeback combo · prepay','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
             ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect at shop · pay at pickup · nothing due now','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false]];
+        foreach($options as &$choice){
+            $choice['plan_label']=$choice['label'];
+            $amount=$choice['transport_fee_minor']%100===0?(string)intdiv($choice['transport_fee_minor'],100):Domain::decimal($choice['transport_fee_minor']);
+            $choice['label'].=' — $'.$amount.($choice['mode']==='prepaid_pickup_delivery'?' round-trip fee':' trip fee');
+        }unset($choice);
+        return $options;
     }
     public static function accessToken(array $row): string {
         $body=$row['id'].'.'.$row['data']['access_expires'];return $body.'.'.hash_hmac('sha256','booking-access:'.$body,wp_salt('auth'));

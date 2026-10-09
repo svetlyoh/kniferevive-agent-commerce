@@ -1,5 +1,11 @@
 # Changelog
 
+## Editable trip fees — plugin 0.5.12, skill 0.5.13 — October 9, 2026
+
+- Add dollar-value single-trip and comeback-combo controls with a dedicated Save trip fees action in WooCommerce → Agent Commerce. Require merchant capability and a nonce; reject invalid prices without partial updates.
+- Include current numeric trip fees in public API option labels and preserve existing booking snapshots. Website labels use “trip fee” and “round-trip fee”; explain once-per-order charging separately.
+- Update skill templates to omit “/order” and fetch current merchant fee settings before displaying new options. Payment, consent, ZIP coverage and existing-order rules stay unchanged.
+
 ## Exact bot button fees — skill 0.5.12 — October 9, 2026
 
 - Require complete visible option labels with numeric fees in each button: $6 for one pickup or delivery, $11 round-trip fee for the comeback combo, and $0 for customer transport.

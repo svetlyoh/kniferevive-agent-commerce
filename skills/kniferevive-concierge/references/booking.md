@@ -28,7 +28,7 @@ Do not infer county from a ZIP prefix or claim an unknown ZIP is outside the reg
 Offer five choices from live `handoff_options` in this order (backend 0.5.11).
 Use the complete button templates and pre-send fee check in SKILL.md's
 “Required visible fee labels”: every button must show its exact numeric trip fee;
-the combo explicitly says `$11 round-trip fee/order`. Never display an amount-free
+the combo explicitly says `$11 round-trip fee`. Never display an amount-free
 “+ fee” or “+ trip fee”. Keep the unpaid option last with “nothing due now”:
 
 1. `prepaid_dropoff`, `customer_collection`: you drop off + collect at shop, prepay; $0 trip fee.

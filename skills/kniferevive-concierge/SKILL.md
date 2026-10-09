@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with prepaid drop-off/collection, delivery-only, pickup, pickup plus delivery, or drop-off/pay at collection. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.5.12"
+  version: "0.5.13"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -68,16 +68,16 @@ the same complete labels for a numbered list when the host cannot render buttons
 Use these templates, replacing `S` with the selected knives' sharpening subtotal
 formatted in USD (for example `$7`); never send the placeholder to the customer:
 
-1. `You drop off + collect at shop · prepay — S + $0 trip fee/order`
-2. `You drop off → they deliver · prepay — S + $6 trip fee/order`
-3. `They pick up → you collect at shop · prepay — S + $6 trip fee/order`
-4. `They pick up + deliver · comeback combo · prepay — S + $11 round-trip fee/order`
-5. `You drop off + collect at shop · pay at pickup — nothing due now · $0 trip fee/order`
+1. `You drop off + collect at shop · prepay — S + $0 trip fee`
+2. `You drop off → they deliver · prepay — S + $6 trip fee`
+3. `They pick up → you collect at shop · prepay — S + $6 trip fee`
+4. `They pick up + deliver · comeback combo · prepay — S + $11 round-trip fee`
+5. `You drop off + collect at shop · pay at pickup — nothing due now · $0 trip fee`
 
 State separately: “Trip fees are per order, before applicable tax. For pay at
 pickup, the sharpening cost is due when you collect your knives.” For a verified
-$7 sharpening subtotal, buttons 2 and 3 must literally show `$7 + $6 trip fee/order`,
-and button 4 must show `$7 + $11 round-trip fee/order`. Do not replace these with
+$7 sharpening subtotal, buttons 2 and 3 must literally show `$7 + $6 trip fee`,
+and button 4 must show `$7 + $11 round-trip fee`. Do not replace these with
 “+ fee”, “+ fees” or “+ trip fee” without the numeric amount, omit who collects the
 knives, or move the unpaid option ahead of the four prepaid choices.
 
@@ -86,6 +86,12 @@ fee, both single-trip labels include $6, the combo includes $11 and “round-tri
 and option 5 says “nothing due now” and is last. Correct any incomplete label
 before sending. This display requirement grants no payment or booking authority.
 
+For new choices, fetch `/booking-options` immediately before displaying prices.
+The merchant edits both fees in WooCommerce → Agent Commerce → Sharpening trip
+fees; a bot reinstall is not needed for a price change. API `label` contains the
+current numeric fee; `plan_label` is only the fee-free journey description. Keep
+the numeric amount in your button even when shortening the journey text. Never
+show `trip fee/order` in a customer button; explain per-order charging separately.
 Use verified live `transport_fee_minor` values when available; if the merchant
 changes its fee schedule, render those exact amounts and disclose the change.
 If API access is challenged, the $6/$11 amounts above are the latest published
@@ -192,7 +198,7 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the versioned 0.5.12 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.5.12/skills/kniferevive-concierge/references/installation.md).
+[in the versioned 0.5.13 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.5.13/skills/kniferevive-concierge/references/installation.md).
 Those platforms have different skill-import abilities; a chat prompt is not
 proof of installation. This section is installer help, not an instruction to
 run shell commands during a shopping task.

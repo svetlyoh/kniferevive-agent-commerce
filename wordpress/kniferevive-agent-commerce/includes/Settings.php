@@ -132,6 +132,24 @@ final class Settings {
         $zips=preg_split('/[\s,;]+/',trim($text),-1,PREG_SPLIT_NO_EMPTY);$s=self::get();$s['booking_pickup_limit_enabled']=$limited;$s['booking_pickup_postal_codes']=$zips;
         update_option('krev_agent_settings',self::validate($s),false);
     }
+    public static function saveTripFees(string $single,string $combined): void {
+        if(!current_user_can('manage_woocommerce'))Domain::fail('FORBIDDEN','Only a WooCommerce administrator can change trip fees.',403);
+        $s=self::get();
+        foreach(['booking_trip_fee_minor'=>[$single,100000],'booking_round_trip_fee_minor'=>[$combined,200000]] as $key=>[$amount,$maximum]){
+            $amount=trim($amount);
+            if(!preg_match('/^([0-9]{1,4})(?:\.([0-9]{1,2}))?$/D',$amount,$parts))Domain::fail('INVALID_SETTINGS','Enter a nonnegative dollar amount with at most two decimal places.');
+            $minor=(int)$parts[1]*100+(int)str_pad($parts[2]??'',2,'0');
+            if($minor>$maximum)Domain::fail('INVALID_SETTINGS','One-trip fees cannot exceed $1,000; combined fees cannot exceed $2,000.');$s[$key]=$minor;
+        }
+        update_option('krev_agent_settings',self::validate($s),false);
+    }
+    private static function tripFeesForm(): void {
+        $s=self::get();
+        echo '<section id="sharpening-trip-fees"><h2>Sharpening trip fees</h2><p>Set the fee per order in dollars. One trip means they pick up from the customer or deliver back. The comeback combo includes both pickup and return delivery. Sharpening is charged separately; configured tax is added at payment.</p><form method="post">';wp_nonce_field('krev_booking_trip_fees');
+        echo '<p><label for="booking-single-trip">One pickup or delivery trip ($ per order)</label><br><input id="booking-single-trip" name="booking_single_trip_dollars" type="number" min="0" max="1000" step="0.01" required value="'.esc_attr(Domain::decimal($s['booking_trip_fee_minor'])).'"></p>';
+        echo '<p><label for="booking-combined-trip">Pickup + delivery · comeback combo ($ total per order)</label><br><input id="booking-combined-trip" name="booking_combined_trip_dollars" type="number" min="0" max="2000" step="0.01" required value="'.esc_attr(Domain::decimal($s['booking_round_trip_fee_minor'])).'"></p>';
+        echo '<p><button class="button button-primary" name="krev_booking_trip_fees_save">Save trip fees</button></p><p>Applies to new booking quotes on the website and bot API. Existing bookings and orders keep their quoted fees. Customer drop-off and collection have a $0 trip fee. These are booking fees, separate from parcel shipping rates.</p></form></section>';
+    }
     private static function pickupCoverageForm(): void {
         $s=self::get();echo '<section id="pickup-zip-coverage"><h2>Prepaid pickup ZIP codes</h2><p>Leave custom coverage off for all supported Contra Costa and Santa Clara ZIPs. Turn it on to serve only the ZIPs below; an empty custom list disables pickup. Customer drop-off prepayment keeps its county check. Existing orders are retained for merchant review.</p><form method="post">';wp_nonce_field('krev_booking_pickup');
         echo '<label><input type="checkbox" name="booking_pickup_limit_enabled" value="yes"'.checked($s['booking_pickup_limit_enabled'],true,false).'> Use a custom pickup ZIP list</label><p><label for="pickup-zip-list">Available prepaid pickup ZIP codes (one per line or separated by commas)</label></p><textarea id="pickup-zip-list" name="booking_pickup_postal_codes" rows="8" cols="40">'.esc_textarea(implode("\n",$s['booking_pickup_postal_codes'])).'</textarea><p><button class="button button-primary" name="krev_booking_pickup_save">Save pickup ZIP codes</button></p></form></section>';
@@ -139,6 +157,11 @@ final class Settings {
     public static function page(): void {
         if (!current_user_can('manage_woocommerce')) return;
         $notice = '';
+        if(isset($_POST['krev_booking_trip_fees_save'])){
+            check_admin_referer('krev_booking_trip_fees');
+            try{self::saveTripFees((string)wp_unslash($_POST['booking_single_trip_dollars']??''),(string)wp_unslash($_POST['booking_combined_trip_dollars']??''));$notice='Trip fees saved for new booking quotes. Existing bookings and orders keep their quoted fees.';}
+            catch(\Throwable $e){$notice=$e instanceof Fault?$e->getMessage():'Trip fees could not be saved.';}
+        }
         if(isset($_POST['krev_booking_pickup_save'])){
             check_admin_referer('krev_booking_pickup');
             try{self::savePickupCoverage(($_POST['booking_pickup_limit_enabled']??'')==='yes',(string)wp_unslash($_POST['booking_pickup_postal_codes']??''));$notice='Pickup ZIP coverage saved. Existing orders remain available for merchant review.';}
@@ -181,7 +204,7 @@ final class Settings {
         }
         echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><h2 id="daily-sharpening-capacity">Daily sharpening capacity</h2><p>Maximum confirmed jobs per open day in America/Los_Angeles. A job may contain several knives. Requested days still need merchant confirmation. Lowering the limit does not cancel existing confirmed jobs.</p><form method="post">';
         wp_nonce_field('krev_booking_capacity');
-        echo '<label for="booking_daily_capacity">Jobs per open day</label> <input id="booking_daily_capacity" name="booking_daily_capacity" type="number" min="1" max="200" step="1" required value="'.esc_attr((string)(self::get()['booking_daily_capacity']??'')).'"> <button class="button button-primary" name="krev_booking_capacity_save">Save daily capacity</button></form>';self::pickupCoverageForm();echo '<h2>Advanced settings</h2><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>Sharpening booking transport: booking_trip_fee_minor sets pickup ($6 = 600); booking_round_trip_fee_minor sets pickup plus return delivery ($11 = 1100 total). Customer drop-off and collection have no transport fee. New bookings retain their quoted transport price; existing orders keep their original financial records. The legacy transport adapter has separate settings.</p><form method="post">';
+        echo '<label for="booking_daily_capacity">Jobs per open day</label> <input id="booking_daily_capacity" name="booking_daily_capacity" type="number" min="1" max="200" step="1" required value="'.esc_attr((string)(self::get()['booking_daily_capacity']??'')).'"> <button class="button button-primary" name="krev_booking_capacity_save">Save daily capacity</button></form>';self::tripFeesForm();self::pickupCoverageForm();echo '<h2>Advanced settings</h2><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>The trip fee fields above update booking_trip_fee_minor and booking_round_trip_fee_minor (integer cents). Customer drop-off and collection have no transport fee. New bookings retain their quoted transport price; existing orders keep their original financial records. The legacy transport adapter has separate settings.</p><form method="post">';
         wp_nonce_field('krev_agent_settings');
         echo '<textarea name="settings" rows="28" style="width:100%;font-family:monospace">' . esc_textarea(wp_json_encode(self::get(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea><p><button class="button button-primary" name="krev_agent_save">Save validated settings</button></p></form><p>Stripe secrets use server constants, never this form or the public skill. Google Pay availability is decided by Stripe checkout and the customer device. Review retained attempts and change requests below; process refunds through existing merchant workflows.</p><table class="widefat"><tr><th>Type</th><th>Reference</th><th>State</th><th>WooCommerce order</th></tr>';
         foreach (Store::backlog(100) as $row) {

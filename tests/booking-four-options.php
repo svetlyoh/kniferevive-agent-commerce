@@ -21,6 +21,17 @@ $options=Api::dispatch('bookingOptions',new WP_REST_Request('GET','/kniferevive-
 fourCheck(count($options['modes'])===5 && $options['modes']===array_column($options['handoff_options'],'mode'),'REST discovery advertises five independently selectable modes');
 $cap=Api::dispatch('capabilities',new WP_REST_Request('GET','/kniferevive-agent/v1/capabilities'))->get_data();
 fourCheck($cap['booking']['handoff_options']===$options['handoff_options'] && $options['adapter_version']===\KnifeRevive\AgentCommerce\VERSION,'capabilities and booking options share the same versioned five-choice menu');
+fourCheck(str_contains($options['handoff_options'][1]['label'],'$6 trip fee') && str_contains($options['handoff_options'][2]['label'],'$6 trip fee') && str_contains($options['handoff_options'][3]['label'],'$11 round-trip fee'),'API button labels explicitly include current numeric trip prices');
+fourCheck(!str_contains(json_encode(array_column($options['handoff_options'],'label')),'fee/order'),'customer option labels omit fee slash order');
+ob_start();Settings::page();$adminForm=ob_get_clean();fourCheck(str_contains($adminForm,'Save trip fees') && str_contains($adminForm,'name="booking_single_trip_dollars"') && str_contains($adminForm,'value="6.00"') && str_contains($adminForm,'value="11.00"'),'merchant plugin exposes dollar-valued single and combined trip controls');
+foreach(['-1','1.999','1e2','six','','1000.01'] as $bad)fourReject(static fn()=>Settings::saveTripFees($bad,'11'),'INVALID_SETTINGS');
+fourReject(static fn()=>Settings::saveTripFees('6','2000.01'),'INVALID_SETTINGS');
+fourCheck(Settings::get()===$s,'invalid fee saves cannot partially update settings');
+wp_set_current_user($vendor);fourReject(static fn()=>Settings::saveTripFees('6','11'),'FORBIDDEN');wp_set_current_user($admin);
+Settings::saveTripFees('6.25','11.50');$newSettings=Settings::get();$expected=$s;$expected['booking_trip_fee_minor']=625;$expected['booking_round_trip_fee_minor']=1150;fourCheck($newSettings===$expected,'fee editor preserves capacity coverage payment gates tax and unrelated settings');
+$newOptions=Api::dispatch('bookingOptions',new WP_REST_Request('GET','/kniferevive-agent/v1/booking-options'))->get_data();
+fourCheck($newOptions['merchant_trip_fee_minor']===625 && $newOptions['merchant_round_trip_fee_minor']===1150 && str_contains($newOptions['handoff_options'][2]['label'],'$6.25 trip fee') && str_contains($newOptions['handoff_options'][3]['label'],'$11.50 round-trip fee'),'new merchant fee settings immediately reach structured API and visible labels');
+Settings::saveTripFees('6','11');fourCheck(Settings::get()===$s,'merchant dollar controls restore exact six and eleven dollar prices');
 $comboKey=Domain::id();$aliasInput=array_replace($base,['mode'=>'prepaid_pickup_delivery','postal_code'=>'94565']);
 $req=new WP_REST_Request('POST','/kniferevive-agent/v1/bookings');$req->set_header('Content-Type','application/json');$req->set_header('X-Krev-Agent-Session',Domain::token($owner));$req->set_header('Idempotency-Key',$comboKey);$req->set_body(wp_json_encode($aliasInput));$aliasResult=Api::dispatch('bookingCreate',$req);
 fourCheck($aliasResult instanceof WP_REST_Response && $aliasResult->get_data()['return_mode']==='courier_delivery' && $aliasResult->get_data()['merchant_trip_fee_minor']===1100,'REST fourth mode defaults to delivery and quotes the total eleven-dollar fee');
@@ -46,7 +57,7 @@ foreach([['prepaid_dropoff','customer_collection',0],['prepaid_pickup','customer
  $intent=Booking::checkout($row['id'],$owner);$q=ListingCheckout::quote($intent['id'],['billing'=>$address,'email'=>'synthetic@example.invalid','payment_method'=>'stripe'],$owner,Domain::id());
  fourCheck($q['data']['quote']['total_minor']===500+$fee && $q['data']['quote']['shipping_minor']===0,'native all-in quote includes exact transport fee once');
 }
-$pickup=$records[1];$combo=$records[2];$s['booking_trip_fee_minor']=999;$s['booking_round_trip_fee_minor']=1999;update_option('krev_agent_settings',$s,false);
+$pickup=$records[1];$combo=$records[2];Settings::saveTripFees('9.99','19.99');
 fourCheck(Booking::transportFee(Store::get($pickup['id']))===600 && Booking::transportFee(Store::get($combo['id']))===1100,'settings changes do not reprice an existing booking');update_option('krev_agent_settings',array_replace($s,['booking_trip_fee_minor'=>600,'booking_round_trip_fee_minor'=>1100]),false);
 // Logged-in isolation is crucial: a changed cookie alone would still share the user ID.
 wc_load_cart();$storefront=WC()->session;$storefrontCart=WC()->cart;WC()->cart->empty_cart();WC()->cart->add_to_cart($p->get_id(),2);$storefront->set('order_awaiting_payment',12345);$storefront->set('store_api_draft_order',54321);$storefront->save_data();
