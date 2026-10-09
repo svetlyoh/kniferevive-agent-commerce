@@ -1,5 +1,11 @@
 # Changelog
 
+## Clear pickup/return labels 0.5.8 — October 9, 2026
+
+- Use concise “they pick up” / “they deliver” wording and explicitly say when the customer collects knives at the shop.
+- Show exact trip fees on every bot button and shorten the live selector price suffix. Keep the unpaid option last.
+- Copy-only update; five API modes, $6 single trip, $11 comeback combo, taxability and payment workflow remain unchanged.
+
 ## Five choices, per-order trip fees and two screens 0.5.7 — October 9, 2026
 
 - Add delivery-only after customer drop-off and advertise all five choices, with unpaid drop-off/collection last. One pickup or delivery is $6; the comeback combo remains $11.

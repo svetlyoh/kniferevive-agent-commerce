@@ -1,0 +1,50 @@
+{
+  "version": "0.5.8",
+  "scope": "Copy-only handoff labels and concise price suffix; payment and pricing behavior unchanged.",
+  "production_update_reported_success": true,
+  "public_form": {
+    "assetVersion": [
+      "https://kniferevive.com/wp-content/plugins/kniferevive-agent-commerce/assets/booking.js?ver=0.5.8"
+    ],
+    "heading": "Your knife game plan",
+    "options": [
+      {
+        "feeMinor": "0",
+        "label": "1. You drop off + collect at shop \u00b7 prepay \u2014 $10.00 + $0.00 trip fee/order",
+        "mode": "prepaid_dropoff"
+      },
+      {
+        "feeMinor": "600",
+        "label": "2. You drop off \u00b7 they deliver \u00b7 prepay \u2014 $10.00 + $6.00 trip fee/order",
+        "mode": "prepaid_dropoff_delivery"
+      },
+      {
+        "feeMinor": "600",
+        "label": "3. They pick up from you \u00b7 you collect at shop \u00b7 prepay \u2014 $10.00 + $6.00 trip fee/order",
+        "mode": "prepaid_pickup"
+      },
+      {
+        "feeMinor": "1100",
+        "label": "4. They pick up + deliver \u00b7 comeback combo \u00b7 prepay \u2014 $10.00 + $11.00 trip fee/order",
+        "mode": "prepaid_pickup_delivery"
+      },
+      {
+        "feeMinor": "0",
+        "label": "5. You drop off + collect at shop \u00b7 pay at pickup \u2014 $10.00 + $0.00 trip fee/order",
+        "mode": "pay_later_dropoff"
+      }
+    ],
+    "subtotal": "Sharpening $10.00 + $6.00 trip fee per order = $16.00 before tax. 1 merchant trip."
+  },
+  "validation": {
+    "changed_php_lint": "pass",
+    "javascript_syntax": "pass",
+    "skill_frontmatter": "pass",
+    "packaged_files_match_source": true,
+    "relative_references_exist": true,
+    "new_financial_test_performed": false,
+    "prior_0_5_7_assertions_not_rerun": 1416
+  },
+  "production_booking_created": false,
+  "clawhub_published_version": "0.4.2"
+}

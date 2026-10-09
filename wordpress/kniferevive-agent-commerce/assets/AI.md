@@ -10,14 +10,14 @@ The installable skill is `skills/kniferevive-concierge/SKILL.md`; OpenAPI is at
 
 Sharpening bookings use `booking.enabled`, independently of legacy direct service
 payments. GET `/booking-options` and `/booking-availability` for live services,
-Pacific service days and request/payment readiness. Backend 0.5.7 exposes five
+Pacific service days and request/payment readiness. Backend 0.5.8 exposes five
 distinct modes and a five-choice `handoff_options` menu in this order:
 
-1. You drop off and collect; prepay online — $0 trip fee.
-2. You drop off; we bring it back — one $6 delivery trip per order.
-3. We pick up; you collect — one $6 pickup trip per order.
-4. We pick up and deliver back; comeback combo — $11 total per order.
-5. You drop off and collect; pay at pickup — $0 trip fee, no ZIP check.
+1. You drop off + collect at shop · prepay — $0 trip fee.
+2. You drop off · they deliver · prepay — $6 trip fee per order.
+3. They pick up from you · you collect at shop · prepay — $6 trip fee per order.
+4. They pick up + deliver · comeback combo · prepay — $11 trip fee per order.
+5. You drop off + collect at shop · pay at pickup — $0 trip fee, no ZIP check.
 
 All choices also charge sharpening. Display service cost + trip fee; final tax
 uses configured rates. New trip fees are taxable native fees, not parcel shipping.
@@ -154,7 +154,7 @@ payment/fulfillment/scheduling states without order keys, PII or processor IDs.
 `not_booked`. After uncertainty, resume the original checkout/status; do not
 start another charge. Real processor verification remains a launch requirement.
 
-## Sharpening bookings (backend 0.5.7; check deployed capabilities)
+## Sharpening bookings (backend 0.5.8; check deployed capabilities)
 
 Read `/booking-options` and its five `handoff_options`, live service costs and
 trip fees before proposing choices. Paid drop-off/collection, delivery-only,

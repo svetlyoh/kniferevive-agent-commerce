@@ -25,16 +25,16 @@ Unknown or cross-county ZIPs need merchant street-address review. The bundled
 2020 Census ZCTA index is a coverage screen, not a complete current USPS directory.
 Do not infer county from a ZIP prefix or claim an unknown ZIP is outside the region.
 
-Offer five choices from live `handoff_options` in this order (backend 0.5.7):
+Offer five choices from live `handoff_options` in this order (backend 0.5.8):
 
-1. `prepaid_dropoff`, `customer_collection`: you drop off and collect, prepay
-   online; $0 trip fee.
+1. `prepaid_dropoff`, `customer_collection`: you drop off + collect at shop, prepay; $0 trip fee.
 2. `prepaid_dropoff_delivery`, optional `courier_delivery`: you drop off,
-   “we bring it back”; one $6 delivery trip.
-3. `prepaid_pickup`, `customer_collection`: we pick up, you collect; one $6 trip.
-4. `prepaid_pickup_delivery`, optional `courier_delivery`: pickup and return
-   delivery, the “comeback combo”; $11 total trip fee.
-5. `pay_later_dropoff`, `customer_collection`: you drop off and collect, pay at
+   they deliver to you, prepay; $6 trip fee.
+3. `prepaid_pickup`, `customer_collection`: they pick up from you, you collect
+   at shop, prepay; $6 trip fee.
+4. `prepaid_pickup_delivery`, optional `courier_delivery`: they pick up + deliver
+   to you, the “comeback combo”, prepay; $11 total trip fee.
+5. `pay_later_dropoff`, `customer_collection`: you drop off + collect at shop, pay at
    pickup; $0 trip fee and no online payment.
 
 Trip fees apply once per order, never per knife; all options also charge the

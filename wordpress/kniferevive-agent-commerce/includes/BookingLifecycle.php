@@ -51,7 +51,7 @@ final class BookingLifecycle {
         }catch(\Throwable $e){return $rates;}
     }
     public static function handoffLabel(array $input): string {
-        return (($input['mode']??'')==='prepaid_pickup'?'We pick up':'You drop off').' → '.(($input['return_mode']??'')==='courier_delivery'?'we deliver':'you collect');
+        return (($input['mode']??'')==='prepaid_pickup'?'They pick up from you':'You drop off at shop').' → '.(($input['return_mode']??'')==='courier_delivery'?'they deliver to you':'you collect at shop');
     }
     public static function order(array $row): ?\WC_Order {
         return BookingOrderBridge::linked($row)??BookingEvents::nativeOrder($row);

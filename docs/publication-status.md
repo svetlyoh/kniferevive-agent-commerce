@@ -1,12 +1,12 @@
 # Publication status
 
-## Current backend 0.5.7; published skill 0.4.2
+## Current backend 0.5.8; published skill 0.4.2
 
-Agent Commerce **0.5.7** and Seller Orders **1.1.6** are deployed with owner-approved prepaid sharpening requests, seller cancellation/refund receipt handling, administrator pickup ZIP controls and capacity 4. The [0.5.7 implementation](booking-trip-fees-two-screens-0.5.7.md) advertises five choices, with unpaid customer drop-off/collection last. One pickup or delivery costs $6 per order; pickup plus delivery is $11. New trip fees are taxable native fees, independent of the parcel shipping policy. Existing records retain their original financial treatment.
+Agent Commerce **0.5.8** and Seller Orders **1.1.6** are deployed with owner-approved prepaid sharpening requests, seller cancellation/refund receipt handling, administrator pickup ZIP controls and capacity 4. The [0.5.8 label patch](booking-clear-labels-0.5.8.md) makes who transports each leg and the trip fee explicit. The [0.5.7 implementation](booking-trip-fees-two-screens-0.5.7.md) advertises five choices, with unpaid customer drop-off/collection last. One pickup or delivery costs $6 per order; pickup plus delivery is $11. New trip fees are taxable native fees, independent of the parcel shipping policy. Existing records retain their original financial treatment.
 
 “Your knife game plan” leads directly to KnifeRevive secure payment, preserving the ordinary store cart. The compact expandable review removes repeated technical states. Different billing details do not replace the consent-bound service address. Unpaid customer drop-off skips ZIP checking; all four prepaid choices require eligible coverage and completed payment before seller submission. Production source and settings match the tested package. See [the evidence](booking-trip-fees-two-screens-0.5.7.json).
 
-GitHub skill source is **0.5.7**. ClawHub remains **0.4.2**; there is no new registry audit, card, immutable release or certification claim. Actual processor settlement, headless API access and the buyer bot's installed runtime remain unverified; earlier anonymous API traffic received a hosting browser challenge. Lightning readiness remains false. See [the payment runbook](prepaid-booking-0.5.1.md) and [the historical four-mode correction](four-api-modes-0.5.6.md).
+GitHub skill source is **0.5.8**. ClawHub remains **0.4.2**; there is no new registry audit, card, immutable release or certification claim. Actual processor settlement, headless API access and the buyer bot's installed runtime remain unverified; earlier anonymous API traffic received a hosting browser challenge. Lightning readiness remains false. See [the payment runbook](prepaid-booking-0.5.1.md) and [the historical four-mode correction](four-api-modes-0.5.6.md).
 
 ## Historical 0.4.2 publication and backend deployment
 

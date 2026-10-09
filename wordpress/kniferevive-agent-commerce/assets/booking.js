@@ -47,7 +47,7 @@
       const pricing = form.querySelector('[data-trip-minor]');
       const tripFee = trips() === 2 ? Number(pricing?.dataset.roundTripMinor || 0) : trips() * Number(pricing?.dataset.tripMinor || 0);
       const usd = value => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(value/100);
-      for (const option of mode?.options || []) if(option.dataset.label) option.textContent=`${option.dataset.label} — ${usd(subtotal)} sharpening + ${usd(Number(option.dataset.feeMinor))} trip fee / order`;
+      for (const option of mode?.options || []) if(option.dataset.label) option.textContent=`${option.dataset.label} — ${usd(subtotal)} + ${usd(Number(option.dataset.feeMinor))} trip fee/order`;
       estimate.textContent = `Sharpening: ${usd(subtotal)} · Trip fee: ${usd(tripFee)} per order · Estimated subtotal: ${usd(subtotal+tripFee)}, before taxes and disclosed fees. ${paid() ? 'Final tax and total on the payment screen.' : 'Pay when you collect your knives.'}`;
       const handoffCost = form.querySelector('#handoff-cost'); if(handoffCost)handoffCost.textContent=`Sharpening ${usd(subtotal)} + ${usd(tripFee)} trip fee per order = ${usd(subtotal+tripFee)} before tax. ${trips() ? `${trips()} merchant trip${trips()===1?'':'s'}.` : 'You drop off and collect.'}`;
       quantities[0].setCustomValidity(quantities.some(q=>Number(q.value)>0) ? '' : 'Choose at least one knife.');

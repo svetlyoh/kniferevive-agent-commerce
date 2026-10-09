@@ -5,15 +5,15 @@ defined('ABSPATH') || exit;
 /** Requests never charge. An independently approved bridge may create one unpaid drop-off order. */
 final class Booking {
     public const MODES = ['prepaid_dropoff','prepaid_dropoff_delivery','prepaid_pickup','prepaid_pickup_delivery','pay_later_dropoff'];
-    /** Four selectable API choices; canonical storage keeps existing pickup/return fields. */
+    /** Five selectable API choices; canonical storage keeps existing pickup/return fields. */
     public static function handoffOptions(): array {
         $s=Settings::get();
         return [
-            ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect · prepay online','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
-            ['mode'=>'prepaid_dropoff_delivery','return_mode'=>'courier_delivery','label'=>'You drop off · we bring it back','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
-            ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'We pick up · you collect','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
-            ['mode'=>'prepaid_pickup_delivery','return_mode'=>'courier_delivery','label'=>'Pickup + delivery · comeback combo','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
-            ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect · pay at pickup','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false]];
+            ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect at shop · prepay','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'prepaid_dropoff_delivery','return_mode'=>'courier_delivery','label'=>'You drop off · they deliver · prepay','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'They pick up from you · you collect at shop · prepay','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'prepaid_pickup_delivery','return_mode'=>'courier_delivery','label'=>'They pick up + deliver · comeback combo · prepay','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect at shop · pay at pickup','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false]];
     }
     public static function accessToken(array $row): string {
         $body=$row['id'].'.'.$row['data']['access_expires'];return $body.'.'.hash_hmac('sha256','booking-access:'.$body,wp_salt('auth'));

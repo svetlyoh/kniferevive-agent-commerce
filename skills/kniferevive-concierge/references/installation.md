@@ -2,9 +2,9 @@
 
 **KnifeRevive Concierge** helps an agent look up relevant KnifeRevive technology listings and San Francisco Bay Area knife-sharpening offerings, compare facts and terms, and prepare a **customer-authorized** checkout handoff only when the merchant's documented capabilities are actually enabled. Browsing and quotes are free; products, sharpening, taxes, fulfillment, and applicable fees are not.
 
-GitHub skill version: **0.5.7**. The published ClawHub version remains **0.4.2**;
+GitHub skill version: **0.5.8**. The published ClawHub version remains **0.4.2**;
 registry installation does not download this GitHub update. Earlier registry
-audits do not certify 0.5.7. Installation does not enable merchant payment gates;
+audits do not certify 0.5.8. Installation does not enable merchant payment gates;
 check live capabilities before use.
 
 Official listing: https://clawhub.ai/svetlyoh/skills/kniferevive-concierge  
@@ -20,7 +20,7 @@ chat prompt alone.
 
 Resolve the current `main` commit, then obtain the entire skill folder at that
 commit: `SKILL.md`, `LICENSE`, and all six files in `references/`. Verify installed
-files against that same commit and check `metadata.version: "0.5.7"`. Backend
+files against that same commit and check `metadata.version: "0.5.8"`. Backend
 and skill metadata are separate version declarations. A download pinned
 to older commit `b80efa7` still contains skill 0.5.1 even though its backend is 0.5.4.
 
