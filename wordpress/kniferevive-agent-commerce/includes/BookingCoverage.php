@@ -17,13 +17,13 @@ final class BookingCoverage {
         $review=$unknown || ($counties && (bool)array_diff($counties,$bay)) || ($eligible && (bool)array_diff($counties,$pickup));
         $state=$review?'address_review_required':($eligible?'eligible':($counties?'bay_area_dropoff_only':'outside_bay_area'));
         $message=match($state){
-            'eligible'=>'Pickup and prepayment are offered in Contra Costa and Santa Clara counties, subject to booking confirmation and payment availability.',
-            'bay_area_dropoff_only'=>'Pickup service is not available in your area but will be available in the near future.',
-            'outside_bay_area'=>'We do not currently offer sharpening services in your area. We are operating in the SF Bay Area only.',
-            default=>'This ZIP code needs address review before KnifeRevive can confirm service coverage or accept prepayment.'
+            'eligible'=>'You’re in! We serve this ZIP. Pickup and online payment are available; KnifeRevive confirms your day and address after review.',
+            'bay_area_dropoff_only'=>'You’re in our Bay Area zone! Drop-off is available. Pickup isn’t in your area yet — it’s coming in the near future.',
+            'outside_bay_area'=>'Not in our zone just yet. We currently sharpen in the SF Bay Area only, so service isn’t available in this ZIP.',
+            default=>'Quick address check needed. We can’t confirm service for this ZIP yet — KnifeRevive needs to review the address before online payment.'
         };
         $pickupEligible=$eligible;if($custom){$settings=Settings::get();if($settings['booking_pickup_limit_enabled'])$pickupEligible=$eligible && in_array($postal,$settings['booking_pickup_postal_codes'],true);}
-        if($eligible && !$pickupEligible)$message='Pickup service is not available in your ZIP code but will be available in the near future. Customer drop-off prepayment is available.';
+        if($eligible && !$pickupEligible)$message='Drop-off? You’re in! You can pay online for drop-off. Pickup isn’t available in this ZIP yet — it’s coming in the near future.';
         return ['postal_code'=>$postal,'coverage_state'=>$state,'service_available'=>(bool)$counties && !(bool)array_diff($counties,$bay),
             'pickup_eligible'=>$pickupEligible,'prepayment_eligible'=>$eligible,'address_review_required'=>(bool)$review,
             'counties'=>array_values(array_map(static fn($id)=>$data['bay_counties'][$id]??'Outside SF Bay Area',$counties)),

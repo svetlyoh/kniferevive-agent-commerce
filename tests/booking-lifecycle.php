@@ -2,7 +2,7 @@
 /** Native commerce lifecycle, synthetic gateway only; external HTTP and email blocked. */
 ob_start();set_exception_handler(static function(Throwable $e){fwrite(STDERR,'FAIL: '.$e->getMessage()."\n");exit(1);});
 require __DIR__.'/sandbox-bootstrap.php';
-use KnifeRevive\AgentCommerce\{Booking,BookingEvents,BookingLifecycle,BookingSeller,Domain,Fault,ListingCheckout,Settings,Store};
+use KnifeRevive\AgentCommerce\{Booking,BookingEvents,BookingLifecycle,BookingSeller,Domain,Fault,ListingCheckout,ListingFrontend,Settings,Store};
 if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Sandbox fence failed');
 $wpdb->query('DELETE FROM '.Store::table('holds')." WHERE slot_id LIKE 'booking-%'");
 $wpdb->query('DELETE FROM '.Store::table('slots')." WHERE id LIKE 'booking-%'");
@@ -79,7 +79,10 @@ lifecycleCheck(Booking::checkout($a['id'],$owner)['id']===$ai['id'] && (int)$wpd
 $aq=ListingCheckout::quote($ai['id'],['billing'=>$address,'email'=>'synthetic@example.invalid','payment_method'=>'stripe'],$owner,Domain::id());
 lifecycleCheck(!$aq['data']['quote']['estimate_only'] && $aq['data']['quote']['total_minor']===1299,'unconfirmed pickup request receives final native total without inventing address verification');
 if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();WC()->cart->empty_cart();
-ListingCheckout::handoff($ai['id'],$owner,$aq['data']['quote']['quote_hash']);$a=Store::get($a['id']);
+$payPost=['accept'=>'yes','email'=>'synthetic@example.invalid'];foreach($address as $field=>$value)$payPost['billing_'.$field]=$value;
+lifecycleReject(static fn()=>ListingFrontend::bookingPayment($ai['id'],$owner,array_replace($payPost,['accept'=>'no'])),'AUTHORIZATION_REQUIRED');
+lifecycleReject(static fn()=>ListingFrontend::bookingPayment($ai['id'],Domain::id(),$payPost),'FORBIDDEN');
+ListingFrontend::bookingPayment($ai['id'],$owner,$payPost);$a=Store::get($a['id']);
 lifecycleCheck(ListingCheckout::bookingCart($a)['id']===$ai['id'],'same-screen native checkout accepts only the consent-bound original browser cart');
 lifecycleCheck(array_keys(BookingLifecycle::bookingGateways(['stripe'=>new LifecycleGateway(),'cod'=>new stdClass()]))===['stripe'],'native AJAX gateway refresh retains the original quoted payment method');
 $bad=$a;$bad['id']=Domain::id();lifecycleReject(static fn()=>ListingCheckout::bookingCart($bad),'CART_CONFLICT');

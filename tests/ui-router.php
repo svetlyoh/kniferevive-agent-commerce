@@ -5,7 +5,7 @@ $path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
 if($path==='/fixture-media/Knife_Revive_Logo_OG_V2.jpg'){header('Content-Type: image/jpeg');readfile(dirname(__DIR__).'/.runtime/ui-media/Knife_Revive_Logo_OG_V2.jpg');exit;}
 $testRoot=getenv('KREV_TEST_WP_ROOT');$fontRoot=realpath($testRoot.'/wp-content/themes/twentytwentyfour/assets/fonts');
 if(str_starts_with($path,'/wp-content/themes/twentytwentyfour/assets/fonts/')){$font=realpath($testRoot.$path);if($font && $fontRoot && str_starts_with(str_replace('\\','/',$font),str_replace('\\','/',$fontRoot).'/') && preg_match('/\.(woff2|woff|ttf)$/',$font)){header('Content-Type: font/woff2');readfile($font);exit;}}
-$assetMap=['storefront.js'=>'text/javascript','booking.js'=>'text/javascript','storefront.css'=>'text/css'];
+$assetMap=['storefront.js'=>'text/javascript','booking.js'=>'text/javascript','storefront.css'=>'text/css','booking-checkout.css'=>'text/css'];
 foreach ($assetMap as $name=>$type) if ($path==='/wp-content/plugins/kniferevive-agent-commerce/assets/'.$name) {
     header('Content-Type: '.$type); readfile(dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/assets/'.$name); exit;
 }

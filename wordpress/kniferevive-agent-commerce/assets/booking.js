@@ -11,6 +11,11 @@
   let addressReview = address?.dataset.addressReview === 'true';
   let coverageResult = null;
   function updateChoices() {
+    const bookingButton = form.querySelector('[data-submit-booking]');
+    if (bookingButton && form.getAttribute('aria-busy') !== 'true') {
+      bookingButton.textContent = bookingButton.dataset.payUpfront === 'true' && mode?.value !== 'pay_later_dropoff' ? 'Continue to secure payment' : 'Send my booking request';
+      bookingButton.dataset.originalLabel = bookingButton.textContent;
+    }
     const trips = (mode?.value === 'prepaid_pickup' ? 1 : 0) + (returns?.value === 'courier_delivery' ? 1 : 0);
     if (address && (trips > 0 || addressReview)) address.open = true;
     for (const name of ['address_1','city']) {
@@ -69,6 +74,8 @@
       if (revision !== current) return;
       if (!response.ok || typeof data.message !== 'string') throw new Error('Coverage unavailable');
       status.textContent = data.message;
+      status.dataset.verifiedPostal = input.value;
+      status.dataset.tone = data.address_review_required ? 'pending' : data.service_available ? 'available' : 'unavailable';
       coverageResult = data;
       addressReview = !!data.address_review_required;
       if (mode) {
@@ -83,9 +90,20 @@
       input.setCustomValidity(data.coverage_state === 'outside_bay_area' ? data.message : '');
       updateChoices();
     } catch (_) {
-      if (revision === current) status.textContent = 'Coverage could not be checked. The server will validate your ZIP before accepting a request.';
+      if (revision === current && status.dataset.verifiedPostal !== input.value) {
+        status.dataset.tone = 'pending';
+        status.textContent = 'Tap “Check service coverage” to confirm your zone. The live check couldn’t connect.';
+      }
     }
   }
   input.addEventListener('change', coverage);
+  input.addEventListener('input', () => {
+    if (status.dataset.verifiedPostal !== input.value) {
+      coverageResult = null;
+      status.dataset.tone = 'pending';
+      status.textContent = 'New ZIP? Tap “Check service coverage” to confirm your zone.';
+    }
+  });
+  if (status.dataset.coverageConfirmed === 'true') status.focus();
   if (input.value) coverage();
 })();

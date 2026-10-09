@@ -16,6 +16,17 @@ final class BookingCheckoutFrontend {
         // This route uses the installed checkout's normal script/frame policy. The restricted
         // discovery form's self-only CSP would prevent Stripe tokenization and 3DS.
         add_filter('woocommerce_is_checkout','__return_true');
+        // Stripe owns its iframe. Use its documented appearance filter, never card DOM access.
+        add_filter('wc_stripe_upe_params',static function($params){
+            $params['appearance']=(object)['theme'=>'stripe','labels'=>'above','variables'=>(object)[
+                'fontFamily'=>'system-ui, sans-serif','fontSizeBase'=>'17px','colorPrimary'=>'#174e37','colorText'=>'#202124',
+                'colorBackground'=>'#ffffff','colorDanger'=>'#a12c22','borderRadius'=>'10px','spacingUnit'=>'5px'],
+                'rules'=>(object)['.Input'=>(object)['padding'=>'14px','border'=>'1px solid #aebdb2','boxShadow'=>'none'],
+                    '.Input:focus'=>(object)['borderColor'=>'#174e37','boxShadow'=>'0 0 0 3px rgba(23,78,55,0.14)'],
+                    '.Label'=>(object)['fontWeight'=>'500','marginBottom'=>'8px']]];
+            return $params;
+        },100);
+        add_filter('wc_stripe_elements_styling',static fn()=>['base'=>['fontFamily'=>'system-ui, sans-serif','fontSize'=>'17px','color'=>'#202124','::placeholder'=>['color'=>'#637168']],'invalid'=>['color'=>'#a12c22']],100);
         add_filter('woocommerce_available_payment_gateways',static function($gateways){return isset($gateways['stripe'])?['stripe'=>$gateways['stripe']]:[];},1000);
         $name=$booking['data']['input']['customer']['name']??'';$parts=explode(' ',trim($name),2);
         add_filter('woocommerce_checkout_get_value',static function($value,$field)use($parts){
@@ -23,8 +34,9 @@ final class BookingCheckoutFrontend {
             return match($field){'billing_first_name','shipping_first_name'=>$parts[0]??'','billing_last_name','shipping_last_name'=>$parts[1]??'',default=>$value};
         },10,2);
         wp_enqueue_style('krev-booking-checkout',plugin_dir_url(FILE).'assets/storefront.css',[],VERSION);
+        wp_enqueue_style('krev-booking-payment',plugin_dir_url(FILE).'assets/booking-checkout.css',['krev-booking-checkout'],VERSION);
         echo '<!doctype html><html lang="'.esc_attr(get_bloginfo('language')?:'en').'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pay for knife sharpening | KnifeRevive</title>';wp_head();
-        echo '</head><body class="krev-private woocommerce woocommerce-checkout"><header class="krev-header"><a href="'.esc_url(home_url('/')).'">'.(PrivateBrand::logo()?:'KnifeRevive').'</a></header><main><h1>Pay for knife sharpening</h1><p>Your payment does not confirm the appointment or pickup address. KnifeRevive reviews the request. If it cannot accept your booking, all unperformed services and trips are fully refundable.</p><p><a href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/'))).'">Booking details and refund status</a> · <a href="'.esc_url(Settings::get()['booking_policy_url']).'">Cancellation and refund terms</a></p>';
+        echo '</head><body class="krev-private krev-booking-payment woocommerce woocommerce-checkout"><header class="krev-header"><a href="'.esc_url(home_url('/')).'">'.(PrivateBrand::logo()?:'KnifeRevive').'</a></header><main><p class="krev-eyebrow">Last step · secure payment</p><h1>Let’s get your knives sharp</h1><div class="krev-journey"><strong>Your knife journey</strong><p>'.esc_html(BookingLifecycle::handoffLabel($booking['data']['input'])).'</p><p>Merchant pickup or delivery trips are charged separately below. Customer drop-off and collection have no trip fee.</p></div><p>Check your total, then confirm payment. KnifeRevive confirms your day and any trip address afterward. If it can’t accept your request, all unperformed services and trips are fully refundable.</p><p><a href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/'))).'">Booking details and refund status</a> · <a href="'.esc_url(Settings::get()['booking_policy_url']).'">Cancellation and refund terms</a></p>';
         wc_print_notices();echo do_shortcode('[woocommerce_checkout]');PrivateBrand::support();echo '</main>';wp_footer();echo '</body></html>';exit;
     }
 }

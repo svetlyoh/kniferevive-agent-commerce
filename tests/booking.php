@@ -22,8 +22,8 @@ $days=Booking::availability()['days'];bookingCheck(count($days)>5 && $days[0]['a
 $date=$days[1]['date'];$owner=Domain::id();$foreign=Domain::id();foreach([$owner,$foreign] as $id)Store::put($id,'session','synthetic',time()+7200,['token_hash'=>hash('sha256',Domain::token($id))]);
 $input=['items'=>[['product_id'=>$p->get_id(),'quantity'=>1]],'mode'=>'pay_later_dropoff','preferred_date'=>$date,'postal_code'=>'94565'];
 bookingCheck(BookingCoverage::check('94565')['prepayment_eligible'] && BookingCoverage::check('95112')['pickup_eligible'],'Contra Costa and Santa Clara ZIPs qualify for prepayment and pickup');
-bookingCheck(BookingCoverage::check('94103')['message']==='Pickup service is not available in your area but will be available in the near future.','other Bay Area ZIPs show the requested pickup message');
-bookingCheck(BookingCoverage::check('90001')['message']==='We do not currently offer sharpening services in your area. We are operating in the SF Bay Area only.','outside Bay Area ZIPs show the requested service message');
+bookingCheck(BookingCoverage::check('94103')['message']==='You’re in our Bay Area zone! Drop-off is available. Pickup isn’t in your area yet — it’s coming in the near future.','other Bay Area ZIPs clearly distinguish drop-off and future pickup');
+bookingCheck(BookingCoverage::check('90001')['message']==='Not in our zone just yet. We currently sharpen in the SF Bay Area only, so service isn’t available in this ZIP.','outside Bay Area ZIPs clearly report service unavailable');
 bookingCheck(BookingCoverage::check('95033')['address_review_required'],'cross-county ZIPs require a street address review');
 bookingCheck(BookingCoverage::check('00000')['coverage_state']==='address_review_required','unknown ZIP is not falsely classified outside Bay Area');
 bookingReject(static fn()=>Booking::create(array_replace($input,['postal_code'=>'90001']),$owner,'booking-outside-fixture'),'OUTSIDE_SERVICE_AREA');

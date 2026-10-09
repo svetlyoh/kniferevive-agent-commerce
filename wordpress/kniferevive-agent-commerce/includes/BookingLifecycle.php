@@ -11,6 +11,17 @@ final class BookingLifecycle {
             return $packages;
         },100);
         add_filter('woocommerce_package_rates',[self::class,'serviceRates'],100,2);
+        add_filter('woocommerce_shipping_package_name',static function($name){return WC()->session?->get('krev_booking_id')?'Pickup & return plan':$name;},100);
+        add_filter('woocommerce_cart_shipping_method_full_label',static function($label,$method){
+            if($method->get_id()!=='krev_booking_local_pickup')return $label;
+            try{$id=WC()->session?->get('krev_booking_id');return $id?esc_html(self::handoffLabel(Store::get($id,'booking')['data']['input'])):$label;}catch(\Throwable $e){return $label;}
+        },100,2);
+        add_filter('woocommerce_order_shipping_to_display',static function($label,$order){
+            try{$id=(string)($order->get_meta('_krev_service_booking')?:$order->get_meta('_krev_unpaid_booking'));if(!Domain::validId($id))return $label;
+                $booking=Store::get($id,'booking');if(self::order($booking)?->get_id()!==$order->get_id())return $label;
+                return esc_html(self::handoffLabel($booking['data']['input']));
+            }catch(\Throwable $e){return $label;}
+        },100,2);
         add_filter('woocommerce_available_payment_gateways',[self::class,'bookingGateways'],1000);
         add_action('woocommerce_payment_complete',[self::class,'observeOrder'],220);
         add_action('woocommerce_order_status_changed',[self::class,'observeOrder'],220);
@@ -35,8 +46,12 @@ final class BookingLifecycle {
         try{$selection=Booking::paymentSelection($id);$items=[];
             foreach($package['contents'] as $line)$items[]=['product_id'=>(int)$line['product_id'],'quantity'=>(int)$line['quantity']];
             usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);if($items!==$selection['items'])return $rates;
+            // Keep the financial quote's rate label stable; human wording uses display filters.
             return ['krev_booking_local_pickup'=>new \WC_Shipping_Rate('krev_booking_local_pickup','Sharpening service handoff',0,[],'local_pickup')];
         }catch(\Throwable $e){return $rates;}
+    }
+    public static function handoffLabel(array $input): string {
+        return (($input['mode']??'')==='prepaid_pickup'?'We pick up':'You drop off').' → '.(($input['return_mode']??'')==='courier_delivery'?'we deliver':'you collect');
     }
     public static function order(array $row): ?\WC_Order {
         return BookingOrderBridge::linked($row)??BookingEvents::nativeOrder($row);

@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-08",
+  "deployed_plugin": "0.5.2",
+  "native_update": "Plugin updated successfully",
+  "readback": {
+    "BookingCheckoutFrontend": true,
+    "ListingFrontend": true
+  },
+  "tests": [
+    {
+      "label": "booking-legacy",
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "processor_evidence": "synthetic only"
+    },
+    {
+      "label": "booking-lifecycle-legacy",
+      "result": "46 lifecycle assertions passed. No real payment, refund, or email was sent.",
+      "processor_evidence": "synthetic only"
+    },
+    {
+      "label": "booking-hpos",
+      "result": "66 booking assertions passed. No real processor request was sent.",
+      "processor_evidence": "synthetic only"
+    },
+    {
+      "label": "booking-lifecycle-hpos",
+      "result": "46 lifecycle assertions passed. No real payment, refund, or email was sent.",
+      "processor_evidence": "synthetic only"
+    }
+  ],
+  "mobile": {
+    "viewport": "390x844",
+    "served_and_unserved_results": "verified synthetic and live POST",
+    "secondary_action_gap_px": 24,
+    "direct_private_booking_to_native_checkout": true,
+    "native_checkout_forms": 1,
+    "total_minor": 1299,
+    "journey": "We pick up \u2192 you collect",
+    "horizontal_overflow": false
+  },
+  "card_fields": "Hosted Stripe appearance filters and surrounding CSS configured; live iframe rendering/transaction not tested",
+  "real_payment_or_refund": false,
+  "new_production_booking": false,
+  "daily_capacity": 4,
+  "trip_fee_minor": 799,
+  "pickup_custom_list_enabled": false,
+  "prepaid_and_pay_before_confirmation": true,
+  "published_skill": "0.4.2",
+  "skill_candidate": "0.5.1",
+  "headless_api": "hosting JS challenge remains unresolved",
+  "plugin_sha256": "20245449239e4bafc4930035d8a470ac5287a1c79affc62205a7603b72db1292"
+}

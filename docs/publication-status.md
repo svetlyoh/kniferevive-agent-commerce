@@ -1,11 +1,13 @@
 # Publication status
 
-## Current backend 0.5.1; published skill 0.4.2
+## Current backend 0.5.2; published skill 0.4.2
 
-Agent Commerce **0.5.1** and Seller Orders **1.1.6** are deployed with
+Agent Commerce **0.5.2** and Seller Orders **1.1.6** are deployed with
 owner-approved prepaid sharpening requests, native same-screen checkout,
 seller cancellation/refund receipt handling and an administrator pickup ZIP
-editor. Capacity remains 4. See [the implementation/deployment runbook](prepaid-booking-0.5.1.md).
+editor. Capacity remains 4. The [0.5.2 UX patch](booking-ux-0.5.2.md) adds prominent coverage confirmation,
+one-step payment preparation, separated controls and clearer pickup/return labels.
+See [the payment implementation runbook](prepaid-booking-0.5.1.md).
 Actual processor settlement and headless API access remain unverified; anonymous
 API traffic receives the hosting browser challenge. Lightning readiness remains
 false. Local skill **0.5.1** is an unpublished candidate, with no new registry

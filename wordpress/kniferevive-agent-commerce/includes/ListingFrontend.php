@@ -39,7 +39,33 @@ final class ListingFrontend {
         }elseif($row){self::review($row,$owner);}
         echo '<p><a href="'.esc_url(wc_get_cart_url()).'">Review your existing cart</a></p><p><a href="'.esc_url(home_url('/shop/')).'">KnifeRevive listings</a></p>';PrivateBrand::end();exit;
     }
-    public static function bookingReview(array $row,string $owner): void {self::review($row,$owner);}
+    public static function bookingReview(array $row,string $owner,array $values=[]): void {
+        $d=$row['data'];$booking=Store::get($d['selection']['booking_id'],'booking');$input=$booking['data']['input'];
+        if($d['handoff_state']!=='review'){
+            echo '<p>Your secure payment screen is ready. Check the original order if you already paid.</p><p><a class="krev-primary-link" href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$booking['id'],'payment'=>'1'],home_url('/'))).'">Continue to secure payment</a></p>';return;
+        }
+        $c=$d['context'];$address=$c['billing']??$input['pickup_address']??['state'=>'CA','country'=>'US','postcode'=>$input['postal_code']];
+        $complete=true;foreach(['address_1','city','state','postcode'] as $field)if(!trim((string)($values['billing_'.$field]??$address[$field]??'')))$complete=false;
+        echo '<section class="krev-payment-next"><h2>Next up: secure payment</h2><p>You’ll see the full total and choose your card or available wallet on the next screen. You only pay when you confirm there.</p><p><strong>Your knife journey:</strong> '.esc_html(BookingLifecycle::handoffLabel($input)).'. Merchant trips are charged separately; this is a local sharpening service, not parcel shipping.</p><form method="post" class="krev-payment-continue">';
+        self::hidden($owner,$row['id']);echo '<input type="hidden" name="action" value="pay"><details'.(!$complete || $values?' open':'').'><summary>Check or edit billing details</summary><p>Your pickup address is prefilled when available. Change it here if your billing address is different.</p><label for="payment-receipt-email">Receipt email</label><input id="payment-receipt-email" name="email" type="email" autocomplete="email" maxlength="254" required value="'.esc_attr($values['email']??$c['email']??$input['customer']['email']).'"><fieldset><legend>Billing address</legend>';
+        foreach(['address_1'=>'Street address','address_2'=>'Apartment (optional)','city'=>'City','state'=>'State code','postcode'=>'ZIP code'] as $field=>$label){
+            $name='billing_'.$field;$value=$values[$name]??$address[$field]??'';
+            echo '<label for="payment-'.esc_attr($name).'">'.esc_html($label).'</label><input id="payment-'.esc_attr($name).'" name="'.esc_attr($name).'" autocomplete="billing '.esc_attr(['address_1'=>'address-line1','address_2'=>'address-line2','city'=>'address-level2','state'=>'address-level1','postcode'=>'postal-code'][$field]).'" maxlength="150" value="'.esc_attr($value).'"'.($field==='address_2'?'':' required').'>';
+        }
+        echo '<input type="hidden" name="billing_country" value="US"></fieldset></details><p><a href="'.esc_url(Settings::get()['booking_policy_url']).'">Cancellation and refund terms</a></p><label class="krev-check"><input type="checkbox" name="accept" value="yes" required> Continue with these booking and billing details. I’ll review the full total and approve payment on the secure payment screen.</label><button class="krev-primary-action">Continue to secure payment</button></form></section>';
+    }
+    /** Prepare the native total privately; final payment approval stays in WooCommerce. */
+    public static function bookingPayment(string $id,string $owner,array $post): void {
+        if(($post['accept']??'')!=='yes')Domain::fail('AUTHORIZATION_REQUIRED','Confirm your details before continuing to secure payment.',403);
+        $row=Store::get($id,'listing');if($row['owner']!==$owner || empty($row['data']['selection']['booking_id']))Domain::fail('FORBIDDEN','Use your original booking payment screen.',403);
+        if($row['data']['handoff_state']==='review'){
+            $booking=Store::get($row['data']['selection']['booking_id'],'booking');$input=$booking['data']['input'];$billing=[];
+            foreach(['address_1','address_2','city','state','postcode','country'] as $field)$billing[$field]=(string)($post['billing_'.$field]??'');
+            $context=['email'=>$post['email']??'','billing'=>$billing,'shipping'=>$input['pickup_address']??$billing,'payment_method'=>'stripe'];
+            $row=ListingCheckout::quote($id,$context,$owner,'booking-payment-'.Domain::id());
+        }
+        ListingCheckout::handoff($id,$owner,(string)($row['data']['quote']['quote_hash']??''));
+    }
     private static function review(array $row,string $owner): void {
         $d=$row['data'];$q=$d['quote'];
         echo '<p>This prepares a buyer-completed WooCommerce checkout. No card has been charged. Inventory is not reserved by a quote.</p><ul>';
