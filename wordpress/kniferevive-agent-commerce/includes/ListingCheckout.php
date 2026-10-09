@@ -274,15 +274,15 @@ final class ListingCheckout {
         Booking::paymentSelection($booking['id']);return $row;
     }
     /** Explicit buyer POST resumes one durable booking intent, never a payment or order. */
-    public static function resumeBookingCart(string $bookingId,string $owner): void {
+    public static function resumeBookingCart(string $bookingId,string $owner,?array $context=null): void {
         if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
-        Store::lock('booking:'.$bookingId,static function()use($bookingId,$owner){
+        Store::lock('booking:'.$bookingId,static function()use($bookingId,$owner,$context){
             $booking=Booking::get($bookingId,$owner);$id=$booking['data']['listing_intent']??'';
-            Store::lock('listing:'.$id,static function()use($booking,$id){
+            Store::lock('listing:'.$id,static function()use($booking,$id,$context){
                 $row=Store::get($id,'listing');$d=$row['data'];
                 $orderStates=array_merge(array_keys(wc_get_order_statuses()),['trash','checkout-draft']);
                 if(($d['selection']['booking_id']??'')!==$booking['id'] || $row['owner']!==($booking['data']['checkout_owner']??$booking['owner']))Domain::fail('FORBIDDEN','Use your private booking link.',403);
-                if(!in_array($booking['data']['booking_state'],['requested','confirmed'],true) || !in_array($d['handoff_state'],['review','cart_ready'],true)
+                if(!in_array($booking['data']['booking_state'],['awaiting_payment','requested','confirmed'],true) || !in_array($d['handoff_state'],['review','cart_ready'],true)
                     || !empty($d['order_id']) || !empty($d['creation_started']) || !empty($d['native_payment_observed'])
                     || !empty($booking['data']['order_id']) || !empty($booking['data']['native_order_id'])
                     || wc_get_orders(['limit'=>1,'status'=>$orderStates,'meta_key'=>'_krev_listing_intent','meta_value'=>$id])
@@ -292,8 +292,9 @@ final class ListingCheckout {
                 $ours=WC()->session->get('krev_listing_intent')===$id && WC()->session->get('krev_listing_owner')===$row['owner']
                     && WC()->session->get('krev_booking_id')===$booking['id'] && hash_equals($d['browser_binding']??'',self::browserBinding()) && self::matchesCart($d['selection']);
                 if(!WC()->cart->is_empty() && !$ours)Domain::fail('CART_CONFLICT','This browser has another cart. Finish or clear it yourself, then return to this booking. Nothing was replaced.',409);
-                if($ours && (int)$row['expires']>=time() && ($d['quote_expires']??0)>=time() && Booking::activePrepaymentHold($booking['id'])){Booking::paymentSelection($booking['id']);return;}
+                if($context===null && $ours && (int)$row['expires']>=time() && ($d['quote_expires']??0)>=time() && Booking::activePrepaymentHold($booking['id'])){Booking::paymentSelection($booking['id']);return;}
                 Booking::renewUnstartedPaymentHold($booking);Booking::paymentSelection($booking['id']);
+                if($context!==null)$d['context']=self::context($context);
                 $fresh=self::price($d['selection'],$d['context']);
                 if($fresh['estimate_only'])Domain::fail('INVALID_REQUEST','Complete your billing details on the booking page first.');
                 // Only a verified copy of this unstarted cart can be cleared. Other carts are untouched.

@@ -137,41 +137,47 @@ payment/fulfillment/scheduling states without order keys, PII or processor IDs.
 `not_booked`. After uncertainty, resume the original checkout/status; do not
 start another charge. Real processor verification remains a launch requirement.
 
-## Sharpening bookings (0.4.0 local candidate; check deployed capabilities)
+## Sharpening bookings (backend 0.5.4; check deployed capabilities)
 
-Check `booking.enabled`, `/booking-options`, `/booking-availability` and
-`/booking-coverage?postal_code=94565` independently of the legacy service adapter.
-POST `/bookings` accepts items, mode, preferred_date and postal_code; contact and
-address fields are rejected. The human supplies and approves sharing them on
-the protected review form. It creates
-a draft, not a reservation or charge. Human submission requests merchant review.
-Modes: unpaid customer drop-off, prepaid customer drop-off, prepaid merchant
-pickup. Merchant trips cost the configured fee per leg (owner pricing $7.99).
-Pay-now checkout temporarily holds one daily job; verified native payment retains the allocation pending merchant review. Only merchant confirmation confirms the appointment. Expired payment holds require review after late settlement.
+Read `/booking-options` and its four `handoff_options` before proposing choices:
+1. Customer drops off and pays when collecting: no ZIP lookup or ZIP field needed.
+2. Customer drops off and prepays online: eligible service ZIP required; no transport fee.
+3. KnifeRevive picks up; customer collects: eligible pickup ZIP and exact address; $6 transport.
+4. KnifeRevive picks up and delivers back: eligible pickup ZIP and exact address; $11 total transport (the comeback combo).
+Prices exclude sharpening and applicable taxes; trust live amounts and the final native quote.
+API modes remain `pay_later_dropoff`, `prepaid_dropoff`, and `prepaid_pickup`;
+option 4 uses `prepaid_pickup` plus `return_mode=courier_delivery`.
 
-Pickup/prepayment eligibility is limited to Contra Costa and Santa Clara county
-ZIPs. Other nine-county Bay Area residents can request unpaid customer drop-off;
-relay the returned pickup-coming-soon message. Outside-area requests are rejected
-with the SF Bay Area only message. Cross-county/unknown ZIPs require review, not
-ZIP-prefix guessing. Read live coverage messages and payment readiness.
+POST `/bookings` accepts service items, mode, preferred_date, optional postal_code
+and return_mode. Contact/address fields are rejected in portable draft creation;
+the human supplies them and approves their use on the protected form. Only
+options 2–4 require `/booking-coverage`; they are limited to supported Contra
+Costa and Santa Clara ZIPs, with the configured pickup ZIP list narrowing
+merchant trips. Relay the live coverage message without guessing ZIP prefixes.
+The customer can instead select option 1 and travel to KnifeRevive themselves.
 
-When enabled, `/bookings/{id}/checkout` returns the
-same native checkout intent. Check `pay_before_confirmation` in booking options; when true an eligible submitted request may pay before merchant confirmation. Custom pickup ZIP settings may narrow courier availability. Stripe and Google Pay require human approval there.
-An explicitly authorized host Lightning wallet can pay the original native
-invoice returned by scoped `/bookings/{id}/wallet-invoice` when separately
-verified/enabled. Native checkout must first prepare the order/invoice; autonomous
-order creation remains disabled. Independently verify invoice/recipient/amount,
-authorization and fee ceilings; never provision a wallet or retry an uncertain
-send. Native settlement and appointment confirmation remain separate states.
+Under `payment_required_before_submission=true`, options 2–4 save an
+`awaiting_payment` request. Continue to Payment is required. Only verified native
+gateway settlement submits it to the merchant and queues booking notifications;
+an order, redirect, manually changed order status, or payment preparation alone
+is insufficient. A native pending financial order may exist during payment;
+it is not a submitted service appointment. The seller confirms the day/address
+after payment. No charge is created by a GET or a draft.
 
-Local candidate 0.4.0 also reports independent `address_authorization` and
-`payment_authorization`, native `order_reference`/`order_state` and a bounded
-PII-free `events` history. New service-only handoffs use expiring opaque referrals;
-these never authorize access to a submitted booking. Purchase review is not
-provider authentication or host wallet authority. No delegated card or universal
-host address integration is supported. A live `booking_creates_woocommerce_order`
-capability and `unpaid_order_timing` describe the separately approved unpaid local
-pickup bridge; otherwise the seller inbox receives a request with no native order.
-Poll the original booking at most three times, at least five seconds apart, then
-use the human status page. `agent_event_push_supported=false`; no portable skill
-can receive unsolicited inbound chat notifications by itself.
+The human uses the independent private booking link and WooCommerce's secure
+checkout. Booking checkout has its own cart/session; other shopping carts and
+pending orders remain saved. An existing or uncertain booking order cannot be
+replaced. Return to its original order and reconcile it instead of retrying.
+Expired unstarted checkout can resume the same intent, with explicit review.
+
+Stripe and available Google Pay require human approval. A host-authorized
+Lightning wallet may pay only the original native invoice returned by
+`/bookings/{id}/wallet-invoice`, when separately enabled and verified. Never
+provision a wallet, infer spending authority, or retry an uncertain send.
+
+Payment, appointment, cancellation, and refund are independent facts. Native
+seller cancellation does not issue a refund. Seller-approved refunds use the
+original native gateway/order and expose scoped refund receipts; gateway
+acceptance is not proof of bank/wallet arrival. Poll the original booking at
+most three times, at least five seconds apart, then use the human status page.
+No portable skill receives unsolicited bot-chat push events by itself.

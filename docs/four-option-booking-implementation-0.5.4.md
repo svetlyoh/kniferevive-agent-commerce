@@ -1,0 +1,27 @@
+# Four-option booking implementation — 0.5.4
+
+User-authorized scope: update the existing production Agent Commerce plugin and requested transport prices. Do not charge a real payment, refund a real order, send test mail, update unrelated plugins, or publish the ClawHub skill as part of this change.
+
+1. Offer exactly four choices: customer drop-off/pay at collection; customer drop-off/prepay; merchant pickup/customer collection ($6 transport); merchant pickup/return delivery ($11 total transport, “comeback combo”). Preserve the API's existing mode/return_mode representation.
+2. Skip ZIP lookup and ZIP requirements entirely for option 1. Options 2–4 retain server-authoritative prepaid coverage; pickup choices additionally require the configured pickup ZIP eligibility and complete address.
+3. Prepaid submission saves an awaiting_payment request. Do not enqueue seller/admin booking notifications or expose a service appointment until a reciprocally bound native WooCommerce order has verified gateway payment. Appointment confirmation remains a separate seller action. Cancellation never invents a refund.
+4. Isolate booking native checkout sessions using a booking-specific WooCommerce session cookie and guest storage key, including signed-in shoppers. Preserve the original storefront cart and pending-order markers. Tag native checkout and Stripe AJAX URLs; tags alone never authorize a booking. Independent booking capability/session ownership, CSRF, quote, cart, capacity, order, and payment checks remain authoritative. Never rebind an order already created or an uncertain creation attempt.
+5. Snapshot transport prices on new bookings; retain quoted legacy order prices. Verify $6 single pickup and $11 combined transport are totals separate from sharpening and applicable tax.
+6. Test in the fenced synthetic WordPress database with outbound email/HTTP blocked: ZIP skipping, all four choices, payment gate, native paid promotion, duplicate hooks, cancellation/refund, guest and logged-in cart isolation, tagged AJAX, ordinary cart/pending-order preservation, and existing-order protections. Run classic/HPOS with sync on/off. Browser-test without pressing Place order.
+7. Package, deploy the exact validated plugin ZIP through native WordPress upload/replace, verify source and settings, set only requested transport prices, push to the existing branch/draft PR, and record limitations. Keep the prior package for rollback.
+
+## Completed — October 9, 2026
+
+Agent Commerce 0.5.4 is deployed. Native WordPress upload showed current 0.5.3/uploaded 0.5.4 and then “Plugin updated successfully.” Readback hashes of BookingFrontend, Booking, BookingSession, BookingNativeSession, BookingCheckoutFrontend and ListingCheckout match the packaged sources. The production WooCommerce session handler exposes the native methods used by the isolated session.
+
+Live settings: pickup 600 cents, pickup plus delivery 1100 cents, payment required before prepaid submission true, prepayment enabled true, pay-before-confirmation true, daily capacity 4. Manage capacity and pickup ZIP eligibility at **WooCommerce → Agent Commerce**. Advanced settings contain the two transport prices. Existing requests keep their original transport quote; the new fees apply to new requests.
+
+The default booking URL initially served an older edge-cached form. Native WordPress.com “Clear all” refreshed the caches; the plain URL now displays all four options, both sharpening services, and no ZIP field for option 1. A coverage-only check for 94565 confirmed service. One small knife with the comeback combo displays $5 sharpening plus $11 transport, subtotal $16 before applicable taxes or disclosed fees. No production booking was submitted.
+
+All five behavioral suites passed in classic and HPOS storage, each with synchronization on and off: 336 assertions per configuration, 1,344 total. The new 42-assertion suite checks the four choices, payment gate, native payment promotion, duplicate hooks, cancellation, frozen fees, isolated signed-in and guest sessions, tagged AJAX authorization, and preservation of unrelated carts/pending-order markers. Contract/example checks, PHP lint, JavaScript syntax and package checks passed.
+
+At a 390×844 viewport, synthetic coverage feedback and address entry remained usable without collapsing the address disclosure. A synthetic unpaid checkout rendered one small knife at $5 plus $11 transport, $0 shipping and $16 total. Its native WooCommerce AJAX URL contains the private booking tag. No Place order action was taken. Browser-driven AJAX payment settlement, real processor payment, payout, refund arrival and authorized bot-wallet settlement remain unverified. Anonymous REST access still receives the hosting challenge; this update does not bypass it. The published ClawHub skill is unchanged.
+
+For an existing unstarted payment, reopen the original private booking link and continue to payment. Ordinary storefront carts now use separate storage. A booking already bound to an order must keep that original order; uncertain or cancelled payment attempts are not silently replaced. No production legacy order was modified during this release.
+
+Sanitized release evidence: [four-option-booking-0.5.4.json](four-option-booking-0.5.4.json). The earlier 0.5.3 package remains available locally for rollback. Synthetic test services were stopped after verification. A full disk interrupted evidence saving; only obsolete binary logs from this task’s fenced synthetic database were purged to recover space.

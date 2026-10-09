@@ -179,7 +179,7 @@ final class Api {
     public static function bookingOptions($request): array { return Booking::options(); }
     public static function bookingCoverage($request): array { return BookingCoverage::check(Domain::text($request->get_param('postal_code'),10)); }
     public static function bookingAvailability($request): array { return Booking::availability(); }
-    public static function bookingCreate($request): array { $input=self::body($request);Domain::fields($input,['items','mode','preferred_date','return_mode','postal_code','notes'],['items','mode','preferred_date','postal_code']);return Booking::response(Booking::create($input,self::owner($request),(string)$request->get_header('Idempotency-Key'))); }
+    public static function bookingCreate($request): array { $input=self::body($request);Domain::fields($input,['items','mode','preferred_date','return_mode','postal_code','notes'],['items','mode','preferred_date']);return Booking::response(Booking::create($input,self::owner($request),(string)$request->get_header('Idempotency-Key'))); }
     public static function bookingOwner(string $id,$request=null): string {
         $token=$request?(string)$request->get_header('X-Krev-Booking'):'';
         if(!$token && str_starts_with((string)($_COOKIE['krev_booking_access']??''),$id.'.'))$token=(string)wp_unslash($_COOKIE['krev_booking_access']);

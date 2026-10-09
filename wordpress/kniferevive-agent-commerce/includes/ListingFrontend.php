@@ -41,7 +41,7 @@ final class ListingFrontend {
     }
     public static function bookingReview(array $row,string $owner,array $values=[]): void {
         $d=$row['data'];$booking=Store::get($d['selection']['booking_id'],'booking');$input=$booking['data']['input'];
-        if(!in_array($booking['data']['booking_state'],['requested','confirmed'],true)){echo '<p>This booking is closed. Any payment already made needs a separate merchant refund review.</p>';return;}
+        if(!in_array($booking['data']['booking_state'],['awaiting_payment','requested','confirmed'],true)){echo '<p>This booking is closed. Any payment already made needs a separate merchant refund review.</p>';return;}
         if($d['handoff_state']!=='review'){
             if($d['handoff_state']!=='cart_ready' || !empty($d['creation_started']) || !empty($d['order_id'])){echo '<p>An order may already exist. Check this booking’s original order or contact KnifeRevive before paying again.</p>';return;}
             try{if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();ListingCheckout::bookingCart($booking);$ready=true;}catch(\Throwable $e){$ready=false;}
@@ -71,7 +71,7 @@ final class ListingFrontend {
             $booking=Store::get($row['data']['selection']['booking_id'],'booking');$input=$booking['data']['input'];$billing=[];
             foreach(['address_1','address_2','city','state','postcode','country'] as $field)$billing[$field]=(string)($post['billing_'.$field]??'');
             $context=['email'=>$post['email']??'','billing'=>$billing,'shipping'=>$input['pickup_address']??$billing,'payment_method'=>'stripe'];
-            $row=ListingCheckout::quote($id,$context,$owner,'booking-payment-'.Domain::id());
+            ListingCheckout::resumeBookingCart($booking['id'],$owner,$context);return;
         }
         ListingCheckout::handoff($id,$owner,(string)($row['data']['quote']['quote_hash']??''));
     }

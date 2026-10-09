@@ -30,7 +30,12 @@ final class Booking {
         return ['enabled'=>self::enabled(),'booking_url'=>add_query_arg('krev_agent','booking',home_url('/')),
             'timezone'=>'America/Los_Angeles','location'=>$s['booking_location'],'phone'=>$s['booking_phone'],
             'modes'=>self::MODES,'weekly_hours'=>$s['booking_weekly_hours'],'services'=>$items,
-            'merchant_trip_fee_minor'=>$s['booking_trip_fee_minor'],'daily_capacity'=>$s['booking_daily_capacity'],
+            'handoff_options'=>[
+                ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · pay when you collect','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false],
+                ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · prepay online','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
+                ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'We pick up · you collect','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
+                ['mode'=>'prepaid_pickup','return_mode'=>'courier_delivery','label'=>'Pickup + delivery · comeback combo','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true]],
+            'merchant_trip_fee_minor'=>$s['booking_trip_fee_minor'],'merchant_round_trip_fee_minor'=>$s['booking_round_trip_fee_minor'],'payment_required_before_submission'=>$s['booking_require_payment_submission'],'daily_capacity'=>$s['booking_daily_capacity'],
             'confirmation'=>'merchant_confirmation_required','prepayment_enabled'=>self::prepaymentEnabled(),
             'pay_before_confirmation'=>$s['booking_pay_before_confirmation'],
             'pickup_postal_codes'=>BookingCoverage::pickupPostcodes(),'pickup_address_review_required'=>true,
@@ -103,7 +108,7 @@ final class Booking {
         return max(0,$capacity-$used);
     }
     public static function normalize(array $input,bool $buyerContext=true): array {
-        Domain::fields($input,['items','mode','preferred_date','return_mode','customer','pickup_address','postal_code','notes'],['items','mode','preferred_date','postal_code']);
+        Domain::fields($input,['items','mode','preferred_date','return_mode','customer','pickup_address','postal_code','notes'],['items','mode','preferred_date']);
         if(!self::enabled())Domain::fail('BOOKING_DISABLED','Service booking requests are unavailable.',503);
         if(!in_array($input['mode'],self::MODES,true))Domain::fail('INVALID_REQUEST','Choose an offered booking option.');
         $input['preferred_date']=Domain::text($input['preferred_date'],10);self::day($input['preferred_date']);
@@ -122,7 +127,8 @@ final class Booking {
         usort($input['items'],static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
         $input['return_mode']=$input['return_mode']??'customer_collection';
         if(!in_array($input['return_mode'],['customer_collection','courier_delivery'],true) || ($input['mode']==='pay_later_dropoff' && $input['return_mode']!=='customer_collection'))Domain::fail('INVALID_REQUEST','Choose customer collection or paid return delivery.');
-        $input['postal_code']=Domain::postal($input['postal_code']);BookingCoverage::requireService($input);
+        if($buyerContext && Settings::get()['booking_require_payment_submission'] && $input['mode']==='prepaid_dropoff' && $input['return_mode']==='courier_delivery')Domain::fail('INVALID_REQUEST','Choose one of the four booking options. Delivery is part of pickup plus delivery.');
+        $input['postal_code']=$input['mode']==='pay_later_dropoff'?'':Domain::postal($input['postal_code']??'');BookingCoverage::requireService($input);
         $input['notes']=Domain::text($input['notes']??'',500);
         if(isset($input['customer'])){
             if(!is_array($input['customer']))Domain::fail('INVALID_REQUEST','Invalid contact details.');
@@ -130,6 +136,7 @@ final class Booking {
             $input['customer']['name']=Domain::text($input['customer']['name'],100);$input['customer']['email']=Domain::text($input['customer']['email'],254);$input['customer']['phone']=Domain::text($input['customer']['phone']??'',30);
             if(!$input['customer']['name'] || !is_email($input['customer']['email']))Domain::fail('INVALID_REQUEST','Enter a name and valid contact email.');
         }
+        if($input['mode']==='pay_later_dropoff')unset($input['pickup_address']);
         if(isset($input['pickup_address'])){
             $a=$input['pickup_address'];if(!is_array($a))Domain::fail('INVALID_REQUEST','Invalid pickup address.');
             Domain::fields($a,['address_1','address_2','city','state','country','postcode'],['address_1','city','state','country','postcode']);
@@ -146,7 +153,7 @@ final class Booking {
             if(self::remaining($input['preferred_date'])===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
             $snapshot=[];foreach($input['items'] as $item){$p=ListingCheckout::product($item['product_id']);$snapshot[]=['product_id'=>$p['product_id'],'title'=>$p['title'],'quantity'=>$item['quantity'],'unit_price_minor'=>$p['unit_price_minor']];}
             $id=Domain::id();$referral=Domain::id();Store::put($referral,'booking_referral',$id,time()+1800,['session_owner'=>$owner]);
-            Store::put($id,'booking',$owner,time()+1800,['input'=>$input,'referral_id'=>$referral,'seller_id'=>(int)get_post_field('post_author',$input['items'][0]['product_id']),'access_expires'=>min(time()+31*86400,strtotime(self::day($input['preferred_date'])['end_at'])+86400),'catalog_snapshot'=>$snapshot,'preferred_window'=>self::day($input['preferred_date']),'booking_state'=>'draft','submitted_at'=>null,'confirmed_at'=>null,'pickup_verified'=>false,'listing_intent'=>null,'payment_state'=>'not_started']);return Store::get($id);
+            Store::put($id,'booking',$owner,time()+1800,['input'=>$input,'referral_id'=>$referral,'seller_id'=>(int)get_post_field('post_author',$input['items'][0]['product_id']),'access_expires'=>min(time()+31*86400,strtotime(self::day($input['preferred_date'])['end_at'])+86400),'catalog_snapshot'=>$snapshot,'preferred_window'=>self::day($input['preferred_date']),'booking_state'=>'draft','submitted_at'=>null,'confirmed_at'=>null,'pickup_verified'=>false,'listing_intent'=>null,'payment_state'=>'not_started','transport_fee_minor'=>self::transportFeeForInput($input)]);return Store::get($id);
         });
     }
     /** Referral exposes only a new service-choice draft. It is not later status authorization. */
@@ -177,18 +184,19 @@ final class Booking {
             if(empty($input['customer']))Domain::fail('INVALID_REQUEST','Contact details are required to request a booking.');
             if(($input['mode']==='prepaid_pickup' || $input['return_mode']==='courier_delivery') && empty($input['pickup_address']))Domain::fail('INVALID_REQUEST','Enter the address for the requested merchant trip.');
             if($coverage['address_review_required'] && empty($input['pickup_address']))Domain::fail('ADDRESS_REVIEW_REQUIRED','Enter your street address to confirm the county for this ZIP code.');
-            Store::transaction(static function()use($id,$d,$input,$row){$d['input']=$input;$d['booking_state']='requested';$d['submitted_at']=time();$proofRow=$row;$proofRow['data']=$d;$d['address_consent']=BookingAuthorization::grant($proofRow);Store::update($id,$d);
+            Store::transaction(static function()use($id,$d,$input,$row){$d['input']=$input;$d['booking_state']=($input['mode']==='pay_later_dropoff' || !Settings::get()['booking_require_payment_submission'])?'requested':'awaiting_payment';$d['submitted_at']=time();$proofRow=$row;$proofRow['data']=$d;$d['address_consent']=BookingAuthorization::grant($proofRow);Store::update($id,$d);
                 global $wpdb;if($wpdb->update(Store::table('records'),['expires'=>time()+90*86400],['id'=>$id])===false)Domain::fail('DATABASE_UNAVAILABLE','Booking persistence failed.',503);
-                $saved=Store::get($id,'booking');BookingEvents::record($saved,'booking.request_received');BookingOutbox::enqueue($saved,'requested');
+                $saved=Store::get($id,'booking');if($d['booking_state']==='requested'){BookingEvents::record($saved,'booking.request_received');BookingOutbox::enqueue($saved,'requested');}else BookingEvents::record($saved,'booking.awaiting_payment');
             });
             return self::get($id,$owner);
         });
-        BookingOrderBridge::transition($id,'requested');self::notify($id,'requested');return self::get($id,$owner);
+        if($row['data']['booking_state']==='requested'){BookingOrderBridge::transition($id,'requested');self::notify($id,'requested');}return self::get($id,$owner);
     }
     public static function confirm(string $id,bool $addressApproved=false): void {
         if(!BookingSeller::can(Store::get($id,'booking')))Domain::fail('FORBIDDEN','The service seller must confirm this request.',403);
         Store::lock('booking:'.$id,static function()use($id,$addressApproved){Store::transaction(static function()use($id,$addressApproved){
             $row=Store::get($id,'booking');$d=$row['data'];if($d['booking_state']==='confirmed')return;
+            if(Settings::get()['booking_require_payment_submission'] && $d['input']['mode']!=='pay_later_dropoff'){if(!self::merchantVisible($row))Domain::fail('PAYMENT_REQUIRED','The customer must complete online payment before this booking reaches the seller.',409);}
             if($d['booking_state']!=='requested')Domain::fail('INVALID_REQUEST','Only submitted requests can be confirmed.');
             if(!in_array(BookingAuthorization::address($row),['granted_for_order','merchant_review_required'],true))Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','The customer must renew contact/fulfillment sharing consent.');
             // Confirming a request is not the merchant buying their own SKU.
@@ -225,7 +233,7 @@ final class Booking {
     }
     public static function paymentSelection(string $id): array {
         $row=Store::get($id,'booking');$d=$row['data'];$input=$d['input'];
-        $requested=$d['booking_state']==='requested' && Settings::get()['booking_pay_before_confirmation'];
+        $requested=$d['booking_state']==='awaiting_payment' || ($d['booking_state']==='requested' && Settings::get()['booking_pay_before_confirmation']);
         if(!self::prepaymentEnabled() || (!$requested && $d['booking_state']!=='confirmed') || $input['mode']==='pay_later_dropoff')Domain::fail('BOOKING_PREPAYMENT_DISABLED','Prepayment requires an eligible submitted booking and native checkout.',503);
         if(!in_array(BookingAuthorization::address($row),$requested?['granted_for_order','merchant_review_required']:['granted_for_order'],true))Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Fulfillment sharing authorization must be current.');
         $coverage=BookingCoverage::requireService($input);
@@ -233,13 +241,13 @@ final class Booking {
         if(!$requested && ($input['mode']==='prepaid_pickup' || $input['return_mode']==='courier_delivery') && !$d['pickup_verified'])Domain::fail('ADDRESS_REVIEW_REQUIRED','Pickup address needs merchant approval.');
         if($requested && !self::activePrepaymentHold($id))Domain::fail('SLOT_UNAVAILABLE','The payment reservation expired. Review the original order before retrying.',409);
         self::day($input['preferred_date']);
-        return ['items'=>$input['items'],'fee_minor'=>Settings::get()['booking_trip_fee_minor']*(($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0)),
-            'fingerprint'=>Domain::digest([$input,$d['window'],Settings::get()['booking_trip_fee_minor'],Settings::get()['booking_policy_version']])];
+        return ['items'=>$input['items'],'fee_minor'=>self::transportFee($row),
+            'fingerprint'=>Domain::digest([$input,$d['window'],isset($d['transport_fee_minor'])?self::transportFee($row):799,Settings::get()['booking_policy_version']])];
     }
     public static function checkout(string $id,string $owner): array {
         return Store::lock('booking:'.$id,static function()use($id,$owner){
             $row=self::get($id,$owner);$d=$row['data'];
-            if($d['booking_state']==='requested' && Settings::get()['booking_pay_before_confirmation']){self::reservePrepayment($row);$row=self::get($id,$owner);$d=$row['data'];}
+            if($d['booking_state']==='awaiting_payment' || ($d['booking_state']==='requested' && Settings::get()['booking_pay_before_confirmation'])){self::reservePrepayment($row);$row=self::get($id,$owner);$d=$row['data'];}
             self::paymentSelection($id);
             if($d['listing_intent'])return ListingCheckout::get($d['listing_intent'],$d['checkout_owner']??$row['owner'],true);
             $checkoutOwner=$d['checkout_owner']??$row['owner'];
@@ -259,7 +267,7 @@ final class Booking {
     /** Called under the booking lock. A payment hold is not merchant appointment confirmation. */
     public static function renewUnstartedPaymentHold(array $row): void {
         // Caller owns booking + listing locks and has ruled out every order/creation attempt.
-        if($row['data']['booking_state']==='requested')self::reservePrepayment($row,true);
+        if(in_array($row['data']['booking_state'],['awaiting_payment','requested'],true))self::reservePrepayment($row,true);
     }
     private static function reservePrepayment(array $row,bool $renewUnstarted=false): void {
         $id=$row['id'];$d=$row['data'];$input=$d['input'];$s=Settings::get();
@@ -285,11 +293,36 @@ final class Booking {
         // A cancelled/disabled booking must not crash the customer's cart. Native
         // order validation still blocks payment without a current confirmed booking.
         try{$row=Store::get($id,'booking');}catch(Fault $e){return;}
-        $input=$row['data']['input'];$selection=['items'=>$input['items'],'fee_minor'=>Settings::get()['booking_trip_fee_minor']*(($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0))];$items=[];
+        $input=$row['data']['input'];$selection=['items'=>$input['items'],'fee_minor'=>self::transportFee($row)];$items=[];
         foreach($cart->get_cart() as $line)$items[]=['product_id'=>(int)$line['product_id'],'quantity'=>(int)$line['quantity']];
         usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
         if($items!==$selection['items']){wc_add_notice('Booking items changed. Review your booking before paying.','error');return;}
         if($selection['fee_minor'])$cart->add_fee('KnifeRevive merchant transport',Domain::decimal($selection['fee_minor']),Settings::get()['booking_transport_taxable'],Settings::get()['booking_transport_tax_class']);
+    }
+    public static function transportFeeForInput(array $input): int {
+        $legs=($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0);$s=Settings::get();
+        return $legs===2?$s['booking_round_trip_fee_minor']:$legs*$s['booking_trip_fee_minor'];
+    }
+    public static function transportFee(array $row): int {
+        if(isset($row['data']['transport_fee_minor']))return (int)$row['data']['transport_fee_minor'];
+        // Legacy requests/quotes keep their original $7.99-per-leg contract.
+        $i=$row['data']['input'];return 799*(($i['mode']==='prepaid_pickup'?1:0)+($i['return_mode']==='courier_delivery'?1:0));
+    }
+    public static function merchantVisible(array $row): bool {
+        if(!Settings::get()['booking_require_payment_submission'] || $row['data']['input']['mode']==='pay_later_dropoff')return $row['data']['booking_state']!=='draft';
+        if(empty($row['data']['listing_intent']))return false;
+        try{$facts=ListingCheckout::facts(Store::get($row['data']['listing_intent'],'listing'));return $facts['payment_verification']==='native_gateway_order_event';}catch(\Throwable $e){return false;}
+    }
+    /** Promote only the original, reciprocally bound and gateway-verified order. */
+    public static function receivePaidRequest(string $id): void {
+        $changed=Store::lock('booking:'.$id,static function()use($id){
+            $row=Store::get($id,'booking');$d=$row['data'];
+            if($d['input']['mode']==='pay_later_dropoff' || !in_array($d['booking_state'],['awaiting_payment','requested'],true) || !empty($d['payment_submission_received_at']) || empty($d['listing_intent']))return false;
+            $facts=ListingCheckout::facts(Store::get($d['listing_intent'],'listing'));if($facts['payment_verification']!=='native_gateway_order_event')return false;
+            $order=BookingEvents::nativeOrder($row);if(!$order || !$order->get_date_paid() || $order->has_status(['cancelled','refunded']))return false;
+            Store::transaction(static function()use($id,$d){$d['booking_state']='requested';$d['payment_submission_received_at']=time();Store::update($id,$d);$saved=Store::get($id,'booking');BookingEvents::record($saved,'booking.request_received');BookingOutbox::enqueue($saved,'requested');});return true;
+        });
+        if($changed)self::notify($id,'requested');
     }
     private static function notify(string $id,string $stage): void {
         BookingOutbox::schedule($id);
@@ -297,15 +330,15 @@ final class Booking {
     public static function response(array $row): array {
         $d=$row['data'];$input=$d['input'];$items=$d['catalog_snapshot'];$subtotal=0;
         foreach($items as $item)$subtotal+=$item['unit_price_minor']*$item['quantity'];
-        $fee=Settings::get()['booking_trip_fee_minor']*(($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0));
+        $fee=self::transportFee($row);
         $payment='not_started';if($d['listing_intent'])$payment=ListingCheckout::facts(Store::get($d['listing_intent'],'listing'))['payment_state'];
         $url=add_query_arg(['krev_agent'=>'booking','booking'=>$row['id']],home_url('/'));
         $order=BookingOrderBridge::linked($row)??BookingEvents::nativeOrder($row);
-        BookingEvents::observe($row);
+        BookingEvents::observe($row);$row=Store::get($row['id'],'booking');$d=$row['data'];
         return ['booking_id'=>$row['id'],'booking_state'=>$d['booking_state'],'payment_state'=>$payment,'mode'=>$input['mode'],'items'=>$items,'preferred_window'=>$d['window']??$d['preferred_window'],
             'return_mode'=>$input['return_mode'],'location'=>Settings::get()['booking_location'],'currency'=>get_woocommerce_currency(),'service_subtotal_minor'=>$subtotal,'merchant_trip_fee_minor'=>$fee,
-            'estimated_subtotal_minor'=>$subtotal+$fee,'total_minor'=>null,'estimate_only'=>true,'prepayment_enabled'=>self::prepaymentEnabled() && BookingCoverage::check($input['postal_code'])['prepayment_eligible'],
-            'coverage'=>BookingCoverage::check($input['postal_code']),'direct_wallet_enabled'=>false,
+            'estimated_subtotal_minor'=>$subtotal+$fee,'total_minor'=>null,'estimate_only'=>true,'prepayment_enabled'=>self::prepaymentEnabled() && BookingCoverage::describe($input)['prepayment_eligible'],
+            'coverage'=>BookingCoverage::describe($input),'direct_wallet_enabled'=>false,
             'policy_url'=>Settings::get()['booking_policy_url']?:null,'booking_access_token'=>self::accessToken($row),'review_url'=>$d['booking_state']==='draft' && !empty($d['referral_id']) && empty($input['customer']) && empty($input['pickup_address'])?add_query_arg(['krev_agent'=>'booking','referral'=>$d['referral_id']],home_url('/')):$url.'#booking_access='.rawurlencode(self::accessToken($row)),'status_url'=>$url,
             'appointment_confirmed'=>$d['booking_state']==='confirmed','refund_state'=>BookingLifecycle::refunds($order)['refund_state'],'refund_summary'=>BookingLifecycle::refunds($order),'expires_at'=>gmdate('c',(int)$row['expires']),
             'order_reference'=>$order?(string)$order->get_order_number():null,'order_state'=>$order?$order->get_status():null,
@@ -326,7 +359,7 @@ final class Booking {
             catch(\Throwable $e){echo '<p>'.esc_html($e instanceof Fault?$e->getMessage():'The original order needs review.').'</p>';}
         }
         global $wpdb;$rows=$wpdb->get_results('SELECT * FROM '.Store::table('records')." WHERE kind='booking' AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.booking_state')) IN ('requested','confirmed') ORDER BY updated DESC LIMIT 50",ARRAY_A);
-        foreach($rows as $row){$d=json_decode($row['data'],true);$row['data']=$d;$i=$d['input'];echo '<section><h3>'.esc_html($i['preferred_date'].' · '.$i['mode'].' · '.$d['booking_state']).'</h3><p>Reference: '.esc_html($row['id']).'</p>';
+        foreach($rows as $row){$d=json_decode($row['data'],true);$row['data']=$d;if(!self::merchantVisible($row))continue;$i=$d['input'];echo '<section><h3>'.esc_html($i['preferred_date'].' · '.$i['mode'].' · '.$d['booking_state']).'</h3><p>Reference: '.esc_html($row['id']).'</p>';
             foreach($i['items'] as $item){$p=wc_get_product($item['product_id']);echo '<p>'.esc_html(($p?$p->get_name():'Unavailable service').' × '.$item['quantity']).'</p>';}
             echo '<p>'.esc_html(implode(' · ',$i['customer']??[])).'</p><p>'.esc_html($i['notes']).'</p>';
             echo '<p>Service ZIP: '.esc_html($i['postal_code']).'</p>';

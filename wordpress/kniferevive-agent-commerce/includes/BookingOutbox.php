@@ -66,7 +66,7 @@ final class BookingOutbox {
             $job=Store::get($id,'booking_mail');$d=$job['data'];
             if($d['state']!=='pending' || $d['next_attempt']>time())return;
             $row=Store::get($d['booking_id'],'booking');
-            if($row['data']['booking_state']==='cancelled'){
+            if($row['data']['booking_state']==='cancelled' || !Booking::merchantVisible($row)){
                 $d['state']='failed';$d['last_error']='obsolete_notification_suppressed';Store::update($id,$d);return;
             }
             // Product transfer, disabled vendor, or changed recipients cannot leak the original contact.
@@ -93,7 +93,7 @@ final class BookingOutbox {
         $i=$row['data']['input'];$id=$row['id'];
         $body='Sharpening booking '.$job['stage'].'. Reference: '.$id."\nRequested day: ".$i['preferred_date'].' (Pacific time).'."\nHandoff: ".$i['mode'].'; return: '.$i['return_mode'].".\n";
         foreach($row['data']['catalog_snapshot'] as $p)$body.=$p['title'].' × '.$p['quantity']."\n";
-        $body.=($row['data']['booking_state']==='confirmed'?'The service day is confirmed.':'The requested day awaits merchant confirmation.')."\nNo payment was taken by this booking form.\n";
+        $body.=($row['data']['booking_state']==='confirmed'?'The service day is confirmed.':'The requested day awaits merchant confirmation.').($i['mode']==='pay_later_dropoff'?"\nPay when you collect your sharpened knives.\n":"\nOnline payment verified on the original WooCommerce order.\n");
         $order=BookingOrderBridge::linked($row)??BookingEvents::nativeOrder($row);
         $body.=$order?'Native order reference: '.$order->get_order_number().' ('.$order->get_status().").\n":"No WooCommerce order has been created yet.\n";
         if($job['role']==='customer')$body.='Private booking link: '.add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/')).'#booking_access='.Booking::accessToken($row)."\n";

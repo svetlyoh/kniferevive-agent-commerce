@@ -13,7 +13,7 @@ wp_set_current_user(get_user_by('login','sandbox-admin')->ID);
 $term=get_term_by('slug','knife-sharpening','product_cat');if(!$term){wp_insert_term('Sharpening','product_cat',['slug'=>'knife-sharpening']);$term=get_term_by('slug','knife-sharpening','product_cat');}
 $vendor=wp_insert_user(["user_login"=>"booking-vendor-".Domain::id(),"user_pass"=>Domain::id(),"user_email"=>Domain::id()."@example.invalid","role"=>"seller"]);update_user_meta($vendor,"dokan_enable_selling","yes");
 $p=new WC_Product_Simple();$p->set_name('Large Knife Sharpening');$p->set_status('publish');$p->set_regular_price('7');$p->set_price('7');$p->set_virtual(true);$p->set_category_ids([$term->term_id]);$p->set_manage_stock(true);$p->set_stock_quantity(100);$p->save();wp_update_post(['ID'=>$p->get_id(),'post_author'=>$vendor]);
-$s=Settings::validate(['booking_enabled'=>true,'booking_location'=>'Synthetic merchant address','booking_services'=>[['product_id'=>$p->get_id(),'definition'=>'An 8-inch chef knife is Large Knife Sharpening.']],
+$s=Settings::validate(['booking_require_payment_submission'=>false,'booking_trip_fee_minor'=>799,'booking_round_trip_fee_minor'=>1598,'booking_enabled'=>true,'booking_location'=>'Synthetic merchant address','booking_services'=>[['product_id'=>$p->get_id(),'definition'=>'An 8-inch chef knife is Large Knife Sharpening.']],
     'booking_weekly_hours'=>[['weekday'=>5,'open'=>'09:00','close'=>'19:00'],['weekday'=>6,'open'=>'09:00','close'=>'19:00'],['weekday'=>7,'open'=>'10:00','close'=>'16:00']]]);
 update_option('krev_agent_settings',$s,false);update_option('woocommerce_calc_taxes','no');update_option('pisol_cefw_payment_gateway_charges',[]);
 bookingCheck(Booking::enabled() && !Settings::operational(),'unpaid booking independent of unconfigured legacy payment settings');
@@ -26,8 +26,8 @@ bookingCheck(BookingCoverage::check('94103')['message']==='You’re in our Bay A
 bookingCheck(BookingCoverage::check('90001')['message']==='Not in our zone just yet. We currently sharpen in the SF Bay Area only, so service isn’t available in this ZIP.','outside Bay Area ZIPs clearly report service unavailable');
 bookingCheck(BookingCoverage::check('95033')['address_review_required'],'cross-county ZIPs require a street address review');
 bookingCheck(BookingCoverage::check('00000')['coverage_state']==='address_review_required','unknown ZIP is not falsely classified outside Bay Area');
-bookingReject(static fn()=>Booking::create(array_replace($input,['postal_code'=>'90001']),$owner,'booking-outside-fixture'),'OUTSIDE_SERVICE_AREA');
-bookingReject(static fn()=>Booking::create(array_replace($input,['postal_code'=>'00000']),$owner,'booking-unknown-fixture'),'COVERAGE_REVIEW_REQUIRED');
+bookingCheck(Booking::create(array_replace($input,['postal_code'=>'90001']),$owner,'booking-outside-fixture')['data']['input']['postal_code']==='', 'unpaid drop-off ignores ZIP coverage');
+bookingCheck(Booking::create(array_replace($input,['postal_code'=>'00000']),$owner,'booking-unknown-fixture')['data']['input']['postal_code']==='', 'unpaid drop-off ignores unknown ZIP');
 bookingReject(static fn()=>Booking::create(array_replace($input,['postal_code'=>'94103','mode'=>'prepaid_pickup']),$owner,'booking-no-pickup-fixture'),'PICKUP_UNAVAILABLE');
 bookingReject(static fn()=>Booking::create(array_replace($input,['postal_code'=>'94103','mode'=>'prepaid_dropoff']),$owner,'booking-no-prepay-fixture'),'PREPAYMENT_AREA_UNAVAILABLE');
 $sf=Booking::create(array_replace($input,['postal_code'=>'94103']),$owner,'booking-sf-dropoff-fixture');bookingCheck($sf['data']['input']['mode']==='pay_later_dropoff','other Bay Area ZIPs can request unpaid drop-off');

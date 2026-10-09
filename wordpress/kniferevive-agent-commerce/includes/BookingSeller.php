@@ -22,7 +22,7 @@ final class BookingSeller {
     public static function rows(): array {
         if(!is_user_logged_in())return [];
         global $wpdb;$rows=$wpdb->get_results('SELECT * FROM '.Store::table('records')." WHERE kind='booking' AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.booking_state'))<>'draft' ORDER BY updated DESC LIMIT 500",ARRAY_A);
-        $out=[];foreach($rows as $r){$r['data']=json_decode($r['data'],true,32,JSON_THROW_ON_ERROR);if(self::can($r))$out[]=$r;if(count($out)>=50)break;}return $out;
+        $out=[];foreach($rows as $r){$r['data']=json_decode($r['data'],true,32,JSON_THROW_ON_ERROR);if(self::can($r) && Booking::merchantVisible($r))$out[]=$r;if(count($out)>=50)break;}return $out;
     }
     /** Read-only adapter for the first-party Seller Orders screen. References are not access grants. */
     public static function appointments(array $cards,string $tab,int $page=1): array {
@@ -41,7 +41,7 @@ final class BookingSeller {
             $cards[]=['order_id'=>$order->get_id(),'order_number'=>$order->get_order_number(),'items'=>$items,'date'=>$i['preferred_date'],
                 'handoff'=>($i['mode']==='prepaid_pickup'?'KnifeRevive pickup':'Customer drop-off').' · '.($i['return_mode']==='courier_delivery'?'KnifeRevive return delivery':'Customer collection'),
                 'state'=>$d['booking_state']==='confirmed'?'Service day confirmed':'Requested — confirmation required',
-                'order_status'=>wc_get_order_status_name($order->get_status()),'payment'=>$order->is_paid()?'Paid':($i['mode']==='pay_later_dropoff'?'Unpaid — pay at drop-off':'Online payment — '.$order->get_status()),
+                'order_status'=>wc_get_order_status_name($order->get_status()),'payment'=>$order->is_paid()?'Paid':($i['mode']==='pay_later_dropoff'?'Unpaid — pay when you collect':'Online payment — '.$order->get_status()),
                 'total'=>html_entity_decode(wp_strip_all_tags($order->get_formatted_order_total()),ENT_QUOTES,'UTF-8'),
                 'review_url'=>add_query_arg('booking',$row['id'],self::url())];
         }return $cards;

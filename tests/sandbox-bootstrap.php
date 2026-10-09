@@ -39,6 +39,7 @@ if (getenv('KREV_LISTING_TEST_STACK')==='1') {
     add_filter('pre_option_woocommerce_stripe_settings',static fn()=>['enabled'=>'no','testmode'=>'yes']);
 }
 if (($argv[2]??'')==='install') define('WP_INSTALLING',true);
+if(getenv('KREV_BOOKING_UI')==='1')add_action('plugins_loaded',static function(){require_once dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/kniferevive-agent-commerce.php';},29);
 require ABSPATH.'wp-settings.php';
 add_filter('pre_wp_mail',static fn() => true);
 add_filter('pre_http_request',static function ($pre) { return $pre!==false ? $pre : new WP_Error('test_outbound_blocked','External requests are disabled in the sandbox.'); },PHP_INT_MAX);
@@ -58,6 +59,6 @@ if (getenv('KREV_LISTING_TEST_STACK')==='1') {
     $proInstaller=new \WeDevs\DokanPro\Install\Installer();$proInstaller->create_shipping_tables();$proInstaller->create_shipping_tracking_table();
 }
 get_role('administrator')->add_cap('manage_woocommerce');
-require dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/kniferevive-agent-commerce.php';
-\KnifeRevive\AgentCommerce\Plugin::boot();
+require_once dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/kniferevive-agent-commerce.php';
+if(getenv('KREV_BOOKING_UI')!=='1')\KnifeRevive\AgentCommerce\Plugin::boot();
 \KnifeRevive\AgentCommerce\Store::install();

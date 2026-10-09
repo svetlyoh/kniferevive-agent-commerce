@@ -76,7 +76,7 @@ final class BookingLifecycle {
             $id=(string)$order->get_meta('_krev_service_booking');if(!Domain::validId($id))$id=(string)$order->get_meta('_krev_unpaid_booking');
             if(!Domain::validId($id))return;$row=Store::get($id,'booking');$bound=self::order($row);
             if(!$bound || $bound->get_id()!==$orderId)return;
-            if($row['data']['booking_state']==='requested' && !empty($row['data']['prepayment_requested_at']) && $order->get_date_paid()){
+            if(in_array($row['data']['booking_state'],['awaiting_payment','requested'],true) && !empty($row['data']['prepayment_requested_at']) && $order->get_date_paid()){
                 $facts=ListingCheckout::facts(Store::get($row['data']['listing_intent'],'listing'));
                 if($facts['payment_verification']==='native_gateway_order_event' && !Store::confirm($id,$order->get_date_paid()->getTimestamp()))BookingEvents::record($row,'payment.capacity_review_required',$order);
             }

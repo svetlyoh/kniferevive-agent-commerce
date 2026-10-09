@@ -19,7 +19,7 @@ final class BookingEvents {
         $intent=Store::get($row['data']['listing_intent'],'listing');
         self::record($row,'woocommerce.order_created',$order);
         $status=ListingCheckout::facts($intent);
-        if($status['payment_state']==='paid' && $status['payment_verification']==='native_gateway_order_event')self::record($row,'payment.verified',$order);
+        if($status['payment_state']==='paid' && $status['payment_verification']==='native_gateway_order_event'){self::record($row,'payment.verified',$order);Booking::receivePaidRequest($row['id']);}
         if($status['payment_state']==='refund_recorded')self::record($row,'refund.review_required',$order);
     }
     public static function record(array $row,string $type,?\WC_Order $order=null,string $occurrence=''): void {

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "KnifeRevive Agent Commerce",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review. Native refund acceptance does not prove bank arrival."
   },
   "servers": [
@@ -2163,8 +2163,7 @@
         "required": [
           "items",
           "mode",
-          "preferred_date",
-          "postal_code"
+          "preferred_date"
         ],
         "additionalProperties": false
       },
@@ -2178,6 +2177,7 @@
           "booking_state": {
             "enum": [
               "draft",
+              "awaiting_payment",
               "requested",
               "confirmed",
               "cancelled"
@@ -2381,10 +2381,11 @@
         "properties": {
           "postal_code": {
             "type": "string",
-            "pattern": "^[0-9]{5}$"
+            "pattern": "^([0-9]{5})?$"
           },
           "coverage_state": {
             "enum": [
+              "not_required",
               "eligible",
               "bay_area_dropoff_only",
               "outside_bay_area",
@@ -2508,6 +2509,7 @@
           },
           "type": {
             "enum": [
+              "booking.awaiting_payment",
               "booking.request_received",
               "woocommerce.order_created",
               "booking.confirmed",
@@ -2542,6 +2544,7 @@
           "booking_state": {
             "enum": [
               "draft",
+              "awaiting_payment",
               "requested",
               "confirmed",
               "cancelled"

@@ -33,8 +33,12 @@ final class BookingCoverage {
         $settings=Settings::get();if($settings['booking_pickup_limit_enabled'])return $settings['booking_pickup_postal_codes'];
         $data=self::data();return array_values(array_map('strval',array_keys(array_filter($data['bay_postal_codes'],static fn($counties)=>(bool)array_intersect($counties,$data['pickup_counties'])))));
     }
+    public static function describe(array $input): array {
+        if($input['mode']==='pay_later_dropoff')return ['postal_code'=>'','coverage_state'=>'not_required','service_available'=>true,'pickup_eligible'=>false,'prepayment_eligible'=>false,'address_review_required'=>false,'counties'=>[],'message'=>'Drop off at KnifeRevive and pay when you collect. No ZIP check needed.'];
+        return self::check($input['postal_code']);
+    }
     public static function requireService(array $input): array {
-        $c=self::check($input['postal_code']);
+        $c=self::describe($input);if($input['mode']==='pay_later_dropoff')return $c;
         if($c['coverage_state']==='outside_bay_area')Domain::fail('OUTSIDE_SERVICE_AREA',$c['message'],422);
         if(!$c['counties'])Domain::fail('COVERAGE_REVIEW_REQUIRED',$c['message'],422);
         $courier=$input['mode']==='prepaid_pickup' || $input['return_mode']==='courier_delivery';

@@ -1,0 +1,182 @@
+{
+  "version": "0.5.4",
+  "client_date": "2026-10-09",
+  "timezone": "America/Los_Angeles",
+  "deployment": {
+    "site": "https://kniferevive.com",
+    "method": "native WordPress upload and replace existing plugin",
+    "success_message": "Plugin updated successfully.",
+    "prior_version": "0.5.3",
+    "package_sha256": "76496cde893c9299fffe2cef9ed2af31c4b166a1b28d9dc5139fa1648650e5a4",
+    "source_readback_sha256": {
+      "Booking.php": "7aa82474f6331bc8ea22efca18a70249253bc6b61c4381393e38f70261bec15c",
+      "BookingCheckoutFrontend.php": "8da7f6055f9d367efbb90ea053ff01d840de66568b5a26ab35200df6d0db39e4",
+      "BookingFrontend.php": "1c31cca155bb81e0bbe1290594a909a12430c17658a23024e48978c59a6acca3",
+      "BookingNativeSession.php": "3e1b0712de3fa19170360712095ea980b76a94a3f5f9019c06b6437a046e3061",
+      "BookingSession.php": "3e2c52e66fd20b70278c58ea552e2806c0f7038b4b3e1f755cf20252e334cfe7",
+      "ListingCheckout.php": "4f10d4bf81f39add6db732a6e5dc7f9a40ad19c228a296da8a447ca20eed10af"
+    },
+    "source_readbacks_match_package": true,
+    "hosting_cache_cleared": true
+  },
+  "production_settings": {
+    "booking_trip_fee_minor": 600,
+    "booking_round_trip_fee_minor": 1100,
+    "booking_require_payment_submission": true,
+    "booking_prepaid_enabled": true,
+    "booking_pay_before_confirmation": true,
+    "booking_daily_capacity": 4
+  },
+  "verification": {
+    "matrix": [
+      {
+        "suite": "listing-checkout",
+        "storage_configuration": "legacy",
+        "assertions": 75,
+        "passed": true
+      },
+      {
+        "suite": "booking",
+        "storage_configuration": "legacy",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-bridge",
+        "storage_configuration": "legacy",
+        "assertions": 87,
+        "passed": true
+      },
+      {
+        "suite": "booking-lifecycle",
+        "storage_configuration": "legacy",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-four-options",
+        "storage_configuration": "legacy",
+        "assertions": 42,
+        "passed": true
+      },
+      {
+        "suite": "listing-checkout",
+        "storage_configuration": "legacy-no-sync",
+        "assertions": 75,
+        "passed": true
+      },
+      {
+        "suite": "booking",
+        "storage_configuration": "legacy-no-sync",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-bridge",
+        "storage_configuration": "legacy-no-sync",
+        "assertions": 87,
+        "passed": true
+      },
+      {
+        "suite": "booking-lifecycle",
+        "storage_configuration": "legacy-no-sync",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-four-options",
+        "storage_configuration": "legacy-no-sync",
+        "assertions": 42,
+        "passed": true
+      },
+      {
+        "suite": "listing-checkout",
+        "storage_configuration": "hpos",
+        "assertions": 75,
+        "passed": true
+      },
+      {
+        "suite": "booking",
+        "storage_configuration": "hpos",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-bridge",
+        "storage_configuration": "hpos",
+        "assertions": 87,
+        "passed": true
+      },
+      {
+        "suite": "booking-lifecycle",
+        "storage_configuration": "hpos",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-four-options",
+        "storage_configuration": "hpos",
+        "assertions": 42,
+        "passed": true
+      },
+      {
+        "suite": "listing-checkout",
+        "storage_configuration": "hpos-no-sync",
+        "assertions": 75,
+        "passed": true
+      },
+      {
+        "suite": "booking",
+        "storage_configuration": "hpos-no-sync",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-bridge",
+        "storage_configuration": "hpos-no-sync",
+        "assertions": 87,
+        "passed": true
+      },
+      {
+        "suite": "booking-lifecycle",
+        "storage_configuration": "hpos-no-sync",
+        "assertions": 66,
+        "passed": true
+      },
+      {
+        "suite": "booking-four-options",
+        "storage_configuration": "hpos-no-sync",
+        "assertions": 42,
+        "passed": true
+      }
+    ],
+    "total_assertion_executions": 1344,
+    "contract_examples_passed": true,
+    "php_lint_passed": true,
+    "booking_javascript_syntax_passed": true,
+    "package_checks_passed": true,
+    "production_plain_url_four_options": true,
+    "production_zip_94565_service_confirmed": true,
+    "production_small_knife_combo_subtotal_minor": 1600,
+    "production_booking_submitted": false,
+    "mobile_synthetic_address_remains_open": true,
+    "synthetic_checkout_product_minor": 500,
+    "synthetic_checkout_transport_minor": 1100,
+    "synthetic_checkout_total_minor": 1600,
+    "synthetic_checkout_tagged_native_ajax": true,
+    "ordinary_cart_and_pending_markers_preserved": true
+  },
+  "limits": [
+    "No real payment or refund performed.",
+    "Real processor settlement, seller payout and refund arrival remain unverified.",
+    "Browser-driven AJAX payment settlement remains unverified; native tag resolution and initial checkout were tested.",
+    "Authorized direct bot-wallet settlement is not enabled or verified.",
+    "Anonymous REST requests still receive the hosting challenge.",
+    "Published ClawHub skill unchanged.",
+    "Existing legacy quoted prices and production orders preserved."
+  ],
+  "cleanup": {
+    "synthetic_services_stopped": true,
+    "only_task_synthetic_obsolete_binary_logs_purged_for_disk_space": true
+  }
+}

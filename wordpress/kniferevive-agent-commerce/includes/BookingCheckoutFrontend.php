@@ -39,7 +39,10 @@ final class BookingCheckoutFrontend {
         // discovery form's self-only CSP would prevent Stripe tokenization and 3DS.
         add_filter('woocommerce_is_checkout','__return_true');
         // Stripe owns its iframe. Use its documented appearance filter, never card DOM access.
-        add_filter('wc_stripe_upe_params',static function($params){
+        add_filter('woocommerce_get_script_data',static function($params,$handle)use($id){if($handle==='wc-checkout' && is_array($params) && isset($params['wc_ajax_url']))$params['wc_ajax_url']=BookingSession::ajaxUrl($params['wc_ajax_url'],$id);return $params;},100,2);
+        foreach(['wc_stripe_params','wc_stripe_express_checkout_params'] as $filter)add_filter($filter,static function($params)use($id){foreach(['ajaxurl','ajax_url','wp_ajax_url'] as $key)if(isset($params[$key]))$params[$key]=BookingSession::ajaxUrl($params[$key],$id);return $params;},100);
+        add_filter('wc_stripe_upe_params',static function($params)use($id){
+            foreach(['ajaxurl','ajax_url','wp_ajax_url'] as $key)if(isset($params[$key]))$params[$key]=BookingSession::ajaxUrl($params[$key],$id);
             $params['appearance']=(object)['theme'=>'stripe','labels'=>'above','variables'=>(object)[
                 'fontFamily'=>'system-ui, sans-serif','fontSizeBase'=>'17px','colorPrimary'=>'#174e37','colorText'=>'#202124',
                 'colorBackground'=>'#ffffff','colorDanger'=>'#a12c22','borderRadius'=>'10px','spacingUnit'=>'5px'],

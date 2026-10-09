@@ -58,7 +58,7 @@ final class BookingOrderBridge {
                 $order->set_billing_first_name($i['customer']['name']);$order->set_billing_email($i['customer']['email']);$order->set_billing_phone($i['customer']['phone']??'');
                 $order->set_billing_country('US');$order->set_billing_state('CA');$order->set_billing_postcode($i['postal_code']);
                 $order->set_customer_note($i['notes']);
-                $order->set_payment_method($gateway->id);$order->set_payment_method_title('Pay at KnifeRevive drop-off — '.$gateway->get_title());
+                $order->set_payment_method($gateway->id);$order->set_payment_method_title('Pay when collecting from KnifeRevive — '.$gateway->get_title());
                 $order->update_meta_data('_krev_unpaid_booking',$id);$order->update_meta_data('_krev_booking_seller',$seller);
                 $order->update_meta_data('_krev_booking_confirmation',$d['booking_state']);$order->update_meta_data('_krev_requested_service_day',$i['preferred_date']);
                 $order->update_meta_data('_krev_pay_at_service','yes');
