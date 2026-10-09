@@ -1,0 +1,56 @@
+{
+  "skill_version": "0.5.6",
+  "published_clawhub_version": "0.4.2",
+  "no_new_registry_audit_claim": true,
+  "sha256": "b8c5771bdcbc5fb25c38e809ccfff1931d7a5ec6c55fc683ece27681499e6d8f",
+  "files": [
+    {
+      "path": "kniferevive-concierge/LICENSE",
+      "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+      "bytes": 919
+    },
+    {
+      "path": "kniferevive-concierge/references/api.md",
+      "sha256": "8fb522a28eab5f6f25a449c3b95e4aced9435be531a2a36358f669c9e96bcadc",
+      "bytes": 4000
+    },
+    {
+      "path": "kniferevive-concierge/references/booking.md",
+      "sha256": "346b221842d925ef07b463752d821dc1563160f9778092f2f77f72c3c9375593",
+      "bytes": 13060
+    },
+    {
+      "path": "kniferevive-concierge/references/installation.md",
+      "sha256": "d309730cf6ca36f3f68a94833d3aa29348db20d0b2a0b1549c15610935a7bbb5",
+      "bytes": 9719
+    },
+    {
+      "path": "kniferevive-concierge/references/listing-checkout.md",
+      "sha256": "a2b7a750976e073969779b3caa8e3139f52729180f821589abda0043115aab07",
+      "bytes": 3977
+    },
+    {
+      "path": "kniferevive-concierge/references/payments.md",
+      "sha256": "e70bf7d6cc28166ecbe6dd51c4ca2f5c60ed5701b6969a52ab5bcfd312e1d0d8",
+      "bytes": 4063
+    },
+    {
+      "path": "kniferevive-concierge/references/sharpening.md",
+      "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e",
+      "bytes": 2128
+    },
+    {
+      "path": "kniferevive-concierge/SKILL.md",
+      "sha256": "4b99e527723518d046904d1503eac0516102cad2e895afed441f046964af7494",
+      "bytes": 9933
+    }
+  ],
+  "validation": {
+    "skill_creator_validator_passed": true,
+    "booking_example_matches_actual_openapi": true,
+    "relative_reference_targets_exist": true,
+    "archive_file_count": 8,
+    "archive_matches_source_file_for_file": true
+  },
+  "backend_changed": true
+}

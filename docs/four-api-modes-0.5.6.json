@@ -1,0 +1,77 @@
+{
+  "version": "0.5.6",
+  "date": "2026-10-09",
+  "test_scope": "fenced synthetic WooCommerce/Dokan, blocked outgoing mail and HTTP",
+  "assertions_total": 1368,
+  "matrix": {
+    "legacy": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 48
+    },
+    "legacy-no-sync": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 48
+    },
+    "hpos": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 48
+    },
+    "hpos-no-sync": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 48
+    }
+  },
+  "contract_actual_samples_passed": true,
+  "php_lint_files": 29,
+  "deployed_readback": {
+    "deployedVersion": "0.5.6",
+    "bookingSha256": "904da1e2cf7dd76c94362bf117cfd576583bcc00c393a57e3792548ae4a7a344",
+    "files": {
+      "includes/Api.php": {
+        "sha256": "95f9827ccebd472b568521ea6ebbd929200b14b5824a853ff4ff4015026bc55d"
+      },
+      "assets/openapi.json": {
+        "sha256": "94b5008447aea294605186af4f5b791ccd9aacca233b02a1b52cc0865df22295",
+        "version": "1.6.0",
+        "modes": [
+          "pay_later_dropoff",
+          "prepaid_dropoff",
+          "prepaid_pickup",
+          "prepaid_pickup_delivery"
+        ]
+      },
+      "assets/AI.md": {
+        "sha256": "1f2b563189a7518ab2eb9fe2636861ec80aee09df7621e449f1cd07258a26ee1"
+      },
+      "kniferevive-agent-commerce.php": {
+        "version": "0.5.6",
+        "sha256": "f865e850a905e87f7b7ef403b9b501bd00f8a06a5e9e10c94ca8471e82667fac"
+      }
+    },
+    "capacity": 4,
+    "tripFeeMinor": 600,
+    "roundTripFeeMinor": 1100,
+    "prepaymentEnabled": true,
+    "requirePaymentBeforeSubmission": true,
+    "cacheCleared": true,
+    "publicFormHasFourOptions": true
+  },
+  "anonymous_live_api_delivery_verified": false,
+  "buyer_bot_runtime_verified": false,
+  "real_payment_or_refund_executed": false,
+  "production_test_booking_created": false,
+  "clawhub_published_version": "0.4.2",
+  "new_registry_audit_claimed": false
+}

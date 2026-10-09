@@ -17,6 +17,18 @@ $s=Settings::validate(['booking_require_payment_submission'=>true,'booking_trip_
 $owner=Domain::id();Store::put($owner,'session','synthetic',time()+7200,['token_hash'=>hash('sha256',Domain::token($owner))]);$days=Booking::availability()['days'];$date=end($days)['date'];
 $base=['items'=>[['product_id'=>$p->get_id(),'quantity'=>1]],'mode'=>'pay_later_dropoff','preferred_date'=>$date];
 $address=['address_1'=>'1 Synthetic Street','address_2'=>'','city'=>'Pittsburg','state'=>'CA','country'=>'US','postcode'=>'94565'];$contact=['customer'=>['name'=>'Synthetic buyer','email'=>'synthetic@example.invalid']];
+$options=Api::dispatch('bookingOptions',new WP_REST_Request('GET','/kniferevive-agent/v1/booking-options'))->get_data();
+fourCheck(count($options['modes'])===4 && $options['modes']===array_column($options['handoff_options'],'mode'),'REST discovery advertises four independently selectable modes');
+$cap=Api::dispatch('capabilities',new WP_REST_Request('GET','/kniferevive-agent/v1/capabilities'))->get_data();
+fourCheck($cap['booking']['handoff_options']===$options['handoff_options'] && $options['adapter_version']===\KnifeRevive\AgentCommerce\VERSION,'capabilities and booking options share the same versioned four-choice menu');
+$comboKey=Domain::id();$aliasInput=array_replace($base,['mode'=>'prepaid_pickup_delivery','postal_code'=>'94565']);
+$req=new WP_REST_Request('POST','/kniferevive-agent/v1/bookings');$req->set_header('Content-Type','application/json');$req->set_header('X-Krev-Agent-Session',Domain::token($owner));$req->set_header('Idempotency-Key',$comboKey);$req->set_body(wp_json_encode($aliasInput));$aliasResult=Api::dispatch('bookingCreate',$req);
+fourCheck($aliasResult instanceof WP_REST_Response && $aliasResult->get_data()['return_mode']==='courier_delivery' && $aliasResult->get_data()['merchant_trip_fee_minor']===1100,'REST fourth mode defaults to delivery and quotes the total eleven-dollar fee');
+$legacy=Booking::create(array_replace($aliasInput,['mode'=>'prepaid_pickup','return_mode'=>'courier_delivery']),$owner,$comboKey);
+fourCheck($legacy['id']===$aliasResult->get_data()['booking_id'] && $legacy['data']['input']['mode']==='prepaid_pickup','legacy composite selection and fourth-mode retry share one canonical idempotent draft');
+fourReject(static fn()=>Booking::create(array_replace($aliasInput,['return_mode'=>'customer_collection']),$owner,Domain::id()),'INVALID_REQUEST');
+fourReject(static fn()=>Booking::create(array_replace($aliasInput,['postal_code'=>'94103']),$owner,Domain::id()),'PICKUP_UNAVAILABLE');
+file_put_contents(dirname(__DIR__).'/.runtime/booking-options-contract-samples.json',wp_json_encode(['BookingOptions'=>$options,'BookingHandoffOption'=>$options['handoff_options'][3],'Capabilities'=>$cap,'BookingInput'=>$aliasInput],JSON_PRETTY_PRINT));
 $drop=Booking::create($base,$owner,Domain::id());$drop=Booking::submit($drop['id'],$owner,$contact,true);
 fourCheck($drop['data']['booking_state']==='requested' && Booking::response($drop)['coverage']['coverage_state']==='not_required','option 1 submits without a ZIP lookup or ZIP value');
 fourCheck(Booking::merchantVisible($drop),'option 1 immediately reaches merchant without online payment');
@@ -25,8 +37,8 @@ fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_dr
 fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_dropoff','postal_code'=>'90001']),$owner,Domain::id()),'OUTSIDE_SERVICE_AREA');
 fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_pickup','postal_code'=>'94103']),$owner,Domain::id()),'PICKUP_UNAVAILABLE');
 $records=[];
-foreach([['prepaid_dropoff','customer_collection',0],['prepaid_pickup','customer_collection',600],['prepaid_pickup','courier_delivery',1100]] as [$mode,$return,$fee]){
- $row=Booking::create(array_replace($base,['mode'=>$mode,'return_mode'=>$return,'postal_code'=>'94565']),$owner,Domain::id());$row=Booking::submit($row['id'],$owner,array_replace($contact,$mode==='prepaid_pickup'?['pickup_address'=>$address]:[]),true);$records[]=$row;
+foreach([['prepaid_dropoff','customer_collection',0],['prepaid_pickup','customer_collection',600],['prepaid_pickup_delivery','courier_delivery',1100]] as [$mode,$return,$fee]){
+ $row=Booking::create(array_replace($base,['mode'=>$mode,'return_mode'=>$return,'postal_code'=>'94565']),$owner,Domain::id());$row=Booking::submit($row['id'],$owner,array_replace($contact,in_array($mode,['prepaid_pickup','prepaid_pickup_delivery'],true)?['pickup_address'=>$address]:[]),true);$records[]=$row;
  fourCheck($row['data']['booking_state']==='awaiting_payment' && Booking::response($row)['merchant_trip_fee_minor']===$fee,'prepaid choice retains exact transport and awaits payment');
  fourCheck(!Booking::merchantVisible($row) && !in_array($row['id'],array_column(BookingSeller::rows(),'id'),true),'unpaid prepaid choice is absent from seller booking inbox');
  fourCheck(!(int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.Store::table('records')." WHERE kind='booking_mail' AND owner=%s",$row['id'])),'unpaid prepaid choice queues no booking notifications');

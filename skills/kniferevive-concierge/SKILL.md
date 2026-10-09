@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with drop-off/pay at collection, prepaid drop-off, pickup, or pickup plus delivery. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.5.5"
+  version: "0.5.6"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -58,10 +58,12 @@ coverage/payment facts:
 | 3 | We pick up; you collect | $6 |
 | 4 | We pick up and deliver back — comeback combo | $11 total |
 
-Sharpening and applicable taxes are additional; obtain live prices. The API's
-three `modes` are internal identifiers, **not three customer choices**. Choices
-3 and 4 both use `prepaid_pickup`; distinguish them by `return_mode`. Do not
-collapse pickup plus delivery into pickup/customer collection. If the API is
+Sharpening and applicable taxes are additional; obtain live prices. Backend 0.5.6
+advertises four distinct API `modes`; choice 4 is `prepaid_pickup_delivery` and
+automatically selects return delivery. Prefer live `handoff_options` for labels
+and fees. Older backends represent choice 4 with `prepaid_pickup` plus
+`return_mode=courier_delivery`; stored receipts retain this compatible format.
+Do not collapse pickup plus delivery into pickup/customer collection. If the API is
 challenged, link the human booking form and say availability needs checking;
 an HTTP 403 alone does not mean the fourth choice or prepayment is disabled.
 

@@ -11,7 +11,7 @@ The installable skill is `skills/kniferevive-concierge/SKILL.md`; OpenAPI is at
 Sharpening bookings use `booking.enabled`, independently of legacy direct service
 payments. GET `/booking-options` and `/booking-availability` for live services,
 Pacific service days and request/payment readiness. Present the four customer
-choices from `handoff_options`, not a list of the three internal `modes` values:
+choices from `handoff_options`. Backend 0.5.6 also advertises four distinct `modes`:
 
 1. Drop off and pay when collecting — no transport fee or ZIP check.
 2. Drop off and prepay online — no transport fee; eligible ZIP and payment required.
@@ -19,10 +19,11 @@ choices from `handoff_options`, not a list of the three internal `modes` values:
 4. We pick up and deliver back, the comeback combo — $11 total transport;
    eligible ZIP and payment required.
 
-Option 4 uses `mode=prepaid_pickup` plus `return_mode=courier_delivery`; option 3
+Option 4 uses `mode=prepaid_pickup_delivery` and defaults to return delivery.
+Legacy `mode=prepaid_pickup` plus `return_mode=courier_delivery` also works; option 3
 uses the same mode plus `return_mode=customer_collection`. They are distinct
 customer choices. Use live prices; existing requests retain their original quote.
-The three API mode identifiers are implementation values, not the customer option count.
+Stored receipts retain the canonical pickup/return representation for compatibility.
 POST `/bookings` with a
 private session and idempotency key to prepare a draft; the human submits the
 returned private review page. Creating a draft does not reserve or charge.
@@ -151,7 +152,7 @@ payment/fulfillment/scheduling states without order keys, PII or processor IDs.
 `not_booked`. After uncertainty, resume the original checkout/status; do not
 start another charge. Real processor verification remains a launch requirement.
 
-## Sharpening bookings (backend 0.5.4; check deployed capabilities)
+## Sharpening bookings (backend 0.5.6; check deployed capabilities)
 
 Read `/booking-options` and its four `handoff_options` before proposing choices:
 1. Customer drops off and pays when collecting: no ZIP lookup or ZIP field needed.
@@ -159,8 +160,11 @@ Read `/booking-options` and its four `handoff_options` before proposing choices:
 3. KnifeRevive picks up; customer collects: eligible pickup ZIP and exact address; $6 transport.
 4. KnifeRevive picks up and delivers back: eligible pickup ZIP and exact address; $11 total transport (the comeback combo).
 Prices exclude sharpening and applicable taxes; trust live amounts and the final native quote.
-API modes remain `pay_later_dropoff`, `prepaid_dropoff`, and `prepaid_pickup`;
-option 4 uses `prepaid_pickup` plus `return_mode=courier_delivery`.
+API modes are `pay_later_dropoff`, `prepaid_dropoff`, `prepaid_pickup`, and
+`prepaid_pickup_delivery`. The fourth defaults to return delivery; an explicitly
+conflicting collection value is rejected. The legacy `prepaid_pickup` plus
+`return_mode=courier_delivery` combination remains valid and shares the same
+canonical draft/idempotency handling as the distinct fourth mode.
 
 POST `/bookings` accepts service items, mode, preferred_date, optional postal_code
 and return_mode. Contact/address fields are rejected in portable draft creation;

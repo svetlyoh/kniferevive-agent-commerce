@@ -1,5 +1,11 @@
 # Changelog
 
+## Distinct fourth API mode 0.5.6 — October 9, 2026
+
+- Advertise `prepaid_pickup_delivery` as a fourth selectable mode in booking options and capabilities, using the same four-entry discovery helper.
+- Accept the new mode through the portable API, default its return leg to delivery and reject contradictory collection selections. Normalize to the existing canonical pickup/delivery format for coverage, idempotency, price snapshots and checkout compatibility.
+- Add typed discovery and four-mode input to OpenAPI 1.6.0, update skill source to 0.5.6, and verify real synthetic REST creation and native fee/submission behavior. Registry publication remains separate.
+
 ## Skill and guide 0.5.5 — October 9, 2026
 
 - Made the four customer choices explicit in the skill entrypoint and explained why three internal API mode identifiers represent four handoff choices.

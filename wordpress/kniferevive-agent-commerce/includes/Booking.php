@@ -4,7 +4,16 @@ defined('ABSPATH') || exit;
 
 /** Requests never charge. An independently approved bridge may create one unpaid drop-off order. */
 final class Booking {
-    public const MODES = ['pay_later_dropoff','prepaid_dropoff','prepaid_pickup'];
+    public const MODES = ['pay_later_dropoff','prepaid_dropoff','prepaid_pickup','prepaid_pickup_delivery'];
+    /** Four selectable API choices; canonical storage keeps existing pickup/return fields. */
+    public static function handoffOptions(): array {
+        $s=Settings::get();
+        return [
+            ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · pay when you collect','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false],
+            ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · prepay online','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'We pick up · you collect','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'prepaid_pickup_delivery','return_mode'=>'courier_delivery','label'=>'Pickup + delivery · comeback combo','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true]];
+    }
     public static function accessToken(array $row): string {
         $body=$row['id'].'.'.$row['data']['access_expires'];return $body.'.'.hash_hmac('sha256','booking-access:'.$body,wp_salt('auth'));
     }
@@ -29,12 +38,8 @@ final class Booking {
         }
         return ['enabled'=>self::enabled(),'booking_url'=>add_query_arg('krev_agent','booking',home_url('/')),
             'timezone'=>'America/Los_Angeles','location'=>$s['booking_location'],'phone'=>$s['booking_phone'],
-            'modes'=>self::MODES,'weekly_hours'=>$s['booking_weekly_hours'],'services'=>$items,
-            'handoff_options'=>[
-                ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · pay when you collect','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false],
-                ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · prepay online','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
-                ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'We pick up · you collect','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
-                ['mode'=>'prepaid_pickup','return_mode'=>'courier_delivery','label'=>'Pickup + delivery · comeback combo','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true]],
+            'adapter_version'=>VERSION,'modes'=>self::MODES,'weekly_hours'=>$s['booking_weekly_hours'],'services'=>$items,
+            'handoff_options'=>self::handoffOptions(),
             'merchant_trip_fee_minor'=>$s['booking_trip_fee_minor'],'merchant_round_trip_fee_minor'=>$s['booking_round_trip_fee_minor'],'payment_required_before_submission'=>$s['booking_require_payment_submission'],'daily_capacity'=>$s['booking_daily_capacity'],
             'confirmation'=>'merchant_confirmation_required','prepayment_enabled'=>self::prepaymentEnabled(),
             'pay_before_confirmation'=>$s['booking_pay_before_confirmation'],
@@ -111,6 +116,10 @@ final class Booking {
         Domain::fields($input,['items','mode','preferred_date','return_mode','customer','pickup_address','postal_code','notes'],['items','mode','preferred_date']);
         if(!self::enabled())Domain::fail('BOOKING_DISABLED','Service booking requests are unavailable.',503);
         if(!in_array($input['mode'],self::MODES,true))Domain::fail('INVALID_REQUEST','Choose an offered booking option.');
+        if($input['mode']==='prepaid_pickup_delivery'){
+            if(isset($input['return_mode']) && $input['return_mode']!=='courier_delivery')Domain::fail('INVALID_REQUEST','Pickup plus delivery requires courier_delivery; omit return_mode or select delivery.');
+            $input['mode']='prepaid_pickup';$input['return_mode']='courier_delivery';
+        }
         $input['preferred_date']=Domain::text($input['preferred_date'],10);self::day($input['preferred_date']);
         if(!is_array($input['items']) || !array_is_list($input['items']) || !$input['items'] || count($input['items'])>10)Domain::fail('INVALID_REQUEST','Choose service items.');
         $allowed=array_column(Settings::get()['booking_services'],'product_id');$seen=[];$count=0;$sellers=[];

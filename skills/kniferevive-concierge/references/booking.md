@@ -26,9 +26,10 @@ Unknown or cross-county ZIPs need merchant street-address review. The bundled
 Do not infer county from a ZIP prefix or claim an unknown ZIP is outside the region.
 
 Offer four choices using live `handoff_options` and their service/payment flags:
-The `modes` array has three internal values and must not be used as the customer
-menu. Both pickup choices use `prepaid_pickup`; their different `return_mode`
-values make separate choices. When live access is challenged, provide the
+Backend 0.5.6 advertises four distinct `modes` as well as four `handoff_options`.
+Use those live labels, fees and coverage flags. On older backends the fourth
+choice is the composite pickup/delivery selection below; do not omit it merely
+because the legacy mode array has three entries. When live access is challenged, provide the
 first-party form without claiming only three choices or disabled prepayment.
 
 - Option 1: `mode=pay_later_dropoff`, `return_mode=customer_collection` — customer
@@ -37,9 +38,13 @@ first-party form without claiming only three choices or disabled prepayment.
   drops off and prepays online; no merchant transport fee.
 - Option 3: `mode=prepaid_pickup`, `return_mode=customer_collection` — KnifeRevive
   picks up and the customer collects; current new-request transport fee is $6.
-- Option 4: `mode=prepaid_pickup`, `return_mode=courier_delivery` — KnifeRevive
+- Option 4: `mode=prepaid_pickup_delivery`, optional `return_mode=courier_delivery` — KnifeRevive
   picks up and delivers back, the “comeback combo”; current new-request transport
-  fee is $11 total. The browser's `prepaid_pickup_delivery` alias is not an API mode.
+  fee is $11 total. This distinct API mode selects return delivery when omitted;
+  an explicitly conflicting collection value is rejected. Legacy
+  `mode=prepaid_pickup` plus `return_mode=courier_delivery` is still supported and
+  maps to the same idempotent draft. Stored/status responses keep that canonical
+  format so existing checkout, quoted prices and order references remain intact.
 
 Options 2–4 require Continue to Payment and completed native payment before
 merchant booking review/notifications. All requested service days still require
