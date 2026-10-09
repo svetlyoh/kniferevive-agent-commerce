@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with prepaid drop-off/collection, delivery-only, pickup, pickup plus delivery, or drop-off/pay at collection. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.5.8"
+  version: "0.5.10"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -57,17 +57,18 @@ the trip fee alongside each choice; a $0 trip fee does not mean free sharpening.
 | 2 | You drop off · they deliver · prepay | $6 |
 | 3 | They pick up from you · you collect at shop · prepay | $6 |
 | 4 | They pick up + deliver · comeback combo · prepay | $11 total |
-| 5 | You drop off + collect at shop · pay at pickup | $0 |
+| 5 | You drop off + collect at shop · pay at pickup · nothing due now | $0 |
 
 Use these concise labels for bot buttons. “They” means KnifeRevive; “shop” is
 the live drop-off location (currently Pittsburg). Keep who transports each leg
 explicit. Append `— {sharpening subtotal} + {trip fee} trip fee` to every button,
-including $0. Never shorten a fee to “+ fee”, omit the collection leg, or move
+including $0. For option 5, show “nothing due now · $0 trip fee” on the
+button and state the sharpening amount is payable at pickup separately. Never shorten a fee to “+ fee”, omit the collection leg, or move
 the unpaid choice ahead of the four prepaid choices.
 
 Obtain live prices; fees apply once per order, regardless of knife count.
 Trip fees are taxable native fees, separate from parcel shipping; final tax uses
-merchant-configured rates. Backend 0.5.8 advertises five distinct API modes.
+merchant-configured rates. Backend 0.5.10 advertises five distinct API modes.
 Delivery-only uses `prepaid_dropoff_delivery`; pickup and delivery uses
 `prepaid_pickup_delivery`. Both imply return delivery, with canonical status
 receipts preserving the older mode/return representation. Older quotes retain

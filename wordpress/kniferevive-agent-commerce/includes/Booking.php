@@ -13,7 +13,7 @@ final class Booking {
             ['mode'=>'prepaid_dropoff_delivery','return_mode'=>'courier_delivery','label'=>'You drop off · they deliver · prepay','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
             ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'They pick up from you · you collect at shop · prepay','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
             ['mode'=>'prepaid_pickup_delivery','return_mode'=>'courier_delivery','label'=>'They pick up + deliver · comeback combo · prepay','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
-            ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect at shop · pay at pickup','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false]];
+            ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect at shop · pay at pickup · nothing due now','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false]];
     }
     public static function accessToken(array $row): string {
         $body=$row['id'].'.'.$row['data']['access_expires'];return $body.'.'.hash_hmac('sha256','booking-access:'.$body,wp_salt('auth'));

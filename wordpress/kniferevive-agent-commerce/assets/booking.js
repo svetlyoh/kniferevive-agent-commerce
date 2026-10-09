@@ -47,12 +47,44 @@
       const pricing = form.querySelector('[data-trip-minor]');
       const tripFee = trips() === 2 ? Number(pricing?.dataset.roundTripMinor || 0) : trips() * Number(pricing?.dataset.tripMinor || 0);
       const usd = value => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(value/100);
-      for (const option of mode?.options || []) if(option.dataset.label) option.textContent=`${option.dataset.label} — ${usd(subtotal)} + ${usd(Number(option.dataset.feeMinor))} trip fee/order`;
-      estimate.textContent = `Sharpening: ${usd(subtotal)} · Trip fee: ${usd(tripFee)} per order · Estimated subtotal: ${usd(subtotal+tripFee)}, before taxes and disclosed fees. ${paid() ? 'Final tax and total on the payment screen.' : 'Pay when you collect your knives.'}`;
-      const handoffCost = form.querySelector('#handoff-cost'); if(handoffCost)handoffCost.textContent=`Sharpening ${usd(subtotal)} + ${usd(tripFee)} trip fee per order = ${usd(subtotal+tripFee)} before tax. ${trips() ? `${trips()} merchant trip${trips()===1?'':'s'}.` : 'You drop off and collect.'}`;
+      for (const option of mode?.options || []) if(option.dataset.label) option.textContent=option.value==='pay_later_dropoff' ? `${option.dataset.label} — ${usd(Number(option.dataset.feeMinor))} trip fee/order` : `${option.dataset.label} — ${usd(subtotal)} + ${usd(Number(option.dataset.feeMinor))} trip fee/order`;
+      estimate.textContent = `Sharpening: ${usd(subtotal)} · Trip fee: ${usd(tripFee)} per order · Estimated subtotal: ${usd(subtotal+tripFee)}, before taxes and disclosed fees. ${paid() ? 'Final tax and total on the payment screen.' : 'Nothing due now. Pay for sharpening when you collect your knives.'}`;
+      const handoffCost = form.querySelector('#handoff-cost'); if(handoffCost)handoffCost.textContent=`Sharpening ${usd(subtotal)} + ${usd(tripFee)} trip fee per order = ${usd(subtotal+tripFee)} before tax. ${trips() ? `${trips()} merchant trip${trips()===1?'':'s'}.` : paid() ? 'You drop off and collect.' : 'Nothing due now. Pay for sharpening at pickup.'}`;
       quantities[0].setCustomValidity(quantities.some(q=>Number(q.value)>0) ? '' : 'Choose at least one knife.');
     }
   }
+  function openReviewChoices(control) {
+    const picker = document.createElement('dialog');
+    picker.className = 'krev-choice-picker';picker.setAttribute('aria-labelledby','krev-choice-title');
+    const heading = document.createElement('h2');heading.id='krev-choice-title';
+    heading.textContent = control.id === 'mode' ? 'Choose your pickup & return plan' : 'Choose your service day';
+    picker.append(heading);
+    for (const option of control.options) {
+      if (!option.value || option.disabled) continue;
+      const choice = document.createElement('button');choice.type='button';choice.className='krev-choice-option';choice.textContent=option.textContent;
+      if (option.selected) choice.setAttribute('aria-current','true');
+      choice.addEventListener('click', () => { control.value=option.value;control.dispatchEvent(new Event('change',{bubbles:true}));picker.close(); });
+      picker.append(choice);
+    }
+    const close = document.createElement('button');close.type='button';close.className='krev-choice-close';close.textContent='Keep my current choice';
+    close.addEventListener('click',()=>picker.close());picker.append(close);
+    picker.addEventListener('close',()=>{picker.remove();control.focus({preventScroll:true});});
+    document.body.append(picker);picker.showModal();
+  }
+  form.addEventListener('click', event => {
+    const link = event.target.closest('[data-edit-target]');
+    if (!link || !form.contains(link)) return;
+    const section = document.getElementById(link.dataset.editTarget);
+    if (!section || !form.contains(section)) return;
+    event.preventDefault();
+    for (let parent = section.parentElement; parent; parent = parent.parentElement) if (parent.tagName === 'DETAILS') parent.open = true;
+    const control = section.matches('input,select,textarea') ? section : section.querySelector('input:not([disabled]),select:not([disabled]),textarea:not([disabled])');
+    section.scrollIntoView({block:'center'});
+    if (control) {
+      control.focus({preventScroll:true});
+      if (control.tagName === 'SELECT') openReviewChoices(control);
+    }
+  });
   form.addEventListener('input',updateChoices);form.addEventListener('change',updateChoices);
   let submitting = false;
   window.addEventListener('pageshow', () => { submitting = false;form.removeAttribute('aria-busy');updateChoices(); });

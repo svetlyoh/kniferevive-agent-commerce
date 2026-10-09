@@ -84,12 +84,16 @@ final class BookingFrontend {
         if($error)echo '<p class="krev-field-error" id="error-'.esc_attr($name).'">'.esc_html($error).'</p>';
     }
     private static function newForm(array $options): void {
+        // Only service choices are carried into a fresh editable draft; never contact data.
+        if(isset($_GET['mode']) && is_string($_GET['mode']) && in_array($_GET['mode'],Booking::MODES,true))self::$values['mode']??=wp_unslash($_GET['mode']);
+        if(isset($_GET['preferred_date']) && is_string($_GET['preferred_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/D',$_GET['preferred_date']))self::$values['preferred_date']??=wp_unslash($_GET['preferred_date']);
+        $prefillQuantities=is_array($_GET['quantities']??null)?$_GET['quantities']:[];foreach($options['services'] as $service){$product=$service['product_id'];$quantity=$prefillQuantities[$product]??null;if(is_scalar($quantity) && ctype_digit((string)$quantity))self::$values['quantities'][$product]??=(string)min(30,(int)$quantity);}
         $postal=(string)(self::$values['postcode']??wp_unslash($_GET['postal_code']??''));$coverage=null;
         if($postal && (self::$values['mode']??'prepaid_dropoff')!=='pay_later_dropoff'){try{$coverage=BookingCoverage::check($postal);}catch(Fault $e){}}
         echo '<ol class="krev-steps" aria-label="Booking screens"><li aria-current="step">1. Your knife game plan</li><li>2. Secure payment</li></ol>';
         echo '<form method="post" data-booking-form><input type="hidden" name="csrf" value="'.esc_attr(wp_create_nonce('krev_booking_new')).'"><input type="hidden" name="request_key" value="'.esc_attr(self::$values['request_key']??Domain::id()).'">';
         echo '<fieldset><legend>Your pickup &amp; return plan</legend><label for="mode">Booking option</label><select id="mode" name="mode" required>';
-        foreach($options['handoff_options'] as $n=>$choice){$value=$choice['mode'];$base=($n+1).'. '.$choice['label'];$label=$base.' — sharpening + $'.Domain::decimal($choice['transport_fee_minor']).' trip fee/order';echo '<option value="'.esc_attr($value).'" data-label="'.esc_attr($base).'" data-fee-minor="'.esc_attr((string)$choice['transport_fee_minor']).'"'.((self::$values['mode']??'prepaid_dropoff')===$value?' selected':'').'>'.esc_html($label).'</option>';}
+        foreach($options['handoff_options'] as $n=>$choice){$value=$choice['mode'];$base=($n+1).'. '.$choice['label'];$label=$base.($value==='pay_later_dropoff'?' — $0.00 trip fee/order':' — sharpening + $'.Domain::decimal($choice['transport_fee_minor']).' trip fee/order');echo '<option value="'.esc_attr($value).'" data-label="'.esc_attr($base).'" data-fee-minor="'.esc_attr((string)$choice['transport_fee_minor']).'"'.((self::$values['mode']??'prepaid_dropoff')===$value?' selected':'').'>'.esc_html($label).'</option>';}
         echo '</select><p id="handoff-cost" role="status" aria-live="polite">Trip fees apply once per order, before configured tax. Sharpening is separate.</p></fieldset>';
         self::coverage($postal,$coverage);
         echo '<fieldset id="field-quantities"><legend>Your knives</legend>';
@@ -123,9 +127,15 @@ final class BookingFrontend {
         foreach($options['services'] as $service)$subtotal+=$service['unit_price_minor']*max(0,min(30,(int)($quantities[$service['product_id']]??0)));
         $mode=self::$values['mode']??$selection['mode']??'prepaid_dropoff';$return=self::$values['return_mode']??$selection['return_mode']??'customer_collection';
         $trips=$mode==='prepaid_pickup_delivery'?2:($mode==='prepaid_dropoff_delivery'?1:(($mode==='prepaid_pickup'?1:0)+($return==='courier_delivery'?1:0)));$fee=$trips===2?$options['merchant_round_trip_fee_minor']:$trips*$options['merchant_trip_fee_minor'];
-        echo '<section class="krev-review" data-trip-minor="'.esc_attr((string)$options['merchant_trip_fee_minor']).'" data-round-trip-minor="'.esc_attr((string)$options['merchant_round_trip_fee_minor']).'"><p id="booking-estimate" role="status" aria-live="polite">'.esc_html('Sharpening: $'.Domain::decimal($subtotal).' + trip fee: $'.Domain::decimal($fee).' per order · Estimated subtotal: $'.Domain::decimal($subtotal+$fee).' before tax.').'</p><details><summary>Review details &amp; make changes</summary><p><a href="#mode">Change pickup / return plan</a> · <a href="#field-quantities">Change knives</a> · <a href="#preferred-date">Change day</a></p><p class="krev-fine-print">Prepaid requests reach KnifeRevive after payment. Your service day still needs confirmation. If KnifeRevive cannot accept it, unperformed services and trips receive a full refund.</p>';
+        echo '<section class="krev-review" data-trip-minor="'.esc_attr((string)$options['merchant_trip_fee_minor']).'" data-round-trip-minor="'.esc_attr((string)$options['merchant_round_trip_fee_minor']).'"><p id="booking-estimate" role="status" aria-live="polite">'.esc_html('Sharpening: $'.Domain::decimal($subtotal).' + trip fee: $'.Domain::decimal($fee).' per order · Estimated subtotal: $'.Domain::decimal($subtotal+$fee).' before tax.').'</p><details><summary>Review details &amp; make changes</summary><p>'.self::editLinks($selection,$quantities).'</p><p class="krev-fine-print">Prepaid requests reach KnifeRevive after payment. Your service day still needs confirmation. If KnifeRevive cannot accept it, unperformed services and trips receive a full refund.</p>';
         if($options['policy_url'])echo '<p><a href="'.esc_url($options['policy_url']).'">Cancellation and refund terms</a></p>';
         echo '</details></section>';
+    }
+    private static function editLinks(?array $selection,array $quantities): string {
+        $base='';
+        if($selection){$mode=$selection['mode'];if(($selection['return_mode']??'')==='courier_delivery')$mode=$mode==='prepaid_pickup'?'prepaid_pickup_delivery':'prepaid_dropoff_delivery';$base=add_query_arg(['krev_agent'=>'booking','mode'=>$mode,'preferred_date'=>$selection['preferred_date'],'quantities'=>$quantities,'postal_code'=>$selection['postal_code']??''],home_url('/'));}
+        $html='';foreach(['mode'=>'Change pickup / return plan','field-quantities'=>'Change knives','preferred-date'=>'Change day'] as $target=>$label)$html.='<a href="'.esc_url($base.'#'.$target).'" class="krev-edit-action"'.($selection?'':' data-edit-target="'.esc_attr($target).'" aria-controls="'.esc_attr($target).'"').'>'.esc_html($label).'</a> ';
+        return $html.($selection?'<span class="krev-fine-print">Changes open a fresh draft with your knife, day and handoff choices. This draft has no order.</span>':'');
     }
     private static function consent(): void {
         $upfront=Booking::prepaymentEnabled();

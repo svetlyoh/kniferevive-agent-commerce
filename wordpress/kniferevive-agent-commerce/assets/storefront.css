@@ -34,3 +34,9 @@ select{display:block;box-sizing:border-box;width:100%;font:inherit;padding:10px;
 @media(max-width:600px){.krev-private{padding:12px}.krev-header{margin-bottom:12px}.krev-header>a:last-child{font-size:.85rem}.krev-brand-logo{max-width:135px}.krev-private main{padding:20px}.krev-steps{grid-template-columns:repeat(2,1fr);font-size:.85rem}.krev-private fieldset{padding:14px}.krev-private button{width:100%}}
 
 .krev-fine-print{font-size:.9rem;line-height:1.6;color:#39443c}.krev-review{padding:14px 18px;border-radius:10px}.krev-review>p{margin:0}.krev-review details{background:#fff}.krev-private summary:focus-visible{outline:3px solid #d98c00;outline-offset:3px}
+
+.krev-edit-action{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;padding:10px 14px;margin:8px 12px 8px 0;border:1px solid #879d8b;border-radius:8px;background:#f1f5ee;color:#174e37!important;text-decoration:none}.krev-edit-action:hover{background:#e4eee0}
+.krev-private .krev-choice-picker{box-sizing:border-box;width:min(620px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;padding:20px;border:1px solid #879d8b;border-radius:12px;background:#fff;color:#202124}
+.krev-choice-picker::backdrop{background:rgba(14,35,23,.45)}.krev-choice-picker h2{font-size:1.25rem;margin:0 0 16px;line-height:1.4}
+.krev-private .krev-choice-option{display:block;box-sizing:border-box;width:100%;white-space:normal;text-align:left;margin:12px 0;padding:14px;background:#fff;color:#174e37;border:1px solid #ccd9cc;border-radius:10px;line-height:1.5}
+.krev-private .krev-choice-option[aria-current=true]{background:#f1f5ee;border-color:#174e37}.krev-private .krev-choice-close{display:block;width:100%;margin-top:20px;background:#174e37;color:#fff}

@@ -38,3 +38,13 @@
   .krev-booking-payment #payment ul.payment_methods,.krev-booking-payment #payment .place-order{padding:16px}
   .krev-booking-payment #payment div.payment_box{padding:16px}
 }
+
+/* Keep native coupon expansion and validation; theme only this booking route. */
+.krev-booking-payment .woocommerce-form-coupon-toggle .woocommerce-info{background:#f1f5ee;color:#174e37;border:1px solid #ccd9cc;border-radius:12px;padding:20px 20px 20px 52px;margin:24px 0;box-shadow:none}
+.krev-booking-payment .woocommerce-form-coupon-toggle .woocommerce-info:before{color:#174e37;top:20px;left:20px}
+.krev-booking-payment .woocommerce-form-coupon-toggle .showcoupon{color:#174e37;font-weight:600}
+.krev-booking-payment.woocommerce form.checkout_coupon{background:#f1f5ee;color:#202124;border:1px solid #ccd9cc;border-radius:12px;padding:20px;margin:0 0 24px}
+.krev-booking-payment.woocommerce form.checkout_coupon .form-row{float:none;width:100%;margin:14px 0}
+.krev-booking-payment.woocommerce form.checkout_coupon button{background:#174e37;color:#fff;border-radius:10px;padding:14px 20px;min-height:50px;float:none}
+.krev-booking-payment .woocommerce-form-coupon-toggle .wc-block-components-notice-banner.is-info{background:#f1f5ee;color:#174e37;border:1px solid #ccd9cc;border-radius:12px;padding:20px!important;margin:24px 0;font-size:17px;line-height:1.6}
+.krev-booking-payment .woocommerce-form-coupon-toggle .wc-block-components-notice-banner.is-info>svg{background-color:#174e37;flex-shrink:0}

@@ -1,0 +1,71 @@
+{
+  "version": "0.5.10",
+  "production_update_reported_success": true,
+  "live_form": {
+    "asset": "https://kniferevive.com/wp-content/plugins/kniferevive-agent-commerce/assets/booking.js?ver=0.5.10",
+    "controls": [
+      {
+        "label": "Change pickup / return plan",
+        "target": "mode"
+      },
+      {
+        "label": "Change knives",
+        "target": "field-quantities"
+      },
+      {
+        "label": "Change day",
+        "target": "preferred-date"
+      }
+    ],
+    "option5": "5. You drop off + collect at shop \u00b7 pay at pickup \u00b7 nothing due now \u2014 $0.00 trip fee/order",
+    "review": "Sharpening: $10.00 \u00b7 Trip fee: $0.00 per order \u00b7 Estimated subtotal: $10.00, before taxes and disclosed fees. Nothing due now. Pay for sharpening when you collect your knives.",
+    "selectedMode": "pay_later_dropoff",
+    "submissionButton": "Book my drop-off",
+    "subtotal": "Sharpening $10.00 + $0.00 trip fee per order = $10.00 before tax. Nothing due now. Pay for sharpening at pickup."
+  },
+  "production_coupon_css": {
+    "file": "assets/booking-checkout.css",
+    "sha256": "b392894630061216599a2bc55ff0f223eb8492c96be9739ef00a8d5889d7a2fb",
+    "sourceMatches": true
+  },
+  "browser_verification": {
+    "live_handoff_choice_dialog_opened": true,
+    "live_day_choice_dialog_opened": true,
+    "live_knives_control_focused": "knife-1963",
+    "synthetic_draft_edit_preserved": {
+      "mode": "prepaid_pickup_delivery",
+      "day": "2026-10-16",
+      "quantity": 2,
+      "customer_email_copied": false
+    },
+    "synthetic_coupon_native_toggle_expanded": true,
+    "synthetic_coupon_panel_and_form_match_journey_background": "rgb(241, 245, 238)",
+    "synthetic_coupon_form_border": "rgb(204, 217, 204)",
+    "synthetic_coupon_form_radius": "12px",
+    "phone_choice_dialog": {
+      "viewport_width": 375,
+      "dialog_width": 335,
+      "scroll_width": 333,
+      "client_width": 333,
+      "horizontal_overflow": false,
+      "all_five_choices_visible": true
+    },
+    "escape_kept_original_day": true
+  },
+  "validation": {
+    "changed_php_lint": "pass",
+    "javascript_syntax": "pass",
+    "skill_frontmatter": "pass",
+    "packaged_files_match_source": true,
+    "relative_references_exist": true,
+    "prior_0_5_7_financial_matrix_not_rerun": 1416
+  },
+  "production_booking_created": false,
+  "real_payment_or_refund_executed": false,
+  "clawhub_published_version": "0.4.2",
+  "synthetic_payment": {
+    "synthetic_native_order_created": false,
+    "synthetic_trip_fee_minor": 1100,
+    "synthetic_payment_state": "not_started"
+  }
+}

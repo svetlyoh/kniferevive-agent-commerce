@@ -1,5 +1,12 @@
 # Changelog
 
+## Booking review controls and coupon styling 0.5.10 — October 9, 2026
+
+- State “nothing due now” for unpaid drop-off/collection; sharpening remains payable at pickup.
+- Make review controls focus knife quantities and open accessible handoff/day choice panels, including on phones. Preserve service choices when opening an editable form from a bot draft.
+- Match the native booking coupon notice and expanded form to the green pickup/return panel.
+- Prices, payment requirements and ordinary storefront coupon styling remain unchanged.
+
 ## Clear pickup/return labels 0.5.8 — October 9, 2026
 
 - Use concise “they pick up” / “they deliver” wording and explicitly say when the customer collects knives at the shop.
