@@ -1,0 +1,15 @@
+# KnifeRevive Concierge 0.5.12 — exact visible trip fees
+
+The owner's screenshot showed an unpaid option first and amount-free “+ fee” labels despite the 0.5.10 guidance. This release supplies full button templates and requires a pre-send check of every visible numeric trip fee. One pickup or delivery is $6 per order; the pickup/return “comeback combo” explicitly says $11 round-trip fee per order. Unpaid customer drop-off/collection stays last with “nothing due now”. Sharpening remains separate and taxes/final checkout fees are disclosed independently.
+
+For a verified $7 sharpening subtotal, the single-trip buttons include `$7 + $6 trip fee/order`; the combo includes `$7 + $11 round-trip fee/order`. Verified live fee changes remain authoritative. When API access is challenged, distinguish published fee estimates from a verified all-in quote. Existing requests retain their frozen fee. No payment, contact-sharing or wallet authorization boundary changed.
+
+Skill validation passed. The complete eight-file archive matches the immutable GitHub skill source byte-for-byte after LF normalization. The corrected archive manifest is attached to the release and recorded on main. Backend remains 0.5.11; no merchant code deployment or booking/payment test is part of this text-only update.
+
+[Immutable source](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.5.12/skills/kniferevive-concierge) at `efe968f24fdb6888dc05634d2449404f50ae80df`. [GitHub release and ZIP](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.5.12), [archive manifest](skill-release-manifest-0.5.12.json).
+
+ClawHub accepted the submission under `svetlyoh`, initially pending security scans, then published **0.5.12 as latest**. The public listing renders the required templates with $6 and $11 numeric amounts. The [exact-version public audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.5.12) reports **Pass**, static analysis has no findings, and registry security is clean/benign with high confidence and no warnings. VirusTotal and SkillSpector reports are null rather than completed passing scans. All eight registry files and a fresh isolated CLI download match the tagged source. No skill execution or active buyer-bot runtime was verified.
+
+Separate full verification reports `ok=false`, `decision=fail`, reason `card.missing`: the registry-generated Skill Card remains unavailable. No complete trust-card certification is claimed. No force-install, duplicate submission or security-gate bypass was used. See [sanitized publication evidence](skill-publication-0.5.12.json). The public audit and fee-label screenshots are saved in the owner's local documentation diagnostics directory.
+
+Updating an online skill does not reload another bot's cached instructions. Update/import the complete 0.5.12 folder through the bot host, verify the active copy and start a new session. If the bot still omits amounts or places unpaid first, it has not demonstrated the new display behavior; do not claim this registry publication remotely enforces its renderer.
