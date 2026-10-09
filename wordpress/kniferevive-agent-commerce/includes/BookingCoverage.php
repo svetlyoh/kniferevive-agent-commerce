@@ -9,7 +9,7 @@ final class BookingCoverage {
         if($data===null)$data=json_decode(file_get_contents(dirname(__DIR__).'/assets/booking-coverage.json'),true,32,JSON_THROW_ON_ERROR);
         return $data;
     }
-    public static function check(string $postal): array {
+    public static function check(string $postal,bool $custom=true): array {
         $postal=Domain::postal($postal);$data=self::data();$counties=$data['bay_postal_codes'][$postal]??[];
         $bay=array_keys($data['bay_counties']);$pickup=$data['pickup_counties'];
         $unknown=!$counties && !in_array($postal,$data['outside_postal_codes'],true);
@@ -22,12 +22,15 @@ final class BookingCoverage {
             'outside_bay_area'=>'We do not currently offer sharpening services in your area. We are operating in the SF Bay Area only.',
             default=>'This ZIP code needs address review before KnifeRevive can confirm service coverage or accept prepayment.'
         };
+        $pickupEligible=$eligible;if($custom){$settings=Settings::get();if($settings['booking_pickup_limit_enabled'])$pickupEligible=$eligible && in_array($postal,$settings['booking_pickup_postal_codes'],true);}
+        if($eligible && !$pickupEligible)$message='Pickup service is not available in your ZIP code but will be available in the near future. Customer drop-off prepayment is available.';
         return ['postal_code'=>$postal,'coverage_state'=>$state,'service_available'=>(bool)$counties && !(bool)array_diff($counties,$bay),
-            'pickup_eligible'=>$eligible,'prepayment_eligible'=>$eligible,'address_review_required'=>(bool)$review,
+            'pickup_eligible'=>$pickupEligible,'prepayment_eligible'=>$eligible,'address_review_required'=>(bool)$review,
             'counties'=>array_values(array_map(static fn($id)=>$data['bay_counties'][$id]??'Outside SF Bay Area',$counties)),
             'message'=>$message,'source_url'=>$data['source_url'],'geography_vintage'=>$data['geography_vintage']];
     }
     public static function pickupPostcodes(): array {
+        $settings=Settings::get();if($settings['booking_pickup_limit_enabled'])return $settings['booking_pickup_postal_codes'];
         $data=self::data();return array_values(array_map('strval',array_keys(array_filter($data['bay_postal_codes'],static fn($counties)=>(bool)array_intersect($counties,$data['pickup_counties'])))));
     }
     public static function requireService(array $input): array {

@@ -12,7 +12,7 @@
   let coverageResult = null;
   function updateChoices() {
     const trips = (mode?.value === 'prepaid_pickup' ? 1 : 0) + (returns?.value === 'courier_delivery' ? 1 : 0);
-    if (address) address.open = trips > 0 || addressReview;
+    if (address && (trips > 0 || addressReview)) address.open = true;
     for (const name of ['address_1','city']) {
       const field = form.querySelector(`input[name="${name}"]`);
       if (field) field.required = trips > 0 || addressReview;
@@ -30,12 +30,14 @@
   }
   form.addEventListener('input',updateChoices);
   form.addEventListener('change',updateChoices);
+  const submitButton = form.querySelector('button[value="submit"]');
+  if (submitButton) submitButton.dataset.originalLabel = submitButton.textContent;
   let submitting = false;
   window.addEventListener('pageshow', () => {
     submitting = false;
     form.removeAttribute('aria-busy');
     const button = form.querySelector('button[value="submit"]');
-    if (button) button.textContent = 'Request booking — no payment now';
+    if (button) button.textContent = button.dataset.originalLabel || 'Continue with booking';
   });
   form.addEventListener('submit', event => {
     if (event.submitter?.value !== 'submit') return;
@@ -71,7 +73,7 @@
       addressReview = !!data.address_review_required;
       if (mode) {
         for (const option of mode.options) {
-          option.disabled = option.value !== 'pay_later_dropoff' && !data.prepayment_eligible;
+          option.disabled = option.value !== 'pay_later_dropoff' && (!data.prepayment_eligible || (option.value === 'prepaid_pickup' && !data.pickup_eligible));
         }
       }
       if (returns) {

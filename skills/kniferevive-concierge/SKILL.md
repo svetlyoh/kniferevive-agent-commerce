@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with unpaid drop-off, prepaid drop-off, or prepaid merchant pickup. Check county coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.4.2"
+  version: "0.5.1"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech

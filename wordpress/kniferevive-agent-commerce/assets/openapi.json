@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "KnifeRevive Agent Commerce",
-    "version": "1.3.0",
-    "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review."
+    "version": "1.4.0",
+    "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review. Native refund acceptance does not prove bank arrival."
   },
   "servers": [
     {
@@ -2289,7 +2289,12 @@
             "type": "boolean"
           },
           "refund_state": {
-            "const": "not_issued"
+            "enum": [
+              "not_issued",
+              "full_gateway_accepted",
+              "partial_gateway_accepted",
+              "manual_review_required"
+            ]
           },
           "expires_at": {
             "type": "string"
@@ -2302,6 +2307,9 @@
           },
           "booking_access_token": {
             "type": "string"
+          },
+          "refund_summary": {
+            "$ref": "#/components/schemas/RefundSummary"
           },
           "order_reference": {
             "type": [
@@ -2422,6 +2430,72 @@
         ],
         "additionalProperties": false
       },
+      "RefundSummary": {
+        "type": "object",
+        "properties": {
+          "refund_state": {
+            "enum": [
+              "not_issued",
+              "full_gateway_accepted",
+              "partial_gateway_accepted",
+              "manual_review_required"
+            ]
+          },
+          "refund_recorded_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "refund_gateway_accepted_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reference": {
+                  "type": "string"
+                },
+                "amount_minor": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "state": {
+                  "enum": [
+                    "gateway_accepted",
+                    "manual_record_only"
+                  ]
+                }
+              },
+              "required": [
+                "reference",
+                "amount_minor",
+                "state"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "refund_arrival_verified": {
+            "const": false
+          },
+          "refund_destination": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "refund_state",
+          "refund_recorded_minor",
+          "refund_gateway_accepted_minor",
+          "refunds",
+          "refund_arrival_verified",
+          "refund_destination"
+        ],
+        "additionalProperties": false
+      },
       "BookingEvent": {
         "type": "object",
         "properties": {
@@ -2439,7 +2513,14 @@
               "booking.confirmed",
               "booking.cancelled",
               "payment.verified",
-              "refund.review_required"
+              "refund.review_required",
+              "woocommerce.order_state",
+              "woocommerce.order_cancelled",
+              "cancellation.payment_review_required",
+              "refund.gateway_accepted",
+              "refund.manual_review_required",
+              "refund.record_removed",
+              "payment.capacity_review_required"
             ]
           },
           "booking_reference": {
@@ -2474,6 +2555,14 @@
           },
           "payment_state": {
             "type": "string"
+          },
+          "refund_state": {
+            "enum": [
+              "not_issued",
+              "full_gateway_accepted",
+              "partial_gateway_accepted",
+              "manual_review_required"
+            ]
           },
           "merchant_confirmation_required": {
             "type": "boolean"
@@ -3104,6 +3193,7 @@
               "paid",
               "refund_recorded",
               "cancelled",
+              "paid_cancelled_review_required",
               "needs_review"
             ]
           },
@@ -3133,6 +3223,9 @@
           },
           "direct_payment_enabled": {
             "const": false
+          },
+          "refund_summary": {
+            "$ref": "#/components/schemas/RefundSummary"
           },
           "next_action": {
             "type": "string"
@@ -3178,6 +3271,7 @@
               "paid",
               "refund_recorded",
               "cancelled",
+              "paid_cancelled_review_required",
               "needs_review"
             ]
           },
@@ -3207,6 +3301,9 @@
           },
           "direct_payment_enabled": {
             "const": false
+          },
+          "refund_summary": {
+            "$ref": "#/components/schemas/RefundSummary"
           },
           "next_action": {
             "type": "string"

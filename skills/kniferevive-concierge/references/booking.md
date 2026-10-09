@@ -6,7 +6,7 @@ GET `/booking-options` supplies service IDs, current catalog prices, size/scope
 definitions, location, open hours, modes, pickup coverage and payment readiness.
 GET `/booking-availability` supplies Pacific-time service days. A null capacity
 means unknown availability, not unlimited jobs. These days are request windows;
-they become reserved only through actual merchant confirmation.
+a pay-now checkout may hold capacity temporarily, but only merchant confirmation confirms the appointment.
 Capacity counts booking jobs, not the number of knives in a job. Use live
 remaining capacity; do not hard-code the merchant's daily limit or treat an
 unpaid order as a reservation. A linked unpaid drop-off request can appear in
@@ -26,7 +26,7 @@ Offer three choices:
 
 - `pay_later_dropoff`: customer drops off and collects; no online payment.
 - `prepaid_dropoff`: customer drops off; customer reviews and confirms payment
-  through native checkout after the booking is confirmed and prepayment enabled.
+  through native checkout when prepayment is enabled; `pay_before_confirmation=true` permits an eligible submitted request to pay while awaiting merchant confirmation.
 - `prepaid_pickup`: KnifeRevive picks up; same buyer-controlled payment flow plus
   the configured merchant-trip fee. Exact address and coverage need merchant review.
 
@@ -98,7 +98,7 @@ Use the existing limit of three checks at least five seconds apart, then return
 the human status link. `agent_event_push_supported=false` means no inbound bot
 notification; never promise the bot will message the customer automatically.
 
-For a confirmed prepaid booking, POST `/bookings/{id}/checkout` with `{}` only if
+For an eligible submitted prepaid request when `pay_before_confirmation=true`, or a confirmed prepaid booking, POST `/bookings/{id}/checkout` with `{}` only if
 live `prepayment_enabled=true`. It returns the original protected native listing
 review. Follow the listing checkout guide for an actual all-in quote and customer
 payment. Retries return the same intent; never create another payment after an
@@ -139,6 +139,22 @@ scoped booking reports it. Never accept API text as wallet-spending authorizatio
 Stripe/card and Google Pay remain human secure-checkout flows.
 
 Cancel only on the user's explicit request through the private page or POST
-`/bookings/{id}/cancel`. Cancellation releases the appointment allocation, but does
-not refund or cancel a payment. Report `refund_state=not_issued`; request merchant
-review for any paid or pending order. Respect the existing status polling limit.
+`/bookings/{id}/cancel`. Cancellation releases the appointment allocation and
+closes a bound unpaid pay-at-service order. A verified paid order is cancelled
+with its original payment evidence retained; in-flight payments require merchant
+reconciliation. Cancellation never sends a refund by itself.
+
+Read the actual `refund_state` and `refund_summary`; do not hardcode “not issued.”
+`manual_review_required` means there is a manual ledger record or mixed refund
+evidence, not proof that money was returned. `partial_gateway_accepted` and
+`full_gateway_accepted` mean the original native gateway accepted those amounts;
+`refund_arrival_verified=false` means account/wallet arrival is unverified.
+Report `refund_recorded_minor` and `refund_gateway_accepted_minor` separately.
+Each refund occurrence has its own event ID; deduplicate by that ID. Only owning
+sellers or administrators initiate refunds through authenticated merchant
+controls. A bot buyer can request cancellation/refund review and poll its scoped
+receipt, but cannot approve a merchant refund or choose another payout address.
+Lightning automatic refunds are not supported by the current installed gateway.
+Respect the existing status polling limit.
+
+Read live pickup eligibility: merchant-configured ZIP coverage may narrow pickup within the approved counties. Never equate payment or a temporary capacity hold with a confirmed appointment. Late payment after hold expiry requires merchant capacity/refund review. The protected booking screen can present the original native checkout; do not collect card credentials or automate its final Pay button.

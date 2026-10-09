@@ -4,11 +4,11 @@ import argparse, hashlib, json, shutil, zipfile
 
 root=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
-parser.add_argument('baseline',type=Path,help='Captured kniferevive-seller-orders 1.1.4 directory')
+parser.add_argument('baseline',type=Path,help='Captured production directory matching the overlay baseline manifest')
 args=parser.parse_args()
 baseline=args.baseline.resolve()
 overlay=root/'wordpress-overlays/kniferevive-seller-orders'
-manifest=json.loads((overlay/'baseline-manifest.json').read_text(encoding='utf-8'))
+manifest=json.loads((overlay/'baseline-manifest.json').read_text(encoding='utf-8-sig'))
 actual={p.relative_to(baseline).as_posix():p for p in baseline.rglob('*') if p.is_file()}
 expected={f['path']:f for f in manifest['files']}
 if actual.keys()!=expected.keys():raise SystemExit('Baseline file inventory differs; inspect before packaging.')
@@ -39,4 +39,4 @@ for source,version in [(baseline,manifest['baseline_version']),(candidate,manife
             entries.append({'path':info.filename,'sha256':hashlib.sha256(payload).hexdigest(),'bytes':len(payload)})
     release['components'][archive.name]={'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'files':entries}
 (out/'seller-orders-release-manifest.json').write_text(json.dumps(release,indent=2)+'\n',encoding='utf-8')
-print('Verified 30-file live baseline; packaged rollback 1.1.4 and four-file overlay 1.1.5.')
+print(f"Verified {len(expected)}-file baseline; packaged rollback {manifest['baseline_version']} and overlay {manifest['target_version']}.")

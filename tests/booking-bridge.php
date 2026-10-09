@@ -2,6 +2,8 @@
 require __DIR__.'/sandbox-bootstrap.php';
 use KnifeRevive\AgentCommerce\{Domain,Settings,Store,Booking,BookingSeller,BookingOrderBridge,BookingOutbox,BookingAuthorization,Api,Fault};
 if(DB_NAME!=='krev_agent_sandbox' || $wpdb->prefix!=='krev_sandbox_')throw new RuntimeException('Sandbox fence failed.');
+$wpdb->query('DELETE FROM '.Store::table('holds')." WHERE slot_id LIKE 'booking-%'");
+$wpdb->query('DELETE FROM '.Store::table('slots')." WHERE id LIKE 'booking-%'");
 $checks=0;
 function bridgeCheck($condition,$message){global $checks;if(!$condition)throw new RuntimeException('FAIL: '.$message);$checks++;echo 'PASS: '.$message."\n";}
 function bridgeReject(callable $work,string $code){try{$work();}catch(Fault $e){bridgeCheck($e->codeName===$code,'rejects '.$code);return;}throw new RuntimeException('Expected '.$code);}
@@ -104,7 +106,7 @@ $p2=clone $p;$p2->set_id(0);$p2->set_name('Other seller service');$p2->save();wp
 bridgeReject(static fn()=>Booking::create(array_replace($input,['items'=>[['product_id'=>$p->get_id(),'quantity'=>1],['product_id'=>$p2->get_id(),'quantity'=>1]]]),$owner,'bridge-mixed-'.Domain::id()),'MULTIPLE_SELLERS');
 $cap=Api::capabilities(null);bridgeCheck($cap['booking']['agent_event_polling_supported'] && !$cap['booking']['agent_event_push_supported'] && !$cap['booking']['host_address_grants_supported'],'capabilities advertise implemented polling only');
 $r=new WP_REST_Request('POST');$r->set_header('Content-Type','application/json');$r->set_body(json_encode(array_replace($input,['customer'=>$contact['customer']])));bridgeReject(static fn()=>Api::bookingCreate($r),'INVALID_REQUEST');
-Booking::cancel($row['id'],$owner);$cancel=Booking::response(Booking::get($row['id'],$owner));bridgeCheck($cancel['booking_state']==='cancelled' && $cancel['refund_state']==='not_issued' && wc_get_order($order->get_id())->has_status('pending'),'cancellation does not fabricate refund or native order cancellation');
+Booking::cancel($row['id'],$owner);$cancel=Booking::response(Booking::get($row['id'],$owner));bridgeCheck($cancel['booking_state']==='cancelled' && $cancel['refund_state']==='not_issued' && wc_get_order($order->get_id())->has_status('cancelled'),'cancellation closes unpaid native service order without fabricating refund');
 $confirmedJobs=array_values(array_filter(BookingOutbox::jobs($row['id']),static fn($j)=>$j['data']['stage']==='confirmed'));
 BookingOutbox::send($confirmedJobs[0]['id']);bridgeCheck(Store::get($confirmedJobs[0]['id'])['data']['last_error']==='obsolete_notification_suppressed','cancelled booking suppresses stale confirmation email');
 bridgeReject(static fn()=>BookingOrderBridge::ensure($row['id']),'ORDER_BRIDGE_INELIGIBLE');
@@ -140,5 +142,5 @@ $s['booking_order_timing']='on_submit';update_option('krev_agent_settings',Setti
 $start=microtime(true)+4;$processes=[];
 foreach([1,2] as $worker){$cmd=[PHP_BINARY,'-n','-d','extension_dir='.ini_get('extension_dir'),'-d','extension=mysqli','-d','extension=mbstring','-d','extension=openssl','-d','extension=curl','-d','memory_limit=512M',__DIR__.'/booking-order-race-worker.php',$argv[1],$race['id'],(string)$start];$pipes=[];$proc=proc_open($cmd,[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']],$pipes);if(!is_resource($proc))throw new RuntimeException('Cannot start order race worker');fclose($pipes[0]);$processes[]=[$proc,$pipes];}
 $outcomes=[];foreach($processes as [$proc,$pipes]){$outcomes[]=trim(stream_get_contents($pipes[1]));$error=stream_get_contents($pipes[2]);fclose($pipes[1]);fclose($pipes[2]);if(proc_close($proc)!==0)throw new RuntimeException('Order race worker failed: '.$error);}
-bridgeCheck(ctype_digit($outcomes[0]) && $outcomes[0]===$outcomes[1] && count(BookingOrderBridge::findOrders($race['id']))===1,'two independent workers racing submission link exactly one native order');
+bridgeCheck(ctype_digit($outcomes[0]) && $outcomes[0]===$outcomes[1] && count(BookingOrderBridge::findOrders($race['id']))===1,'two independent workers racing submission link exactly one native order ('.implode(', ',$outcomes).')');
 echo "$checks booking bridge assertions passed. Email and processor evidence is synthetic only.\n";

@@ -6,7 +6,7 @@ final class Frontend {
     private static function localTime(string $value): string { return (new \DateTimeImmutable($value))->setTimezone(new \DateTimeZone('America/Los_Angeles'))->format('M j, Y g:i A T'); }
     private static function csrf(string $owner,string $quote,int $bucket): string { return hash_hmac('sha256',Domain::canonical([$owner,$quote,$bucket]),wp_salt('nonce')); }
     public static function render(): void {
-        if(($_GET['krev_agent']??'')==='booking')BookingFrontend::render();
+        if(($_GET['krev_agent']??'')==='booking'){if(($_GET['payment']??'')==='1')BookingCheckoutFrontend::render();BookingFrontend::render();}
         if(in_array($_GET['krev_agent']??'',['listing-review','listing-status'],true))ListingFrontend::render();
         if (parse_url($_SERVER['REQUEST_URI']??'',PHP_URL_PATH)==='/AI.md') {
             header('Content-Type: text/markdown; charset=utf-8'); header('X-Content-Type-Options: nosniff');

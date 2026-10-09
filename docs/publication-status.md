@@ -1,6 +1,17 @@
 # Publication status
 
-## Current published skill 0.4.2; plugin 0.4.2 deployed
+## Current backend 0.5.1; published skill 0.4.2
+
+Agent Commerce **0.5.1** and Seller Orders **1.1.6** are deployed with
+owner-approved prepaid sharpening requests, native same-screen checkout,
+seller cancellation/refund receipt handling and an administrator pickup ZIP
+editor. Capacity remains 4. See [the implementation/deployment runbook](prepaid-booking-0.5.1.md).
+Actual processor settlement and headless API access remain unverified; anonymous
+API traffic receives the hosting browser challenge. Lightning readiness remains
+false. Local skill **0.5.1** is an unpublished candidate, with no new registry
+audit, card, immutable release or certification claimed.
+
+## Historical 0.4.2 publication and backend deployment
 
 The newest publication is [0.4.2](skill-publication-0.4.2.md), published after the
 owner's explicit request. Its public audit shows Pass, clean/benign security and
@@ -21,7 +32,7 @@ notifications accepted by the mailer. The owner reports inbox arrival; the
 connected mailbox verifies a seller message for that new reference. Three
 distinct recipient inbox receipts and the owning-seller live login remain
 unverified. The test remains requested and unpaid. The
-unpublished 0.4.0 **skill** candidate is superseded by 0.4.2; no payment activation occurred.
+unpublished 0.4.0 **skill** candidate was superseded by 0.4.2; no payment activation occurred at that stage.
 See [deployment observations](booking-deployment-0.4.0-2026-10-08.md) and
 [incident and readiness notes](incremental-booking-0.4.0.md).
 Older sections below are retained as historical evidence.

@@ -15,12 +15,20 @@ Pacific service days and request/payment readiness. The three modes are
 private session and idempotency key to prepare a draft; the human submits the
 returned private review page. Creating a draft does not reserve or charge.
 Only `appointment_confirmed=true` supports a confirmed booking. GET
-`/bookings/{id}` reports appointment and payment separately. A confirmed prepaid
-booking can prepare native checkout through POST `/bookings/{id}/checkout` when
+`/bookings/{id}` reports appointment and payment separately. An eligible prepaid
+request can prepare native checkout through POST `/bookings/{id}/checkout` when
 enabled; the human reviews the final total and authorizes payment. $7.99 per
 merchant trip is an estimate input, not an all-in quote. Missing coverage/capacity
 means merchant review, not guaranteed availability. The public human booking URL
 is advertised in capabilities and works without installing a skill.
+
+Booking receipts include `refund_summary`: recorded amount and original-gateway
+accepted amount are separate, and neither proves arrival in a bank or wallet.
+Cancellation closes a bound unpaid service order without issuing a refund. Paid
+cancellation preserves payment evidence and needs separate merchant refund review.
+Native refund events are keyed per occurrence. Sellers use authenticated merchant
+controls; buyers poll the same private booking receipt. A refund does not authorize
+the bot to obtain merchant credentials or provide a new payout destination.
 
 `GET /catalog?category=technology&per_page=10&page=1` lists normalized offers.
 Use `category=sharpening` for service products. Responses contain `product_id`,
@@ -139,7 +147,7 @@ the protected review form. It creates
 a draft, not a reservation or charge. Human submission requests merchant review.
 Modes: unpaid customer drop-off, prepaid customer drop-off, prepaid merchant
 pickup. Merchant trips cost the configured fee per leg (owner pricing $7.99).
-Only merchant confirmation with real daily capacity reserves a service day.
+Pay-now checkout temporarily holds one daily job; verified native payment retains the allocation pending merchant review. Only merchant confirmation confirms the appointment. Expired payment holds require review after late settlement.
 
 Pickup/prepayment eligibility is limited to Contra Costa and Santa Clara county
 ZIPs. Other nine-county Bay Area residents can request unpaid customer drop-off;
@@ -147,8 +155,8 @@ relay the returned pickup-coming-soon message. Outside-area requests are rejecte
 with the SF Bay Area only message. Cross-county/unknown ZIPs require review, not
 ZIP-prefix guessing. Read live coverage messages and payment readiness.
 
-After confirmation and enabled prepayment, `/bookings/{id}/checkout` returns the
-same native checkout intent. Stripe and Google Pay require human approval there.
+When enabled, `/bookings/{id}/checkout` returns the
+same native checkout intent. Check `pay_before_confirmation` in booking options; when true an eligible submitted request may pay before merchant confirmation. Custom pickup ZIP settings may narrow courier availability. Stripe and Google Pay require human approval there.
 An explicitly authorized host Lightning wallet can pay the original native
 invoice returned by scoped `/bookings/{id}/wallet-invoice` when separately
 verified/enabled. Native checkout must first prepare the order/invoice; autonomous

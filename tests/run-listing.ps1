@@ -19,6 +19,7 @@ foreach($taskMode in @('legacy','legacy-no-sync','hpos','hpos-no-sync')) {
     Invoke-SandboxCheck 'tests/listing-checkout.php' @() 'listing checkout assertions passed.' "listing-$taskMode"
     Invoke-SandboxCheck 'tests/booking.php' @() 'booking assertions passed.' "booking-$taskMode"
     Invoke-SandboxCheck 'tests/booking-bridge.php' @() 'booking bridge assertions passed.' "booking-bridge-$taskMode"
+    Invoke-SandboxCheck 'tests/booking-lifecycle.php' @() 'lifecycle assertions passed.' "booking-lifecycle-$taskMode"
     if($taskMode -in @('legacy','hpos')) {
         Remove-Item Env:KREV_LISTING_TEST_STACK
         Invoke-SandboxCheck 'tests/integration.php' @() 'behavioral assertions passed.' "operator-regression-$taskMode"

@@ -19,8 +19,14 @@ final class ListingCheckout {
         if(WC()->session)WC()->session->set('krev_booking_id',null);
         // Keep the durable intent/order evidence; only the emptied browser cart is detached.
     }
-    public static function enabled(): bool {
+    public static function enabled(bool $booking=false): bool {
         $s=Settings::get();
+        // Owner launch approval is a scoped business decision, not a claim of test/live evidence.
+        if($booking && $s['booking_launch_approved'] && $s['booking_enabled'] && $s['booking_prepaid_enabled']
+            && $s['booking_policy_url'] && $s['booking_policy_version'] && $s['booking_services']
+            && get_woocommerce_currency()==='USD' && wc_get_price_decimals()===2){
+            foreach(WC()->payment_gateways()->payment_gateways() as $g)if($g->id==='stripe' && in_array($g->id,$s['listing_gateway_ids'],true) && $g->enabled==='yes' && $g->supports('refunds'))return true;
+        }
         $configured=$s['listing_handoff_enabled'] && $s['listing_pricing_verified'] && $s['listing_gateway_ids']
             && $s['listing_policy_url'] && $s['listing_policy_version'] && $s['return_policy_url']
             && get_woocommerce_currency()==='USD' && wc_get_price_decimals()===2;
@@ -29,8 +35,8 @@ final class ListingCheckout {
             && ($g->get_option('testmode','unknown')==='yes' || $s['listing_live_verified']))return true;
         return false;
     }
-    private static function requireEnabled(): void {
-        if (!self::enabled()) Domain::fail('LISTING_HANDOFF_DISABLED','Agent listing handoff is unavailable. Use the original listing and normal checkout.',503);
+    private static function requireEnabled(bool $booking=false): void {
+        if (!self::enabled($booking)) Domain::fail('LISTING_HANDOFF_DISABLED','Agent listing handoff is unavailable. Use the original listing and normal checkout.',503);
         if (!is_ssl() && wp_get_environment_type()!=='local') Domain::fail('FORBIDDEN','Secure first-party checkout is required.',403);
     }
     public static function seller(int $id): array {
@@ -42,7 +48,7 @@ final class ListingCheckout {
         foreach (Settings::get()['listing_services'] as $terms) if ($terms['product_id']===$id) return $terms;
         return null;
     }
-    private static function eligible($p): string {
+    private static function eligible($p,bool $booking=false): string {
         if (!$p || $p->get_status()!=='publish' || $p->get_catalog_visibility()==='hidden') return 'unavailable';
         if (!$p->is_type('simple')) return 'unsupported_variation';
         if (!$p->is_purchasable() || !$p->is_in_stock() || $p->backorders_allowed()) return 'unavailable';
@@ -54,10 +60,14 @@ final class ListingCheckout {
         }
         if ($p->get_meta('_product_addons') || apply_filters('krev_agent_listing_requires_configuration',false,$p)) return 'requires_selection';
         if (Commerce::isService($p)) {
+            if($booking && Settings::get()['booking_launch_approved']){
+                if(!in_array($p->get_id(),array_column(Settings::get()['booking_services'],'product_id'),true))return 'needs_manual_review';
+            }else{
             $terms=self::serviceTerms($p->get_id());
             if (!$terms || !$terms['native_fulfillment_verified']) return 'needs_manual_review';
+            }
         }
-        return self::enabled() ? 'handoff_only' : 'handoff_disabled';
+        return self::enabled($booking) ? 'handoff_only' : 'handoff_disabled';
     }
     /** Read only the native plugin's buyer terms; native checkout still owns snapshots. */
     private static function returnPolicy(int $id): ?array {
@@ -104,6 +114,8 @@ final class ListingCheckout {
     }
     private static function selection(array $input): array {
         Domain::fields($input,['items','coupons','source','booking_id'],['items']);
+        $booking=isset($input['booking_id']);
+        if($booking){if(!Domain::validId($input['booking_id']))Domain::fail('INVALID_REQUEST','Invalid booking reference.');Booking::paymentSelection($input['booking_id']);}
         if (!is_array($input['items']) || !array_is_list($input['items']) || !$input['items'] || count($input['items'])>10) Domain::fail('INVALID_REQUEST','Use one to ten listing lines.');
         $seen=[];$sellers=[];$quantity=0;
         foreach ($input['items'] as $item) {
@@ -111,7 +123,7 @@ final class ListingCheckout {
             Domain::fields($item,['product_id','quantity'],['product_id','quantity']);
             $id=Domain::integer($item['product_id'],1,PHP_INT_MAX);$qty=Domain::integer($item['quantity'],1,30);$quantity+=$qty;
             if (isset($seen[$id]) || $quantity>50) Domain::fail('INVALID_REQUEST','Use unique products and at most 50 units.');
-            $p=wc_get_product($id);$state=self::eligible($p);
+            $p=wc_get_product($id);$state=self::eligible($p,$booking);
             if (in_array($state,['unsupported_variation','requires_selection'],true)) Domain::fail('UNSUPPORTED_VARIATION','Use the listing page to select unsupported variations or add-ons.');
             if ($state==='needs_manual_review') Domain::fail('NEEDS_MANUAL_REVIEW','Sharpening fulfillment terms must be verified before native prepayment.');
             if ($state!=='handoff_only' || !$p->has_enough_stock($qty) || ($p->is_sold_individually() && $qty!==1)) Domain::fail('LISTING_UNAVAILABLE','A selected listing or quantity is unavailable.');
@@ -132,7 +144,10 @@ final class ListingCheckout {
         return $input;
     }
     public static function create(array $input,string $owner,string $key): array {
-        self::requireEnabled();if(isset($input['booking_id']))Booking::get($input['booking_id'],$owner);$input=self::selection($input);$purchase=Domain::digest($input['items']);
+        self::requireEnabled(isset($input['booking_id']));if(isset($input['booking_id'])){
+            $booking=Store::get($input['booking_id'],'booking');
+            if($booking['owner']!==$owner && ($booking['data']['checkout_owner']??null)!==$owner)Domain::fail('NOT_FOUND','Booking unavailable.',404);
+        }$input=self::selection($input);$purchase=Domain::digest(isset($input['booking_id'])?[$input['items'],$input['booking_id']]:$input['items']);
         return Store::lock('listing-purchase:'.Domain::digest([$owner,$purchase]),static function()use($input,$owner,$key,$purchase){
             return Store::idempotent($owner,'listing-create',$key,$input,static function()use($input,$owner,$purchase){
                 if (Store::unresolvedListing($owner,$purchase)) Domain::fail('PAYMENT_UNRESOLVED','A matching native checkout is unresolved. Check its original status.',409);
@@ -170,6 +185,9 @@ final class ListingCheckout {
         if (!class_exists(QuoteSession::class,false)) require_once __DIR__.'/QuoteCart.php';
         if (!class_exists(ListingCart::class,false)) require_once __DIR__.'/ListingCart.php';
         $selection=self::selection($selection);$context=self::context($context);
+        if(isset($selection['booking_id']) && !$context['shipping_methods']){
+            foreach($selection['items'] as $line)if(wc_get_product($line['product_id'])->needs_shipping()){$context['shipping_methods']=['krev_booking_local_pickup'];break;}
+        }
         $items=array_map(static fn($line)=>['product_id'=>$line['product_id'],'quantity'=>$line['quantity'],'listing'=>self::product($line['product_id'])],$selection['items']);
         $empty=['currency'=>'USD','items'=>$items,'total_minor'=>null,'estimate_only'=>true,'reason'=>'customer_address_and_gateway_required',
             'shipping_rates'=>[],'fees'=>[],'tax_minor'=>null,'shipping_minor'=>null,'discount_minor'=>null,'payment_methods'=>[],'policy_url'=>Settings::get()['listing_policy_url'],'return_policy_url'=>Settings::get()['return_policy_url']];
@@ -200,7 +218,8 @@ final class ListingCheckout {
             $cart->calculate_totals();
             $gateways=$wc->payment_gateways()->get_available_payment_gateways();
             if(!isset($gateways[$context['payment_method']]) || $context['payment_method']==='krev_agent_checkout')Domain::fail('PAYMENT_METHOD_UNAVAILABLE','Selected native payment method is unavailable.');
-            if($gateways[$context['payment_method']]->get_option('testmode','unknown')!=='yes' && !Settings::get()['listing_live_verified'])Domain::fail('PAYMENT_METHOD_UNAVAILABLE','Live or unknown gateway mode needs separate merchant verification.');
+            $bookingLaunch=isset($selection['booking_id']) && Settings::get()['booking_launch_approved'] && $context['payment_method']==='stripe';
+            if($gateways[$context['payment_method']]->get_option('testmode','unknown')!=='yes' && !Settings::get()['listing_live_verified'] && !$bookingLaunch)Domain::fail('PAYMENT_METHOD_UNAVAILABLE','Live or unknown gateway mode needs separate merchant verification.');
             $rates=[];$missing=false;
             foreach($shipping->get_packages() as $index=>$package){
                 $options=[];foreach($package['rates']??[] as $rate)$options[]=['id'=>$rate->get_id(),'label'=>wp_strip_all_tags($rate->get_label()),'cost_minor'=>self::minor($rate->get_cost()),'tax_minor'=>self::minor(array_sum($rate->get_taxes()))];
@@ -218,6 +237,7 @@ final class ListingCheckout {
                 'shipping_rates'=>$rates,'shipping_minor'=>$missing?null:self::minor($cart->get_shipping_total()),'tax_minor'=>self::minor($cart->get_total_tax()),'discount_minor'=>self::minor($cart->get_discount_total()),
                 'payment_methods'=>array_values(array_intersect(array_keys($gateways),Settings::get()['listing_gateway_ids'])),'payment_method'=>$context['payment_method'],
                 'native_cart_hash'=>$cart->get_cart_hash(),'buyer_context_id'=>get_current_user_id(),'policy_version'=>Settings::get()['listing_policy_version']]);
+            if(isset($selection['booking_id'])){$quote['policy_url']=Settings::get()['booking_policy_url'];$quote['policy_version']=Settings::get()['booking_policy_version'];$quote['return_policy_url']=Settings::get()['booking_policy_url'];}
             $quote['quote_hash']=Domain::digest([$quote,$context,$selection,isset($selection['booking_id'])?Booking::paymentSelection($selection['booking_id'])['fingerprint']:null]);return $quote;
         } finally {
             [$wc->cart,$wc->session,$wc->customer]=$saved;[$shipping->packages,$shipping->shipping_methods]=$savedShipping;
@@ -225,7 +245,7 @@ final class ListingCheckout {
         }
     }
     public static function quote(string $id,array $input,string $owner,string $key): array {
-        self::requireEnabled();$context=self::context($input);
+        $original=self::get($id,$owner);self::requireEnabled(isset($original['data']['selection']['booking_id']));$context=self::context($input);
         return Store::lock('listing:'.$id,static function()use($id,$context,$owner,$key){
             $row=self::get($id,$owner);if($row['data']['handoff_state']!=='review')Domain::fail('INTENT_ALREADY_USED','Check the original native checkout instead of replacing it.',409);
             $q=Store::idempotent($owner,'listing-quote:'.$id,$key,$context,static function()use($row,$context,$owner){
@@ -242,9 +262,19 @@ final class ListingCheckout {
         usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);$coupons=WC()->cart->get_applied_coupons();sort($coupons);
         return $items===$selection['items'] && $coupons===$selection['coupons'];
     }
+    /** Read-only gate for the original booking browser's native checkout screen. */
+    public static function bookingCart(array $booking): array {
+        $id=$booking['data']['listing_intent']??'';$row=Store::get($id,'listing');$d=$row['data'];
+        if(($d['selection']['booking_id']??'')!==$booking['id'] || $row['owner']!==($booking['data']['checkout_owner']??$booking['owner'])
+            || !WC()->session || WC()->session->get('krev_listing_intent')!==$id || WC()->session->get('krev_booking_id')!==$booking['id']
+            || WC()->session->get('krev_listing_owner')!==$row['owner'] || empty($d['approved_at'])
+            || !hash_equals($d['browser_binding']??'',self::browserBinding()) || !self::matchesCart($d['selection']))Domain::fail('CART_CONFLICT','Use the original booking payment browser. No cart was replaced.',409);
+        if($d['handoff_state']!=='cart_ready' || !empty($d['order_id']))Domain::fail('PAYMENT_UNRESOLVED','Check the original order before another payment.',409);
+        Booking::paymentSelection($booking['id']);return $row;
+    }
     /** Called only after the first-party form's CSRF + quote-bound buyer acceptance. */
     public static function handoff(string $id,string $owner,string $hash): string {
-        self::requireEnabled();
+        $original=self::get($id,$owner);self::requireEnabled(isset($original['data']['selection']['booking_id']));
         if (!WC()->session || !WC()->cart || !WC()->customer) wc_load_cart();
         return Store::lock('listing:'.$id,static function()use($id,$owner,$hash){
             $row=self::get($id,$owner);$d=$row['data'];$binding=self::browserBinding();
@@ -289,7 +319,7 @@ final class ListingCheckout {
         return $row;
     }
     private static function validateOrder(\WC_Order $order,array $row): void {
-        self::requireEnabled();$d=$row['data'];
+        $d=$row['data'];self::requireEnabled(isset($d['selection']['booking_id']));
         $existing=(int)($d['order_id']??0);
         if($existing && $existing!==$order->get_id())Domain::fail('ORDER_ALREADY_EXISTS','Resume the original native order. Do not create another payment.',409);
         if(($d['creation_started']??false) && !$existing && !$order->get_id())Domain::fail('PAYMENT_UNRESOLVED','Interrupted order creation needs merchant reconciliation.',409);
@@ -342,6 +372,7 @@ final class ListingCheckout {
         if((int)$row['data']['order_id']!==$order->get_id() || $method!==$row['data']['context']['payment_method']
             || self::minor($order->get_total())!==$row['data']['quote']['total_minor']
             || $order->get_meta('_krev_listing_quote_hash')!==$row['data']['quote']['quote_hash'])throw new \Exception('Use the original reviewed payment method and amount; contact KnifeRevive before a different payment.');
+        if(isset($row['data']['selection']['booking_id']))Booking::paymentSelection($row['data']['selection']['booking_id']);
     }
     public static function paymentObserved(int $orderId): void {
         $order=wc_get_order($orderId);$id=$order?$order->get_meta('_krev_listing_intent'):null;
@@ -351,18 +382,23 @@ final class ListingCheckout {
         });
     }
     public static function status(string $id,string $owner): array {
-        $row=self::get($id,$owner,true);$d=$row['data'];$order=empty($d['order_id'])?null:wc_get_order($d['order_id']);
+        return self::facts(self::get($id,$owner,true));
+    }
+    /** Internal native facts after a separately validated booking or seller grant. */
+    public static function facts(array $row): array {
+        $id=$row['id'];$d=$row['data'];$order=empty($d['order_id'])?null:wc_get_order($d['order_id']);
         $payment='not_started';$state=null;$fulfillment='not_started';$verification='none';
         if($order){
             if($order->get_meta('_krev_listing_intent')!==$id)Domain::fail('NOT_FOUND','Order binding unavailable.',404);
             $state=$order->get_status();$payment='pending';$fulfillment=$state;
+            $evidence=$d['native_payment_observed']??[];
+            if($order->get_date_paid() && $order->get_transaction_id() && ($evidence['gateway']??'')===$order->get_payment_method()
+                && hash_equals($evidence['reference_hash']??'',hash('sha256',$order->get_transaction_id())))$verification='native_gateway_order_event';
             if($order->has_status('refunded') || $order->get_total_refunded()>0)$payment='refund_recorded';
-            elseif($order->has_status('cancelled'))$payment='cancelled';
+            elseif($order->has_status('cancelled'))$payment=$verification==='native_gateway_order_event'?'paid_cancelled_review_required':'cancelled';
             elseif($order->has_status('failed'))$payment='needs_review';
             elseif($order->is_paid()){
-                $evidence=$d['native_payment_observed']??[];
-                if($order->get_date_paid() && $order->get_transaction_id() && ($evidence['gateway']??'')===$order->get_payment_method()
-                    && hash_equals($evidence['reference_hash']??'',hash('sha256',$order->get_transaction_id()))){$payment='paid';$verification='native_gateway_order_event';}
+                if($verification==='native_gateway_order_event'){$payment='paid';}
                 else $payment='needs_review';
             }elseif($order->has_status('on-hold'))$payment='needs_review';
         }
@@ -370,7 +406,7 @@ final class ListingCheckout {
         return ['intent_id'=>$id,'handoff_state'=>$d['handoff_state'],'payment_state'=>$payment,'payment_verification'=>$verification,
             'fulfillment_state'=>$fulfillment,'woocommerce_status'=>$state,'scheduling_state'=>$service?'not_booked':'not_applicable',
             'inventory_reserved_at_quote'=>false,'direct_payment_enabled'=>false,'next_action'=>$payment==='paid'?'native_merchant_fulfillment':($order?'check_original_native_order':'buyer_review'),
-            'status_url'=>add_query_arg(['krev_agent'=>'listing-status','intent'=>$id],home_url('/'))];
+            'refund_summary'=>BookingLifecycle::refunds($order),'status_url'=>add_query_arg(['krev_agent'=>'listing-status','intent'=>$id],home_url('/'))];
     }
     public static function response(array $row,string $owner): array {
         $out=self::status($row['id'],$owner);$out['expires_at']=gmdate('c',(int)$row['expires']);$out['quote']=$row['data']['quote'];

@@ -14,7 +14,8 @@ final class Settings {
             'booking_weekly_hours'=>[],'booking_daily_capacity'=>null,'booking_pickup_postal_codes'=>[],
             'booking_trip_fee_minor'=>799,'booking_prepaid_enabled'=>false,'booking_policy_url'=>'','booking_policy_version'=>'',
             'booking_transport_taxable'=>false,'booking_transport_tax_class'=>'','booking_wallet_enabled'=>false,'booking_wallet_verified'=>false,
-            'booking_order_timing'=>'disabled','booking_order_verified'=>false,'booking_offline_gateway_id'=>''];
+            'booking_order_timing'=>'disabled','booking_order_verified'=>false,'booking_offline_gateway_id'=>'',
+            'booking_launch_approved'=>false,'booking_pay_before_confirmation'=>false,'booking_pickup_limit_enabled'=>false];
     }
     public static function get(): array { return array_replace(self::defaults(), (array)get_option('krev_agent_settings', [])); }
     public static function validate(array $s): array {
@@ -85,7 +86,7 @@ final class Settings {
             // Retain only a redacted operator reference, never provider IDs or credentials.
             if(!preg_match('/^[a-zA-Z0-9 ._-]{1,80}$/D',(string)$e['reference']) || preg_match('/(?:sk_|whsec_|pi_|ch_|cs_|acct_)/i',$e['reference']))Domain::fail('INVALID_SETTINGS','Use a redacted internal evidence label, never provider IDs or secrets.');
         }
-        foreach(['booking_enabled','booking_prepaid_enabled','booking_transport_taxable','booking_wallet_enabled','booking_wallet_verified'] as $flag)if(!is_bool($s[$flag]))Domain::fail('INVALID_SETTINGS','Booking flags must be booleans.');
+        foreach(['booking_enabled','booking_prepaid_enabled','booking_transport_taxable','booking_wallet_enabled','booking_wallet_verified','booking_launch_approved','booking_pay_before_confirmation','booking_pickup_limit_enabled'] as $flag)if(!is_bool($s[$flag]))Domain::fail('INVALID_SETTINGS','Booking flags must be booleans.');
         if(!is_bool($s['booking_order_verified']) || !in_array($s['booking_order_timing'],['disabled','on_submit','on_confirm'],true) || !in_array($s['booking_offline_gateway_id'],['','cod','bacs','cheque'],true))Domain::fail('INVALID_SETTINGS','Use an approved and tested unpaid-order timing and native offline method.');
         foreach(['booking_location'=>300,'booking_phone'=>30,'booking_policy_version'=>100,'booking_transport_tax_class'=>100] as $field=>$limit)$s[$field]=Domain::text($s[$field],$limit);
         $s['booking_policy_url']=Domain::text($s['booking_policy_url'],500);
@@ -95,7 +96,7 @@ final class Settings {
         foreach(['booking_services','booking_weekly_hours','booking_pickup_postal_codes'] as $field)if(!is_array($s[$field]) || !array_is_list($s[$field]) || count($s[$field])>200)Domain::fail('INVALID_SETTINGS','Invalid booking collection.');
         $seen=[];foreach($s['booking_services'] as $service){Domain::fields($service,['product_id','definition'],['product_id','definition']);Domain::integer($service['product_id'],1,PHP_INT_MAX);if(!Domain::text($service['definition'],500) || isset($seen[$service['product_id']]))Domain::fail('INVALID_SETTINGS','Use unique booking services with scope definitions.');$seen[$service['product_id']]=true;}
         $seen=[];foreach($s['booking_weekly_hours'] as $hours){Domain::fields($hours,['weekday','open','close'],['weekday','open','close']);Domain::integer($hours['weekday'],1,7);foreach(['open','close'] as $field)if(!is_string($hours[$field]) || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/D',$hours[$field]))Domain::fail('INVALID_SETTINGS','Use 24-hour booking times.');if($hours['open']>=$hours['close'] || isset($seen[$hours['weekday']]))Domain::fail('INVALID_SETTINGS','Use one nonempty window per open weekday.');$seen[$hours['weekday']]=true;}
-        foreach($s['booking_pickup_postal_codes'] as $zip)Domain::postal($zip);
+        foreach($s['booking_pickup_postal_codes'] as &$zip){$zip=Domain::postal($zip);$c=BookingCoverage::check($zip,false);if(!$c['prepayment_eligible'] || $c['address_review_required'])Domain::fail('INVALID_SETTINGS','Pickup ZIPs must be unambiguous Contra Costa or Santa Clara service ZIPs.');}unset($zip);$s['booking_pickup_postal_codes']=array_values(array_unique($s['booking_pickup_postal_codes']));
         return $s;
     }
     public static function operational(): bool {
@@ -126,9 +127,24 @@ final class Settings {
         Domain::integer($capacity,1,200);$s=self::get();$s['booking_daily_capacity']=$capacity;
         update_option('krev_agent_settings',self::validate($s),false);
     }
+    public static function savePickupCoverage(bool $limited,string $text): void {
+        if(!current_user_can('manage_woocommerce'))Domain::fail('FORBIDDEN','Only a WooCommerce administrator can change pickup coverage.',403);
+        $zips=preg_split('/[\s,;]+/',trim($text),-1,PREG_SPLIT_NO_EMPTY);$s=self::get();$s['booking_pickup_limit_enabled']=$limited;$s['booking_pickup_postal_codes']=$zips;
+        update_option('krev_agent_settings',self::validate($s),false);
+    }
+    private static function pickupCoverageForm(): void {
+        $s=self::get();echo '<section id="pickup-zip-coverage"><h2>Prepaid pickup ZIP codes</h2><p>Leave custom coverage off for all supported Contra Costa and Santa Clara ZIPs. Turn it on to serve only the ZIPs below; an empty custom list disables pickup. Customer drop-off prepayment keeps its county check. Existing orders are retained for merchant review.</p><form method="post">';wp_nonce_field('krev_booking_pickup');
+        echo '<label><input type="checkbox" name="booking_pickup_limit_enabled" value="yes"'.checked($s['booking_pickup_limit_enabled'],true,false).'> Use a custom pickup ZIP list</label><p><label for="pickup-zip-list">Available prepaid pickup ZIP codes (one per line or separated by commas)</label></p><textarea id="pickup-zip-list" name="booking_pickup_postal_codes" rows="8" cols="40">'.esc_textarea(implode("\n",$s['booking_pickup_postal_codes'])).'</textarea><p><button class="button button-primary" name="krev_booking_pickup_save">Save pickup ZIP codes</button></p></form></section>';
+    }
     public static function page(): void {
         if (!current_user_can('manage_woocommerce')) return;
         $notice = '';
+        if(isset($_POST['krev_booking_pickup_save'])){
+            check_admin_referer('krev_booking_pickup');
+            try{self::savePickupCoverage(($_POST['booking_pickup_limit_enabled']??'')==='yes',(string)wp_unslash($_POST['booking_pickup_postal_codes']??''));$notice='Pickup ZIP coverage saved. Existing orders remain available for merchant review.';}
+            catch(\Throwable $e){$notice=$e instanceof Fault?$e->getMessage():'Pickup coverage could not be saved.';}
+        }
+
         if(isset($_POST['krev_booking_capacity_save'])){
             check_admin_referer('krev_booking_capacity');
             try{$capacity=(string)wp_unslash($_POST['booking_daily_capacity']??'');
@@ -165,7 +181,7 @@ final class Settings {
         }
         echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><h2 id="daily-sharpening-capacity">Daily sharpening capacity</h2><p>Maximum confirmed jobs per open day in America/Los_Angeles. A job may contain several knives. Requested days still need merchant confirmation. Lowering the limit does not cancel existing confirmed jobs.</p><form method="post">';
         wp_nonce_field('krev_booking_capacity');
-        echo '<label for="booking_daily_capacity">Jobs per open day</label> <input id="booking_daily_capacity" name="booking_daily_capacity" type="number" min="1" max="200" step="1" required value="'.esc_attr((string)(self::get()['booking_daily_capacity']??'')).'"> <button class="button button-primary" name="krev_booking_capacity_save">Save daily capacity</button></form><h2>Advanced settings</h2><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>Merchant courier pricing: $7.99 per trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax. Configure each courier leg fee_minor as 799. transport_round_trip_minor may be 1598 for both trips; null sums separate trip prices. The combined total can be staged while courier coverage and tax treatment remain unconfigured.</p><form method="post">';
+        echo '<label for="booking_daily_capacity">Jobs per open day</label> <input id="booking_daily_capacity" name="booking_daily_capacity" type="number" min="1" max="200" step="1" required value="'.esc_attr((string)(self::get()['booking_daily_capacity']??'')).'"> <button class="button button-primary" name="krev_booking_capacity_save">Save daily capacity</button></form>';self::pickupCoverageForm();echo '<h2>Advanced settings</h2><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>Merchant courier pricing: $7.99 per trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax. Configure each courier leg fee_minor as 799. transport_round_trip_minor may be 1598 for both trips; null sums separate trip prices. The combined total can be staged while courier coverage and tax treatment remain unconfigured.</p><form method="post">';
         wp_nonce_field('krev_agent_settings');
         echo '<textarea name="settings" rows="28" style="width:100%;font-family:monospace">' . esc_textarea(wp_json_encode(self::get(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea><p><button class="button button-primary" name="krev_agent_save">Save validated settings</button></p></form><p>Stripe secrets use server constants, never this form or the public skill. Google Pay availability is decided by Stripe checkout and the customer device. Review retained attempts and change requests below; process refunds through existing merchant workflows.</p><table class="widefat"><tr><th>Type</th><th>Reference</th><th>State</th><th>WooCommerce order</th></tr>';
         foreach (Store::backlog(100) as $row) {

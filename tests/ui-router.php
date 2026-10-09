@@ -9,10 +9,15 @@ $assetMap=['storefront.js'=>'text/javascript','booking.js'=>'text/javascript','s
 foreach ($assetMap as $name=>$type) if ($path==='/wp-content/plugins/kniferevive-agent-commerce/assets/'.$name) {
     header('Content-Type: '.$type); readfile(dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/assets/'.$name); exit;
 }
+// Native checkout assets, served only from the installed sandbox core/plugin tree.
+if(preg_match('/\.(js|css)$/D',$path) && (str_starts_with($path,'/wp-includes/') || str_starts_with($path,'/wp-content/plugins/woocommerce/'))){
+    $file=realpath($testRoot.$path);$base=realpath($testRoot);
+    if($file && $base && str_starts_with(str_replace('\\','/',$file),str_replace('\\','/',$base).'/')){header('Content-Type: '.(str_ends_with($path,'.js')?'text/javascript':'text/css'));readfile($file);exit;}
+}
 $argv=[__FILE__,getenv('KREV_TEST_WP_ROOT')];
 require __DIR__.'/sandbox-bootstrap.php';
 if(getenv('KREV_LISTING_UI')==='1'){
-    class ListingUiGateway extends WC_Payment_Gateway {public function __construct(){$this->id='stripe';$this->enabled='yes';$this->title='Synthetic native test gateway';$this->settings=['testmode'=>'yes'];}public function is_available(){return true;}public function process_payment($id){throw new RuntimeException('Synthetic browser must not initiate payment.');}}
+    class ListingUiGateway extends WC_Payment_Gateway {public function __construct(){$this->id='stripe';$this->enabled='yes';$this->title='Synthetic native test gateway';$this->supports=['products','refunds'];$this->settings=['testmode'=>'yes'];}public function is_available(){return true;}public function process_payment($id){throw new RuntimeException('Synthetic browser must not initiate payment.');}}
     add_filter('woocommerce_payment_gateways',static fn($g)=>[ListingUiGateway::class],1000);WC()->payment_gateways()->init();
     if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
     if((int)($_GET['page_id']??0)===(int)get_option('woocommerce_checkout_page_id')){

@@ -1,6 +1,6 @@
 {
-  "baseline_version": "1.1.4",
-  "target_version": "1.1.5",
+  "baseline_version": "1.1.5",
+  "target_version": "1.1.6",
   "schema_version": "1.1.4",
   "files": [
     {
@@ -20,8 +20,8 @@
     },
     {
       "path": "includes/class-krev-orders-endpoints.php",
-      "sha256": "0113d7bc9a1b819c02d8c012d0c52bd8db803cb640f73945dc42c61c86e50e7c",
-      "bytes": 6018
+      "sha256": "732ecd9c1bc7c8c14d8643ded30caba41ffcc9011198613d96b0117b11c9e318",
+      "bytes": 6710
     },
     {
       "path": "includes/class-krev-orders-permissions.php",
@@ -30,8 +30,8 @@
     },
     {
       "path": "includes/class-krev-orders-plugin.php",
-      "sha256": "3974ac734797d87a6f32951d7ce54321fa1f1a609c9fbed60595a3c5ed80beb7",
-      "bytes": 2457
+      "sha256": "71dc2e024e55e10bc428a34aa2ed14e11f9222f119c4f866e008b61b538c8aa4",
+      "bytes": 2471
     },
     {
       "path": "includes/class-krev-orders-query.php",
@@ -95,8 +95,8 @@
     },
     {
       "path": "kniferevive-seller-orders.php",
-      "sha256": "77d02f90ad98e230980ee045cbaa5693686c8c5c5f7e9674bc825562da8cd11d",
-      "bytes": 1826
+      "sha256": "c069110d7cd1ebd1476f37579c211bd56d3a8dc0378b229b1864559808db6417",
+      "bytes": 1965
     },
     {
       "path": "README.md",
@@ -125,8 +125,8 @@
     },
     {
       "path": "templates/seller-orders.php",
-      "sha256": "4d3de6c0ee6969cb0948f5de7a4ccb070264f2daea9d8e1d3fa7452677da35ed",
-      "bytes": 5996
+      "sha256": "bfb93f8125383f0cb28029dab970b1556813088835a22979002cd15c9549cd93",
+      "bytes": 7561
     },
     {
       "path": "templates/sharpening-order-detail.php",

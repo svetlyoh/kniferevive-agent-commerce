@@ -14,14 +14,14 @@ const root=path.resolve(__dirname,'..');
     await page.getByLabel('Receipt email').fill('browser@example.invalid');
     for(const kind of ['Billing','Delivery'])for(const [label,value] of [['Street address','123 Synthetic Street'],['City','San Francisco'],['State code','CA'],['Postal code','94110']])await page.getByLabel(`${kind} ${label}`,{exact:true}).fill(value);
     await page.getByRole('button',{name:'Calculate native quote'}).click();
-    await page.getByRole('button',{name:'Continue to WooCommerce checkout'}).waitFor();
+    await page.getByRole('button',{name:'Continue to secure payment'}).waitFor();
     if(!(await page.locator('main').innerText()).includes('All-in total: $12.00 USD'))throw Error('Native quote mismatch');
     if(!(await page.locator('main').innerText()).includes('Synthetic buyer return policy displayed for review.'))throw Error('Assigned buyer return terms missing');
     if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile review overflows');
     await page.screenshot({path:path.join(root,'.runtime/listing-review-mobile.png'),fullPage:true});
     const approved=page.getByRole('checkbox');if(await approved.isChecked())throw Error('Consent was preselected');
     await page.setViewportSize({width:1280,height:900});await page.screenshot({path:path.join(root,'.runtime/listing-review-desktop.png'),fullPage:true});
-    await approved.check();await page.getByRole('button',{name:'Continue to WooCommerce checkout'}).click();
+    await approved.check();await page.getByRole('button',{name:'Continue to secure payment'}).click();
     await page.getByRole('heading',{name:'Native WooCommerce checkout'}).waitFor();
     if(await page.locator('form.checkout').count()!==1){fs.writeFileSync(path.join(root,'.runtime/listing-native-error.html'),await page.content());throw Error('Native WooCommerce checkout form absent: '+await page.locator('body').innerText());}
     if(!(await page.locator('body').innerText()).includes('Synthetic listing browser test'))throw Error('Selected native cart line missing');

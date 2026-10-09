@@ -1,5 +1,7 @@
-# Seller Orders 1.1.5 overlay
+# Seller Orders 1.1.6 overlay
 
-Four-file UI patch against the exact captured production 1.1.4 plugin. This is not a standalone plugin or the unrelated local 1.2.0 build. Requires Agent Commerce 0.4.2 for appointment cards; without its filter provider the original lists continue to work.
+Narrow patch against the exact captured production 1.1.5 plugin. Preserve all 30 baseline files and schema 1.1.4. This is not the unrelated local 1.2.0 build. Agent Commerce 0.5.x supplies paid/unpaid appointment cards and correct merchant-trip handoff labels.
 
-Build with `python tools/package_seller_orders_overlay.py <baseline-directory>`. Every baseline file must match `baseline-manifest.json`; keep the private live backup locally. Output includes full candidate and rollback ZIPs plus per-file/archive hashes. The archive contains the existing 30 plugin files, four overlaid, without this README or manifest. Schema stays 1.1.4. See `docs/seller-booking-visibility-0.4.2.md` for approval, test, deployment and rollback evidence.
+The overlay excludes WooCommerce refund objects from native order lists and fixes a reproduced sharpening-dashboard refund DTO fatal. It retains prior pickup-list behavior, seller ownership and permissions.
+
+Build with `python tools/package_seller_orders_overlay.py <baseline-directory>`. Every baseline file must match `baseline-manifest.json`; private production backups stay local. Output includes full candidate and rollback ZIPs with per-file/archive hashes. Never manually copy the unrelated local plugin over production. See docs/prepaid-booking-0.5.1.md for deployment and test status.

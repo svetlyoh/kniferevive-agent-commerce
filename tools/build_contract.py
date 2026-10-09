@@ -61,15 +61,21 @@ S["BookingInput"] = obj({"items": S["QuoteInput"]["properties"]["items"], "mode"
 S["Booking"] = obj({"booking_id": opaque, "booking_state": {"enum": ["draft", "requested", "confirmed", "cancelled"]}, "payment_state": string, "mode": string, "items": array(obj({"product_id": integer, "title": string, "quantity": integer, "unit_price_minor": integer}, ["product_id", "title", "quantity", "unit_price_minor"])), "preferred_window": obj({"date": string, "start_at": string, "end_at": string, "timezone": string}, ["date", "start_at", "end_at", "timezone"]), "return_mode": string, "location": string, "currency": string, "service_subtotal_minor": integer, "merchant_trip_fee_minor": integer, "estimated_subtotal_minor": integer, "total_minor": {"type": "null"}, "estimate_only": {"const": True}, "prepayment_enabled": {"type": "boolean"}, "policy_url": {"type": ["string", "null"]}, "review_url": string, "status_url": string, "appointment_confirmed": {"type": "boolean"}, "refund_state": {"const": "not_issued"}, "expires_at": string}, ["booking_id", "booking_state", "payment_state", "mode", "items", "preferred_window", "estimated_subtotal_minor", "total_minor", "estimate_only", "review_url", "status_url", "appointment_confirmed", "refund_state"])
 S["BookingCoverage"] = obj({"postal_code": postal, "coverage_state": {"enum": ["eligible", "bay_area_dropoff_only", "outside_bay_area", "address_review_required"]}, "service_available": {"type": "boolean"}, "pickup_eligible": {"type": "boolean"}, "prepayment_eligible": {"type": "boolean"}, "address_review_required": {"type": "boolean"}, "counties": array(string), "message": string, "source_url": string, "geography_vintage": string}, ["postal_code", "coverage_state", "service_available", "pickup_eligible", "prepayment_eligible", "address_review_required", "message"])
 S["Booking"]["properties"].update({"coverage": ref("BookingCoverage"), "direct_wallet_enabled": {"const": False}, "booking_access_token": string})
+refund_state = {"enum": ["not_issued", "full_gateway_accepted", "partial_gateway_accepted", "manual_review_required"]}
+S["RefundSummary"] = obj({"refund_state": refund_state, "refund_recorded_minor": integer, "refund_gateway_accepted_minor": integer,
+    "refunds": array(obj({"reference": string, "amount_minor": integer, "state": {"enum": ["gateway_accepted", "manual_record_only"]}}, ["reference", "amount_minor", "state"])),
+    "refund_arrival_verified": {"const": False}, "refund_destination": {"type": ["string", "null"]}},
+    ["refund_state", "refund_recorded_minor", "refund_gateway_accepted_minor", "refunds", "refund_arrival_verified", "refund_destination"])
+S["Booking"]["properties"].update({"refund_state": refund_state, "refund_summary": ref("RefundSummary")})
 # Portable draft creation accepts service choices only; contact sharing is a protected human POST.
 for pii_field in ("customer", "pickup_address"):
     S["BookingInput"]["properties"].pop(pii_field)
 S["BookingEvent"] = obj({
     "schema_version": {"const": "1"}, "event_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "type": {"enum": ["booking.request_received", "woocommerce.order_created", "booking.confirmed", "booking.cancelled", "payment.verified", "refund.review_required"]},
+    "type": {"enum": ["booking.request_received", "woocommerce.order_created", "booking.confirmed", "booking.cancelled", "payment.verified", "refund.review_required", "woocommerce.order_state", "woocommerce.order_cancelled", "cancellation.payment_review_required", "refund.gateway_accepted", "refund.manual_review_required", "refund.record_removed", "payment.capacity_review_required"]},
     "booking_reference": opaque, "correlation_id": {"type": ["string", "null"]}, "order_reference": {"type": ["string", "null"]},
     "booking_state": S["Booking"]["properties"]["booking_state"], "order_state": {"type": ["string", "null"]},
-    "payment_state": string, "merchant_confirmation_required": {"type": "boolean"}, "occurred_at": {"type": "string", "format": "date-time"}
+    "payment_state": string, "refund_state": refund_state, "merchant_confirmation_required": {"type": "boolean"}, "occurred_at": {"type": "string", "format": "date-time"}
 }, ["schema_version", "event_id", "type", "booking_reference", "order_reference", "booking_state", "order_state", "payment_state", "merchant_confirmation_required", "occurred_at"])
 S["Booking"]["properties"].update({
     "order_reference": {"type": ["string", "null"]}, "order_state": {"type": ["string", "null"]}, "order_bridge_state": string,
@@ -110,11 +116,11 @@ S["ListingQuote"] = obj({
 }, ["currency", "items", "total_minor", "estimate_only", "reason", "shipping_rates", "fees", "tax_minor", "shipping_minor", "discount_minor", "payment_methods", "policy_url", "return_policy_url"])
 S["ListingStatus"] = obj({
     "intent_id": opaque, "handoff_state": {"enum": ["review", "preparing_cart", "cart_ready", "order_linked"]},
-    "payment_state": {"enum": ["not_started", "pending", "paid", "refund_recorded", "cancelled", "needs_review"]},
+    "payment_state": {"enum": ["not_started", "pending", "paid", "refund_recorded", "cancelled", "paid_cancelled_review_required", "needs_review"]},
     "payment_verification": {"enum": ["none", "native_gateway_order_event"]}, "fulfillment_state": string,
     "woocommerce_status": nullable, "scheduling_state": {"enum": ["not_booked", "not_applicable"]},
     "inventory_reserved_at_quote": {"const": False}, "direct_payment_enabled": {"const": False},
-    "next_action": string, "status_url": string
+    "refund_summary": ref("RefundSummary"), "next_action": string, "status_url": string
 }, ["intent_id", "handoff_state", "payment_state", "payment_verification", "fulfillment_state", "woocommerce_status", "scheduling_state", "inventory_reserved_at_quote", "direct_payment_enabled", "next_action", "status_url"])
 S["ListingIntent"] = obj({**S["ListingStatus"]["properties"], "expires_at": string, "quote_expires_at": nullable, "review_url": string, "quote": {"anyOf": [ref("ListingQuote"), {"type": "null"}]}}, [*S["ListingStatus"]["required"], "expires_at", "quote_expires_at", "review_url", "quote"])
 def route(path, method, operation, output=None, body=None, private=False, idem=False, query=()):
@@ -161,7 +167,7 @@ route("/orders/{id}", "GET", "statusOrder", "Status", private=True)
 route("/orders/{id}/change-requests", "POST", "change", body="ChangeInput", private=True, idem=True)
 route("/stripe/webhook", "POST", "webhook")
 paths["/stripe/webhook"]["post"]["description"] = "Stripe-Signature on the unmodified raw request body is mandatory. This is a processor callback, not a shopper mutation."
-contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.3.0", "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}, "BookingAccess": {"type": "apiKey", "in": "header", "name": "X-Krev-Booking"}}, "schemas": S}}
+contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.4.0", "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review. Native refund acceptance does not prove bank arrival."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}, "BookingAccess": {"type": "apiKey", "in": "header", "name": "X-Krev-Booking"}}, "schemas": S}}
 payload = json.dumps(contract, indent=2) + "\n"
 for file in [ROOT / "openapi/kniferevive-agent-v1.yaml", ROOT / "wordpress/kniferevive-agent-commerce/assets/openapi.json"]:
     file.parent.mkdir(parents=True, exist_ok=True)

@@ -28,7 +28,7 @@ final class ListingFrontend {
                 $context=['email'=>$post['email']??'','payment_method'=>$post['payment_method']??'','shipping_methods'=>array_values((array)($post['shipping_methods']??[]))];
                 foreach(['billing','shipping'] as $kind)foreach(['address_1','address_2','city','state','postcode','country'] as $field)$context[$kind][$field]=(string)($post[$kind.'_'.$field]??'');
                 $row=ListingCheckout::quote($id,$context,$owner,'buyer-listing-quote-'.Domain::digest($context).'-'.Domain::id());
-                $message='Review the refreshed quote. No payment or appointment has been created.';
+                $message='Review the refreshed quote. No payment has been created.';
             }
         }catch(\Throwable $e){$message=$e instanceof Fault?$e->getMessage():'The original checkout needs review. Do not retry an uncertain payment.';}
         $assets=plugin_dir_url(FILE).'assets/';
@@ -39,13 +39,14 @@ final class ListingFrontend {
         }elseif($row){self::review($row,$owner);}
         echo '<p><a href="'.esc_url(wc_get_cart_url()).'">Review your existing cart</a></p><p><a href="'.esc_url(home_url('/shop/')).'">KnifeRevive listings</a></p>';PrivateBrand::end();exit;
     }
+    public static function bookingReview(array $row,string $owner): void {self::review($row,$owner);}
     private static function review(array $row,string $owner): void {
         $d=$row['data'];$q=$d['quote'];
         echo '<p>This prepares a buyer-completed WooCommerce checkout. No card has been charged. Inventory is not reserved by a quote.</p><ul>';
         foreach($d['selection']['items'] as $line){
             $p=ListingCheckout::product($line['product_id']);
             echo '<li><a href="'.esc_url($p['canonical_url']).'">'.esc_html($p['title']).'</a> × '.esc_html((string)$line['quantity']).' — Seller: '.esc_html($p['seller']['display_name']).'</li>';
-            if($p['return_policy']) {
+            if(!isset($d['selection']['booking_id']) && $p['return_policy']) {
                 $terms=$p['return_policy'];
                 echo '<li>Return terms: <strong>'.esc_html($terms['label']).'</strong> '.esc_html($terms['description']).' <a href="'.esc_url($p['return_policy_url']).'">Full return policy</a>';
                 if($terms['type'])echo ' · Type: '.esc_html($terms['type']);
@@ -53,11 +54,14 @@ final class ListingFrontend {
                 if($terms['fee_terms'])echo ' · Fee terms: '.esc_html($terms['fee_terms']);
                 echo '</li>';
             }
-            if($p['fulfillment_type']==='service')echo '<li><strong>Sharpening payment does not book an appointment.</strong> '.esc_html($p['fulfillment_note']??'Merchant review required.').' <a href="'.esc_url($p['policy_url']??'').'">Seller service and fulfillment terms</a></li>';
+            if($p['fulfillment_type']==='service'){
+                if(isset($d['selection']['booking_id']))echo '<li>Payment is for your sharpening request. The merchant must confirm the day and any trip address. <a href="'.esc_url(Settings::get()['booking_policy_url']).'">Sharpening cancellation and refund terms</a></li>';
+                else echo '<li><strong>Sharpening payment does not book an appointment.</strong> '.esc_html($p['fulfillment_note']??'Merchant review required.').' <a href="'.esc_url($p['policy_url']??'').'">Seller service and fulfillment terms</a></li>';
+            }
         }
         echo '</ul>';
         if($d['handoff_state']!=='review'){
-            echo '<p>This intent has already been handed to its original checkout browser. Do not start another payment if its outcome is uncertain.</p><p><a href="'.esc_url(wc_get_checkout_url()).'">Resume original native checkout</a></p><p><a href="'.esc_url(add_query_arg(['krev_agent'=>'listing-status','intent'=>$row['id']],home_url('/'))).'">Check original purchase status</a></p>';return;
+            echo '<p>This intent has already been handed to its original checkout browser. Do not start another payment if its outcome is uncertain.</p><p><a href="'.esc_url(isset($d['selection']['booking_id'])?add_query_arg(['krev_agent'=>'booking','booking'=>$d['selection']['booking_id'],'payment'=>'1'],home_url('/')):wc_get_checkout_url()).'">Resume original native checkout</a></p><p><a href="'.esc_url(add_query_arg(['krev_agent'=>'listing-status','intent'=>$row['id']],home_url('/'))).'">Check original purchase status</a></p>';return;
         }
         if($q && !$q['estimate_only']){
             foreach($q['items'] as $line)echo '<p>'.esc_html($line['listing']['title'].' — $'.Domain::decimal($line['total_minor'])).'</p>';
@@ -65,10 +69,18 @@ final class ListingFrontend {
             echo '<p>Discount: $'.esc_html(Domain::decimal($q['discount_minor'])).'</p><p>Shipping: $'.esc_html(Domain::decimal($q['shipping_minor'])).'</p><p>Taxes: $'.esc_html(Domain::decimal($q['tax_minor'])).'</p><p><strong>All-in total: $'.esc_html(Domain::decimal($q['total_minor'])).' USD</strong></p><p>Native payment method: '.esc_html($q['payment_method']).'. The gateway may require a login or independent payment approval.</p>';
             foreach($q['shipping_rates'] as $package)foreach($package['options'] as $rate)if($rate['id']===$package['selected'])echo '<p>Selected shipping: '.esc_html($rate['label']).'</p>';
             echo '<p>Quote valid until '.esc_html(gmdate('c',$d['quote_expires'])).'. <a href="'.esc_url($q['policy_url']).'">Purchase terms</a> · <a href="'.esc_url($q['return_policy_url']).'">Return and refund policy</a></p><form method="post">';
-            self::hidden($owner,$row['id']);echo '<input type="hidden" name="action" value="continue"><input type="hidden" name="quote_hash" value="'.esc_attr($q['quote_hash']).'"><label><input type="checkbox" name="accept" value="yes" required> I accept these items, seller, fulfillment, total and policies. Continue to native checkout; I will authorize payment there.</label><button>Continue to WooCommerce checkout</button></form>';
+            self::hidden($owner,$row['id']);echo '<input type="hidden" name="action" value="continue"><input type="hidden" name="quote_hash" value="'.esc_attr($q['quote_hash']).'"><label><input type="checkbox" name="accept" value="yes" required> I accept these items, seller, fulfillment, total and policies. Continue to native checkout; I will authorize payment there.</label><button>Continue to secure payment</button></form>';
         }else echo '<p><strong>Estimate only:</strong> enter complete addresses, choose the actual gateway and a native shipping rate where required. The total is unknown until those checks pass.</p>';
         echo '<h2>Prepare or update the quote</h2><form method="post">';self::hidden($owner,$row['id']);echo '<input type="hidden" name="action" value="quote">';
-        $c=$d['context'];echo '<label>Receipt email<input name="email" type="email" maxlength="254" required value="'.esc_attr($c['email']??'').'"></label>';
+        $c=$d['context'];
+        if(isset($d['selection']['booking_id'])){
+            $booking=Store::get($d['selection']['booking_id'],'booking');
+            if(in_array(BookingAuthorization::address($booking),['granted_for_order','merchant_review_required'],true)){
+                $c['email']=$c['email']??$booking['data']['input']['customer']['email'];
+                foreach(['billing','shipping'] as $kind)if(!isset($c[$kind]) && isset($booking['data']['input']['pickup_address']))$c[$kind]=$booking['data']['input']['pickup_address'];
+            }
+        }
+        echo '<label>Receipt email<input name="email" type="email" maxlength="254" required value="'.esc_attr($c['email']??'').'"></label>';
         foreach(['billing'=>'Billing','shipping'=>'Delivery'] as $kind=>$label){echo '<fieldset><legend>'.esc_html($label.' address').'</legend>';
             foreach(['address_1'=>'Street address','address_2'=>'Apartment (optional)','city'=>'City','state'=>'State code','postcode'=>'Postal code','country'=>'Country code'] as $field=>$text){$value=$c[$kind][$field]??($field==='country'?'US':'');echo '<label>'.esc_html($label.' '.$text).'<input name="'.esc_attr($kind.'_'.$field).'" maxlength="150" '.($field==='address_2'?'':'required').' value="'.esc_attr($value).'"></label>';}
             echo '</fieldset>';

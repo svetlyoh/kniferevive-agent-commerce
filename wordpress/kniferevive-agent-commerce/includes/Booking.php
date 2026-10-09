@@ -32,6 +32,7 @@ final class Booking {
             'modes'=>self::MODES,'weekly_hours'=>$s['booking_weekly_hours'],'services'=>$items,
             'merchant_trip_fee_minor'=>$s['booking_trip_fee_minor'],'daily_capacity'=>$s['booking_daily_capacity'],
             'confirmation'=>'merchant_confirmation_required','prepayment_enabled'=>self::prepaymentEnabled(),
+            'pay_before_confirmation'=>$s['booking_pay_before_confirmation'],
             'pickup_postal_codes'=>BookingCoverage::pickupPostcodes(),'pickup_address_review_required'=>true,
             'coverage_url'=>rest_url(Api::NS.'/booking-coverage'),'pickup_counties'=>['Contra Costa','Santa Clara'],
             'prepayment_counties'=>['Contra Costa','Santa Clara'],'direct_wallet_enabled'=>false,
@@ -41,7 +42,7 @@ final class Booking {
     }
     public static function prepaymentEnabled(): bool {
         $s=Settings::get();
-        return self::enabled() && $s['booking_prepaid_enabled'] && $s['booking_policy_url'] && $s['booking_policy_version'] && ListingCheckout::enabled();
+        return self::enabled() && $s['booking_prepaid_enabled'] && $s['booking_policy_url'] && $s['booking_policy_version'] && ListingCheckout::enabled(true);
     }
     public static function walletEnabled(): bool {
         $s=Settings::get();
@@ -201,8 +202,9 @@ final class Booking {
             $sql=$wpdb->prepare("INSERT INTO $table (id,capacity,start_at,end_at,kind,enabled) VALUES(%s,%d,%d,%d,'customer_dropoff',1) ON DUPLICATE KEY UPDATE capacity=VALUES(capacity),enabled=1",$slot,$s['booking_daily_capacity'],strtotime($day['start_at']),strtotime($day['end_at']));
             if($wpdb->query($sql)===false)Domain::fail('DATABASE_UNAVAILABLE','Booking window could not be saved.',503);
             $wpdb->get_row($wpdb->prepare("SELECT id FROM $table WHERE id=%s FOR UPDATE",$slot));
-            if(self::remaining($day['date'],true)===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
-            if($wpdb->insert(Store::table('holds'),['slot_id'=>$slot,'attempt_id'=>$id,'expires'=>strtotime($day['end_at']),'state'=>'confirmed'])!==1)Domain::fail('DATABASE_UNAVAILABLE','The booking could not be reserved.',503);
+            if(!self::activePrepaymentHold($id) && self::remaining($day['date'],true)===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
+            $holds=Store::table('holds');
+            if($wpdb->query($wpdb->prepare("INSERT INTO $holds (slot_id,attempt_id,expires,state) VALUES(%s,%s,%d,'confirmed') ON DUPLICATE KEY UPDATE expires=VALUES(expires),state='confirmed'",$slot,$id,strtotime($day['end_at'])))===false)Domain::fail('DATABASE_UNAVAILABLE','The booking could not be reserved.',503);
             $d['booking_state']='confirmed';$d['confirmed_at']=time();$d['pickup_verified']=$courier;$d['coverage_verified']=$addressApproved || !$coverage['address_review_required'];$d['window']=$day;Store::update($id,$d);
             $saved=Store::get($id,'booking');BookingEvents::record($saved,'booking.confirmed');BookingOutbox::enqueue($saved,'confirmed');
         });});
@@ -211,7 +213,8 @@ final class Booking {
         self::notify($id,'confirmed');
     }
     public static function cancel(string $id,string $owner): array {
-        return Store::lock('booking:'.$id,static function()use($id,$owner){return Store::transaction(static function()use($id,$owner){$row=self::get($id,$owner);$d=$row['data'];Store::release($id);$d['booking_state']='cancelled';if(isset($d['address_consent']))$d['address_consent']['revoked_at']=time();Store::update($id,$d);$saved=self::get($id,$owner);BookingEvents::record($saved,'booking.cancelled');return $saved;});});
+        $saved=Store::lock('booking:'.$id,static function()use($id,$owner){return Store::transaction(static function()use($id,$owner){$row=self::get($id,$owner);$d=$row['data'];Store::release($id);$d['booking_state']='cancelled';if(isset($d['address_consent']))$d['address_consent']['revoked_at']=time();Store::update($id,$d);$saved=self::get($id,$owner);BookingEvents::record($saved,'booking.cancelled');return $saved;});});
+        BookingLifecycle::cancelOrder($saved);return self::get($id,$owner);
     }
     public static function shareConsent(string $id,string $owner,bool $approved): void {
         if(!$approved)Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Approve sharing contact/fulfillment details.',403);
@@ -222,11 +225,13 @@ final class Booking {
     }
     public static function paymentSelection(string $id): array {
         $row=Store::get($id,'booking');$d=$row['data'];$input=$d['input'];
-        if(!self::prepaymentEnabled() || $d['booking_state']!=='confirmed' || $input['mode']==='pay_later_dropoff')Domain::fail('BOOKING_PREPAYMENT_DISABLED','Prepayment requires a confirmed booking and verified native checkout.',503);
-        if(BookingAuthorization::address($row)!=='granted_for_order')Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Fulfillment sharing authorization must be current.');
+        $requested=$d['booking_state']==='requested' && Settings::get()['booking_pay_before_confirmation'];
+        if(!self::prepaymentEnabled() || (!$requested && $d['booking_state']!=='confirmed') || $input['mode']==='pay_later_dropoff')Domain::fail('BOOKING_PREPAYMENT_DISABLED','Prepayment requires an eligible submitted booking and native checkout.',503);
+        if(!in_array(BookingAuthorization::address($row),$requested?['granted_for_order','merchant_review_required']:['granted_for_order'],true))Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Fulfillment sharing authorization must be current.');
         $coverage=BookingCoverage::requireService($input);
-        if(!$coverage['prepayment_eligible'] || empty($d['coverage_verified']))Domain::fail('ADDRESS_REVIEW_REQUIRED','Prepayment requires verified Contra Costa or Santa Clara county coverage.');
-        if(($input['mode']==='prepaid_pickup' || $input['return_mode']==='courier_delivery') && !$d['pickup_verified'])Domain::fail('ADDRESS_REVIEW_REQUIRED','Pickup address needs merchant approval.');
+        if(!$coverage['prepayment_eligible'] || ($requested?$coverage['address_review_required']:empty($d['coverage_verified'])))Domain::fail('ADDRESS_REVIEW_REQUIRED','This ZIP requires county review before prepayment.');
+        if(!$requested && ($input['mode']==='prepaid_pickup' || $input['return_mode']==='courier_delivery') && !$d['pickup_verified'])Domain::fail('ADDRESS_REVIEW_REQUIRED','Pickup address needs merchant approval.');
+        if($requested && !self::activePrepaymentHold($id))Domain::fail('SLOT_UNAVAILABLE','The payment reservation expired. Review the original order before retrying.',409);
         self::day($input['preferred_date']);
         return ['items'=>$input['items'],'fee_minor'=>Settings::get()['booking_trip_fee_minor']*(($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0)),
             'fingerprint'=>Domain::digest([$input,$d['window'],Settings::get()['booking_trip_fee_minor'],Settings::get()['booking_policy_version']])];
@@ -234,6 +239,7 @@ final class Booking {
     public static function checkout(string $id,string $owner): array {
         return Store::lock('booking:'.$id,static function()use($id,$owner){
             $row=self::get($id,$owner);$d=$row['data'];
+            if($d['booking_state']==='requested' && Settings::get()['booking_pay_before_confirmation']){self::reservePrepayment($row);$row=self::get($id,$owner);$d=$row['data'];}
             self::paymentSelection($id);
             if($d['listing_intent'])return ListingCheckout::get($d['listing_intent'],$d['checkout_owner']??$row['owner'],true);
             $checkoutOwner=$d['checkout_owner']??$row['owner'];
@@ -245,6 +251,29 @@ final class Booking {
             $d['checkout_owner']=$checkoutOwner;Store::update($id,$d);
             $intent=ListingCheckout::create(['items'=>$d['input']['items'],'booking_id'=>$id],$checkoutOwner,'booking-checkout-'.$id);
             $d['listing_intent']=$intent['id'];Store::update($id,$d);return $intent;
+        });
+    }
+    public static function activePrepaymentHold(string $id): bool {
+        global $wpdb;return (bool)$wpdb->get_var($wpdb->prepare('SELECT attempt_id FROM '.Store::table('holds')." WHERE attempt_id=%s AND (state='confirmed' OR (state='held' AND expires>%d))",$id,time()));
+    }
+    /** Called under the booking lock. A payment hold is not merchant appointment confirmation. */
+    private static function reservePrepayment(array $row): void {
+        $id=$row['id'];$d=$row['data'];$input=$d['input'];$s=Settings::get();
+        if(!self::prepaymentEnabled() || $input['mode']==='pay_later_dropoff')Domain::fail('BOOKING_PREPAYMENT_DISABLED','Choose an available prepaid option.',503);
+        $c=BookingCoverage::requireService($input);
+        if(!$c['prepayment_eligible'] || $c['address_review_required'])Domain::fail('ADDRESS_REVIEW_REQUIRED','This ZIP needs merchant county review before payment.');
+        if(!in_array(BookingAuthorization::address($row),['granted_for_order','merchant_review_required'],true))Domain::fail('ADDRESS_AUTHORIZATION_REQUIRED','Approve sharing fulfillment details first.',403);
+        if(self::activePrepaymentHold($id))return;
+        if(!empty($d['listing_intent']))Domain::fail('PAYMENT_UNRESOLVED','Check the original checkout; its payment hold expired. Do not start another payment.',409);
+        if($s['booking_daily_capacity']===null)Domain::fail('CAPACITY_UNCONFIGURED','Daily capacity is not configured.');
+        $day=self::day($input['preferred_date']);
+        Store::transaction(static function()use($id,$d,$s,$day){
+            global $wpdb;$slot='booking-'.$day['date'];$table=Store::table('slots');
+            if($wpdb->query($wpdb->prepare("INSERT INTO $table (id,capacity,start_at,end_at,kind,enabled) VALUES(%s,%d,%d,%d,'customer_dropoff',1) ON DUPLICATE KEY UPDATE capacity=VALUES(capacity),enabled=1",$slot,$s['booking_daily_capacity'],strtotime($day['start_at']),strtotime($day['end_at'])))===false)Domain::fail('DATABASE_UNAVAILABLE','Could not reserve the payment window.',503);
+            $wpdb->get_row($wpdb->prepare("SELECT id FROM $table WHERE id=%s FOR UPDATE",$slot));
+            if(self::remaining($day['date'],true)===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
+            if($wpdb->insert(Store::table('holds'),['slot_id'=>$slot,'attempt_id'=>$id,'expires'=>min(time()+1800,strtotime($day['end_at'])),'state'=>'held'])!==1)Domain::fail('DATABASE_UNAVAILABLE','Could not reserve payment capacity.',503);
+            $d['window']=$day;$d['prepayment_requested_at']=time();Store::update($id,$d);
         });
     }
     public static function nativeFees($cart): void {
@@ -265,7 +294,7 @@ final class Booking {
         $d=$row['data'];$input=$d['input'];$items=$d['catalog_snapshot'];$subtotal=0;
         foreach($items as $item)$subtotal+=$item['unit_price_minor']*$item['quantity'];
         $fee=Settings::get()['booking_trip_fee_minor']*(($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0));
-        $payment='not_started';if($d['listing_intent'])$payment=ListingCheckout::status($d['listing_intent'],$d['checkout_owner']??$row['owner'])['payment_state'];
+        $payment='not_started';if($d['listing_intent'])$payment=ListingCheckout::facts(Store::get($d['listing_intent'],'listing'))['payment_state'];
         $url=add_query_arg(['krev_agent'=>'booking','booking'=>$row['id']],home_url('/'));
         $order=BookingOrderBridge::linked($row)??BookingEvents::nativeOrder($row);
         BookingEvents::observe($row);
@@ -274,7 +303,7 @@ final class Booking {
             'estimated_subtotal_minor'=>$subtotal+$fee,'total_minor'=>null,'estimate_only'=>true,'prepayment_enabled'=>self::prepaymentEnabled() && BookingCoverage::check($input['postal_code'])['prepayment_eligible'],
             'coverage'=>BookingCoverage::check($input['postal_code']),'direct_wallet_enabled'=>false,
             'policy_url'=>Settings::get()['booking_policy_url']?:null,'booking_access_token'=>self::accessToken($row),'review_url'=>$d['booking_state']==='draft' && !empty($d['referral_id']) && empty($input['customer']) && empty($input['pickup_address'])?add_query_arg(['krev_agent'=>'booking','referral'=>$d['referral_id']],home_url('/')):$url.'#booking_access='.rawurlencode(self::accessToken($row)),'status_url'=>$url,
-            'appointment_confirmed'=>$d['booking_state']==='confirmed','refund_state'=>'not_issued','expires_at'=>gmdate('c',(int)$row['expires']),
+            'appointment_confirmed'=>$d['booking_state']==='confirmed','refund_state'=>BookingLifecycle::refunds($order)['refund_state'],'refund_summary'=>BookingLifecycle::refunds($order),'expires_at'=>gmdate('c',(int)$row['expires']),
             'order_reference'=>$order?(string)$order->get_order_number():null,'order_state'=>$order?$order->get_status():null,
             'order_bridge_state'=>$d['order_bridge_state']??'not_created','events'=>BookingEvents::recent($row['id']),
             'address_authorization'=>BookingAuthorization::address($row),'payment_authorization'=>BookingAuthorization::payment($row),
