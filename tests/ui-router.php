@@ -20,12 +20,21 @@ if(getenv('KREV_LISTING_UI')==='1'){
     class ListingUiGateway extends WC_Payment_Gateway {public function __construct(){$this->id='stripe';$this->enabled='yes';$this->title='Synthetic native test gateway';$this->supports=['products','refunds'];$this->settings=['testmode'=>'yes'];}public function is_available(){return true;}public function process_payment($id){throw new RuntimeException('Synthetic browser must not initiate payment.');}}
     add_filter('woocommerce_payment_gateways',static fn($g)=>[ListingUiGateway::class],1000);WC()->payment_gateways()->init();
     if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
+    if(getenv('KREV_STOREFRONT_UI')==='1' && ($_SERVER['REQUEST_METHOD']??'GET')==='GET' && isset($_GET['krev_ui_cart'])){
+        WC()->cart->empty_cart();$services=\KnifeRevive\AgentCommerce\Settings::get()['booking_services'];
+        WC()->cart->add_to_cart($services[0]['product_id'],2);WC()->cart->add_to_cart($services[1]['product_id'],1);
+        if($_GET['krev_ui_cart']==='mixed')WC()->cart->add_to_cart((int)get_option('krev_ui_storefront_goods'),1);
+        WC()->cart->calculate_totals();WC()->session->set_customer_session_cookie(true);WC()->session->save_data();
+    }
     if((int)($_GET['page_id']??0)===(int)get_option('woocommerce_checkout_page_id')){
         echo '<!doctype html><html><head><meta charset="utf-8"><title>Synthetic native WooCommerce checkout</title></head><body><h1>Native WooCommerce checkout</h1>';
         echo do_shortcode('[woocommerce_checkout]');echo '</body></html>';exit;
     }
 }
 add_filter('plugins_url',static function ($url,$relative,$plugin) { return str_ends_with($plugin,'kniferevive-agent-commerce.php') ? WP_HOME.'/wp-content/plugins/kniferevive-agent-commerce'.($relative?'/'.$relative:'') : $url; },10,3);
+if(getenv('KREV_STOREFRONT_UI')==='1' && $path==='/checkout/'){
+    add_filter('woocommerce_is_checkout','__return_true');\KnifeRevive\AgentCommerce\StorefrontBooking::render();
+}
 if(isset($_GET['wc-ajax'])){WC_AJAX::do_wc_ajax();exit;}
 if(getenv('KREV_BOOKING_UI')==='1' && (isset($_GET['krev_ui_vendor']) || isset($_GET['krev_ui_vendor_orders']))){
     // Synthetic loopback fixture only; never included in the distributable plugin.

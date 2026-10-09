@@ -328,7 +328,8 @@ final class ListingCheckout {
                 WC()->customer->set_billing_email($d['context']['email']);WC()->customer->set_calculated_shipping(true);
                 WC()->session->set('chosen_payment_method',$d['context']['payment_method']);WC()->session->set('chosen_shipping_methods',$d['context']['shipping_methods']);
                 WC()->session->set('krev_booking_id',$d['selection']['booking_id']??null);
-                foreach($d['selection']['items'] as $line)if(!WC()->cart->add_to_cart($line['product_id'],$line['quantity']))Domain::fail('LISTING_UNAVAILABLE','Native cart refused the selected item.');
+                WC()->session->set('krev_booking_cart_building',true);
+                try{foreach($d['selection']['items'] as $line)if(!WC()->cart->add_to_cart($line['product_id'],$line['quantity']))Domain::fail('LISTING_UNAVAILABLE','Native cart refused the selected item.');}finally{WC()->session->set('krev_booking_cart_building',null);}
                 foreach($d['selection']['coupons'] as $code)if(!WC()->cart->apply_coupon($code))Domain::fail('COUPON_UNAVAILABLE','Native checkout refused the coupon.');
                 WC()->cart->calculate_totals();
                 if(!self::matchesCart($d['selection']) || self::minor(WC()->cart->get_total('edit'))!==$fresh['total_minor'])Domain::fail('QUOTE_CHANGED','Native cart differs from the reviewed quote.');

@@ -1,0 +1,155 @@
+{
+  "backend_version": "0.5.11",
+  "published_skill_version": "0.5.10",
+  "date": "2026-10-09",
+  "production_update_reported_success": true,
+  "zip_sha256": "1364223689f7a8cbc950fa133707c6356db5dc83d8399fa4425b9dd4a0f145e2",
+  "tests": {
+    "assertions_total": 774,
+    "sync_enabled": true,
+    "fenced_database": "krev_agent_sandbox",
+    "host": "127.0.0.1:11019",
+    "external_http_and_email_blocked": true,
+    "runs": [
+      {
+        "storage": "legacy",
+        "suite": "storefront-booking",
+        "assertions": 33,
+        "final_line": "PASS: 33 storefront assertions; no external payment or email.",
+        "sha256": "071c626e87daa876d5655269166f63be5823215a9cb35d897f4f6c7268ea172d"
+      },
+      {
+        "storage": "legacy",
+        "suite": "listing-checkout",
+        "assertions": 75,
+        "final_line": "75 listing checkout assertions passed.",
+        "sha256": "5c9e21947879cc07b59e5ccd31a274e0c96b41acc266d15c41e416d6e1fc2cc0"
+      },
+      {
+        "storage": "legacy",
+        "suite": "booking",
+        "assertions": 66,
+        "final_line": "66 booking assertions passed. No real processor request was sent.",
+        "sha256": "68fbd9371b7f24e93e4d9bacfe6f62c049dc9635d14af030954e8f1448544e8d"
+      },
+      {
+        "storage": "legacy",
+        "suite": "booking-bridge",
+        "assertions": 87,
+        "final_line": "87 booking bridge assertions passed. Email and processor evidence is synthetic only.",
+        "sha256": "8075fc0e4b4bc773fd276033ca6db38be80531cd61e8439c5ab84ec9f19c2d80"
+      },
+      {
+        "storage": "legacy",
+        "suite": "booking-lifecycle",
+        "assertions": 66,
+        "final_line": "66 lifecycle assertions passed. No real payment, refund, or email was sent.",
+        "sha256": "983022fd3d87bc1c8d1a4404fbe9ca09eba8b2d70cbf289d08b13b95015bf358"
+      },
+      {
+        "storage": "legacy",
+        "suite": "booking-four-options",
+        "assertions": 60,
+        "final_line": "60 four-option assertions passed. No real payment, order, email or refund was sent.",
+        "sha256": "4f52e46266a41a08986f1e551d621a1ba126cba2afb861ae222749814be5c5d6"
+      },
+      {
+        "storage": "hpos",
+        "suite": "storefront-booking",
+        "assertions": 33,
+        "final_line": "PASS: 33 storefront assertions; no external payment or email.",
+        "sha256": "071c626e87daa876d5655269166f63be5823215a9cb35d897f4f6c7268ea172d"
+      },
+      {
+        "storage": "hpos",
+        "suite": "listing-checkout",
+        "assertions": 75,
+        "final_line": "75 listing checkout assertions passed.",
+        "sha256": "5c9e21947879cc07b59e5ccd31a274e0c96b41acc266d15c41e416d6e1fc2cc0"
+      },
+      {
+        "storage": "hpos",
+        "suite": "booking",
+        "assertions": 66,
+        "final_line": "66 booking assertions passed. No real processor request was sent.",
+        "sha256": "68fbd9371b7f24e93e4d9bacfe6f62c049dc9635d14af030954e8f1448544e8d"
+      },
+      {
+        "storage": "hpos",
+        "suite": "booking-bridge",
+        "assertions": 87,
+        "final_line": "87 booking bridge assertions passed. Email and processor evidence is synthetic only.",
+        "sha256": "2b3e2eca11fe0cf4814863f237eb6905162fddc84cc2d21810877981dbcb408e"
+      },
+      {
+        "storage": "hpos",
+        "suite": "booking-lifecycle",
+        "assertions": 66,
+        "final_line": "66 lifecycle assertions passed. No real payment, refund, or email was sent.",
+        "sha256": "983022fd3d87bc1c8d1a4404fbe9ca09eba8b2d70cbf289d08b13b95015bf358"
+      },
+      {
+        "storage": "hpos",
+        "suite": "booking-four-options",
+        "assertions": 60,
+        "final_line": "60 four-option assertions passed. No real payment, order, email or refund was sent.",
+        "sha256": "4f52e46266a41a08986f1e551d621a1ba126cba2afb861ae222749814be5c5d6"
+      }
+    ]
+  },
+  "synthetic_browser": {
+    "cart": {
+      "small_qty": 2,
+      "large_qty": 1,
+      "ordinary_product_preserved": true
+    },
+    "services_minor": 1700,
+    "trip_fee_minor": 1100,
+    "payment_total_minor": 2800,
+    "parcel_shipping_minor": 0,
+    "changed_items_warning": false,
+    "address_disclosure_open_while_typing": true,
+    "final_payment_capture_viewport_width": 1280,
+    "place_order_clicked": false
+  },
+  "production": {
+    "entry": "https://kniferevive.com/checkout/",
+    "normal_cart_quantity_prefilled": 1,
+    "large_service_minor": 700,
+    "choice_trip_fees_minor": [
+      0,
+      600,
+      600,
+      1100,
+      0
+    ],
+    "option5_nothing_due_now": true,
+    "unpaid_zip_disabled": true,
+    "coverage_messages": {
+      "94565": "eligible pickup and online payment",
+      "94103": "SF Bay Area; pickup not yet available",
+      "90001": "outside SF Bay Area; sharpening unavailable"
+    },
+    "source_fingerprint_present": true,
+    "booking_asset": "https://kniferevive.com/wp-content/plugins/kniferevive-agent-commerce/assets/booking.js?ver=0.5.11",
+    "settings_readback": {
+      "daily_capacity": 4,
+      "trip_fee_minor": 600,
+      "combo_fee_minor": 1100,
+      "trip_taxable": true,
+      "prepaid_enabled": true,
+      "payment_required_before_submission": true
+    },
+    "temporary_cart_item_removed": true,
+    "cart_final_count": 0,
+    "booking_submitted": false,
+    "order_created": false,
+    "payment_or_refund_sent": false,
+    "email_sent": false
+  },
+  "limitations": [
+    "No actual processor settlement, seller payout or gateway refund was exercised.",
+    "Final payment browser capture was desktop; a later viewport override returned 1280px.",
+    "Registry skill 0.5.10 is unchanged; no new ClawHub publication performed."
+  ]
+}

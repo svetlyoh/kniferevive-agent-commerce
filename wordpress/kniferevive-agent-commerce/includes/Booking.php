@@ -305,7 +305,7 @@ final class Booking {
         $input=$row['data']['input'];$selection=['items'=>$input['items'],'fee_minor'=>self::transportFee($row)];$items=[];
         foreach($cart->get_cart() as $line)$items[]=['product_id'=>(int)$line['product_id'],'quantity'=>(int)$line['quantity']];
         usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
-        if($items!==$selection['items']){wc_add_notice('Booking items changed. Review your booking before paying.','error');return;}
+        if($items!==$selection['items']){if(!WC()->session->get('krev_booking_cart_building'))wc_add_notice('Booking items changed. Review your booking before paying.','error');return;}
         if($selection['fee_minor'])$cart->add_fee(isset($row['data']['transport_taxable'])?'KnifeRevive trip fee (per order)':'KnifeRevive merchant transport',Domain::decimal($selection['fee_minor']),$row['data']['transport_taxable']??false,$row['data']['transport_tax_class']??'');
     }
     public static function transportFeeForInput(array $input): int {

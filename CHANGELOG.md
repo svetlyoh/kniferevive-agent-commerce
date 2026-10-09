@@ -1,5 +1,12 @@
 # Changelog
 
+## Storefront sharpening checkout 0.5.11 — October 9, 2026
+
+- Route the normal sharpening cart into the same two-screen booking/payment flow, with cart quantities prefilled and all five pickup/return choices.
+- Reuse ZIP coverage, requested-day/capacity checks, consent and verified payment requirements. Charge $6 for one trip or $11 for the comeback combo as taxable per-order fees.
+- Preserve mixed-cart goods and existing unpaid orders; bind source quantities, reject stale cart edits and consume only recoverable booking handoffs. Guard native order creation against bypassing booking checks.
+- Remove a false changed-items notice while constructing a multi-service payment cart; retain final item/total validation. The published skill remains 0.5.10.
+
 ## Booking review controls and coupon styling 0.5.10 — October 9, 2026
 
 - State “nothing due now” for unpaid drop-off/collection; sharpening remains payable at pickup.
