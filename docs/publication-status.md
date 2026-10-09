@@ -18,8 +18,10 @@ pickup/delivery on new requests, and isolates booking checkout from an existing
 storefront cart. Original quoted legacy prices and orders are preserved.
 Actual processor settlement and headless API access remain unverified; anonymous
 API traffic receives the hosting browser challenge. Lightning readiness remains
-false. Local skill **0.5.1** is an unpublished candidate, with no new registry
-audit, card, immutable release or certification claimed.
+false. GitHub skill source is now **0.5.4**, with booking instructions aligned
+to the deployed backend. ClawHub remains **0.4.2**; there is no new registry
+audit, card, immutable release or certification claim. See
+[the GitHub source correction](skill-source-0.5.4.md).
 
 ## Historical 0.4.2 publication and backend deployment
 

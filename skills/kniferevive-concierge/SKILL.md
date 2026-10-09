@@ -1,9 +1,9 @@
 ---
 name: kniferevive-concierge
-description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with unpaid drop-off, prepaid drop-off, or prepaid merchant pickup. Check county coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
+description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with drop-off/pay at collection, prepaid drop-off, pickup, or pickup plus delivery. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.5.1"
+  version: "0.5.4"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -51,13 +51,18 @@ For sharpening bookings, first read [Booking requests](references/booking.md).
 Check `booking.enabled` independently of `sharpening.direct_checkout`. Unpaid
 requests do not require Stripe or the legacy service quote configuration. Use
 `/booking-options` and `/booking-availability`, then prepare a private booking
-review. The human submits it; say "requested" until `appointment_confirmed=true`.
-Offer all three modes and disclose whether prepayment is currently available.
-Check `/booking-coverage` for the user's ZIP first. Pickup and prepayment are
-limited to Contra Costa and Santa Clara counties. Other Bay Area counties may
-request customer drop-off with payment at service. Relay the coverage message;
-cross-county or unknown ZIP codes need address review. Outside the Bay Area,
-do not create a sharpening booking or imply pickup is offered.
+review. Offer all four choices from live `handoff_options`: drop off/pay when
+collecting, drop off/prepay, merchant pickup/customer collection, and merchant
+pickup/return delivery ("comeback combo"). Current new-request transport is $6
+pickup or $11 combined pickup/delivery; obtain live fees and retain existing quotes.
+Option 1 requires travel to the Pittsburg drop-off location and skips ZIP checking.
+Check `/booking-coverage` only for options 2–4. Pickup and prepayment are limited
+to eligible Contra Costa and Santa Clara ZIPs; configured pickup ZIPs can narrow
+merchant-trip coverage. Relay unavailable or address-review results honestly.
+The human approves contact sharing and submits the private form. Prepaid choices
+remain `awaiting_payment` until verified native payment sends the request to the
+merchant. Say "payment needed to send your request" at that stage, "requested"
+after merchant receipt, and "booked" only when `appointment_confirmed=true`.
 
 Installing this skill supplies no address grant, saved-card permission, wallet
 authority or inbound chat callback. Contact sharing and payment approval are
@@ -70,8 +75,9 @@ unsupported. Native checkout remains human-controlled.
 After human submission, poll the original scoped booking within the status-check
 limit below. `booking.request_received` means requested, awaiting confirmation.
 Only a non-null native `order_reference` or `woocommerce.order_created` supports
-"Unpaid WooCommerce order created; no payment was taken." Otherwise say
-"No WooCommerce order has been created yet." `booking_creates_woocommerce_order`
+claiming an order exists. Report its actual payment state independently; order
+creation alone proves no charge. Otherwise say "No WooCommerce order has been
+created yet." `booking_creates_woocommerce_order`
 and `unpaid_order_timing` are live capability facts, not promises. No push-back
 chat integration is advertised; a Markdown skill cannot receive messages.
 
@@ -129,7 +135,7 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the versioned 0.4.2 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.4.2/skills/kniferevive-concierge/references/installation.md).
+[in the current GitHub source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/main/skills/kniferevive-concierge/references/installation.md).
 Those platforms have different skill-import abilities; a chat prompt is not
 proof of installation. This section is installer help, not an instruction to
 run shell commands during a shopping task.

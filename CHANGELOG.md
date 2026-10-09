@@ -1,5 +1,11 @@
 # Changelog
 
+## GitHub skill source 0.5.4 — October 9, 2026
+
+- Corrected the skill metadata left at 0.5.1 while the backend advanced to 0.5.4.
+- Documented four booking choices, ZIP checks only for prepaid choices, $6 pickup and $11 combined transport on new requests, awaiting-payment merchant submission and separate booking checkout sessions.
+- Updated current-source installation links and distinguished GitHub imports from the unchanged ClawHub 0.4.2 publication. This source update claims no new registry audit and does not change payment authorization or backend settings.
+
 ## Skill 0.4.2 — October 8, 2026
 
 - Updated the portable skill for consent-scoped unpaid booking receipts and native seller-order facts, keeping request, confirmation and payment states separate.

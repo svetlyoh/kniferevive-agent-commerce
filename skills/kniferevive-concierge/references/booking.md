@@ -12,26 +12,35 @@ remaining capacity; do not hard-code the merchant's daily limit or treat an
 unpaid order as a reservation. A linked unpaid drop-off request can appear in
 the seller's Local Pickup list before the service day is confirmed.
 
-GET `/booking-coverage?postal_code=94565` classifies an exact five-digit ZIP.
+For prepaid options 2–4 only, GET `/booking-coverage?postal_code=94565` classifies
+an exact five-digit ZIP. Option 1 skips ZIP lookup and requires customer travel
+to the Pittsburg drop-off location; do not demand a ZIP for it.
 Pickup and prepayment are offered only in Contra Costa and Santa Clara counties.
 Other Bay Area ZIPs receive: “Pickup service is not available in your area but
-will be available in the near future.” Offer customer drop-off and pay at service.
+will be available in the near future.” Offer customer drop-off and pay at collection.
 Outside the Bay Area: “We do not currently offer sharpening services in your area.
-We are operating in the SF Bay Area only.” Do not create a sharpening booking.
+We are operating in the SF Bay Area only.” Do not offer merchant trips or prepaid
+booking outside eligible coverage. Do not claim this checks option 1 eligibility.
 Unknown or cross-county ZIPs need merchant street-address review. The bundled
 2020 Census ZCTA index is a coverage screen, not a complete current USPS directory.
 Do not infer county from a ZIP prefix or claim an unknown ZIP is outside the region.
 
-Offer three choices:
+Offer four choices using live `handoff_options` and their service/payment flags:
 
-- `pay_later_dropoff`: customer drops off and collects; no online payment.
-- `prepaid_dropoff`: customer drops off; customer reviews and confirms payment
-  through native checkout when prepayment is enabled; `pay_before_confirmation=true` permits an eligible submitted request to pay while awaiting merchant confirmation.
-- `prepaid_pickup`: KnifeRevive picks up; same buyer-controlled payment flow plus
-  the configured merchant-trip fee. Exact address and coverage need merchant review.
+- Option 1: `mode=pay_later_dropoff`, `return_mode=customer_collection` — customer
+  drops off and pays when collecting; no online payment or merchant transport fee.
+- Option 2: `mode=prepaid_dropoff`, `return_mode=customer_collection` — customer
+  drops off and prepays online; no merchant transport fee.
+- Option 3: `mode=prepaid_pickup`, `return_mode=customer_collection` — KnifeRevive
+  picks up and the customer collects; current new-request transport fee is $6.
+- Option 4: `mode=prepaid_pickup`, `return_mode=courier_delivery` — KnifeRevive
+  picks up and delivers back, the “comeback combo”; current new-request transport
+  fee is $11 total. The browser's `prepaid_pickup_delivery` alias is not an API mode.
 
-Customer collection avoids a return trip fee. `courier_delivery` adds another
-merchant trip. Current owner pricing is $7.99 per merchant trip; obtain live fees.
+Options 2–4 require Continue to Payment and completed native payment before
+merchant booking review/notifications. All requested service days still require
+merchant confirmation after payment. Obtain live transport prices; the combined
+fee is a total, not two $6 charges. Existing requests retain their original quote.
 An 8-inch chef's knife matches the configured Large Knife Sharpening definition;
 use its live price ($7 at setup). Do not generalize this to unconfigured size limits.
 Catalog service and transport subtotals exclude applicable tax and other fees.
@@ -45,12 +54,12 @@ Idempotency-Key:
   "items": [{"product_id": 1964, "quantity": 1}],
   "mode": "pay_later_dropoff",
   "preferred_date": "2026-10-09",
-  "postal_code": "94565",
   "return_mode": "customer_collection"
 }
 ```
 
 IDs and dates are examples; discover actual services and an available future day.
+Omit `postal_code` for option 1. Options 2–4 require the eligible five-digit ZIP.
 Draft creation accepts service choices and optional short service `notes`, not
 `customer` or `pickup_address`. The human enters and approves sharing these on
 the private first-party form. Do not put PII in service notes. Never put addresses or session tokens
@@ -75,9 +84,11 @@ If the API is missing, challenged or returns non-JSON, send the customer to
 `https://kniferevive.com/?krev_agent=booking`. Do not bypass the hosting challenge
 or scrape the merchant's private dashboard to create a request.
 
-GET `/bookings/{id}` reports `draft`, `requested`, `confirmed` or `cancelled` and a
-separate `payment_state`. Say "booking requested; awaiting KnifeRevive confirmation"
-after submission. Only `appointment_confirmed=true` supports "booked". Pickup
+GET `/bookings/{id}` reports `draft`, `awaiting_payment`, `requested`, `confirmed`
+or `cancelled`, with a separate `payment_state`. For `awaiting_payment`, say
+“Payment is needed to send this request to KnifeRevive.” Say “booking requested;
+awaiting KnifeRevive confirmation” only after verified merchant receipt. Only
+`appointment_confirmed=true` supports “booked.” Pickup
 cannot be confirmed without approved coverage/address. Return timing is arranged
 separately; do not promise same-day completion or delivery.
 
@@ -88,7 +99,10 @@ does not prove card authentication, wallet authority or settlement. Host wallet
 authorization remains unknown to this portable API; delegated cards are unsupported.
 
 `events` is a bounded, PII-free fact history on the existing scoped GET. A
-`booking.request_received` event proves only that the request was persisted.
+`booking.awaiting_payment` proves the prepaid details were saved, not that the
+merchant received a booking. `booking.request_received` proves merchant request
+receipt; for prepaid requests the native payment gate must have passed. Neither
+event confirms an appointment.
 `woocommerce.order_created` appears only after a real native order is verified
 for its Dokan seller. Read current `order_reference` and `order_state`; if null,
 say "No WooCommerce order has been created yet." An unpaid order is not a
@@ -98,13 +112,23 @@ Use the existing limit of three checks at least five seconds apart, then return
 the human status link. `agent_event_push_supported=false` means no inbound bot
 notification; never promise the bot will message the customer automatically.
 
-For an eligible submitted prepaid request when `pay_before_confirmation=true`, or a confirmed prepaid booking, POST `/bookings/{id}/checkout` with `{}` only if
+For an eligible `awaiting_payment` request, a submitted legacy prepaid request
+when `pay_before_confirmation=true`, or a confirmed prepaid booking, POST
+`/bookings/{id}/checkout` with `{}` only if
 live `prepayment_enabled=true`. It returns the original protected native listing
 review. Follow the listing checkout guide for an actual all-in quote and customer
 payment. Retries return the same intent; never create another payment after an
 uncertain outcome. Payment success comes from native verified order status.
-When disabled, record the prepayment preference honestly and explain that a secure
-payment link is not yet available; an unpaid booking request can still proceed.
+When disabled, explain that prepaid checkout is unavailable and offer option 1
+if the customer can drop off and collect. Do not submit a prepaid choice as an
+unpaid merchant booking or silently change its handoff.
+
+Booking checkout uses separate native WooCommerce sessions to preserve unrelated
+storefront carts/pending orders. Returning through the original private link can
+resume the same unstarted payment intent. Never clear another cart, create a
+replacement booking to bypass an existing/uncertain order, or promise recovery
+when private authorization is missing. Existing linked orders keep their original
+native payment/receipt path; ask for merchant review if recovery is blocked.
 
 ## Direct payment from an authorized bot wallet
 

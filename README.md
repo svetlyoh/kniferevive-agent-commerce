@@ -8,6 +8,8 @@ Installed/published versions and payment gates are recorded in [publication stat
 
 ## Install with OpenClaw
 
+For current skill **0.5.4**, import the [entire GitHub skill folder on main](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/main/skills/kniferevive-concierge) through your host's supported GitHub import flow. Resolve the latest commit and verify `metadata.version` and all eight files. The ClawHub commands below install published registry **0.4.2**; they do not fetch this newer GitHub source. See the [GitHub update instructions](skills/kniferevive-concierge/references/installation.md#install-the-current-github-skill).
+
 From an already installed OpenClaw environment, in a Linux terminal or Windows
 PowerShell:
 
