@@ -1,5 +1,11 @@
 # Changelog
 
+## Exact bot button fees — skill 0.5.12 — October 9, 2026
+
+- Require complete visible option labels with numeric fees in each button: $6 for one pickup or delivery, $11 round-trip fee for the comeback combo, and $0 for customer transport.
+- Supply full templates, a $7 sharpening example and a pre-send completeness check. Keep unpaid drop-off/collection last with “nothing due now”.
+- Preserve live-fee overrides, frozen existing quotes, coverage checks and payment/consent boundaries. Explain active-copy/session checks when a bot still shows amount-free legacy labels. Backend remains 0.5.11.
+
 ## Storefront sharpening checkout 0.5.11 — October 9, 2026
 
 - Route the normal sharpening cart into the same two-screen booking/payment flow, with cart quantities prefilled and all five pickup/return choices.

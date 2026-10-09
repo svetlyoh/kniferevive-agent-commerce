@@ -55,5 +55,5 @@ Booking-specific routes accept the private `X-Krev-Booking` capability returned
 with a draft, independently of the general two-hour shopper token. See
 [Booking requests](booking.md) for its narrow scope and expiry. Use JSON Accept;
 if the host HTTP tool supports an identifying User-Agent, identify this merchant
-client honestly (e.g. KnifeRevive-Concierge/0.5.10). A hosting challenge or non-JSON
+client honestly (e.g. KnifeRevive-Concierge/0.5.12). A hosting challenge or non-JSON
 response is not an API result. Use the human booking page; never bypass the challenge.

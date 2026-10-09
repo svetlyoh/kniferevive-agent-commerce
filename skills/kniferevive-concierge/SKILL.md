@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with prepaid drop-off/collection, delivery-only, pickup, pickup plus delivery, or drop-off/pay at collection. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.5.10"
+  version: "0.5.12"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -59,16 +59,43 @@ the trip fee alongside each choice; a $0 trip fee does not mean free sharpening.
 | 4 | They pick up + deliver · comeback combo · prepay | $11 total |
 | 5 | You drop off + collect at shop · pay at pickup · nothing due now | $0 |
 
-Use these concise labels for bot buttons. “They” means KnifeRevive; “shop” is
-the live drop-off location (currently Pittsburg). Keep who transports each leg
-explicit. Append `— {sharpening subtotal} + {trip fee} trip fee` to every button,
-including $0. For option 5, show “nothing due now · $0 trip fee” on the
-button and state the sharpening amount is payable at pickup separately. Never shorten a fee to “+ fee”, omit the collection leg, or move
-the unpaid choice ahead of the four prepaid choices.
+### Required visible fee labels
+
+Every sharpening option button must contain its numeric dollar trip fee in the
+button text itself. A fee shown only in surrounding prose is insufficient. Use
+the same complete labels for a numbered list when the host cannot render buttons.
+“They” means KnifeRevive; “shop” is the live drop-off location (currently Pittsburg).
+Use these templates, replacing `S` with the selected knives' sharpening subtotal
+formatted in USD (for example `$7`); never send the placeholder to the customer:
+
+1. `You drop off + collect at shop · prepay — S + $0 trip fee/order`
+2. `You drop off → they deliver · prepay — S + $6 trip fee/order`
+3. `They pick up → you collect at shop · prepay — S + $6 trip fee/order`
+4. `They pick up + deliver · comeback combo · prepay — S + $11 round-trip fee/order`
+5. `You drop off + collect at shop · pay at pickup — nothing due now · $0 trip fee/order`
+
+State separately: “Trip fees are per order, before applicable tax. For pay at
+pickup, the sharpening cost is due when you collect your knives.” For a verified
+$7 sharpening subtotal, buttons 2 and 3 must literally show `$7 + $6 trip fee/order`,
+and button 4 must show `$7 + $11 round-trip fee/order`. Do not replace these with
+“+ fee”, “+ fees” or “+ trip fee” without the numeric amount, omit who collects the
+knives, or move the unpaid option ahead of the four prepaid choices.
+
+Before displaying the menu, check that all five labels include a numeric trip
+fee, both single-trip labels include $6, the combo includes $11 and “round-trip”,
+and option 5 says “nothing due now” and is last. Correct any incomplete label
+before sending. This display requirement grants no payment or booking authority.
+
+Use verified live `transport_fee_minor` values when available; if the merchant
+changes its fee schedule, render those exact amounts and disclose the change.
+If API access is challenged, the $6/$11 amounts above are the latest published
+merchant rates: mark availability and final pricing as awaiting merchant checkout
+verification and offer the human form. Do not present them as an all-in quote or
+silently omit the fees. An existing request keeps its original frozen fee.
 
 Obtain live prices; fees apply once per order, regardless of knife count.
 Trip fees are taxable native fees, separate from parcel shipping; final tax uses
-merchant-configured rates. Backend 0.5.10 advertises five distinct API modes.
+merchant-configured rates. Backend 0.5.11 advertises five distinct API modes.
 Delivery-only uses `prepaid_dropoff_delivery`; pickup and delivery uses
 `prepaid_pickup_delivery`. Both imply return delivery, with canonical status
 receipts preserving the older mode/return representation. Older quotes retain
@@ -165,7 +192,7 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the versioned 0.5.10 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.5.10/skills/kniferevive-concierge/references/installation.md).
+[in the versioned 0.5.12 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.5.12/skills/kniferevive-concierge/references/installation.md).
 Those platforms have different skill-import abilities; a chat prompt is not
 proof of installation. This section is installer help, not an instruction to
 run shell commands during a shopping task.
