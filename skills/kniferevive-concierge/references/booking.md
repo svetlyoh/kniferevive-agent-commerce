@@ -26,6 +26,10 @@ Unknown or cross-county ZIPs need merchant street-address review. The bundled
 Do not infer county from a ZIP prefix or claim an unknown ZIP is outside the region.
 
 Offer four choices using live `handoff_options` and their service/payment flags:
+The `modes` array has three internal values and must not be used as the customer
+menu. Both pickup choices use `prepaid_pickup`; their different `return_mode`
+values make separate choices. When live access is challenged, provide the
+first-party form without claiming only three choices or disabled prepayment.
 
 - Option 1: `mode=pay_later_dropoff`, `return_mode=customer_collection` — customer
   drops off and pays when collecting; no online payment or merchant transport fee.

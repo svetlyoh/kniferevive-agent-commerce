@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with drop-off/pay at collection, prepaid drop-off, pickup, or pickup plus delivery. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.5.4"
+  version: "0.5.5"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -48,6 +48,23 @@ checkout link"; the buyer authorizes payment there. Do not auto-submit review,
 checkout or payment forms. A quote reserves no stock.
 
 For sharpening bookings, first read [Booking requests](references/booking.md).
+Present these four customer choices, marking any unavailable choice using live
+coverage/payment facts:
+
+| Choice | Customer handoff | New-request transport fee |
+|---|---|---|
+| 1 | Drop off; pay when collecting | $0 |
+| 2 | Drop off; prepay online | $0 |
+| 3 | We pick up; you collect | $6 |
+| 4 | We pick up and deliver back — comeback combo | $11 total |
+
+Sharpening and applicable taxes are additional; obtain live prices. The API's
+three `modes` are internal identifiers, **not three customer choices**. Choices
+3 and 4 both use `prepaid_pickup`; distinguish them by `return_mode`. Do not
+collapse pickup plus delivery into pickup/customer collection. If the API is
+challenged, link the human booking form and say availability needs checking;
+an HTTP 403 alone does not mean the fourth choice or prepayment is disabled.
+
 Check `booking.enabled` independently of `sharpening.direct_checkout`. Unpaid
 requests do not require Stripe or the legacy service quote configuration. Use
 `/booking-options` and `/booking-availability`, then prepare a private booking

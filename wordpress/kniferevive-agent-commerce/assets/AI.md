@@ -10,15 +10,29 @@ The installable skill is `skills/kniferevive-concierge/SKILL.md`; OpenAPI is at
 
 Sharpening bookings use `booking.enabled`, independently of legacy direct service
 payments. GET `/booking-options` and `/booking-availability` for live services,
-Pacific service days and request/payment readiness. The three modes are
-`pay_later_dropoff`, `prepaid_dropoff`, `prepaid_pickup`. POST `/bookings` with a
+Pacific service days and request/payment readiness. Present the four customer
+choices from `handoff_options`, not a list of the three internal `modes` values:
+
+1. Drop off and pay when collecting — no transport fee or ZIP check.
+2. Drop off and prepay online — no transport fee; eligible ZIP and payment required.
+3. We pick up, you collect — $6 pickup transport; eligible ZIP and payment required.
+4. We pick up and deliver back, the comeback combo — $11 total transport;
+   eligible ZIP and payment required.
+
+Option 4 uses `mode=prepaid_pickup` plus `return_mode=courier_delivery`; option 3
+uses the same mode plus `return_mode=customer_collection`. They are distinct
+customer choices. Use live prices; existing requests retain their original quote.
+The three API mode identifiers are implementation values, not the customer option count.
+POST `/bookings` with a
 private session and idempotency key to prepare a draft; the human submits the
 returned private review page. Creating a draft does not reserve or charge.
 Only `appointment_confirmed=true` supports a confirmed booking. GET
 `/bookings/{id}` reports appointment and payment separately. An eligible prepaid
 request can prepare native checkout through POST `/bookings/{id}/checkout` when
-enabled; the human reviews the final total and authorizes payment. $7.99 per
-merchant trip is an estimate input, not an all-in quote. Missing coverage/capacity
+enabled; the human reviews the final total and authorizes payment. Prepaid choices
+remain `awaiting_payment` until verified native payment sends the request to the
+merchant. Transport prices are separate from sharpening and applicable tax;
+they are not all-in quotes. Missing coverage/capacity
 means merchant review, not guaranteed availability. The public human booking URL
 is advertised in capabilities and works without installing a skill.
 

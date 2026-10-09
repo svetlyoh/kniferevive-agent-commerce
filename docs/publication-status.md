@@ -1,8 +1,8 @@
 # Publication status
 
-## Current backend 0.5.4; published skill 0.4.2
+## Current backend 0.5.5; published skill 0.4.2
 
-Agent Commerce **0.5.4** and Seller Orders **1.1.6** are deployed with
+Agent Commerce **0.5.5** and Seller Orders **1.1.6** are deployed with
 owner-approved prepaid sharpening requests, native same-screen checkout,
 seller cancellation/refund receipt handling and an administrator pickup ZIP
 editor. Capacity remains 4. The [0.5.2 UX patch](booking-ux-0.5.2.md) adds prominent coverage confirmation,
@@ -18,10 +18,10 @@ pickup/delivery on new requests, and isolates booking checkout from an existing
 storefront cart. Original quoted legacy prices and orders are preserved.
 Actual processor settlement and headless API access remain unverified; anonymous
 API traffic receives the hosting browser challenge. Lightning readiness remains
-false. GitHub skill source is now **0.5.4**, with booking instructions aligned
+false. GitHub skill source is now **0.5.5**, with booking instructions aligned
 to the deployed backend. ClawHub remains **0.4.2**; there is no new registry
 audit, card, immutable release or certification claim. See
-[the GitHub source correction](skill-source-0.5.4.md).
+[the four-choice guide correction](skill-source-0.5.5.md).
 
 ## Historical 0.4.2 publication and backend deployment
 

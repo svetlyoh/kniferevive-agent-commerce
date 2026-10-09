@@ -1,6 +1,6 @@
 # KnifeRevive Agent Commerce
 
-A merchant storefront skill and WooCommerce adapter. **Agent Commerce 0.5.4** is deployed with four sharpening choices, native prepaid checkout, seller-scoped Local Pickup orders and daily capacity 4. New pickup costs $6; pickup plus delivery costs $11 total, separate from sharpening. Unpaid customer drop-off skips ZIP checking; prepaid choices require eligible coverage and completed native payment before merchant submission. Booking checkout uses separate native sessions so other storefront carts remain intact. WooCommerce/Dokan remains authoritative for pricing, gateway settlement and seller accounting. See the [implementation and verification record](docs/four-option-booking-implementation-0.5.4.md).
+A merchant storefront skill and WooCommerce adapter. **Agent Commerce 0.5.5** is deployed with four sharpening choices, native prepaid checkout, seller-scoped Local Pickup orders and daily capacity 4. New pickup costs $6; pickup plus delivery costs $11 total, separate from sharpening. Unpaid customer drop-off skips ZIP checking; prepaid choices require eligible coverage and completed native payment before merchant submission. Booking checkout uses separate native sessions so other storefront carts remain intact. WooCommerce/Dokan remains authoritative for pricing, gateway settlement and seller accounting. See the [implementation and verification record](docs/four-option-booking-implementation-0.5.4.md).
 
 Installed/published versions and payment gates are recorded in [publication status](docs/publication-status.md), [0.4.2 skill evidence](docs/skill-publication-0.4.2.md) and [live seller visibility/capacity evidence](docs/seller-booking-visibility-0.4.2.md). A release does not enable payments. Real payment, seller settlement/refund and policy checks remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md) and [native checkout runbook](docs/listing-checkout-runbook-0.2.0.md).
 
@@ -8,7 +8,7 @@ Installed/published versions and payment gates are recorded in [publication stat
 
 ## Install with OpenClaw
 
-For current skill **0.5.4**, import the [entire GitHub skill folder on main](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/main/skills/kniferevive-concierge) through your host's supported GitHub import flow. Resolve the latest commit and verify `metadata.version` and all eight files. The ClawHub commands below install published registry **0.4.2**; they do not fetch this newer GitHub source. See the [GitHub update instructions](skills/kniferevive-concierge/references/installation.md#install-the-current-github-skill).
+For current skill **0.5.5**, import the [entire GitHub skill folder on main](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/main/skills/kniferevive-concierge) through your host's supported GitHub import flow. Resolve the latest commit and verify `metadata.version` and all eight files. The ClawHub commands below install published registry **0.4.2**; they do not fetch this newer GitHub source. See the [GitHub update instructions](skills/kniferevive-concierge/references/installation.md#install-the-current-github-skill).
 
 From an already installed OpenClaw environment, in a Linux terminal or Windows
 PowerShell:

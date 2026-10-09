@@ -1,5 +1,11 @@
 # Changelog
 
+## Skill and guide 0.5.5 — October 9, 2026
+
+- Made the four customer choices explicit in the skill entrypoint and explained why three internal API mode identifiers represent four handoff choices.
+- Corrected stale introductory AI.md guidance that still described three modes and $7.99 transport; new-request pickup is $6 and combined pickup/delivery is $11 total.
+- Clarified that a hosting challenge is not proof that prepayment or the fourth choice is disabled. Booking, payment, authorization and refund behavior are unchanged.
+
 ## GitHub skill source 0.5.4 — October 9, 2026
 
 - Corrected the skill metadata left at 0.5.1 while the backend advanced to 0.5.4.
