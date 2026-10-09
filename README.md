@@ -4,11 +4,11 @@ A merchant storefront skill and WooCommerce adapter. **Agent Commerce 0.5.10** i
 
 Installed/published versions and payment gates are recorded in [publication status](docs/publication-status.md), [0.4.2 skill evidence](docs/skill-publication-0.4.2.md) and [live seller visibility/capacity evidence](docs/seller-booking-visibility-0.4.2.md). A release does not enable payments. Real payment, seller settlement/refund and policy checks remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md) and [native checkout runbook](docs/listing-checkout-runbook-0.2.0.md).
 
-[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.4.2](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.4.2) · [0.4.2 audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.4.2)
+[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.5.10](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.5.10) · [0.5.10 audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.5.10)
 
 ## Install with OpenClaw
 
-For current skill **0.5.10**, import the [entire GitHub skill folder on main](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/main/skills/kniferevive-concierge) through your host's supported GitHub import flow. Resolve the latest commit and verify `metadata.version` and all eight files. Both booking discovery endpoints expose five distinct choices, including delivery-only `prepaid_dropoff_delivery`; see the [five-choice implementation record](docs/booking-trip-fees-two-screens-0.5.7.md). The ClawHub commands below install published registry **0.4.2**; they do not fetch this newer GitHub source. See the [GitHub update instructions](skills/kniferevive-concierge/references/installation.md#install-the-current-github-skill).
+Current skill **0.5.10** is published on ClawHub and available from the [versioned GitHub skill folder](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.5.10/skills/kniferevive-concierge). All eight registry files and a fresh isolated CLI download match the tagged source. Its public audit shows Pass; separate full verification currently reports `card.missing`. See [publication evidence](docs/skill-publication-0.5.10.md). Both booking discovery endpoints expose five distinct choices, including delivery-only `prepaid_dropoff_delivery`; see the [five-choice implementation record](docs/booking-trip-fees-two-screens-0.5.7.md) and [GitHub update instructions](skills/kniferevive-concierge/references/installation.md#install-the-current-github-skill).
 
 From an already installed OpenClaw environment, in a Linux terminal or Windows
 PowerShell:
@@ -28,7 +28,7 @@ workspace directory. This is a registry download; use the native commands above
 for an active OpenClaw workspace. Published version example:
 
 ```sh
-clawhub install @svetlyoh/kniferevive-concierge --version 0.4.2
+clawhub install @svetlyoh/kniferevive-concierge --version 0.5.10
 ```
 
 Check the [exact-version publication evidence](docs/skill-publication-0.4.2.md) for audit results, warnings and provenance limits. Earlier passes do not certify a new version. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
