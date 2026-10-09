@@ -1,4 +1,4 @@
-# Editable sharpening trip fees
+# Editable sharpening trip fees — deployed 0.5.13
 
 The merchant can set both prices at **WooCommerce → Agent Commerce → Sharpening trip fees**. Enter dollar amounts for **One pickup or delivery trip** and **Pickup + delivery · comeback combo**, then press **Save trip fees**. Current prices are $6 and $11. These are taxable booking fees charged once per order, separate from sharpening and parcel shipping.
 
@@ -8,4 +8,4 @@ Both `/booking-options` and `/capabilities` return customer-facing labels contai
 
 Skill 0.5.13 instructs bots to fetch current options before presenting new choices and retain the numeric fee when shortening labels. Registry publication cannot reload a third-party bot's cached skill or force its renderer to comply.
 
-Plugin 0.5.12 introduced these controls. Live browser verification caught a dynamically appended “/order” suffix in prepaid choices; the final deployed correction is [0.5.13](trip-fee-settings-0.5.13.md).
+All 216 handoff/checkout assertions passed in legacy and HPOS storage; schema, skill, PHP and JavaScript validation passed. Live WordPress reported the 0.5.13 update successful. Saving $6/$11 through the new editor preserved every other setting, taxable trips and capacity 4. Live dialog buttons show $7.00 + $6.00 trip fee and $7.00 + $11.00 round-trip fee, with no slash-order suffix and unpaid last. The versioned 0.5.13 script is loaded. No production booking, order, payment, refund or email was created. Anonymous booking-options access still returns a hosting 403 challenge; API labels were verified in the isolated API tests, not through a successful anonymous production API read. See [evidence](trip-fee-settings-0.5.13.json) and [package hashes](plugin-release-manifest-0.5.13.json).

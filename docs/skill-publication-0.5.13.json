@@ -1,0 +1,196 @@
+{
+  "version": "0.5.13",
+  "status": "published",
+  "publisher": "svetlyoh",
+  "registry_latest": "0.5.13",
+  "source_ref": "skill-v0.5.13",
+  "source_commit": "f4798a0cb58d948db62359aa439d27ad9e7917f0",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+      "registry_install_and_tag_match": true
+    },
+    {
+      "path": "references/api.md",
+      "sha256": "44a8328160e70a0063288c510034000084c10c396c344e8fd2dd640a940bad2b",
+      "registry_install_and_tag_match": true
+    },
+    {
+      "path": "references/booking.md",
+      "sha256": "1150da4334fd6eb989ea2dd260da41fb9472138d5191839bbd7b4501865cf5b3",
+      "registry_install_and_tag_match": true
+    },
+    {
+      "path": "references/installation.md",
+      "sha256": "89e3d5f6e91dbd576fd6b08cdf9dace089c25d9f1826ac65a79b0515e9e2e765",
+      "registry_install_and_tag_match": true
+    },
+    {
+      "path": "references/listing-checkout.md",
+      "sha256": "a2b7a750976e073969779b3caa8e3139f52729180f821589abda0043115aab07",
+      "registry_install_and_tag_match": true
+    },
+    {
+      "path": "references/payments.md",
+      "sha256": "e70bf7d6cc28166ecbe6dd51c4ca2f5c60ed5701b6969a52ab5bcfd312e1d0d8",
+      "registry_install_and_tag_match": true
+    },
+    {
+      "path": "references/sharpening.md",
+      "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e",
+      "registry_install_and_tag_match": true
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "1a27dd5ee90f3238d783a46c8f2833daa03f6d7db4d28517462184be2733d678",
+      "registry_install_and_tag_match": true
+    }
+  ],
+  "security": {
+    "status": "clean",
+    "hasWarnings": false,
+    "checkedAt": 1791588808567,
+    "model": null,
+    "hasScanResult": true,
+    "sha256hash": "f6a802e62b5934547f76cdec0df215822b648c1e82cbd9785e6c21b0f3ea237d",
+    "virustotalUrl": "https://www.virustotal.com/gui/file/f6a802e62b5934547f76cdec0df215822b648c1e82cbd9785e6c21b0f3ea237d",
+    "scanners": {
+      "vt": null,
+      "skillspector": null,
+      "llm": {
+        "status": "clean",
+        "verdict": "benign",
+        "normalizedStatus": "clean",
+        "confidence": "high",
+        "summary": "This is a disclosed KnifeRevive shopping and sharpening concierge skill with sensitive commerce flows, but the artifacts keep payment, booking, wallet, and personal-data handling user-controlled and scoped.",
+        "dimensions": null,
+        "guidance": null,
+        "findings": null,
+        "agenticRiskFindings": null,
+        "riskSummary": null,
+        "model": null,
+        "checkedAt": 1791588808567
+      }
+    }
+  },
+  "verification": {
+    "schema": "clawhub.skill.verify.v1",
+    "ok": false,
+    "decision": "fail",
+    "reasons": [
+      "card.missing"
+    ],
+    "slug": "kniferevive-concierge",
+    "displayName": "KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech",
+    "pageUrl": "https://clawhub.ai/svetlyoh/skills/kniferevive-concierge",
+    "publisherHandle": "svetlyoh",
+    "publisherDisplayName": "svetlyoh",
+    "publisherProfileUrl": "https://clawhub.ai/svetlyoh",
+    "version": "0.5.13",
+    "resolvedFrom": "version",
+    "tag": null,
+    "createdAt": 1791588678229,
+    "card": {
+      "available": false,
+      "path": "skill-card.md",
+      "url": "https://wry-manatee-359.convex.site/api/v1/skills/kniferevive-concierge/card?ownerHandle=svetlyoh&version=0.5.13",
+      "sha256": null,
+      "size": null,
+      "contentType": null
+    },
+    "artifact": {
+      "sourceFingerprint": "54e8a4275e9905cc85e212fc9c8d2f409c3a8987140b2151894b4493c17a7049",
+      "bundleFingerprints": [],
+      "files": [
+        {
+          "path": "LICENSE",
+          "size": 919,
+          "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+          "contentType": "application/octet-stream"
+        },
+        {
+          "path": "references/api.md",
+          "size": 4001,
+          "sha256": "44a8328160e70a0063288c510034000084c10c396c344e8fd2dd640a940bad2b",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/booking.md",
+          "size": 13213,
+          "sha256": "1150da4334fd6eb989ea2dd260da41fb9472138d5191839bbd7b4501865cf5b3",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/installation.md",
+          "size": 10396,
+          "sha256": "89e3d5f6e91dbd576fd6b08cdf9dace089c25d9f1826ac65a79b0515e9e2e765",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/listing-checkout.md",
+          "size": 3977,
+          "sha256": "a2b7a750976e073969779b3caa8e3139f52729180f821589abda0043115aab07",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/payments.md",
+          "size": 4063,
+          "sha256": "e70bf7d6cc28166ecbe6dd51c4ca2f5c60ed5701b6969a52ab5bcfd312e1d0d8",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/sharpening.md",
+          "size": 2128,
+          "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "SKILL.md",
+          "size": 13090,
+          "sha256": "1a27dd5ee90f3238d783a46c8f2833daa03f6d7db4d28517462184be2733d678",
+          "contentType": "text/markdown"
+        }
+      ]
+    },
+    "provenance": {
+      "source": "unavailable",
+      "reason": "No server-resolved GitHub import provenance is stored for this version."
+    },
+    "security": {
+      "status": "clean",
+      "passed": true,
+      "rawStatus": "clean",
+      "verdict": "benign",
+      "confidence": "high",
+      "summary": "This is a disclosed KnifeRevive shopping and sharpening concierge skill with sensitive commerce flows, but the artifacts keep payment, booking, wallet, and personal-data handling user-controlled and scoped.",
+      "model": null,
+      "checkedAt": 1791588808567,
+      "scannerReports": {
+        "aig": null,
+        "skillspector": null
+      }
+    },
+    "signature": {
+      "status": "unsigned"
+    }
+  },
+  "audit_ui": "Pass",
+  "audit_version": "0.5.13",
+  "public_fee_templates_verified": true,
+  "active_buyer_bot_verified": false,
+  "submission": {
+    "ok": true,
+    "status": "pending-publication",
+    "slug": "kniferevive-concierge",
+    "displayName": "KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech",
+    "folder": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\skills\\kniferevive-concierge",
+    "version": "0.5.13",
+    "latestVersion": "0.5.12",
+    "fileCount": 8,
+    "fingerprint": "54e8a4275e9905cc85e212fc9c8d2f409c3a8987140b2151894b4493c17a7049",
+    "versionId": "k97c6yh68e8vpjh0fz0148q7qn8fzakc",
+    "publicationStatus": "pending",
+    "attemptId": "zx7fb9w8j1z33754b2cbvst8558fyh77"
+  }
+}

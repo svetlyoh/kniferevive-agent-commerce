@@ -1,0 +1,65 @@
+{
+  "plugin_version": "0.5.13",
+  "skill_version": "0.5.13",
+  "date": "2026-10-09",
+  "production_update_reported_success": true,
+  "zip_sha256": "27bd94cc6ffdfb371ddfefa05a8a0ded7809fa488d1cd558331cdec77d79c430",
+  "tests": {
+    "assertions": 216,
+    "runs": [
+      {
+        "suite": "booking-four-options",
+        "storage": "legacy",
+        "assertions": 75,
+        "sha256": "02ecb90130e4414daacbf47aafa8a9ec03e7770c3f7a074f7108217eb6696208"
+      },
+      {
+        "suite": "storefront-booking",
+        "storage": "legacy",
+        "assertions": 33,
+        "sha256": "e9dea6edd112e530d5b6849dac1040d20c188ef03d2f386a8cf81d4ff3996f30"
+      },
+      {
+        "suite": "booking-four-options",
+        "storage": "hpos",
+        "assertions": 75,
+        "sha256": "02ecb90130e4414daacbf47aafa8a9ec03e7770c3f7a074f7108217eb6696208"
+      },
+      {
+        "suite": "storefront-booking",
+        "storage": "hpos",
+        "assertions": 33,
+        "sha256": "e9dea6edd112e530d5b6849dac1040d20c188ef03d2f386a8cf81d4ff3996f30"
+      }
+    ],
+    "synthetic_database": "krev_agent_sandbox",
+    "host": "127.0.0.1:11019",
+    "external_http_and_email_blocked": true,
+    "api_contract_passed": true,
+    "skill_validator_passed": true,
+    "php_syntax_passed": true,
+    "javascript_syntax_passed": true
+  },
+  "production": {
+    "settings_url": "https://kniferevive.com/wp-admin/admin.php?page=krev-agent-commerce#sharpening-trip-fees",
+    "fee_controls_present": true,
+    "same_price_save_verified": true,
+    "all_other_settings_preserved": true,
+    "single_minor": 600,
+    "combined_minor": 1100,
+    "transport_taxable": true,
+    "capacity": 4,
+    "five_dialog_choices_verified": true,
+    "numeric_fee_labels_verified": true,
+    "customer_label_slash_order_absent": true,
+    "booking_script_version": "0.5.13",
+    "anonymous_api_status": 403,
+    "booking_or_order_created": false,
+    "payment_refund_or_email_sent": false
+  },
+  "limitations": [
+    "A third-party bot active runtime was not modified or verified.",
+    "Anonymous booking-options access remains challenged with HTTP 403.",
+    "No real payment settlement or refund was tested."
+  ]
+}
