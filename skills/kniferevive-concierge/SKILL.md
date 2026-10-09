@@ -165,7 +165,7 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the current GitHub source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/main/skills/kniferevive-concierge/references/installation.md).
+[in the versioned 0.5.10 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.5.10/skills/kniferevive-concierge/references/installation.md).
 Those platforms have different skill-import abilities; a chat prompt is not
 proof of installation. This section is installer help, not an instruction to
 run shell commands during a shopping task.

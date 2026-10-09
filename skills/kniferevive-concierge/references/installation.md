@@ -2,10 +2,10 @@
 
 **KnifeRevive Concierge** helps an agent look up relevant KnifeRevive technology listings and San Francisco Bay Area knife-sharpening offerings, compare facts and terms, and prepare a **customer-authorized** checkout handoff only when the merchant's documented capabilities are actually enabled. Browsing and quotes are free; products, sharpening, taxes, fulfillment, and applicable fees are not.
 
-GitHub skill version: **0.5.10**. The published ClawHub version remains **0.4.2**;
-registry installation does not download this GitHub update. Earlier registry
-audits do not certify 0.5.10. Installation does not enable merchant payment gates;
-check live capabilities before use.
+Skill release: **0.5.10**. Check the exact version's ClawHub publication and audit
+status before installing; earlier registry audits do not certify this release.
+Installation does not enable merchant payment gates; check live capabilities
+before use.
 
 Official listing: https://clawhub.ai/svetlyoh/skills/kniferevive-concierge  
 Current GitHub source: https://github.com/svetlyoh/kniferevive-agent-commerce/tree/main/skills/kniferevive-concierge
@@ -28,7 +28,16 @@ Replace the existing installation through the host's normal update/import flow;
 check the active workspace/shared-skill path for another copy, and start a new
 agent session so it reloads the instructions. Preserve unrelated skills and
 credentials. A cached session can keep old instructions even after files change.
-The registry commands below install the published registry version, not `main`.
+The registry commands below install the registry's latest published version,
+not `main`. For an exact 0.5.10 registry download, use an already installed
+ClawHub CLI after confirming that version is published:
+
+```text
+clawhub install @svetlyoh/kniferevive-concierge --version 0.5.10
+```
+
+An existing installation should use its host's supported update/replace flow.
+After updating, verify the active copy's version and start a new agent session.
 
 Before installing any third-party agent skill, review its files and permissions. This skill's shopping instructions do **not** grant your assistant a new bank account, wallet, payment credential, or blanket permission to purchase. Agent capabilities differ by platform.
 
