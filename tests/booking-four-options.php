@@ -1,0 +1,72 @@
+<?php
+/** New strict policy, real native Woo/Dokan hooks, synthetic processor only. */
+ob_start();set_exception_handler(static function(Throwable $e){fwrite(STDERR,'FAIL: '.$e->getMessage()."\n");exit(1);});
+require __DIR__.'/sandbox-bootstrap.php';
+use KnifeRevive\AgentCommerce\{Api,Booking,BookingEvents,BookingLifecycle,BookingSeller,BookingSession,BookingNativeSession,Domain,Fault,ListingCheckout,ListingFrontend,Settings,Store};
+if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Sandbox fence failed');
+$checks=0;function fourCheck(bool $ok,string $label):void{global $checks;if(!$ok)throw new RuntimeException($label);++$checks;echo "PASS: $label\n";}
+function fourReject(callable $fn,string $code):void{try{$fn();}catch(Fault $e){fourCheck($e->codeName===$code,'rejects '.$code);return;}throw new RuntimeException('Missing rejection '.$code);}
+$wpdb->query('DELETE FROM '.Store::table('holds')." WHERE slot_id LIKE 'booking-%'");
+$admin=get_user_by('login','sandbox-admin')->ID;wp_set_current_user($admin);
+$vendor=wp_insert_user(['user_login'=>'four-'.Domain::id(),'user_pass'=>Domain::id(),'user_email'=>Domain::id().'@example.invalid','role'=>'seller']);update_user_meta($vendor,'dokan_enable_selling','yes');
+$term=get_term_by('slug','knife-sharpening','product_cat');$p=new WC_Product_Simple();$p->set_name('Synthetic Small Knife Sharpening');$p->set_status('publish');$p->set_regular_price('5');$p->set_virtual(false);$p->set_category_ids([$term->term_id]);$p->save();wp_update_post(['ID'=>$p->get_id(),'post_author'=>$vendor]);
+class FourGateway extends WC_Payment_Gateway{public function __construct(){$this->id='stripe';$this->enabled='yes';$this->supports=['products','refunds'];$this->settings=['testmode'=>'no'];}public function is_available(){return true;}}
+add_filter('woocommerce_payment_gateways',static fn()=>[FourGateway::class],1000);WC()->payment_gateways()->init();update_option('woocommerce_calc_taxes','no');update_option('pisol_cefw_payment_gateway_charges',[]);
+$zone=new WC_Shipping_Zone();$zone->set_zone_name('Synthetic four-option handoff');$zone->add_location('US:CA','state');$zone->save();$method=$zone->add_shipping_method('local_pickup');update_option('woocommerce_local_pickup_'.$method.'_settings',['enabled'=>'yes','cost'=>'0']);delete_transient('wc_shipping_method_count');
+$s=Settings::validate(['booking_require_payment_submission'=>true,'booking_trip_fee_minor'=>600,'booking_round_trip_fee_minor'=>1100,'booking_enabled'=>true,'booking_prepaid_enabled'=>true,'booking_launch_approved'=>true,'booking_pay_before_confirmation'=>true,'booking_location'=>'Synthetic location','booking_services'=>[['product_id'=>$p->get_id(),'definition'=>'Synthetic small knife']], 'booking_daily_capacity'=>200,'booking_weekly_hours'=>[['weekday'=>5,'open'=>'09:00','close'=>'19:00'],['weekday'=>6,'open'=>'09:00','close'=>'19:00'],['weekday'=>7,'open'=>'10:00','close'=>'16:00']],'booking_policy_url'=>'https://kniferevive.com/sharpening-cancellations-and-refunds/','booking_policy_version'=>'synthetic-only','listing_gateway_ids'=>['stripe']]);update_option('krev_agent_settings',$s,false);
+$owner=Domain::id();Store::put($owner,'session','synthetic',time()+7200,['token_hash'=>hash('sha256',Domain::token($owner))]);$days=Booking::availability()['days'];$date=end($days)['date'];
+$base=['items'=>[['product_id'=>$p->get_id(),'quantity'=>1]],'mode'=>'pay_later_dropoff','preferred_date'=>$date];
+$address=['address_1'=>'1 Synthetic Street','address_2'=>'','city'=>'Pittsburg','state'=>'CA','country'=>'US','postcode'=>'94565'];$contact=['customer'=>['name'=>'Synthetic buyer','email'=>'synthetic@example.invalid']];
+$drop=Booking::create($base,$owner,Domain::id());$drop=Booking::submit($drop['id'],$owner,$contact,true);
+fourCheck($drop['data']['booking_state']==='requested' && Booking::response($drop)['coverage']['coverage_state']==='not_required','option 1 submits without a ZIP lookup or ZIP value');
+fourCheck(Booking::merchantVisible($drop),'option 1 immediately reaches merchant without online payment');
+Booking::confirm($drop['id']);fourCheck(Store::get($drop['id'])['data']['booking_state']==='confirmed','option 1 remains merchant-confirmable');
+fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_dropoff']),$owner,Domain::id()),'INVALID_REQUEST');
+fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_dropoff','postal_code'=>'90001']),$owner,Domain::id()),'OUTSIDE_SERVICE_AREA');
+fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_pickup','postal_code'=>'94103']),$owner,Domain::id()),'PICKUP_UNAVAILABLE');
+$records=[];
+foreach([['prepaid_dropoff','customer_collection',0],['prepaid_pickup','customer_collection',600],['prepaid_pickup','courier_delivery',1100]] as [$mode,$return,$fee]){
+ $row=Booking::create(array_replace($base,['mode'=>$mode,'return_mode'=>$return,'postal_code'=>'94565']),$owner,Domain::id());$row=Booking::submit($row['id'],$owner,array_replace($contact,$mode==='prepaid_pickup'?['pickup_address'=>$address]:[]),true);$records[]=$row;
+ fourCheck($row['data']['booking_state']==='awaiting_payment' && Booking::response($row)['merchant_trip_fee_minor']===$fee,'prepaid choice retains exact transport and awaits payment');
+ fourCheck(!Booking::merchantVisible($row) && !in_array($row['id'],array_column(BookingSeller::rows(),'id'),true),'unpaid prepaid choice is absent from seller booking inbox');
+ fourCheck(!(int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.Store::table('records')." WHERE kind='booking_mail' AND owner=%s",$row['id'])),'unpaid prepaid choice queues no booking notifications');
+ fourReject(static fn()=>Booking::confirm($row['id'],true),'PAYMENT_REQUIRED');
+ $intent=Booking::checkout($row['id'],$owner);$q=ListingCheckout::quote($intent['id'],['billing'=>$address,'email'=>'synthetic@example.invalid','payment_method'=>'stripe'],$owner,Domain::id());
+ fourCheck($q['data']['quote']['total_minor']===500+$fee && $q['data']['quote']['shipping_minor']===0,'native all-in quote includes exact transport fee once');
+}
+$pickup=$records[1];$combo=$records[2];$s['booking_trip_fee_minor']=999;$s['booking_round_trip_fee_minor']=1999;update_option('krev_agent_settings',$s,false);
+fourCheck(Booking::transportFee(Store::get($pickup['id']))===600 && Booking::transportFee(Store::get($combo['id']))===1100,'settings changes do not reprice an existing booking');update_option('krev_agent_settings',array_replace($s,['booking_trip_fee_minor'=>600,'booking_round_trip_fee_minor'=>1100]),false);
+// Logged-in isolation is crucial: a changed cookie alone would still share the user ID.
+wc_load_cart();$storefront=WC()->session;$storefrontCart=WC()->cart;WC()->cart->empty_cart();WC()->cart->add_to_cart($p->get_id(),2);$storefront->set('order_awaiting_payment',12345);$storefront->set('store_api_draft_order',54321);$storefront->save_data();
+$_COOKIE['krev_booking_access']=Booking::accessToken($pickup);$_GET=['krev_agent'=>'booking','booking'=>$pickup['id']];$handler=apply_filters('woocommerce_session_handler',WC_Session_Handler::class);
+fourCheck($handler===BookingNativeSession::class,'authorized private booking selects isolated native session');
+$separate=new $handler();$separate->init();WC()->session=$separate;WC()->cart=new WC_Cart();WC()->customer=new WC_Customer($admin,true);
+fourCheck(str_starts_with($separate->get_customer_id(),'t_') && $separate->get_customer_id()!==(string)$admin && $separate->get_customer_id()!==$storefront->get_customer_id(),'logged-in isolated cart uses unique storage instead of storefront user key');
+fourCheck(WC()->cart->is_empty() && !$separate->get('order_awaiting_payment') && !$separate->get('store_api_draft_order') && !apply_filters('woocommerce_persistent_cart_enabled',true),'isolated session starts empty without importing pending orders or persistent cart');
+$pay=['accept'=>'yes','email'=>'synthetic@example.invalid'];foreach($address as $field=>$value)$pay['billing_'.$field]=$value;
+ListingFrontend::bookingPayment($pickup['data']['listing_intent']??Store::get($pickup['id'])['data']['listing_intent'],$owner,$pay);
+fourCheck(Domain::cents(wc_format_decimal(WC()->cart->get_total('edit'),2))===1100 && ListingCheckout::bookingCart(Store::get($pickup['id']))['data']['handoff_state']==='cart_ready','Continue to Payment succeeds beside a different cart and pending orders');
+fourCheck(array_sum(array_column($storefrontCart->get_cart(),'quantity'))===2 && $storefront->get('order_awaiting_payment')===12345 && $storefront->get('store_api_draft_order')===54321,'original cart quantities and both pending-order markers survive unchanged');
+$cookieProperty=new ReflectionProperty(WC_Session_Handler::class,'_cookie');$cookieName=$cookieProperty->getValue($separate);$expires=time()+3600;$message=$separate->get_customer_id().'|'.$expires;
+$_COOKIE[$cookieName]=$message.'|'.(time()+3000).'|'.hash_hmac('md5',$message,wp_hash($message));$restored=new BookingNativeSession();$restored->init();
+fourCheck($restored->get_customer_id()===$separate->get_customer_id() && $restored->get('krev_booking_id')===$pickup['id'],'authenticated booking cookie restores the original checkout session');
+wp_set_current_user(0);$guest=new BookingNativeSession();$guest->init();fourCheck($guest->get_customer_id()!==$separate->get_customer_id() && !$guest->get('krev_booking_id'),'a different login identity cannot inherit a prepared booking cart');wp_set_current_user($admin);
+$_COOKIE[$cookieName].='tampered';$tampered=new BookingNativeSession();$tampered->init();fourCheck($tampered->get_customer_id()!==$separate->get_customer_id() && !$tampered->get('krev_booking_id'),'tampered native session cookie cannot restore payment cart');unset($_COOKIE[$cookieName]);
+$_GET=['wc-ajax'=>'checkout','krev_booking_checkout'=>$pickup['id']];fourCheck(apply_filters('woocommerce_session_handler',WC_Session_Handler::class)===BookingNativeSession::class,'tagged native checkout AJAX selects the same authorized booking session');
+$_GET=['wc-ajax'=>'checkout'];fourCheck(apply_filters('woocommerce_session_handler',WC_Session_Handler::class)===WC_Session_Handler::class,'ordinary storefront checkout AJAX keeps ordinary cart');
+$_GET=['wc-ajax'=>'checkout','krev_booking_checkout'=>Domain::id()];fourReject(static fn()=>BookingSession::resolve(WC_Session_Handler::class),'AUTHORIZATION_REQUIRED');
+fourCheck(str_contains(BookingSession::ajaxUrl('/?wc-ajax=%%endpoint%%',$pickup['id']),'%%endpoint%%&krev_booking_checkout='),'AJAX route tagging retains WooCommerce placeholder');
+$_GET=[];
+// Reciprocal synthetic native order: no network or real charge.
+$pi=Store::get(Store::get($pickup['id'])['data']['listing_intent'],'listing');$d=$pi['data'];$order=wc_create_order(['status'=>'pending']);$order->add_product($p,1);$fee=new WC_Order_Item_Fee();$fee->set_name('KnifeRevive merchant transport');$fee->set_total('6.00');$order->add_item($fee);$ship=new WC_Order_Item_Shipping();$ship->set_method_id('local_pickup');$ship->set_method_title('Sharpening service handoff');$ship->set_total(0);$order->add_item($ship);$order->set_payment_method('stripe');$order->set_billing_email('synthetic@example.invalid');$order->update_meta_data('_krev_listing_intent',$pi['id']);$order->update_meta_data('_krev_service_booking',$pickup['id']);$order->update_meta_data('_krev_listing_quote_hash',$d['quote']['quote_hash']);$order->calculate_totals();$order->save();$d['order_id']=$order->get_id();Store::update($pi['id'],$d);dokan()->order->maybe_split_orders($order->get_id());dokan_sync_insert_order($order->get_id());
+fourCheck(!Booking::merchantVisible(Store::get($pickup['id'])),'pending native order alone does not submit prepaid booking');
+$order->set_status('processing');$order->set_date_paid(time());$order->save();fourCheck(!Booking::merchantVisible(Store::get($pickup['id'])),'manually paid-looking order does not bypass gateway verification');
+$order->set_status('pending');$order->set_date_paid(null);$order->save();$order->payment_complete('synthetic-four-options-only');$saved=Store::get($pickup['id']);
+fourCheck($saved['data']['booking_state']==='requested' && Booking::merchantVisible($saved) && !empty($saved['data']['payment_submission_received_at']),'native payment_complete submits the original prepaid booking');
+$count=(int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.Store::table('records')." WHERE kind='booking_mail' AND owner=%s",$pickup['id']));fourCheck($count===3,'verified payment queues customer seller and admin notifications');
+BookingLifecycle::observeOrder($order->get_id());Booking::response(Store::get($pickup['id']));fourCheck((int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.Store::table('records')." WHERE kind='booking_mail' AND owner=%s",$pickup['id']))===$count,'duplicate hooks and polling never duplicate booking notification jobs');
+Booking::confirm($pickup['id'],true);fourCheck(Store::get($pickup['id'])['data']['booking_state']==='confirmed','seller confirms day after native payment');
+fourReject(static fn()=>ListingCheckout::resumeBookingCart($pickup['id'],$owner),'PAYMENT_UNRESOLVED');
+Booking::cancel($combo['id'],$owner);fourCheck(!Booking::merchantVisible(Store::get($combo['id'])),'cancelled unpaid prepaid request does not reach seller inbox');
+WC()->cart->empty_cart();WC()->session=$storefront;WC()->cart=$storefrontCart;$storefront->set('order_awaiting_payment',null);$storefront->set('store_api_draft_order',null);WC()->cart->empty_cart();$zone->delete();delete_transient('wc_shipping_method_count');
+echo "$checks four-option assertions passed. No real payment, order, email or refund was sent.\n";

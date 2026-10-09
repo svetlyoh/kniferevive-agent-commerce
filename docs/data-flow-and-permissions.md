@@ -19,3 +19,7 @@ Public discovery: 120 requests/network/minute. Private sessions: 60 requests/min
 Expired session, quote, consent and rate rows are pruned after an additional day. Financial attempt/idempotency/event/change evidence is retained for reconciliation and merchant recordkeeping; the operator must apply an appropriate retention/export policy. There is no destructive uninstall hook. Database deletion is not part of this release.
 
 The ClawHub package contains only the skill Markdown/reference/license files. Backend code, tests, mocked keys, test databases, dependencies, screenshots and production configuration are excluded. The publisher should report the exact submitted version's actual audit result; this document does not assert a completed audit or certification.
+
+## Native listing candidate 0.2.0
+
+Public listing discovery includes canonical URLs, public seller names/IDs and live WC price/stock; no checkout keys or private seller configuration. Scoped intents retain selected items, quote hash, authorized address/email and native order binding in private database records. The buyer fragment exchange uses the existing HttpOnly cookie, no-store/no-referrer review and CSRF-bound approval. There is no consent bypass endpoint. The original native gateway receives payment credentials; the agent receives only safe status and native-event verification classification. Admin diagnostics expose configuration booleans and masked/redacted references, never credentials. PII is absent from status/logs/packages and remains subject to the store's private retention policy.

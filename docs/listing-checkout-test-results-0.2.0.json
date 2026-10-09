@@ -1,0 +1,107 @@
+{
+  "candidate_versions": {
+    "adapter": "0.2.0",
+    "skill": "0.2.0",
+    "openapi": "1.1.0"
+  },
+  "recorded_date": "2026-10-08",
+  "state": "source_candidate_not_deployed",
+  "matrix": [
+    {
+      "label": "storage-legacy",
+      "result": "Synthetic database set to legacy; sync yes. Run tests in a fresh process.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "listing-legacy",
+      "result": "75 listing checkout assertions passed.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "operator-regression-legacy",
+      "result": "91 behavioral assertions passed. External requests and customer emails were blocked.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "storage-legacy-no-sync",
+      "result": "Synthetic database set to legacy; sync no. Run tests in a fresh process.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "listing-legacy-no-sync",
+      "result": "75 listing checkout assertions passed.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "storage-hpos",
+      "result": "Synthetic database set to hpos; sync yes. Run tests in a fresh process.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "listing-hpos",
+      "result": "75 listing checkout assertions passed.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "operator-regression-hpos",
+      "result": "91 behavioral assertions passed. External requests and customer emails were blocked.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "storage-hpos-no-sync",
+      "result": "Synthetic database set to hpos; sync no. Run tests in a fresh process.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "listing-hpos-no-sync",
+      "result": "75 listing checkout assertions passed.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    },
+    {
+      "label": "stripe-setup-regression",
+      "result": "16 merchant setup assertions passed; all processor requests were fixtures.",
+      "processor_evidence": "synthetic only",
+      "state": "PASS"
+    }
+  ],
+  "browser": {
+    "listing": {
+      "state": "PASS",
+      "result": "PASS: private fragment exchange, estimate/final review, unselected buyer consent, protected cookie, mobile/desktop layout, native WC checkout form and unpaid status. No Pay action or external request.",
+      "processor_evidence": "synthetic only; no payment submission"
+    },
+    "operator": {
+      "state": "PASS",
+      "result": "PASS: private fragment exchange, contact review, consent, pending checkout, HttpOnly cookie, mobile/desktop layout, and no browser errors.",
+      "processor_evidence": "synthetic only; no payment submission"
+    }
+  },
+  "additional_checks": {
+    "php_syntax": "PASS: 26 files",
+    "contract": "PASS: 11 actual synthetic payload schemas, AI.md example and copy parity",
+    "skill_frontmatter": "PASS; not a ClawHub audit",
+    "source_literal_scan": "PASS; no credential-like long literals",
+    "package_hash_and_source_parity": "PASS",
+    "unchanged_operator_payment_sources": "PASS: Commerce, Payments, Gateway, StripeSetup"
+  },
+  "not_run": [
+    "real native Stripe test-mode payment and signed processor replay",
+    "real vendor transfer/refund/dispute",
+    "settled quantity-one purchase race",
+    "production-version staging and actual theme/Checkout Block browser",
+    "actual sharpening purchase/booking",
+    "eligible Google Pay and Lightning settlement",
+    "candidate ClawHub audit/card provenance",
+    "production activation or registry/GitHub release"
+  ]
+}

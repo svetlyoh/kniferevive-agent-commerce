@@ -41,3 +41,7 @@ The included test bootstrap **never loads the actual WordPress wp-config.php**. 
 ## Future publication
 
 Run the exact artifact manifest/secret review, then push to the owner's explicitly requested GitHub owner/repository/visibility. Publish only the skill folder on ClawHub. Verify publisher login and current CLI help, inspect the actual version's audit and preserve its URL/findings. Pending/error is not a completed review. Update source/version/capability documentation after actual deployment. No engagement farming, unsolicited promotions, artificial installs or misleading audit badges are part of release.
+
+## Native listing candidate 0.2.0
+
+Use [the native listing runbook](listing-checkout-runbook-0.2.0.md) for the actual new JSON controls, separate live-mode gate, gateway diagnostics, existing-order recovery and staged rollback. Original operator-service retries/webhooks above are a different payment owner. Do not route native vendor payments through that adapter. Preserve all financial rows/ledgers after expiry or feature disablement.

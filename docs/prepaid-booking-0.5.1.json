@@ -1,0 +1,167 @@
+{
+  "date": "2026-10-08",
+  "deployed_plugin": "0.5.1",
+  "deployed_seller_orders": "1.1.6",
+  "published_skill": "0.4.2",
+  "unpublished_skill_candidate": "0.5.1",
+  "prepaid_launch_enabled": true,
+  "pay_before_merchant_confirmation": true,
+  "daily_capacity": 4,
+  "custom_pickup_zip_list_enabled": false,
+  "processor_mode_changed": false,
+  "real_processor_charge_or_refund_tested": false,
+  "lightning_wallet_verified": false,
+  "anonymous_api": "403 hosting JavaScript browser challenge; not verified from bot host",
+  "source_readback": [
+    "BookingLifecycle.php exact after newline normalization",
+    "Settings.php exact after newline normalization"
+  ],
+  "mobile_evidence": "390x844; sequential typing preserves open panel and focus; no overflow; synthetic same-booking-URL native form",
+  "contracts": "16 actual payload types plus AI.md/packaged documentation match",
+  "tests": [
+    {
+      "label": "storage-legacy",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "Synthetic database set to legacy; sync yes. Run tests in a fresh process."
+    },
+    {
+      "label": "listing-legacy",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "75 listing checkout assertions passed."
+    },
+    {
+      "label": "booking-legacy",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "66 booking assertions passed. No real processor request was sent."
+    },
+    {
+      "label": "booking-bridge-legacy",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "87 booking bridge assertions passed. Email and processor evidence is synthetic only."
+    },
+    {
+      "label": "booking-lifecycle-legacy",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "44 lifecycle assertions passed. No real payment, refund, or email was sent."
+    },
+    {
+      "label": "operator-regression-legacy",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "91 behavioral assertions passed. External requests and customer emails were blocked."
+    },
+    {
+      "label": "storage-legacy-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "Synthetic database set to legacy; sync no. Run tests in a fresh process."
+    },
+    {
+      "label": "listing-legacy-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "75 listing checkout assertions passed."
+    },
+    {
+      "label": "booking-legacy-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "66 booking assertions passed. No real processor request was sent."
+    },
+    {
+      "label": "booking-bridge-legacy-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "87 booking bridge assertions passed. Email and processor evidence is synthetic only."
+    },
+    {
+      "label": "booking-lifecycle-legacy-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "44 lifecycle assertions passed. No real payment, refund, or email was sent."
+    },
+    {
+      "label": "storage-hpos",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "Synthetic database set to hpos; sync yes. Run tests in a fresh process."
+    },
+    {
+      "label": "listing-hpos",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "75 listing checkout assertions passed."
+    },
+    {
+      "label": "booking-hpos",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "66 booking assertions passed. No real processor request was sent."
+    },
+    {
+      "label": "booking-bridge-hpos",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "87 booking bridge assertions passed. Email and processor evidence is synthetic only."
+    },
+    {
+      "label": "booking-lifecycle-hpos",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "44 lifecycle assertions passed. No real payment, refund, or email was sent."
+    },
+    {
+      "label": "operator-regression-hpos",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "91 behavioral assertions passed. External requests and customer emails were blocked."
+    },
+    {
+      "label": "storage-hpos-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "Synthetic database set to hpos; sync no. Run tests in a fresh process."
+    },
+    {
+      "label": "listing-hpos-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "75 listing checkout assertions passed."
+    },
+    {
+      "label": "booking-hpos-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "66 booking assertions passed. No real processor request was sent."
+    },
+    {
+      "label": "booking-bridge-hpos-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "87 booking bridge assertions passed. Email and processor evidence is synthetic only."
+    },
+    {
+      "label": "booking-lifecycle-hpos-no-sync",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "44 lifecycle assertions passed. No real payment, refund, or email was sent."
+    },
+    {
+      "label": "stripe-setup-regression",
+      "processor_evidence": "synthetic only",
+      "state": "PASS",
+      "result": "16 merchant setup assertions passed; all processor requests were fixtures."
+    }
+  ],
+  "package_sha256": {
+    "kniferevive-agent-commerce-0.5.1.zip": "967046681baccfab14e7fea9cc2a6b14ae762da5ea14a10e31ee6a47d33b2cdd",
+    "kniferevive-concierge-0.5.1.zip": "dda5e1de643e3fd4530775fd3301002173fbf3bde56da495fc055d34b74bf528",
+    "kniferevive-seller-orders-1.1.5.zip": "5f9cf85e8f94bb87b8f80cf1ed6977727a4afa9d9af98c88d9ec3581f8eb2352",
+    "kniferevive-seller-orders-1.1.6.zip": "98dc62a43e53ada67bff6fabe180f06f1702b93c5e443221c635c8bbf6f780ea"
+  }
+}

@@ -1,6 +1,65 @@
 # Publication status
 
-## Current skill version 0.1.1 — October 7, 2026
+## Current backend 0.5.4; published skill 0.4.2
+
+Agent Commerce **0.5.4** and Seller Orders **1.1.6** are deployed with
+owner-approved prepaid sharpening requests, native same-screen checkout,
+seller cancellation/refund receipt handling and an administrator pickup ZIP
+editor. Capacity remains 4. The [0.5.2 UX patch](booking-ux-0.5.2.md) adds prominent coverage confirmation,
+one-step payment preparation, separated controls and clearer pickup/return labels.
+The [0.5.3 payment recovery patch](booking-payment-resume-0.5.3.md) lets an independently
+authorized buyer resume the same unstarted checkout after returning through email
+or losing the original browser cart, with order, consent and capacity checks.
+See [the payment implementation runbook](prepaid-booking-0.5.1.md).
+The [0.5.4 four-option patch](four-option-booking-implementation-0.5.4.md)
+skips ZIP checks for unpaid customer drop-off, requires completed native payment
+before prepaid requests reach the merchant, charges $6 pickup or $11 combined
+pickup/delivery on new requests, and isolates booking checkout from an existing
+storefront cart. Original quoted legacy prices and orders are preserved.
+Actual processor settlement and headless API access remain unverified; anonymous
+API traffic receives the hosting browser challenge. Lightning readiness remains
+false. Local skill **0.5.1** is an unpublished candidate, with no new registry
+audit, card, immutable release or certification claimed.
+
+## Historical 0.4.2 publication and backend deployment
+
+The newest publication is [0.4.2](skill-publication-0.4.2.md), published after the
+owner's explicit request. Its public audit shows Pass, clean/benign security and
+no registry warnings; all eight registry and isolated-install source hashes
+match the immutable GitHub release. Full verification separately reports
+`card.missing`; generated-card and server-resolved provenance remain unavailable.
+VirusTotal/SkillSpector reports are null rather than completed passing checks.
+The previous [0.3.0](booking-publication-0.3.0.md) card/audit evidence is historical.
+The incremental **plugin** 0.4.0
+was deployed after owner approval and [patched to 0.4.1](booking-patch-0.4.1.md),
+with [owner-approved unpaid order creation now enabled](booking-live-unpaid-0.4.1-2026-10-08.md).
+The [0.4.2 visibility/capacity patch](seller-booking-visibility-0.4.2.md) adds
+the linked request to the custom Seller Orders → Local Pickup screen and a
+dedicated daily-capacity control. Owner-approved capacity is 4 jobs per open day.
+Seller Orders 1.1.5 is a four-file overlay against its live 1.1.4 baseline.
+One marked live request created pending Local pickup order #2980 and three
+notifications accepted by the mailer. The owner reports inbox arrival; the
+connected mailbox verifies a seller message for that new reference. Three
+distinct recipient inbox receipts and the owning-seller live login remain
+unverified. The test remains requested and unpaid. The
+unpublished 0.4.0 **skill** candidate was superseded by 0.4.2; no payment activation occurred at that stage.
+See [deployment observations](booking-deployment-0.4.0-2026-10-08.md) and
+[incident and readiness notes](incremental-booking-0.4.0.md).
+Older sections below are retained as historical evidence.
+
+## Current skill version 0.1.2 — October 8, 2026
+
+Documentation-only installation/onboarding release, published under the owner's existing GitHub/ClawHub authorization. [GitHub release and ZIP](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.2), [public listing](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge), and [version-specific security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2) are live. Registry latest and the public Versions view show 0.1.2. The exact title, Finance/Lifestyle categories, topics and publisher remain unchanged.
+
+The public SKILL.md displays a distinct installation section. Its relative reference link is rewritten to ClawHub's file API; Files exposes `references/installation.md` as readable raw Markdown, and the absolute versioned GitHub fallback renders the guide. All six registry file hashes match release source commit `474c3f6e2bfc77a65cce40e7866d4d31d9022765`.
+
+Public audit outcome: **Pass**; registry security: **clean / benign, high confidence**. Static analysis has no findings. The separately generated card is currently unavailable: CLI verification returns `card.missing`, the `--card` request returns unavailable, and the public listing omits the Skill Card tab for this version. Server-resolved GitHub-import provenance is unavailable. No generated card was authored or uploaded. Scanner report absence is not a completed passing scan. Exact evidence and report archive hash: [security-scan-0.1.2.json](security-scan-0.1.2.json).
+
+Source is pushed on review branch `docs/concierge-installation-0.1.2`; [draft review PR](https://github.com/svetlyoh/kniferevive-agent-commerce/pull/1) is open, with main unchanged. [Installation validation and platform limits](installation-validation-0.1.2.md) records actual checks. Merchant plugin, APIs, payment flags and booking behavior are unchanged.
+
+On October 8, the older 0.1.1 generated card was independently rechecked and verification now passes. The following October 7 card-missing observation is retained as historical evidence, not a current guarantee.
+
+## Historical metadata release 0.1.1 — October 7, 2026
 
 The public listing is **KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech**. Authored categories are **Finance** (shopping/commerce) and **Lifestyle** (cooking/home), replacing Uncategorized/Other. Topics: `knife-sharpening`, `sf-bay-area`, `ai-tech`, `shopping`. The public page and registry latest tag both show **0.1.1**.
 
@@ -30,3 +89,7 @@ Released source commit: `e69fb02c00eb44ff73841124ef13ed5d081f609f`, skill path `
 The exact scanner snapshot, file hashes, card/provenance limitation, audit URL and report archive hash are recorded in [security-scan-0.1.0.json](security-scan-0.1.0.json). Later documentation commits do not change the immutable published skill version or its linked release commit.
 
 At the time of the initial publication, the merchant plugin was inactive in Local Sites. Subsequent backend setup is recorded above and in merchant setup evidence; publication itself does not prove working checkout. The skill must check capabilities and use the merchant pages on disabled capabilities.
+
+## Unpublished native listing candidate — 8 October 2026
+
+Source plugin/skill 0.2.0 is a review candidate with disabled-by-default native handoff. Installed backend remains 0.1.3 and the registry skill remains 0.1.2. No 0.2.0 tag, GitHub release, ClawHub publication, generated card or external security certification was created. The earlier audit does not certify these changes. See listing-checkout-release-0.2.0.md for tested behavior and outstanding processor/staging proof.

@@ -1,5 +1,11 @@
 # Sharpening and physical handoff
 
+Seller-owned published SKUs may use [native listing checkout](listing-checkout.md)
+only with individually verified fulfillment terms. It does not reserve service
+appointments or infer transport fees from shipping labels. Missing/conflicting
+terms mean merchant review. The workflow below is the separate operator-service
+booking path; never change product ownership or grant sellers administrator rights.
+
 Use current catalog service definitions. Do not invent small/large size cutoffs,
 restoration scope, or handling rules. Unsupported damage or assessment work must
 be priced by an operator before prepayment. Version 1 excludes mixed tech/service

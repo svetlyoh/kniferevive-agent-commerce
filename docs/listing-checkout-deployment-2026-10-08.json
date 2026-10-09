@@ -1,0 +1,154 @@
+{
+  "verified_at_utc": "2026-10-08T14:29:53.087316+00:00",
+  "origin": "https://kniferevive.com",
+  "adapter_version": "0.2.0",
+  "plugin_zip_sha256": "228da47df3df397c886420255d412fb72d1b33ef25974762c7fb1db2aa8522b5",
+  "production_settings_preserved": true,
+  "production_api_source_matches_package": true,
+  "listing_handoff_enabled": false,
+  "listing_pricing_verified": false,
+  "listing_live_verified": false,
+  "listing_gateway_ids": [],
+  "anonymous_get_checks": [
+    {
+      "route": "capabilities",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "keys": [
+        "schema_version",
+        "adapter_version",
+        "merchant",
+        "merchant_origin",
+        "discovery",
+        "sharpening",
+        "technology",
+        "listings",
+        "payment_rails",
+        "google_pay",
+        "stripe_environment",
+        "handoff_hosts",
+        "policy_url",
+        "return_policy_url",
+        "openapi_url",
+        "limits",
+        "timezone",
+        "skill_cost_minor"
+      ],
+      "bytes": 1362
+    },
+    {
+      "route": "listings?per_page=3",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "keys": [
+        "schema_version",
+        "items",
+        "page",
+        "per_page",
+        "total",
+        "pages",
+        "fetched_at"
+      ],
+      "bytes": 2702
+    },
+    {
+      "route": "listings/1963",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "keys": [
+        "product_id",
+        "title",
+        "type",
+        "canonical_url",
+        "categories",
+        "seller",
+        "condition",
+        "condition_verification",
+        "currency",
+        "unit_price_minor",
+        "price_status",
+        "stock_status",
+        "available_quantity",
+        "inventory_reserved",
+        "checkout_eligibility",
+        "direct_payment_enabled",
+        "variations",
+        "fulfillment_type",
+        "fulfillment_note",
+        "policy_url",
+        "return_policy",
+        "return_policy_url",
+        "updated_at"
+      ],
+      "bytes": 766
+    },
+    {
+      "route": "listings/1964",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "keys": [
+        "product_id",
+        "title",
+        "type",
+        "canonical_url",
+        "categories",
+        "seller",
+        "condition",
+        "condition_verification",
+        "currency",
+        "unit_price_minor",
+        "price_status",
+        "stock_status",
+        "available_quantity",
+        "inventory_reserved",
+        "checkout_eligibility",
+        "direct_payment_enabled",
+        "variations",
+        "fulfillment_type",
+        "fulfillment_note",
+        "policy_url",
+        "return_policy",
+        "return_policy_url",
+        "updated_at"
+      ],
+      "bytes": 766
+    },
+    {
+      "route": "openapi",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "keys": [
+        "openapi",
+        "info",
+        "servers",
+        "paths",
+        "components"
+      ],
+      "bytes": 26454
+    }
+  ],
+  "schema_checks": "PASS: capabilities, listings, small and large sharpening; deployed OpenAPI exactly matches packaged contract",
+  "public_health": [
+    {
+      "url": "https://kniferevive.com/",
+      "status": 200,
+      "bytes": 266553,
+      "fatal_error": false
+    },
+    {
+      "url": "https://kniferevive.com/shop/knife-sharpening/small-knife-sharpening/",
+      "status": 200,
+      "bytes": 398920,
+      "fatal_error": false
+    },
+    {
+      "url": "https://kniferevive.com/shop/knife-sharpening/large-knife-sharpening/",
+      "status": 200,
+      "bytes": 396302,
+      "fatal_error": false
+    }
+  ],
+  "real_processor_test_payment": "NOT_RUN",
+  "refund": "NOT_RUN",
+  "published_skill_version": "0.1.2"
+}

@@ -6,17 +6,17 @@ final class Frontend {
     private static function localTime(string $value): string { return (new \DateTimeImmutable($value))->setTimezone(new \DateTimeZone('America/Los_Angeles'))->format('M j, Y g:i A T'); }
     private static function csrf(string $owner,string $quote,int $bucket): string { return hash_hmac('sha256',Domain::canonical([$owner,$quote,$bucket]),wp_salt('nonce')); }
     public static function render(): void {
+        if(($_GET['krev_agent']??'')==='booking'){if(($_GET['payment']??'')==='1')BookingCheckoutFrontend::render();BookingFrontend::render();}
+        if(in_array($_GET['krev_agent']??'',['listing-review','listing-status'],true))ListingFrontend::render();
         if (parse_url($_SERVER['REQUEST_URI']??'',PHP_URL_PATH)==='/AI.md') {
             header('Content-Type: text/markdown; charset=utf-8'); header('X-Content-Type-Options: nosniff');
             readfile(dirname(__DIR__).'/assets/AI.md'); exit;
         }
         if (!isset($_GET['krev_agent'])) return;
-        nocache_headers(); header('Referrer-Policy: no-referrer'); header('X-Robots-Tag: noindex, nofollow, noarchive');
-        header('X-Content-Type-Options: nosniff');
-        header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+        PrivateBrand::headers();
         $base=plugin_dir_url(FILE).'assets/';
         $heading=($_GET['krev_agent']??'')==='status'?'Payment and appointment status':'Review your service';
-        echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.esc_html($heading).' | KnifeRevive</title><link rel="stylesheet" href="'.esc_url($base.'storefront.css').'"></head><body><main data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"><p>KnifeRevive</p><h1>'.esc_html($heading).'</h1><div id="session-status" role="status"></div>';
+        PrivateBrand::start($heading,'data-attach="'.esc_url(rest_url(Api::NS.'/sessions/attach')).'"');echo '<h1>'.esc_html($heading).'</h1>';
         try {
             $owner=Api::owner();
             $view=Domain::text((string)wp_unslash($_GET['krev_agent']),20);
@@ -27,7 +27,7 @@ final class Frontend {
             $message=$e instanceof Fault?$e->getMessage():'This request could not be completed. Check the original attempt before trying another payment.';
             echo '<p>'.esc_html($message).'</p><p>Use your private review link or contact KnifeRevive through the site.</p>';
         }
-        echo '<p><a href="'.esc_url(home_url('/#knife-sharpening')).'">KnifeRevive sharpening</a></p></main><script src="'.esc_url($base.'storefront.js').'" defer></script></body></html>'; exit;
+        echo '<p><a href="'.esc_url(home_url('/#knife-sharpening')).'">KnifeRevive sharpening</a></p>';PrivateBrand::end();exit;
     }
     private static function review(string $owner): void {
         $id=(string)wp_unslash($_GET['quote']??'');

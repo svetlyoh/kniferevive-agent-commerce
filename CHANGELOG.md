@@ -1,5 +1,28 @@
 # Changelog
 
+## Skill 0.4.2 — October 8, 2026
+
+- Updated the portable skill for consent-scoped unpaid booking receipts and native seller-order facts, keeping request, confirmation and payment states separate.
+- Clarified daily capacity as jobs rather than knife count and added the direct human booking fallback for unavailable/challenged APIs.
+- Updated versioned installation references and removed duplicate stale candidate notices. Merchant paid gates and wallet authority are unchanged.
+- Registry publication and exact-version audit are tracked in `docs/skill-publication-0.4.2.md`.
+
+## Candidate 0.2.0 native listing handoff — October 8, 2026
+
+- Added all-category published listings, private expiring/idempotent intents, canonical native WC quotes and CSRF-protected buyer review into existing checkout.
+- Preserved browser carts and native Dokan/Connect hooks; bound classic/Store API orders, guarded retries and added scoped payment/fulfillment/scheduling status.
+- Added disabled-by-default handoff/pricing/live gates, narrow service fulfillment approvals, admin-only test/live diagnostics and recovery of an existing interrupted order.
+- Included assigned native return terms in buyer review/quote binding and pruned expired abandoned quote context without deleting financial evidence.
+- Updated skill source, listing reference, API contract 1.1.0, AI.md and operator audit/runbook/checklist. No live activation, ClawHub publication or new processor session path.
+- Fenced behavioral/browser tests and actual seller/fee plugin comparisons; real processor and production-version evidence remain separate launch gates.
+
+## Skill 0.1.2 installation documentation — October 8, 2026
+
+- Added Linux terminal and Windows PowerShell OpenClaw installation/readiness instructions, shared installation and WSL guidance.
+- Added separate Meta Muse personal-agent, Grok Bot private-skill and OpenAI dot adoption prompts, with a clearly separate Muse Code local-skill alternative.
+- Linked human-facing installation guidance from SKILL.md and README; distinguished native OpenClaw installation from ClawHub CLI downloads and registry-generated Skill Cards.
+- Shopping, quoting, consent, payment, booking and merchant backend behavior unchanged. No native installation/adoption on third-party platforms is claimed.
+
 ## 0.1.3 per-trip correction — October 7, 2026
 
 - Corrected merchant courier price to $7.99 for each merchant trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax.

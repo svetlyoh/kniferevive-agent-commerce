@@ -88,6 +88,11 @@ final class Store {
         global $wpdb;
         if ($wpdb->update(self::table('records'), ['data'=>Domain::canonical($data),'updated'=>time()], ['id'=>$id]) === false) Domain::fail('DATABASE_UNAVAILABLE', 'Cannot persist state.', 503, true);
     }
+    /** Refresh only an independently authorized, unstarted booking checkout. */
+    public static function refreshListing(string $id,array $data,int $expires): void {
+        global $wpdb;
+        if($wpdb->update(self::table('records'),['data'=>Domain::canonical($data),'expires'=>$expires,'updated'=>time()],['id'=>$id,'kind'=>'listing'])===false)Domain::fail('DATABASE_UNAVAILABLE','Cannot refresh checkout.',503);
+    }
     public static function idempotent(string $owner, string $op, string $key, array $input, callable $create): array {
         global $wpdb;
         $scope = Domain::digest([$owner,$op,Domain::key($key)]); $hash = Domain::digest($input);
@@ -109,7 +114,7 @@ final class Store {
         self::lock('slots-admin', static function () use ($wpdb,$slots) {
             self::transaction(static function () use ($wpdb,$slots) {
                 $table = self::table('slots');
-                if ($wpdb->query("UPDATE $table SET enabled=0") === false) throw new \RuntimeException();
+                if ($wpdb->query("UPDATE $table SET enabled=0 WHERE id NOT LIKE 'booking-%'") === false) throw new \RuntimeException();
                 foreach ($slots as $slot) {
                     $current = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id=%s FOR UPDATE", $slot['id']), ARRAY_A);
                     $start = Domain::slotTime($slot['start']); $end = Domain::slotTime($slot['end']);
@@ -128,7 +133,7 @@ final class Store {
     }
     public static function slots(?string $kind = null): array {
         global $wpdb;
-        $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . self::table('slots') . ' WHERE enabled=1 AND start_at>%d ORDER BY start_at,id LIMIT 200', time()), ARRAY_A);
+        $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . self::table('slots') . " WHERE enabled=1 AND id NOT LIKE 'booking-%%' AND start_at>%d ORDER BY start_at,id LIMIT 200", time()), ARRAY_A);
         $out = [];
         foreach ($rows as $row) {
             if ($kind !== null && $row['kind'] !== $kind) continue;
@@ -184,9 +189,21 @@ final class Store {
         global $wpdb;
         return $wpdb->get_var($wpdb->prepare('SELECT id FROM '.self::table('records')." WHERE kind='attempt' AND owner=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.purchase_hash'))=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.payment_state')) IN ('creating','unknown','pending','review_required') LIMIT 1",$owner,$purchaseHash));
     }
+    public static function unresolvedListing(string $owner,string $hash): ?string {
+        global $wpdb;
+        return $wpdb->get_var($wpdb->prepare('SELECT id FROM '.self::table('records')." WHERE kind='listing' AND owner=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.purchase_hash'))=%s AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.handoff_state')) IN ('preparing_cart','cart_ready','order_linked') LIMIT 1",$owner,$hash));
+    }
     public static function pruneEphemeral(): void {
         global $wpdb;
-        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind IN ('rate','session','quote','consent') AND expires<%d",time()-86400));
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind IN ('rate','session','quote','consent','listing_quote','booking_referral') AND expires<%d",time()-86400));
+        // Abandoned review-only PII expires; issued/interrupted financial evidence never does.
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='listing' AND expires<%d
+            AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.handoff_state'))='review'
+            AND (JSON_EXTRACT(data,'$.order_id') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.order_id'))='null')
+            AND (JSON_EXTRACT(data,'$.selection.booking_id') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.selection.booking_id'))='null')
+            AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(data,'$.creation_started')),'false')='false'",time()-86400));
         // Checkout, event, idempotency, and refund evidence is retained for operator reconciliation.
+        // Submitted requests, order links and notification/event history need explicit retention review.
+        $wpdb->query($wpdb->prepare('DELETE FROM '.self::table('records')." WHERE kind='booking' AND expires<%d AND JSON_UNQUOTE(JSON_EXTRACT(data,'$.booking_state'))='draft' AND (JSON_EXTRACT(data,'$.listing_intent') IS NULL OR JSON_UNQUOTE(JSON_EXTRACT(data,'$.listing_intent'))='null')",time()-86400));
     }
 }

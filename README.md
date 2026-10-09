@@ -1,18 +1,35 @@
 # KnifeRevive Agent Commerce
 
-A local release candidate implementing the KnifeRevive Concierge storefront skill and a WordPress/WooCommerce adapter. Annex technology discovery is available through a structured catalog and existing product checkout. The adapter supports authorized, prepaid, operator-owned sharpening orders through hosted Stripe Checkout or the existing KnifeRevive Lightning coordinator, with separate intake/return appointments.
+A merchant storefront skill and WooCommerce adapter. **Agent Commerce 0.5.4** is deployed with four sharpening choices, native prepaid checkout, seller-scoped Local Pickup orders and daily capacity 4. New pickup costs $6; pickup plus delivery costs $11 total, separate from sharpening. Unpaid customer drop-off skips ZIP checking; prepaid choices require eligible coverage and completed native payment before merchant submission. Booking checkout uses separate native sessions so other storefront carts remain intact. WooCommerce/Dokan remains authoritative for pricing, gateway settlement and seller accounting. See the [implementation and verification record](docs/four-option-booking-implementation-0.5.4.md).
 
-**Merchant plugin 0.1.3; portable skill 0.1.1. New agent payments remain disabled.** The merchant backend is installed locally and on KnifeRevive, and a dedicated Stripe test webhook is registered. Operational rules and real processor payment verification remain necessary before the skill can advertise working prepaid bookings. The owner authorized GitHub and ClawHub publication on October 7, 2026; publication does not verify live payments. See [publication status](docs/publication-status.md) for the skill release and audit results.
+Installed/published versions and payment gates are recorded in [publication status](docs/publication-status.md), [0.4.2 skill evidence](docs/skill-publication-0.4.2.md) and [live seller visibility/capacity evidence](docs/seller-booking-visibility-0.4.2.md). A release does not enable payments. Real payment, seller settlement/refund and policy checks remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md) and [native checkout runbook](docs/listing-checkout-runbook-0.2.0.md).
 
-[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge) · [Download the release](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.1.1) · [Security audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.1)
+[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.4.2](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.4.2) · [0.4.2 audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.4.2)
 
-Install the published skill with the ClawHub CLI:
+## Install with OpenClaw
 
-```sh
-clawhub install @svetlyoh/kniferevive-concierge --version 0.1.1
+From an already installed OpenClaw environment, in a Linux terminal or Windows
+PowerShell:
+
+```text
+openclaw skills install @svetlyoh/kniferevive-concierge
+openclaw skills check
 ```
 
-The observed ClawHub security result is clean/benign with no warnings. Its separate Skill Card verification currently reports `card.missing`; full card/provenance verification is therefore not claimed. See the version-specific evidence before deciding to install.
+See [Installation and agent prompts](skills/kniferevive-concierge/references/installation.md)
+for workspace/shared installation, WSL guidance, and separate Meta Muse, Grok Bot
+and OpenAI dot adoption prompts. Muse Code is a separate developer-tool pathway.
+A prompt does not prove native installation or authorize payment.
+
+The ClawHub CLI also supports downloading a registry skill into its selected
+workspace directory. This is a registry download; use the native commands above
+for an active OpenClaw workspace. Published version example:
+
+```sh
+clawhub install @svetlyoh/kniferevive-concierge --version 0.4.2
+```
+
+Check the [exact-version publication evidence](docs/skill-publication-0.4.2.md) for audit results, warnings and provenance limits. Earlier passes do not certify a new version. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
 
 ## Components
 

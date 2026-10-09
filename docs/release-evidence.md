@@ -48,3 +48,7 @@ New payments ship disabled. Unsupported/unconfigured journeys advertise their ac
 ## Sources rechecked
 
 The release boundaries were compared with [ClawHub security-audit guidance](https://github.com/openclaw/clawhub/blob/main/docs/security-audits.md), [Stripe hosted fulfillment](https://docs.stripe.com/checkout/fulfillment?payment-ui=stripe-hosted), and [Stripe Google Pay documentation](https://docs.stripe.com/google-pay) on October 7, 2026. Actual submitted audit findings and real merchant-account behavior remain independent checks.
+
+## Native listing candidate 0.2.0
+
+Detailed current inventory, test matrix, reproducible commands, exact package manifests and release conditions are in [listing-checkout-release-0.2.0.md](listing-checkout-release-0.2.0.md) and its linked audit/runbook. Earlier real-deployment evidence remains historical and does not establish this new candidate as deployed or processor-verified.

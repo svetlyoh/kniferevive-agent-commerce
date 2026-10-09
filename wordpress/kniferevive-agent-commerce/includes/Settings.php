@@ -6,18 +6,27 @@ final class Settings {
         return ['enabled' => false, 'pricing_verified' => false, 'stripe_enabled' => false, 'stripe_live' => false, 'live_verified' => false, 'stripe_use_woocommerce_keys' => false,
             'lightning_enabled' => false, 'pending_scheduling' => false, 'technology_category' => 'technology',
             'merchant_ids' => [], 'services' => [], 'postal_codes' => [], 'location' => '', 'policy_url' => '', 'return_policy_url' => '',
-            'policy_version' => '', 'slots' => [], 'transport' => [], 'transport_round_trip_minor' => null, 'max_minor' => 10000];
+            'policy_version' => '', 'slots' => [], 'transport' => [], 'transport_round_trip_minor' => null, 'max_minor' => 10000,
+            'listing_handoff_enabled'=>false,'listing_pricing_verified'=>false,'listing_live_verified'=>false,'listing_gateway_ids'=>[],
+            'listing_policy_url'=>'','listing_policy_version'=>'','listing_services'=>[],'listing_max_minor'=>100000,
+            'gateway_evidence'=>[],
+            'booking_enabled'=>false,'booking_location'=>'','booking_phone'=>'','booking_services'=>[],
+            'booking_weekly_hours'=>[],'booking_daily_capacity'=>null,'booking_pickup_postal_codes'=>[],
+            'booking_trip_fee_minor'=>600,'booking_round_trip_fee_minor'=>1100,'booking_require_payment_submission'=>true,'booking_prepaid_enabled'=>false,'booking_policy_url'=>'','booking_policy_version'=>'',
+            'booking_transport_taxable'=>false,'booking_transport_tax_class'=>'','booking_wallet_enabled'=>false,'booking_wallet_verified'=>false,
+            'booking_order_timing'=>'disabled','booking_order_verified'=>false,'booking_offline_gateway_id'=>'',
+            'booking_launch_approved'=>false,'booking_pay_before_confirmation'=>false,'booking_pickup_limit_enabled'=>false];
     }
     public static function get(): array { return array_replace(self::defaults(), (array)get_option('krev_agent_settings', [])); }
     public static function validate(array $s): array {
         Domain::fields($s, array_keys(self::defaults()));
         $s = array_replace(self::defaults(), $s);
-        foreach (['enabled', 'pricing_verified', 'stripe_enabled', 'stripe_live', 'live_verified', 'stripe_use_woocommerce_keys', 'lightning_enabled', 'pending_scheduling'] as $key) {
+        foreach (['enabled', 'pricing_verified', 'stripe_enabled', 'stripe_live', 'live_verified', 'stripe_use_woocommerce_keys', 'lightning_enabled', 'pending_scheduling','listing_handoff_enabled','listing_pricing_verified','listing_live_verified'] as $key) {
             if (!is_bool($s[$key])) Domain::fail('INVALID_SETTINGS', 'Settings flags must be booleans.');
         }
-        foreach (['location', 'policy_version', 'technology_category'] as $key) $s[$key] = Domain::text($s[$key], 300);
+        foreach (['location', 'policy_version', 'technology_category','listing_policy_version'] as $key) $s[$key] = Domain::text($s[$key], 300);
         if (!preg_match('/^[a-z0-9-]+$/D', $s['technology_category'])) Domain::fail('INVALID_SETTINGS', 'Use a category slug.');
-        foreach (['policy_url', 'return_policy_url'] as $key) {
+        foreach (['policy_url', 'return_policy_url','listing_policy_url'] as $key) {
             $s[$key] = Domain::text($s[$key], 500);
             if ($s[$key] && !Domain::httpsHost($s[$key], 'kniferevive.com')) Domain::fail('INVALID_SETTINGS', 'Policy links must use kniferevive.com HTTPS.');
         }
@@ -36,6 +45,7 @@ final class Settings {
         foreach ($s['slots'] as $slot) {
             Domain::fields($slot, ['id','start','end','capacity','kind'], ['id','start','end','capacity','kind']);
             if (!preg_match('/^[a-z0-9-]{1,64}$/D', $slot['id']) || isset($ids[$slot['id']])) Domain::fail('INVALID_SETTINGS', 'Slot IDs must be unique.');
+            if(str_starts_with($slot['id'],'booking-'))Domain::fail('INVALID_SETTINGS','The booking- slot prefix is reserved for confirmed booking allocations.');
             $ids[$slot['id']] = true;
             if (!in_array($slot['kind'], ['customer_dropoff','courier_pickup','customer_collection','courier_delivery'], true)) Domain::fail('INVALID_SETTINGS', 'Unknown slot kind.');
             if (Domain::slotTime($slot['start']) >= Domain::slotTime($slot['end'])) Domain::fail('INVALID_SETTINGS', 'Slot end must follow its start.');
@@ -60,6 +70,33 @@ final class Settings {
             }
         }
         Domain::integer($s['max_minor'], 1, 1000000);
+        Domain::integer($s['listing_max_minor'],1,1000000);
+        foreach(['listing_gateway_ids','listing_services','gateway_evidence'] as $key)if(!is_array($s[$key]) || !array_is_list($s[$key]) || count($s[$key])>100)Domain::fail('INVALID_SETTINGS','Invalid listing settings collection.');
+        foreach($s['listing_gateway_ids'] as $id)if(!is_string($id) || !preg_match('/^[a-z0-9_-]{1,80}$/D',$id) || $id==='krev_agent_checkout')Domain::fail('INVALID_SETTINGS','Use native gateway IDs; the service adapter cannot pay marketplace listings.');
+        $seen=[];foreach($s['listing_services'] as $terms){
+            Domain::fields($terms,['product_id','terms_url','fulfillment_note','policy_version','native_fulfillment_verified'],['product_id','terms_url','fulfillment_note','policy_version','native_fulfillment_verified']);
+            Domain::integer($terms['product_id'],1,PHP_INT_MAX);
+            if(isset($seen[$terms['product_id']]))Domain::fail('INVALID_SETTINGS','Listing service approvals must be unique.');$seen[$terms['product_id']]=true;
+            if(!is_bool($terms['native_fulfillment_verified']) || !Domain::httpsHost(Domain::text($terms['terms_url'],500),'kniferevive.com') || !Domain::text($terms['fulfillment_note'],1000) || !Domain::text($terms['policy_version'],100))Domain::fail('INVALID_SETTINGS','Each approved native service needs reviewed public terms, fulfillment instructions and a version.');
+        }
+        foreach($s['gateway_evidence'] as $e){
+            Domain::fields($e,['gateway_id','environment','state','checked_at','reference'],['gateway_id','environment','state','checked_at','reference']);
+            if(!preg_match('/^[a-z0-9_-]{1,80}$/D',(string)$e['gateway_id']) || !in_array($e['environment'],['test','live'],true) || !in_array($e['state'],['disabled','configured_test','test_payment_verified','live_webhook_configured','live_payment_verified','needs_operator_review'],true))Domain::fail('INVALID_SETTINGS','Invalid gateway evidence state.');
+            Domain::integer($e['checked_at'],0,time());
+            // Retain only a redacted operator reference, never provider IDs or credentials.
+            if(!preg_match('/^[a-zA-Z0-9 ._-]{1,80}$/D',(string)$e['reference']) || preg_match('/(?:sk_|whsec_|pi_|ch_|cs_|acct_)/i',$e['reference']))Domain::fail('INVALID_SETTINGS','Use a redacted internal evidence label, never provider IDs or secrets.');
+        }
+        foreach(['booking_require_payment_submission','booking_enabled','booking_prepaid_enabled','booking_transport_taxable','booking_wallet_enabled','booking_wallet_verified','booking_launch_approved','booking_pay_before_confirmation','booking_pickup_limit_enabled'] as $flag)if(!is_bool($s[$flag]))Domain::fail('INVALID_SETTINGS','Booking flags must be booleans.');
+        if(!is_bool($s['booking_order_verified']) || !in_array($s['booking_order_timing'],['disabled','on_submit','on_confirm'],true) || !in_array($s['booking_offline_gateway_id'],['','cod','bacs','cheque'],true))Domain::fail('INVALID_SETTINGS','Use an approved and tested unpaid-order timing and native offline method.');
+        foreach(['booking_location'=>300,'booking_phone'=>30,'booking_policy_version'=>100,'booking_transport_tax_class'=>100] as $field=>$limit)$s[$field]=Domain::text($s[$field],$limit);
+        $s['booking_policy_url']=Domain::text($s['booking_policy_url'],500);
+        if($s['booking_policy_url'] && !Domain::httpsHost($s['booking_policy_url'],'kniferevive.com'))Domain::fail('INVALID_SETTINGS','Booking policies must use KnifeRevive HTTPS.');
+        Domain::integer($s['booking_trip_fee_minor'],0,100000);Domain::integer($s['booking_round_trip_fee_minor'],0,200000);
+        if($s['booking_daily_capacity']!==null)Domain::integer($s['booking_daily_capacity'],1,200);
+        foreach(['booking_services','booking_weekly_hours','booking_pickup_postal_codes'] as $field)if(!is_array($s[$field]) || !array_is_list($s[$field]) || count($s[$field])>200)Domain::fail('INVALID_SETTINGS','Invalid booking collection.');
+        $seen=[];foreach($s['booking_services'] as $service){Domain::fields($service,['product_id','definition'],['product_id','definition']);Domain::integer($service['product_id'],1,PHP_INT_MAX);if(!Domain::text($service['definition'],500) || isset($seen[$service['product_id']]))Domain::fail('INVALID_SETTINGS','Use unique booking services with scope definitions.');$seen[$service['product_id']]=true;}
+        $seen=[];foreach($s['booking_weekly_hours'] as $hours){Domain::fields($hours,['weekday','open','close'],['weekday','open','close']);Domain::integer($hours['weekday'],1,7);foreach(['open','close'] as $field)if(!is_string($hours[$field]) || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/D',$hours[$field]))Domain::fail('INVALID_SETTINGS','Use 24-hour booking times.');if($hours['open']>=$hours['close'] || isset($seen[$hours['weekday']]))Domain::fail('INVALID_SETTINGS','Use one nonempty window per open weekday.');$seen[$hours['weekday']]=true;}
+        foreach($s['booking_pickup_postal_codes'] as &$zip){$zip=Domain::postal($zip);$c=BookingCoverage::check($zip,false);if(!$c['prepayment_eligible'] || $c['address_review_required'])Domain::fail('INVALID_SETTINGS','Pickup ZIPs must be unambiguous Contra Costa or Santa Clara service ZIPs.');}unset($zip);$s['booking_pickup_postal_codes']=array_values(array_unique($s['booking_pickup_postal_codes']));
         return $s;
     }
     public static function operational(): bool {
@@ -85,9 +122,36 @@ final class Settings {
         if ($s['lightning_enabled'] && $s['live_verified'] && class_exists('KnifeRevive\\Lightning\\Settings') && \KnifeRevive\Lightning\Settings::get('accept', 'no') === 'yes') $rails[] = 'lightning';
         return $rails;
     }
+    public static function saveDailyCapacity(int $capacity): void {
+        if(!current_user_can('manage_woocommerce'))Domain::fail('FORBIDDEN','Only a WooCommerce administrator can change booking capacity.',403);
+        Domain::integer($capacity,1,200);$s=self::get();$s['booking_daily_capacity']=$capacity;
+        update_option('krev_agent_settings',self::validate($s),false);
+    }
+    public static function savePickupCoverage(bool $limited,string $text): void {
+        if(!current_user_can('manage_woocommerce'))Domain::fail('FORBIDDEN','Only a WooCommerce administrator can change pickup coverage.',403);
+        $zips=preg_split('/[\s,;]+/',trim($text),-1,PREG_SPLIT_NO_EMPTY);$s=self::get();$s['booking_pickup_limit_enabled']=$limited;$s['booking_pickup_postal_codes']=$zips;
+        update_option('krev_agent_settings',self::validate($s),false);
+    }
+    private static function pickupCoverageForm(): void {
+        $s=self::get();echo '<section id="pickup-zip-coverage"><h2>Prepaid pickup ZIP codes</h2><p>Leave custom coverage off for all supported Contra Costa and Santa Clara ZIPs. Turn it on to serve only the ZIPs below; an empty custom list disables pickup. Customer drop-off prepayment keeps its county check. Existing orders are retained for merchant review.</p><form method="post">';wp_nonce_field('krev_booking_pickup');
+        echo '<label><input type="checkbox" name="booking_pickup_limit_enabled" value="yes"'.checked($s['booking_pickup_limit_enabled'],true,false).'> Use a custom pickup ZIP list</label><p><label for="pickup-zip-list">Available prepaid pickup ZIP codes (one per line or separated by commas)</label></p><textarea id="pickup-zip-list" name="booking_pickup_postal_codes" rows="8" cols="40">'.esc_textarea(implode("\n",$s['booking_pickup_postal_codes'])).'</textarea><p><button class="button button-primary" name="krev_booking_pickup_save">Save pickup ZIP codes</button></p></form></section>';
+    }
     public static function page(): void {
         if (!current_user_can('manage_woocommerce')) return;
         $notice = '';
+        if(isset($_POST['krev_booking_pickup_save'])){
+            check_admin_referer('krev_booking_pickup');
+            try{self::savePickupCoverage(($_POST['booking_pickup_limit_enabled']??'')==='yes',(string)wp_unslash($_POST['booking_pickup_postal_codes']??''));$notice='Pickup ZIP coverage saved. Existing orders remain available for merchant review.';}
+            catch(\Throwable $e){$notice=$e instanceof Fault?$e->getMessage():'Pickup coverage could not be saved.';}
+        }
+
+        if(isset($_POST['krev_booking_capacity_save'])){
+            check_admin_referer('krev_booking_capacity');
+            try{$capacity=(string)wp_unslash($_POST['booking_daily_capacity']??'');
+                if(!preg_match('/^[0-9]+$/D',$capacity))Domain::fail('INVALID_SETTINGS','Daily capacity must be a whole number from 1 to 200.');
+                self::saveDailyCapacity((int)$capacity);$notice='Daily sharpening capacity saved. This limit counts jobs per open day, not knives. Existing confirmed bookings are retained.';
+            }catch(\Throwable $e){$notice=$e instanceof Fault?$e->getMessage():'Daily capacity could not be saved.';}
+        }
         if (isset($_POST['krev_agent_test_webhook']) && current_user_can('manage_options')) {
             check_admin_referer('krev_agent_test_webhook');
             try { StripeSetup::testWebhook(); $notice='Dedicated Stripe test webhook configured. New payments remain controlled by the settings below.'; }
@@ -115,7 +179,9 @@ final class Settings {
                 $notice = 'Settings saved. Capacity is jobs per window. Existing payment attempts are retained.';
             } catch (\Throwable $e) { $notice = $e instanceof Fault ? $e->getMessage() : 'Settings could not be saved. Check JSON and database readiness.'; }
         }
-        echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>Merchant courier pricing: $7.99 per trip, $15.98 for pickup plus return delivery, and $0 courier fee for customer drop-off plus collection, before applicable tax. Configure each courier leg fee_minor as 799. transport_round_trip_minor may be 1598 for both trips; null sums separate trip prices. The combined total can be staged while courier coverage and tax treatment remain unconfigured.</p><form method="post">';
+        echo '<div class="wrap"><h1>KnifeRevive Agent Commerce</h1><p>' . esc_html($notice) . '</p><h2 id="daily-sharpening-capacity">Daily sharpening capacity</h2><p>Maximum confirmed jobs per open day in America/Los_Angeles. A job may contain several knives. Requested days still need merchant confirmation. Lowering the limit does not cancel existing confirmed jobs.</p><form method="post">';
+        wp_nonce_field('krev_booking_capacity');
+        echo '<label for="booking_daily_capacity">Jobs per open day</label> <input id="booking_daily_capacity" name="booking_daily_capacity" type="number" min="1" max="200" step="1" required value="'.esc_attr((string)(self::get()['booking_daily_capacity']??'')).'"> <button class="button button-primary" name="krev_booking_capacity_save">Save daily capacity</button></form>';self::pickupCoverageForm();echo '<h2>Advanced settings</h2><p>New payments default to disabled. Configure service definitions, approved merchant user IDs, exact postal codes, the location, policies, and UTC or explicit-offset appointment windows. Transport requires a separately installed address verifier (documented PHP filter). Capacity counts jobs, not knives.</p><p>Sharpening booking transport: booking_trip_fee_minor sets pickup ($6 = 600); booking_round_trip_fee_minor sets pickup plus return delivery ($11 = 1100 total). Customer drop-off and collection have no transport fee. New bookings retain their quoted transport price; existing orders keep their original financial records. The legacy transport adapter has separate settings.</p><form method="post">';
         wp_nonce_field('krev_agent_settings');
         echo '<textarea name="settings" rows="28" style="width:100%;font-family:monospace">' . esc_textarea(wp_json_encode(self::get(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea><p><button class="button button-primary" name="krev_agent_save">Save validated settings</button></p></form><p>Stripe secrets use server constants, never this form or the public skill. Google Pay availability is decided by Stripe checkout and the customer device. Review retained attempts and change requests below; process refunds through existing merchant workflows.</p><table class="widefat"><tr><th>Type</th><th>Reference</th><th>State</th><th>WooCommerce order</th></tr>';
         foreach (Store::backlog(100) as $row) {
@@ -123,6 +189,8 @@ final class Settings {
             echo '<tr><td>' . esc_html($row['kind']) . '</td><td>' . esc_html($row['id']) . '</td><td>' . esc_html($d['payment_state'] ?? $d['state'] ?? 'pending') . '</td><td>' . ($order ? '<a href="' . esc_url($order->get_edit_order_url()) . '">' . esc_html($order->get_order_number()) . '</a>' : '—') . '</td></tr>';
         }
         echo '</table>';
+        Booking::admin();
+        GatewayDiagnostics::render();
         if (current_user_can('manage_options')) {
             echo '<h2>Stripe test connection</h2><p>Test key: '.(self::stripeKey(false)?'present':'missing').'. Dedicated test webhook signing secret: '.(self::webhookSecret(false)?'present':'missing').'. Enable stripe_use_woocommerce_keys above to reuse the existing official WooCommerce Stripe test key. The button registers only test events with Stripe, stores the signing secret encrypted, and never enables live payments. Existing gateway webhooks are retained.</p><form method="post">';
             wp_nonce_field('krev_agent_test_webhook');

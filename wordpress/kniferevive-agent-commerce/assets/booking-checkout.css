@@ -1,0 +1,40 @@
+/* Booking payment only: native Stripe fields and checkout validation remain intact. */
+.krev-booking-payment main{max-width:880px}
+.krev-booking-payment .krev-journey{background:#f1f5ee;border:1px solid #ccd9cc;border-radius:12px;padding:20px;margin:24px 0}
+.krev-booking-payment .krev-journey p{margin:8px 0}
+.krev-booking-payment form.checkout{margin-top:32px}
+.krev-booking-payment .col2-set{display:grid;grid-template-columns:minmax(0,1fr);gap:24px}
+.krev-booking-payment .col2-set .col-1,.krev-booking-payment .col2-set .col-2{float:none;width:100%;min-width:0}
+.krev-booking-payment .form-row{float:none;width:auto;padding:0;margin:0 0 20px}
+.krev-booking-payment .woocommerce-billing-fields__field-wrapper{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+.krev-booking-payment .form-row-wide{grid-column:1/-1}
+.krev-booking-payment input.input-text,.krev-booking-payment textarea,.krev-booking-payment select{background:#fff;color:#202124;border:1px solid #aebdb2;border-radius:10px;padding:14px;font:17px/1.5 system-ui,sans-serif;min-height:50px}
+.krev-booking-payment .select2-container{max-width:100%}
+.krev-booking-payment .select2-container .select2-selection--single{height:52px;border:1px solid #aebdb2;border-radius:10px}
+.krev-booking-payment .select2-container .select2-selection__rendered{line-height:50px;padding-left:14px}
+.krev-booking-payment .select2-container .select2-selection__arrow{height:50px}
+.krev-booking-payment input[type=radio],.krev-booking-payment input[type=checkbox]{display:inline-block;width:20px;height:20px;min-height:0;vertical-align:middle;margin:0 10px 0 0;accent-color:#174e37}
+.krev-booking-payment table.shop_table{width:100%;border:1px solid #d8e0d7;border-radius:12px;border-collapse:separate;border-spacing:0;overflow:hidden;margin:20px 0 28px}
+.krev-booking-payment table.shop_table th,.krev-booking-payment table.shop_table td{padding:16px;text-align:left;border-top:1px solid #e4e9e2;overflow-wrap:anywhere}
+.krev-booking-payment table.shop_table thead th{border-top:0;background:#f1f5ee}
+.krev-booking-payment table.shop_table .order-total{background:#f1f5ee;font-size:1.15rem}
+.krev-booking-payment ul#shipping_method{list-style:none;padding:0;margin:0}
+.krev-booking-payment ul#shipping_method li{margin:0}
+.krev-booking-payment #payment.woocommerce-checkout-payment{background:#f6f8f4;border:1px solid #d8e0d7;border-radius:14px;overflow:visible}
+.krev-booking-payment #payment ul.payment_methods{padding:22px;list-style:none;border-bottom:1px solid #d8e0d7;margin:0}
+.krev-booking-payment #payment ul.payment_methods li{padding:0;margin:0;line-height:1.6}
+.krev-booking-payment #payment ul.payment_methods li>label{display:inline;font:600 18px/1.5 system-ui,sans-serif;margin:0}
+.krev-booking-payment #payment div.payment_box{box-sizing:border-box;width:100%;background:#fff;color:#202124;border:1px solid #d8e0d7;border-radius:12px;padding:20px;margin:18px 0 0;font-size:17px}
+.krev-booking-payment #payment div.payment_box:before{display:none}
+.krev-booking-payment #payment fieldset.wc-payment-form{border:0;padding:0;margin:16px 0;min-width:0}
+.krev-booking-payment .wc-stripe-elements-field{border:1px solid #aebdb2;border-radius:10px;padding:16px;background:#fff;min-height:24px}
+.krev-booking-payment #payment .place-order{padding:22px;margin:0}
+.krev-booking-payment #payment .woocommerce-terms-and-conditions-wrapper{margin-bottom:22px}
+.krev-booking-payment #payment #place_order{float:none;width:100%;background:#174e37;color:#fff;border-radius:10px;padding:16px 24px;min-height:54px;font:600 18px/1.4 system-ui,sans-serif;white-space:normal}
+.krev-booking-payment .woocommerce-error,.krev-booking-payment .woocommerce-info,.krev-booking-payment .woocommerce-message{border-radius:10px;box-sizing:border-box}
+@media(max-width:600px){
+  .krev-booking-payment .woocommerce-billing-fields__field-wrapper{grid-template-columns:minmax(0,1fr);gap:0}
+  .krev-booking-payment table.shop_table th,.krev-booking-payment table.shop_table td{padding:12px;font-size:15px}
+  .krev-booking-payment #payment ul.payment_methods,.krev-booking-payment #payment .place-order{padding:16px}
+  .krev-booking-payment #payment div.payment_box{padding:16px}
+}

@@ -1,0 +1,111 @@
+{
+  "version": "0.1.2",
+  "checked_on": "2026-10-08 America/Los_Angeles",
+  "source_commit": "474c3f6e2bfc77a65cce40e7866d4d31d9022765",
+  "public_listing": "https://clawhub.ai/svetlyoh/skills/kniferevive-concierge",
+  "audit_url": "https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.1.2",
+  "security": {
+    "status": "clean",
+    "passed": true,
+    "rawStatus": "clean",
+    "verdict": "benign",
+    "confidence": "high",
+    "summary": "This skill is a merchant shopping and sharpening concierge that is clearly scoped and repeatedly requires user consent before bookings or payments.",
+    "model": null,
+    "checkedAt": 1791450999696,
+    "scannerReports": {
+      "aig": null,
+      "skillspector": null
+    }
+  },
+  "verification": {
+    "ok": false,
+    "decision": "fail",
+    "reasons": [
+      "card.missing"
+    ],
+    "card": {
+      "available": false,
+      "path": "skill-card.md",
+      "url": "https://wry-manatee-359.convex.site/api/v1/skills/kniferevive-concierge/card?ownerHandle=svetlyoh&version=0.1.2",
+      "sha256": null,
+      "size": null,
+      "contentType": null
+    },
+    "provenance": {
+      "source": "unavailable",
+      "reason": "No server-resolved GitHub import provenance is stored for this version."
+    }
+  },
+  "source_fingerprint": "bb4f52d2e8f623a217ccfc0f4f9e4e1fbaed82a1f4a7313419b68a1272dcd2b7",
+  "files": [
+    {
+      "path": "LICENSE",
+      "size": 919,
+      "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+      "contentType": "application/octet-stream"
+    },
+    {
+      "path": "references/api.md",
+      "size": 3063,
+      "sha256": "983393b4550092b96966491646fa842ff72f1a84831a4551e78bb3dc5414a42a",
+      "contentType": "text/markdown"
+    },
+    {
+      "path": "references/installation.md",
+      "size": 8273,
+      "sha256": "86b9ab9e04f147c7d5e650681ee8aa8a855ff34dbf499526fe4d9c507d6bca7b",
+      "contentType": "text/markdown"
+    },
+    {
+      "path": "references/payments.md",
+      "size": 2447,
+      "sha256": "04624dec4d771a102417aa1c0ec42848e124c8704a5edb0c6b483726ec4cbff0",
+      "contentType": "text/markdown"
+    },
+    {
+      "path": "references/sharpening.md",
+      "size": 1722,
+      "sha256": "352068b5080ced40e4c240d9fce13eda34d21f4610e0cb0b8c3512189b607b55",
+      "contentType": "text/markdown"
+    },
+    {
+      "path": "SKILL.md",
+      "size": 4977,
+      "sha256": "3e0ab7bbc1c51551076d718646c9381d60f5450481a87d9c2657ecc6298954ae",
+      "contentType": "text/markdown"
+    }
+  ],
+  "published_files_match_source": true,
+  "scan_manifest": {
+    "scanId": "skill:kniferevive-concierge:0.1.2",
+    "sourceKind": "published",
+    "update": false,
+    "status": "succeeded",
+    "artifact": {
+      "displayName": "KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech",
+      "fileCount": 6,
+      "kind": "skill",
+      "slug": "kniferevive-concierge",
+      "version": "0.1.2"
+    },
+    "createdAt": 1791450808371,
+    "updatedAt": 1791450808371,
+    "completedAt": 1791450808322,
+    "writtenBack": true
+  },
+  "static_analysis": {
+    "checkedAt": 1791450808322,
+    "engineVersion": "v2.4.26",
+    "findings": [],
+    "reasonCodes": [],
+    "status": "clean",
+    "summary": "No suspicious patterns detected."
+  },
+  "report_sha256": "c062843b7233b05abb3a3ee43aa2636164f0f1c5283187245b10ba9f07f5f0f8",
+  "unavailable_scanner_reports": [
+    "clawscan.json",
+    "skillspector.json",
+    "virustotal.json"
+  ]
+}

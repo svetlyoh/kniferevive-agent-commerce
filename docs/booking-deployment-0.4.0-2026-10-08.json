@@ -1,0 +1,76 @@
+{
+  "checked_at": "2026-10-08T20:04:10.497821+00:00",
+  "adapter_version": "0.4.0",
+  "source_commit": "00df20c937e7e208d5d956a0499fa2bbcec6f17b",
+  "status": "deployed_active_order_bridge_gated",
+  "deployment_authorized": true,
+  "on_submit_timing_authorized": true,
+  "native_updater_result": "Plugin updated successfully",
+  "entry_source_normalized_match": true,
+  "settings_changes": [
+    "booking_order_timing: disabled -> on_submit"
+  ],
+  "order_bridge": {
+    "timing": "on_submit",
+    "verified": false,
+    "offline_gateway_id": "",
+    "creates_order": false
+  },
+  "existing_cod": {
+    "enabled": true,
+    "title": "Pay at Pickup / Delivery",
+    "local_pickup": true,
+    "accepts_virtual": true,
+    "changed": false,
+    "bridge_method_selection_pending": true
+  },
+  "effective_prepaid_checkout_available": false,
+  "native_listing_readiness_verified": false,
+  "wallet_readiness_verified": false,
+  "original_incident": {
+    "reference": "167c8b10ecc1d73f6ec1600d8b373ee5",
+    "present_in_admin_and_inbox": true,
+    "queue_order_link": null,
+    "queue_bridge_state": "not_created",
+    "contact_authorization": "unknown",
+    "altered": false,
+    "full_native_order_metadata_search": "pending"
+  },
+  "browser": {
+    "secure_public_form": true,
+    "public_estimate_service_minor": 700,
+    "public_estimate_trip_minor": 0,
+    "contact_entered": false,
+    "request_submitted": false,
+    "separate_native_seller_login_verified": false
+  },
+  "live_versions": {
+    "wordpress": "7.1.3",
+    "woocommerce": "11.2.0"
+  },
+  "public_rest_http_checks": {
+    "capabilities": "403 hosting browser challenge",
+    "booking-options": "403 hosting browser challenge",
+    "openapi": "403 hosting browser challenge",
+    "in_app_rest_navigation": "blocked-by-client",
+    "verified": false,
+    "challenge_bypassed": false
+  },
+  "backup": {
+    "source_files": 25,
+    "normalized_baseline_parity": true,
+    "file_settings_backup": true,
+    "full_database_backup": false,
+    "rollback_archive_sha256": "0c1c8d639c9173279b59d3a17718e6f20a2cb51baa28472d73ca3ddb17a10c92"
+  },
+  "no_production_test_order_email_charge_refund_or_wallet_send": true,
+  "live_test_permission_pending": true,
+  "worker_and_inbox_receipt_verified": false,
+  "clawhub_published_version": "0.3.0",
+  "clawhub_0_4_0_published": false,
+  "screenshot": {
+    "path": "docs/screenshots/booking-live-0.4.0.jpg",
+    "sha256": "6ef2d042e29b441a409477c9dcf5e1d9409a3cde6c4f0c2d257273b32c8d810c",
+    "customer_pii": false
+  }
+}

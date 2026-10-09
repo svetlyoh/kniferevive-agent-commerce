@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-08T20:11:56.680503+00:00",
+  "adapter_version": "0.4.1",
+  "native_update_success": true,
+  "entry_source_normalized_match": true,
+  "settings_unchanged": true,
+  "order_timing": "on_submit",
+  "order_bridge_enabled": false,
+  "offline_method_approval_pending": true,
+  "live_unpaid_test_and_notifications_approval_pending": true,
+  "unversioned_observed_css_bytes": 1041,
+  "versioned_observed_css_bytes": 4196,
+  "versioned_css_matches_source": true,
+  "versioned_css_sha256": "e8565c8bbf3da8d923864160b034bb6835d9a226216a74b0c3ca85f68985dd2e",
+  "live_header_display": "flex",
+  "live_skip_position": "absolute",
+  "contact_free_estimate_minor": 700,
+  "merchant_trip_fee_minor_for_dropoff_and_collection": 0,
+  "request_submitted": false,
+  "email_sent": false,
+  "patch_checks": [
+    "two PHP syntax checks",
+    "live entry equality",
+    "live settings equality",
+    "observed current CSS equality",
+    "archive manifest hashes"
+  ],
+  "public_rest_verified": false,
+  "clawhub_published_version": "0.3.0",
+  "screenshot": {
+    "path": "docs/screenshots/booking-live-0.4.1.jpg",
+    "sha256": "d0dc2be5d67685f728e777cf77902696bac2ad40c4e7d32135efca12daf03c50",
+    "customer_pii": false
+  }
+}

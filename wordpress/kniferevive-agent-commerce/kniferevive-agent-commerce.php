@@ -2,16 +2,16 @@
 /**
  * Plugin Name: KnifeRevive Agent Commerce
  * Description: Structured shopping, consent-bound prepaid sharpening, and verified payment handoffs.
- * Version: 0.1.3
+ * Version: 0.5.4
  * Requires PHP: 8.2
  * Requires Plugins: woocommerce
  * License: GPL-2.0-or-later
  */
 namespace KnifeRevive\AgentCommerce;
 defined('ABSPATH') || exit;
-const VERSION = '0.1.3';
+const VERSION = '0.5.4';
 const FILE = __FILE__;
-foreach (['Domain', 'Settings', 'Store', 'StripeSetup', 'Commerce', 'Payments', 'Api', 'Frontend', 'Plugin'] as $class) {
+foreach (['Domain', 'Settings', 'Store', 'StripeSetup', 'Commerce', 'Payments', 'ListingCheckout', 'BookingCoverage', 'BookingSession', 'Booking', 'BookingAuthorization', 'BookingEvents', 'BookingSeller', 'BookingOrderBridge', 'BookingLifecycle', 'BookingOutbox', 'PrivateBrand', 'GatewayDiagnostics', 'Api', 'ListingFrontend', 'BookingFrontend', 'BookingCheckoutFrontend', 'Frontend', 'Plugin'] as $class) {
     require_once __DIR__ . '/includes/' . $class . '.php';
 }
 register_activation_hook(__FILE__, [Store::class, 'install']);
