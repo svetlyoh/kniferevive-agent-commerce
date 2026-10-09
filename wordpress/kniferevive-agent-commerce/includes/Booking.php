@@ -4,15 +4,16 @@ defined('ABSPATH') || exit;
 
 /** Requests never charge. An independently approved bridge may create one unpaid drop-off order. */
 final class Booking {
-    public const MODES = ['pay_later_dropoff','prepaid_dropoff','prepaid_pickup','prepaid_pickup_delivery'];
+    public const MODES = ['prepaid_dropoff','prepaid_dropoff_delivery','prepaid_pickup','prepaid_pickup_delivery','pay_later_dropoff'];
     /** Four selectable API choices; canonical storage keeps existing pickup/return fields. */
     public static function handoffOptions(): array {
         $s=Settings::get();
         return [
-            ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · pay when you collect','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false],
-            ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'Drop off · prepay online','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'prepaid_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect · prepay online','transport_fee_minor'=>0,'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'prepaid_dropoff_delivery','return_mode'=>'courier_delivery','label'=>'You drop off · we bring it back','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
             ['mode'=>'prepaid_pickup','return_mode'=>'customer_collection','label'=>'We pick up · you collect','transport_fee_minor'=>$s['booking_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
-            ['mode'=>'prepaid_pickup_delivery','return_mode'=>'courier_delivery','label'=>'Pickup + delivery · comeback combo','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true]];
+            ['mode'=>'prepaid_pickup_delivery','return_mode'=>'courier_delivery','label'=>'Pickup + delivery · comeback combo','transport_fee_minor'=>$s['booking_round_trip_fee_minor'],'zip_required'=>true,'payment_required'=>true],
+            ['mode'=>'pay_later_dropoff','return_mode'=>'customer_collection','label'=>'You drop off + collect · pay at pickup','transport_fee_minor'=>0,'zip_required'=>false,'payment_required'=>false]];
     }
     public static function accessToken(array $row): string {
         $body=$row['id'].'.'.$row['data']['access_expires'];return $body.'.'.hash_hmac('sha256','booking-access:'.$body,wp_salt('auth'));
@@ -116,9 +117,9 @@ final class Booking {
         Domain::fields($input,['items','mode','preferred_date','return_mode','customer','pickup_address','postal_code','notes'],['items','mode','preferred_date']);
         if(!self::enabled())Domain::fail('BOOKING_DISABLED','Service booking requests are unavailable.',503);
         if(!in_array($input['mode'],self::MODES,true))Domain::fail('INVALID_REQUEST','Choose an offered booking option.');
-        if($input['mode']==='prepaid_pickup_delivery'){
+        if(in_array($input['mode'],['prepaid_pickup_delivery','prepaid_dropoff_delivery'],true)){
             if(isset($input['return_mode']) && $input['return_mode']!=='courier_delivery')Domain::fail('INVALID_REQUEST','Pickup plus delivery requires courier_delivery; omit return_mode or select delivery.');
-            $input['mode']='prepaid_pickup';$input['return_mode']='courier_delivery';
+            $input['mode']=$input['mode']==='prepaid_pickup_delivery'?'prepaid_pickup':'prepaid_dropoff';$input['return_mode']='courier_delivery';
         }
         $input['preferred_date']=Domain::text($input['preferred_date'],10);self::day($input['preferred_date']);
         if(!is_array($input['items']) || !array_is_list($input['items']) || !$input['items'] || count($input['items'])>10)Domain::fail('INVALID_REQUEST','Choose service items.');
@@ -136,7 +137,6 @@ final class Booking {
         usort($input['items'],static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
         $input['return_mode']=$input['return_mode']??'customer_collection';
         if(!in_array($input['return_mode'],['customer_collection','courier_delivery'],true) || ($input['mode']==='pay_later_dropoff' && $input['return_mode']!=='customer_collection'))Domain::fail('INVALID_REQUEST','Choose customer collection or paid return delivery.');
-        if($buyerContext && Settings::get()['booking_require_payment_submission'] && $input['mode']==='prepaid_dropoff' && $input['return_mode']==='courier_delivery')Domain::fail('INVALID_REQUEST','Choose one of the four booking options. Delivery is part of pickup plus delivery.');
         $input['postal_code']=$input['mode']==='pay_later_dropoff'?'':Domain::postal($input['postal_code']??'');BookingCoverage::requireService($input);
         $input['notes']=Domain::text($input['notes']??'',500);
         if(isset($input['customer'])){
@@ -162,7 +162,7 @@ final class Booking {
             if(self::remaining($input['preferred_date'])===0)Domain::fail('SLOT_UNAVAILABLE','This service day is full.',409);
             $snapshot=[];foreach($input['items'] as $item){$p=ListingCheckout::product($item['product_id']);$snapshot[]=['product_id'=>$p['product_id'],'title'=>$p['title'],'quantity'=>$item['quantity'],'unit_price_minor'=>$p['unit_price_minor']];}
             $id=Domain::id();$referral=Domain::id();Store::put($referral,'booking_referral',$id,time()+1800,['session_owner'=>$owner]);
-            Store::put($id,'booking',$owner,time()+1800,['input'=>$input,'referral_id'=>$referral,'seller_id'=>(int)get_post_field('post_author',$input['items'][0]['product_id']),'access_expires'=>min(time()+31*86400,strtotime(self::day($input['preferred_date'])['end_at'])+86400),'catalog_snapshot'=>$snapshot,'preferred_window'=>self::day($input['preferred_date']),'booking_state'=>'draft','submitted_at'=>null,'confirmed_at'=>null,'pickup_verified'=>false,'listing_intent'=>null,'payment_state'=>'not_started','transport_fee_minor'=>self::transportFeeForInput($input)]);return Store::get($id);
+            Store::put($id,'booking',$owner,time()+1800,['input'=>$input,'referral_id'=>$referral,'seller_id'=>(int)get_post_field('post_author',$input['items'][0]['product_id']),'access_expires'=>min(time()+31*86400,strtotime(self::day($input['preferred_date'])['end_at'])+86400),'catalog_snapshot'=>$snapshot,'preferred_window'=>self::day($input['preferred_date']),'booking_state'=>'draft','submitted_at'=>null,'confirmed_at'=>null,'pickup_verified'=>false,'listing_intent'=>null,'payment_state'=>'not_started','transport_fee_minor'=>self::transportFeeForInput($input),'transport_taxable'=>Settings::get()['booking_transport_taxable'],'transport_tax_class'=>Settings::get()['booking_transport_tax_class']]);return Store::get($id);
         });
     }
     /** Referral exposes only a new service-choice draft. It is not later status authorization. */
@@ -306,7 +306,7 @@ final class Booking {
         foreach($cart->get_cart() as $line)$items[]=['product_id'=>(int)$line['product_id'],'quantity'=>(int)$line['quantity']];
         usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
         if($items!==$selection['items']){wc_add_notice('Booking items changed. Review your booking before paying.','error');return;}
-        if($selection['fee_minor'])$cart->add_fee('KnifeRevive merchant transport',Domain::decimal($selection['fee_minor']),Settings::get()['booking_transport_taxable'],Settings::get()['booking_transport_tax_class']);
+        if($selection['fee_minor'])$cart->add_fee(isset($row['data']['transport_taxable'])?'KnifeRevive trip fee (per order)':'KnifeRevive merchant transport',Domain::decimal($selection['fee_minor']),$row['data']['transport_taxable']??false,$row['data']['transport_tax_class']??'');
     }
     public static function transportFeeForInput(array $input): int {
         $legs=($input['mode']==='prepaid_pickup'?1:0)+($input['return_mode']==='courier_delivery'?1:0);$s=Settings::get();

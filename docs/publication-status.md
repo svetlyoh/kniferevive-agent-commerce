@@ -1,27 +1,12 @@
 # Publication status
 
-## Current backend 0.5.6; published skill 0.4.2
+## Current backend 0.5.7; published skill 0.4.2
 
-Agent Commerce **0.5.6** and Seller Orders **1.1.6** are deployed with
-owner-approved prepaid sharpening requests, native same-screen checkout,
-seller cancellation/refund receipt handling and an administrator pickup ZIP
-editor. Capacity remains 4. The [0.5.2 UX patch](booking-ux-0.5.2.md) adds prominent coverage confirmation,
-one-step payment preparation, separated controls and clearer pickup/return labels.
-The [0.5.3 payment recovery patch](booking-payment-resume-0.5.3.md) lets an independently
-authorized buyer resume the same unstarted checkout after returning through email
-or losing the original browser cart, with order, consent and capacity checks.
-See [the payment implementation runbook](prepaid-booking-0.5.1.md).
-The [0.5.4 four-option patch](four-option-booking-implementation-0.5.4.md)
-skips ZIP checks for unpaid customer drop-off, requires completed native payment
-before prepaid requests reach the merchant, charges $6 pickup or $11 combined
-pickup/delivery on new requests, and isolates booking checkout from an existing
-storefront cart. Original quoted legacy prices and orders are preserved.
-Actual processor settlement and headless API access remain unverified; anonymous
-API traffic receives the hosting browser challenge. Lightning readiness remains
-false. GitHub skill source is now **0.5.6**, with booking instructions aligned
-to the deployed backend. ClawHub remains **0.4.2**; there is no new registry
-audit, card, immutable release or certification claim. See
-[the distinct fourth API mode correction](four-api-modes-0.5.6.md).
+Agent Commerce **0.5.7** and Seller Orders **1.1.6** are deployed with owner-approved prepaid sharpening requests, seller cancellation/refund receipt handling, administrator pickup ZIP controls and capacity 4. The [0.5.7 implementation](booking-trip-fees-two-screens-0.5.7.md) advertises five choices, with unpaid customer drop-off/collection last. One pickup or delivery costs $6 per order; pickup plus delivery is $11. New trip fees are taxable native fees, independent of the parcel shipping policy. Existing records retain their original financial treatment.
+
+“Your knife game plan” leads directly to KnifeRevive secure payment, preserving the ordinary store cart. The compact expandable review removes repeated technical states. Different billing details do not replace the consent-bound service address. Unpaid customer drop-off skips ZIP checking; all four prepaid choices require eligible coverage and completed payment before seller submission. Production source and settings match the tested package. See [the evidence](booking-trip-fees-two-screens-0.5.7.json).
+
+GitHub skill source is **0.5.7**. ClawHub remains **0.4.2**; there is no new registry audit, card, immutable release or certification claim. Actual processor settlement, headless API access and the buyer bot's installed runtime remain unverified; earlier anonymous API traffic received a hosting browser challenge. Lightning readiness remains false. See [the payment runbook](prepaid-booking-0.5.1.md) and [the historical four-mode correction](four-api-modes-0.5.6.md).
 
 ## Historical 0.4.2 publication and backend deployment
 

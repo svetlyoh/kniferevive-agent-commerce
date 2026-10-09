@@ -2,7 +2,7 @@
 /** New strict policy, real native Woo/Dokan hooks, synthetic processor only. */
 ob_start();set_exception_handler(static function(Throwable $e){fwrite(STDERR,'FAIL: '.$e->getMessage()."\n");exit(1);});
 require __DIR__.'/sandbox-bootstrap.php';
-use KnifeRevive\AgentCommerce\{Api,Booking,BookingEvents,BookingLifecycle,BookingSeller,BookingSession,BookingNativeSession,Domain,Fault,ListingCheckout,ListingFrontend,Settings,Store};
+use KnifeRevive\AgentCommerce\{BookingCheckoutFields,Api,Booking,BookingEvents,BookingLifecycle,BookingSeller,BookingSession,BookingNativeSession,Domain,Fault,ListingCheckout,ListingFrontend,Settings,Store};
 if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Sandbox fence failed');
 $checks=0;function fourCheck(bool $ok,string $label):void{global $checks;if(!$ok)throw new RuntimeException($label);++$checks;echo "PASS: $label\n";}
 function fourReject(callable $fn,string $code):void{try{$fn();}catch(Fault $e){fourCheck($e->codeName===$code,'rejects '.$code);return;}throw new RuntimeException('Missing rejection '.$code);}
@@ -12,15 +12,15 @@ $vendor=wp_insert_user(['user_login'=>'four-'.Domain::id(),'user_pass'=>Domain::
 $term=get_term_by('slug','knife-sharpening','product_cat');$p=new WC_Product_Simple();$p->set_name('Synthetic Small Knife Sharpening');$p->set_status('publish');$p->set_regular_price('5');$p->set_virtual(false);$p->set_category_ids([$term->term_id]);$p->save();wp_update_post(['ID'=>$p->get_id(),'post_author'=>$vendor]);
 class FourGateway extends WC_Payment_Gateway{public function __construct(){$this->id='stripe';$this->enabled='yes';$this->supports=['products','refunds'];$this->settings=['testmode'=>'no'];}public function is_available(){return true;}}
 add_filter('woocommerce_payment_gateways',static fn()=>[FourGateway::class],1000);WC()->payment_gateways()->init();update_option('woocommerce_calc_taxes','no');update_option('pisol_cefw_payment_gateway_charges',[]);
-$zone=new WC_Shipping_Zone();$zone->set_zone_name('Synthetic four-option handoff');$zone->add_location('US:CA','state');$zone->save();$method=$zone->add_shipping_method('local_pickup');update_option('woocommerce_local_pickup_'.$method.'_settings',['enabled'=>'yes','cost'=>'0']);delete_transient('wc_shipping_method_count');
-$s=Settings::validate(['booking_require_payment_submission'=>true,'booking_trip_fee_minor'=>600,'booking_round_trip_fee_minor'=>1100,'booking_enabled'=>true,'booking_prepaid_enabled'=>true,'booking_launch_approved'=>true,'booking_pay_before_confirmation'=>true,'booking_location'=>'Synthetic location','booking_services'=>[['product_id'=>$p->get_id(),'definition'=>'Synthetic small knife']], 'booking_daily_capacity'=>200,'booking_weekly_hours'=>[['weekday'=>5,'open'=>'09:00','close'=>'19:00'],['weekday'=>6,'open'=>'09:00','close'=>'19:00'],['weekday'=>7,'open'=>'10:00','close'=>'16:00']],'booking_policy_url'=>'https://kniferevive.com/sharpening-cancellations-and-refunds/','booking_policy_version'=>'synthetic-only','listing_gateway_ids'=>['stripe']]);update_option('krev_agent_settings',$s,false);
+$zone=new WC_Shipping_Zone();$zone->set_zone_name('Synthetic four-option handoff');$zone->add_location('US:CA','state');$zone->save();$flat=$zone->add_shipping_method('flat_rate');update_option('woocommerce_flat_rate_'.$flat.'_settings',['enabled'=>'yes','cost'=>'7.99']);$method=$zone->add_shipping_method('local_pickup');update_option('woocommerce_local_pickup_'.$method.'_settings',['enabled'=>'yes','cost'=>'0']);delete_transient('wc_shipping_method_count');
+$s=Settings::validate(['booking_transport_taxable'=>true,'booking_require_payment_submission'=>true,'booking_trip_fee_minor'=>600,'booking_round_trip_fee_minor'=>1100,'booking_enabled'=>true,'booking_prepaid_enabled'=>true,'booking_launch_approved'=>true,'booking_pay_before_confirmation'=>true,'booking_location'=>'Synthetic location','booking_services'=>[['product_id'=>$p->get_id(),'definition'=>'Synthetic small knife']], 'booking_daily_capacity'=>200,'booking_weekly_hours'=>[['weekday'=>5,'open'=>'09:00','close'=>'19:00'],['weekday'=>6,'open'=>'09:00','close'=>'19:00'],['weekday'=>7,'open'=>'10:00','close'=>'16:00']],'booking_policy_url'=>'https://kniferevive.com/sharpening-cancellations-and-refunds/','booking_policy_version'=>'synthetic-only','listing_gateway_ids'=>['stripe']]);update_option('krev_agent_settings',$s,false);
 $owner=Domain::id();Store::put($owner,'session','synthetic',time()+7200,['token_hash'=>hash('sha256',Domain::token($owner))]);$days=Booking::availability()['days'];$date=end($days)['date'];
 $base=['items'=>[['product_id'=>$p->get_id(),'quantity'=>1]],'mode'=>'pay_later_dropoff','preferred_date'=>$date];
 $address=['address_1'=>'1 Synthetic Street','address_2'=>'','city'=>'Pittsburg','state'=>'CA','country'=>'US','postcode'=>'94565'];$contact=['customer'=>['name'=>'Synthetic buyer','email'=>'synthetic@example.invalid']];
 $options=Api::dispatch('bookingOptions',new WP_REST_Request('GET','/kniferevive-agent/v1/booking-options'))->get_data();
-fourCheck(count($options['modes'])===4 && $options['modes']===array_column($options['handoff_options'],'mode'),'REST discovery advertises four independently selectable modes');
+fourCheck(count($options['modes'])===5 && $options['modes']===array_column($options['handoff_options'],'mode'),'REST discovery advertises five independently selectable modes');
 $cap=Api::dispatch('capabilities',new WP_REST_Request('GET','/kniferevive-agent/v1/capabilities'))->get_data();
-fourCheck($cap['booking']['handoff_options']===$options['handoff_options'] && $options['adapter_version']===\KnifeRevive\AgentCommerce\VERSION,'capabilities and booking options share the same versioned four-choice menu');
+fourCheck($cap['booking']['handoff_options']===$options['handoff_options'] && $options['adapter_version']===\KnifeRevive\AgentCommerce\VERSION,'capabilities and booking options share the same versioned five-choice menu');
 $comboKey=Domain::id();$aliasInput=array_replace($base,['mode'=>'prepaid_pickup_delivery','postal_code'=>'94565']);
 $req=new WP_REST_Request('POST','/kniferevive-agent/v1/bookings');$req->set_header('Content-Type','application/json');$req->set_header('X-Krev-Agent-Session',Domain::token($owner));$req->set_header('Idempotency-Key',$comboKey);$req->set_body(wp_json_encode($aliasInput));$aliasResult=Api::dispatch('bookingCreate',$req);
 fourCheck($aliasResult instanceof WP_REST_Response && $aliasResult->get_data()['return_mode']==='courier_delivery' && $aliasResult->get_data()['merchant_trip_fee_minor']===1100,'REST fourth mode defaults to delivery and quotes the total eleven-dollar fee');
@@ -37,8 +37,8 @@ fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_dr
 fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_dropoff','postal_code'=>'90001']),$owner,Domain::id()),'OUTSIDE_SERVICE_AREA');
 fourReject(static fn()=>Booking::create(array_replace($base,['mode'=>'prepaid_pickup','postal_code'=>'94103']),$owner,Domain::id()),'PICKUP_UNAVAILABLE');
 $records=[];
-foreach([['prepaid_dropoff','customer_collection',0],['prepaid_pickup','customer_collection',600],['prepaid_pickup_delivery','courier_delivery',1100]] as [$mode,$return,$fee]){
- $row=Booking::create(array_replace($base,['mode'=>$mode,'return_mode'=>$return,'postal_code'=>'94565']),$owner,Domain::id());$row=Booking::submit($row['id'],$owner,array_replace($contact,in_array($mode,['prepaid_pickup','prepaid_pickup_delivery'],true)?['pickup_address'=>$address]:[]),true);$records[]=$row;
+foreach([['prepaid_dropoff','customer_collection',0],['prepaid_pickup','customer_collection',600],['prepaid_pickup_delivery','courier_delivery',1100],['prepaid_dropoff_delivery','courier_delivery',600]] as [$mode,$return,$fee]){
+ $row=Booking::create(array_replace($base,['mode'=>$mode,'return_mode'=>$return,'postal_code'=>'94565']),$owner,Domain::id());$row=Booking::submit($row['id'],$owner,array_replace($contact,($mode==='prepaid_pickup' || $return==='courier_delivery')?['pickup_address'=>$address]:[]),true);$records[]=$row;
  fourCheck($row['data']['booking_state']==='awaiting_payment' && Booking::response($row)['merchant_trip_fee_minor']===$fee,'prepaid choice retains exact transport and awaits payment');
  fourCheck(!Booking::merchantVisible($row) && !in_array($row['id'],array_column(BookingSeller::rows(),'id'),true),'unpaid prepaid choice is absent from seller booking inbox');
  fourCheck(!(int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.Store::table('records')." WHERE kind='booking_mail' AND owner=%s",$row['id'])),'unpaid prepaid choice queues no booking notifications');
@@ -80,5 +80,24 @@ BookingLifecycle::observeOrder($order->get_id());Booking::response(Store::get($p
 Booking::confirm($pickup['id'],true);fourCheck(Store::get($pickup['id'])['data']['booking_state']==='confirmed','seller confirms day after native payment');
 fourReject(static fn()=>ListingCheckout::resumeBookingCart($pickup['id'],$owner),'PAYMENT_UNRESOLVED');
 Booking::cancel($combo['id'],$owner);fourCheck(!Booking::merchantVisible(Store::get($combo['id'])),'cancelled unpaid prepaid request does not reach seller inbox');
+// New billing/fee policy: actual native tax engine, fixed address, per-order fee for three knives.
+update_option('woocommerce_calc_taxes','yes');update_option('woocommerce_prices_include_tax','no');update_option('woocommerce_tax_based_on','shipping');
+WC_Tax::_insert_tax_rate(['tax_rate_country'=>'US','tax_rate_state'=>'CA','tax_rate'=>'10.0000','tax_rate_name'=>'Synthetic ten percent','tax_rate_priority'=>1,'tax_rate_compound'=>0,'tax_rate_shipping'=>1,'tax_rate_order'=>0,'tax_rate_class'=>'']);WC_Cache_Helper::invalidate_cache_group('taxes');
+$deliveryInput=array_replace($base,['items'=>[['product_id'=>$p->get_id(),'quantity'=>3]],'mode'=>'prepaid_dropoff_delivery','postal_code'=>'94565']);
+$delivery=Booking::create($deliveryInput,$owner,Domain::id());$delivery=Booking::submit($delivery['id'],$owner,array_replace($contact,['pickup_address'=>$address]),true);Booking::checkout($delivery['id'],$owner);$delivery=Store::get($delivery['id']);
+fourCheck($delivery['data']['input']['mode']==='prepaid_dropoff' && $delivery['data']['input']['return_mode']==='courier_delivery','delivery-only mode stores canonical drop-off plus return delivery');
+$_COOKIE['krev_booking_access']=Booking::accessToken($delivery);BookingSession::prepare($delivery,$owner,['billing'=>$address,'shipping'=>$address,'email'=>'synthetic@example.invalid','payment_method'=>'stripe']);
+$deliveryIntent=ListingCheckout::bookingCart(Store::get($delivery['id']));$dq=$deliveryIntent['data']['quote'];
+fourCheck($dq['shipping_minor']===0 && $dq['total_minor']===2310 && count($dq['fees'])===1 && $dq['fees'][0]['total_minor']===600 && $dq['fees'][0]['tax_minor']===60,'three knives use one taxable six-dollar trip; 7.99 flat shipping excluded');
+fourCheck(WC()->session instanceof BookingNativeSession && $storefront->get('order_awaiting_payment')===12345,'details preparation switches to its own session without replacing storefront order markers');
+fourCheck(apply_filters('woocommerce_cart_needs_shipping_address',true)===false,'booking checkout suppresses separate shipping-address entry');
+$billing=array_replace($address,['address_1'=>'2 Synthetic Billing Street','city'=>'San Jose','postcode'=>'95112']);$posted=['billing_email'=>'synthetic@example.invalid'];foreach($billing as $field=>$value)$posted['billing_'.$field]=$value;
+BookingCheckoutFields::review(http_build_query($posted));$deliveryIntent=ListingCheckout::bookingCart(Store::get($delivery['id']));
+fourCheck($deliveryIntent['data']['context']['billing']==$billing && $deliveryIntent['data']['context']['shipping']==$address,'native billing refresh changes billing only and retains approved trip destination');
+$protected=BookingCheckoutFields::posted(array_replace($posted,['shipping_address_1'=>'Unapproved replacement']));
+fourCheck($protected['shipping_address_1']===$address['address_1'] && $protected['shipping_postcode']==='94565' && !$protected['ship_to_different_address'],'native order payload ignores alternate shipping address');
+$s=Settings::get();$s['booking_transport_taxable']=false;update_option('krev_agent_settings',$s,false);WC()->cart->calculate_totals();
+fourCheck(Domain::cents(wc_format_decimal(WC()->cart->get_fee_tax(),2))===60,'existing trip quote retains its taxable snapshot after settings change');
+update_option('woocommerce_calc_taxes','no');
 WC()->cart->empty_cart();WC()->session=$storefront;WC()->cart=$storefrontCart;$storefront->set('order_awaiting_payment',null);$storefront->set('store_api_draft_order',null);WC()->cart->empty_cart();$zone->delete();delete_transient('wc_shipping_method_count');
 echo "$checks four-option assertions passed. No real payment, order, email or refund was sent.\n";

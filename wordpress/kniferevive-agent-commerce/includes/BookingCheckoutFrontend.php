@@ -58,10 +58,17 @@ final class BookingCheckoutFrontend {
             if($value!==null && $value!=='')return $value;
             return match($field){'billing_first_name','shipping_first_name'=>$parts[0]??'','billing_last_name','shipping_last_name'=>$parts[1]??'',default=>$value};
         },10,2);
+        add_filter('woocommerce_checkout_get_value',static function($value,$field)use($intent){
+            if(isset($_POST[$field]))return wc_clean(wp_unslash($_POST[$field]));
+            if($value!==null && $value!=='')return $value;
+            if($field==='billing_email')return $intent['data']['context']['email'];
+            if(str_starts_with($field,'billing_'))return $intent['data']['context']['billing'][substr($field,8)]??$value;
+            return $value;
+        },20,2);
         wp_enqueue_style('krev-booking-checkout',plugin_dir_url(FILE).'assets/storefront.css',[],VERSION);
         wp_enqueue_style('krev-booking-payment',plugin_dir_url(FILE).'assets/booking-checkout.css',['krev-booking-checkout'],VERSION);
         echo '<!doctype html><html lang="'.esc_attr(get_bloginfo('language')?:'en').'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pay for knife sharpening | KnifeRevive</title>';wp_head();
-        echo '</head><body class="krev-private krev-booking-payment woocommerce woocommerce-checkout"><header class="krev-header"><a href="'.esc_url(home_url('/')).'">'.(PrivateBrand::logo()?:'KnifeRevive').'</a></header><main><p class="krev-eyebrow">Last step · secure payment</p><h1>Let’s get your knives sharp</h1><div class="krev-journey"><strong>Your knife journey</strong><p>'.esc_html(BookingLifecycle::handoffLabel($booking['data']['input'])).'</p><p>Merchant pickup or delivery trips are charged separately below. Customer drop-off and collection have no trip fee.</p></div><p>Check your total, then confirm payment. KnifeRevive confirms your day and any trip address afterward. If it can’t accept your request, all unperformed services and trips are fully refundable.</p><p><a href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/'))).'">Booking details and refund status</a> · <a href="'.esc_url(Settings::get()['booking_policy_url']).'">Cancellation and refund terms</a></p>';
+        echo '</head><body class="krev-private krev-booking-payment woocommerce woocommerce-checkout"><a class="krev-skip" href="#booking-main">Skip to payment</a><header class="krev-header"><a href="'.esc_url(home_url('/')).'">'.(PrivateBrand::logo()?:'KnifeRevive').'</a></header><main id="booking-main"><p class="krev-eyebrow">Last step · KnifeRevive secure payment</p><h1>Let’s get your knives sharp</h1><ol class="krev-steps" aria-label="Booking screens"><li>1. Your knife game plan</li><li aria-current="step">2. Secure payment</li></ol><div class="krev-journey"><strong>Your pickup &amp; return plan</strong><p>'.esc_html(BookingLifecycle::handoffLabel($booking['data']['input'])).'</p><p>Trip fee: $'.esc_html(Domain::decimal(Booking::transportFee($booking))).' per order, plus configured tax.</p></div><p class="krev-fine-print">Confirm your total and pay. KnifeRevive confirms your day afterward. Unperformed services and trips receive a full refund if we cannot accept your request.</p><details><summary>Booking details &amp; cancellation terms</summary><p><a href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/'))).'">Open my booking details</a> · <a href="'.esc_url(Settings::get()['booking_policy_url']).'">Cancellation and refund terms</a></p></details>';
         wc_print_notices();echo do_shortcode('[woocommerce_checkout]');PrivateBrand::support();echo '</main>';wp_footer();echo '</body></html>';exit;
     }
 }

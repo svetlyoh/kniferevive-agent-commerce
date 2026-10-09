@@ -10,7 +10,7 @@ foreach ($assetMap as $name=>$type) if ($path==='/wp-content/plugins/kniferevive
     header('Content-Type: '.$type); readfile(dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/assets/'.$name); exit;
 }
 // Native checkout assets, served only from the installed sandbox core/plugin tree.
-if(preg_match('/\.(js|css)$/D',$path) && (str_starts_with($path,'/wp-includes/') || str_starts_with($path,'/wp-content/plugins/woocommerce/'))){
+if(preg_match('/\.(js|css)$/D',$path) && (str_starts_with($path,'/wp-includes/') || str_starts_with($path,'/wp-content/plugins/') || str_starts_with($path,'/wp-content/themes/'))){
     $file=realpath($testRoot.$path);$base=realpath($testRoot);
     if($file && $base && str_starts_with(str_replace('\\','/',$file),str_replace('\\','/',$base).'/')){header('Content-Type: '.(str_ends_with($path,'.js')?'text/javascript':'text/css'));readfile($file);exit;}
 }
@@ -26,6 +26,7 @@ if(getenv('KREV_LISTING_UI')==='1'){
     }
 }
 add_filter('plugins_url',static function ($url,$relative,$plugin) { return str_ends_with($plugin,'kniferevive-agent-commerce.php') ? WP_HOME.'/wp-content/plugins/kniferevive-agent-commerce'.($relative?'/'.$relative:'') : $url; },10,3);
+if(isset($_GET['wc-ajax'])){WC_AJAX::do_wc_ajax();exit;}
 if(getenv('KREV_BOOKING_UI')==='1' && (isset($_GET['krev_ui_vendor']) || isset($_GET['krev_ui_vendor_orders']))){
     // Synthetic loopback fixture only; never included in the distributable plugin.
     wp_set_current_user((int)get_option('krev_ui_booking_vendor'));

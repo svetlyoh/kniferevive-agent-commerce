@@ -1,0 +1,133 @@
+{
+  "version": "0.5.7",
+  "date": "2026-10-09",
+  "assertions_total": 1416,
+  "matrix": {
+    "legacy": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 60
+    },
+    "legacy-no-sync": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 60
+    },
+    "hpos": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 60
+    },
+    "hpos-no-sync": {
+      "listing-checkout": 75,
+      "booking": 66,
+      "booking-bridge": 87,
+      "booking-lifecycle": 66,
+      "booking-four-options": 60
+    }
+  },
+  "php_lint_files": 30,
+  "javascript_syntax_passed": true,
+  "contract_actual_samples_passed": true,
+  "deployed_files": {
+    "includes/Booking.php": {
+      "sha256": "fc7e507043f2c499c877b5074787803dccef38a2dd3d4c1182b071b5287e08eb"
+    },
+    "includes/BookingFrontend.php": {
+      "sha256": "a9d63cfe4f3f80050e462af14ef544fbc3acc3b28c2d1d44514e5849f8aebd27"
+    },
+    "includes/BookingSession.php": {
+      "sha256": "86362c75a69334f13944652fcdbd56e1ffe221238b15a81ea58bdc1bddd48407"
+    },
+    "includes/BookingCheckoutFields.php": {
+      "sha256": "780017046c2c6ec4030dd9946ca18aaab8c90f9cc13ece1590544032dee6b292"
+    },
+    "includes/BookingCheckoutFrontend.php": {
+      "sha256": "d8887f3db938fee78f2a50b0e144e0ffeeeb3ff88aceaef11623a2bf3f4f718d"
+    },
+    "includes/Plugin.php": {
+      "sha256": "2c5c699559e1ee755c509bece6109e2b0bc8661a32f88de2f31537b9934420e5"
+    },
+    "assets/booking.js": {
+      "sha256": "472890b19da7a9c0d02d53afcd9a98274a855909befad98e5df29b6721e6b9be"
+    },
+    "assets/storefront.css": {
+      "sha256": "790dfbf021a54f6838943b7d03d9c32baa0e0bf64142abb3d9e141e9c351b7f5"
+    },
+    "assets/openapi.json": {
+      "sha256": "8c72b2e51a65f1300b5d7cb928895cfeb69664e261e372e122f029fe13f86cd3",
+      "modes": [
+        "prepaid_dropoff",
+        "prepaid_dropoff_delivery",
+        "prepaid_pickup",
+        "prepaid_pickup_delivery",
+        "pay_later_dropoff"
+      ]
+    },
+    "assets/AI.md": {
+      "sha256": "acf48a544612a93029b4d6ff765a5a3a510d9925e0ee192a05b1e28d4fd86955"
+    },
+    "kniferevive-agent-commerce.php": {
+      "sha256": "2b70d6efa3a6a0e9b52a6fe805bd89d41cc9bee68aafe75af867d089c4cc3153",
+      "version": "0.5.7"
+    }
+  },
+  "production_configuration": {
+    "trip_fee_minor": 600,
+    "combo_fee_minor": 1100,
+    "capacity": 4,
+    "trip_taxable": true,
+    "tax_calculation_already_enabled": true,
+    "changed_setting_keys": [
+      "booking_transport_taxable"
+    ],
+    "site_shipping_policy_changed": false
+  },
+  "synthetic_browser": {
+    "direct_second_screen_cart_ready": true,
+    "alternate_billing_saved": true,
+    "trip_address_unchanged": true,
+    "trip_fee_minor": 600,
+    "trip_tax_minor": 60,
+    "shipping_minor": 0,
+    "total_minor": 1430,
+    "native_order_created": false
+  },
+  "mobile_horizontal_overflow": false,
+  "production_test_booking_created": false,
+  "real_payment_or_refund_executed": false,
+  "anonymous_live_api_delivery_verified": false,
+  "clawhub_published_version": "0.4.2",
+  "new_registry_audit_claimed": false,
+  "production_public_form": {
+    "verified": true,
+    "heading": "Your knife game plan",
+    "screens": 2,
+    "option_modes": [
+      "prepaid_dropoff",
+      "prepaid_dropoff_delivery",
+      "prepaid_pickup",
+      "prepaid_pickup_delivery",
+      "pay_later_dropoff"
+    ],
+    "trip_fees_minor": [
+      0,
+      600,
+      600,
+      1100,
+      0
+    ],
+    "selected_delivery_only_service_minor": 700,
+    "selected_delivery_only_trip_minor": 600,
+    "asset_version": "0.5.7",
+    "production_submission_performed": false,
+    "object_cache_clear_confirmed": true,
+    "edge_cache_clear_confirmed": true
+  }
+}

@@ -27,4 +27,21 @@ final class BookingSession {
         // Keep Woo's %%endpoint%% placeholder unchanged.
         return $url.(str_contains($url,'?')?'&':'?').'krev_booking_checkout='.rawurlencode($id);
     }
+    /** An authorized details POST prepares only this booking's independent cart. */
+    public static function prepare(array $booking,string $owner,array $context): void {
+        Booking::get($booking['id'],$owner);
+        if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
+        if(!(WC()->session instanceof BookingNativeSession) || self::$id!==$booking['id']){
+            WC()->session->save_data();
+            // Detach the ordinary cart's persistence callbacks before switching runtimes.
+            // Its saved quantities, pending orders and authenticated cookie remain intact.
+            global $wp_filter;
+            foreach($wp_filter as $hook=>$filter)foreach($filter->callbacks as $priority=>$callbacks)foreach($callbacks as $callback){
+                $fn=$callback['function'];if(is_array($fn) && ($fn[0] instanceof \WC_Cart_Session || $fn[0] instanceof \WC_Cart))remove_action($hook,$fn,$priority);
+            }
+            self::$id=$booking['id'];require_once __DIR__.'/BookingNativeSession.php';
+            WC()->session=new BookingNativeSession();WC()->session->init();WC()->cart=new \WC_Cart();WC()->customer=new \WC_Customer(get_current_user_id(),true);
+        }
+        ListingCheckout::resumeBookingCart($booking['id'],$owner,$context);
+    }
 }

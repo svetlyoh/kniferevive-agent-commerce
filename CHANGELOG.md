@@ -1,5 +1,12 @@
 # Changelog
 
+## Five choices, per-order trip fees and two screens 0.5.7 — October 9, 2026
+
+- Add delivery-only after customer drop-off and advertise all five choices, with unpaid drop-off/collection last. One pickup or delivery is $6; the comeback combo remains $11.
+- Charge taxable native trip fees once per order, exclude the parcel flat shipping rate, and preserve historic financial snapshots.
+- Move authorized details submission directly to isolated KnifeRevive payment, with compact expandable review and no technical state box. Keep the service address fixed when billing differs.
+- Deploy the matching backend and GitHub skill source; verify 1,416 synthetic assertions, native browser/AJAX behavior, mobile fit and production source/settings readback. ClawHub publication and actual processor settlement remain separate.
+
 ## Distinct fourth API mode 0.5.6 — October 9, 2026
 
 - Advertise `prepaid_pickup_delivery` as a fourth selectable mode in booking options and capabilities, using the same four-entry discovery helper.

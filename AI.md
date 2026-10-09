@@ -10,20 +10,22 @@ The installable skill is `skills/kniferevive-concierge/SKILL.md`; OpenAPI is at
 
 Sharpening bookings use `booking.enabled`, independently of legacy direct service
 payments. GET `/booking-options` and `/booking-availability` for live services,
-Pacific service days and request/payment readiness. Present the four customer
-choices from `handoff_options`. Backend 0.5.6 also advertises four distinct `modes`:
+Pacific service days and request/payment readiness. Backend 0.5.7 exposes five
+distinct modes and a five-choice `handoff_options` menu in this order:
 
-1. Drop off and pay when collecting — no transport fee or ZIP check.
-2. Drop off and prepay online — no transport fee; eligible ZIP and payment required.
-3. We pick up, you collect — $6 pickup transport; eligible ZIP and payment required.
-4. We pick up and deliver back, the comeback combo — $11 total transport;
-   eligible ZIP and payment required.
+1. You drop off and collect; prepay online — $0 trip fee.
+2. You drop off; we bring it back — one $6 delivery trip per order.
+3. We pick up; you collect — one $6 pickup trip per order.
+4. We pick up and deliver back; comeback combo — $11 total per order.
+5. You drop off and collect; pay at pickup — $0 trip fee, no ZIP check.
 
-Option 4 uses `mode=prepaid_pickup_delivery` and defaults to return delivery.
-Legacy `mode=prepaid_pickup` plus `return_mode=courier_delivery` also works; option 3
-uses the same mode plus `return_mode=customer_collection`. They are distinct
-customer choices. Use live prices; existing requests retain their original quote.
-Stored receipts retain the canonical pickup/return representation for compatibility.
+All choices also charge sharpening. Display service cost + trip fee; final tax
+uses configured rates. New trip fees are taxable native fees, not parcel shipping.
+Use live prices, never an old $7.99 screenshot. Delivery-only mode is
+`prepaid_dropoff_delivery`; both it and `prepaid_pickup_delivery` imply return
+delivery when omitted. Canonical storage/receipts preserve drop-off or pickup
+plus `courier_delivery`; existing quoted finances stay frozen. The human booking
+flow has two screens, “Your knife game plan” and KnifeRevive secure payment.
 POST `/bookings` with a
 private session and idempotency key to prepare a draft; the human submits the
 returned private review page. Creating a draft does not reserve or charge.
@@ -152,29 +154,24 @@ payment/fulfillment/scheduling states without order keys, PII or processor IDs.
 `not_booked`. After uncertainty, resume the original checkout/status; do not
 start another charge. Real processor verification remains a launch requirement.
 
-## Sharpening bookings (backend 0.5.6; check deployed capabilities)
+## Sharpening bookings (backend 0.5.7; check deployed capabilities)
 
-Read `/booking-options` and its four `handoff_options` before proposing choices:
-1. Customer drops off and pays when collecting: no ZIP lookup or ZIP field needed.
-2. Customer drops off and prepays online: eligible service ZIP required; no transport fee.
-3. KnifeRevive picks up; customer collects: eligible pickup ZIP and exact address; $6 transport.
-4. KnifeRevive picks up and delivers back: eligible pickup ZIP and exact address; $11 total transport (the comeback combo).
-Prices exclude sharpening and applicable taxes; trust live amounts and the final native quote.
-API modes are `pay_later_dropoff`, `prepaid_dropoff`, `prepaid_pickup`, and
-`prepaid_pickup_delivery`. The fourth defaults to return delivery; an explicitly
-conflicting collection value is rejected. The legacy `prepaid_pickup` plus
-`return_mode=courier_delivery` combination remains valid and shares the same
-canonical draft/idempotency handling as the distinct fourth mode.
-
+Read `/booking-options` and its five `handoff_options`, live service costs and
+trip fees before proposing choices. Paid drop-off/collection, delivery-only,
+pickup-only, the comeback combo, then unpaid customer drop-off/collection are
+distinct choices. Both delivery aliases imply `courier_delivery`. Options 1–4
+require eligible ZIP coverage and payment before merchant submission; option 5
+skips ZIP lookup and has $0 trip fee. Trip fees are per order, taxable using native
+configured rates. Preserve existing quotes; never use parcel flat-rate shipping.
 POST `/bookings` accepts service items, mode, preferred_date, optional postal_code
 and return_mode. Contact/address fields are rejected in portable draft creation;
 the human supplies them and approves their use on the protected form. Only
-options 2–4 require `/booking-coverage`; they are limited to supported Contra
+options 1–4 require `/booking-coverage`; they are limited to supported Contra
 Costa and Santa Clara ZIPs, with the configured pickup ZIP list narrowing
 merchant trips. Relay the live coverage message without guessing ZIP prefixes.
-The customer can instead select option 1 and travel to KnifeRevive themselves.
+The customer can instead select option 5 and travel to KnifeRevive themselves.
 
-Under `payment_required_before_submission=true`, options 2–4 save an
+Under `payment_required_before_submission=true`, options 1–4 save an
 `awaiting_payment` request. Continue to Payment is required. Only verified native
 gateway settlement submits it to the merchant and queues booking notifications;
 an order, redirect, manually changed order status, or payment preparation alone

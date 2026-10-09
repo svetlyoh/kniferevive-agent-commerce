@@ -1,9 +1,9 @@
 ---
 name: kniferevive-concierge
-description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with drop-off/pay at collection, prepaid drop-off, pickup, or pickup plus delivery. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
+description: Find or compare KnifeRevive listings and request SF Bay Area knife sharpening with prepaid drop-off/collection, delivery-only, pickup, pickup plus delivery, or drop-off/pay at collection. Check required coverage, live prices and policies; prepare secure checkout links or pay an existing verified Lightning invoice with an explicitly authorized host wallet when enabled.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.5.6"
+  version: "0.5.7"
 ---
 
 # KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech
@@ -48,34 +48,38 @@ checkout link"; the buyer authorizes payment there. Do not auto-submit review,
 checkout or payment forms. A quote reserves no stock.
 
 For sharpening bookings, first read [Booking requests](references/booking.md).
-Present these four customer choices, marking any unavailable choice using live
-coverage/payment facts:
+Present five choices in the live handoff-menu order. Show sharpening cost plus
+the trip fee alongside each choice; a $0 trip fee does not mean free sharpening.
 
-| Choice | Customer handoff | New-request transport fee |
+| Choice | Pickup / return plan | Trip fee per order, before tax |
 |---|---|---|
-| 1 | Drop off; pay when collecting | $0 |
-| 2 | Drop off; prepay online | $0 |
+| 1 | You drop off and collect; prepay online | $0 |
+| 2 | You drop off; we bring it back | $6 |
 | 3 | We pick up; you collect | $6 |
 | 4 | We pick up and deliver back — comeback combo | $11 total |
+| 5 | You drop off and collect; pay at pickup | $0 |
 
-Sharpening and applicable taxes are additional; obtain live prices. Backend 0.5.6
-advertises four distinct API `modes`; choice 4 is `prepaid_pickup_delivery` and
-automatically selects return delivery. Prefer live `handoff_options` for labels
-and fees. Older backends represent choice 4 with `prepaid_pickup` plus
-`return_mode=courier_delivery`; stored receipts retain this compatible format.
-Do not collapse pickup plus delivery into pickup/customer collection. If the API is
-challenged, link the human booking form and say availability needs checking;
-an HTTP 403 alone does not mean the fourth choice or prepayment is disabled.
+Obtain live prices; fees apply once per order, regardless of knife count.
+Trip fees are taxable native fees, separate from parcel shipping; final tax uses
+merchant-configured rates. Backend 0.5.7 advertises five distinct API modes.
+Delivery-only uses `prepaid_dropoff_delivery`; pickup and delivery uses
+`prepaid_pickup_delivery`. Both imply return delivery, with canonical status
+receipts preserving the older mode/return representation. Older quotes retain
+their frozen fees and tax policy. Never invent $7.99 from a flat shipping method
+or an old screenshot. If anonymous API access is challenged, link the human form
+and say availability needs checking; a 403 does not establish disabled payment.
 
 Check `booking.enabled` independently of `sharpening.direct_checkout`. Unpaid
 requests do not require Stripe or the legacy service quote configuration. Use
 `/booking-options` and `/booking-availability`, then prepare a private booking
-review. Offer all four choices from live `handoff_options`: drop off/pay when
-collecting, drop off/prepay, merchant pickup/customer collection, and merchant
-pickup/return delivery ("comeback combo"). Current new-request transport is $6
-pickup or $11 combined pickup/delivery; obtain live fees and retain existing quotes.
-Option 1 requires travel to the Pittsburg drop-off location and skips ZIP checking.
-Check `/booking-coverage` only for options 2–4. Pickup and prepayment are limited
+review. Offer all five choices from live `handoff_options`. Current single pickup
+or delivery is $6; the approved comeback combo is $11 total. The human form has
+two screens: “Your knife game plan” and KnifeRevive secure payment. Customer
+drop-off/pay at pickup is last, skips ZIP checking and requires no online payment.
+Prepaid choices need eligible coverage and completed native payment before seller
+submission. Billing changes do not change the approved trip destination.
+Option 5 requires travel to the Pittsburg drop-off location and skips ZIP checking.
+Check `/booking-coverage` only for options 1–4. Pickup and prepayment are limited
 to eligible Contra Costa and Santa Clara ZIPs; configured pickup ZIPs can narrow
 merchant-trip coverage. Relay unavailable or address-review results honestly.
 The human approves contact sharing and submits the private form. Prepaid choices

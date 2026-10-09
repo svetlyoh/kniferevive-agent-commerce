@@ -13,7 +13,7 @@
   let coverageResult = null;
   let revision = 0;
   const paid = () => !!mode && mode.value !== 'pay_later_dropoff';
-  const trips = () => mode?.value === 'prepaid_pickup_delivery' ? 2 : (mode?.value === 'prepaid_pickup' ? 1 : 0) + (returns?.value === 'courier_delivery' ? 1 : 0);
+  const trips = () => mode?.value === 'prepaid_pickup_delivery' ? 2 : (mode?.value === 'prepaid_dropoff_delivery' ? 1 : mode?.value === 'prepaid_pickup' ? 1 : 0) + (returns?.value === 'courier_delivery' ? 1 : 0);
   function updateChoices() {
     if (coverageFields) coverageFields.hidden = !paid();
     input.disabled = !paid();input.required = paid();
@@ -24,6 +24,16 @@
       bookingButton.dataset.originalLabel = bookingButton.textContent;
     }
     const needsAddress = paid() && (trips() > 0 || addressReview);
+    const billing = form.querySelector('[data-billing-fields]');
+    const different = form.querySelector('[name="billing_different"]');
+    const needsBilling = paid() && (trips() === 0 || different?.checked);
+    if (billing) {
+      billing.hidden = !paid();
+      const choice = billing.querySelector('[data-billing-choice]'); if (choice) choice.hidden = trips() === 0;
+      const fields = billing.querySelector('[data-billing-inputs]'); if (fields) fields.hidden = !needsBilling;
+      if (needsBilling) billing.open = true;
+      for (const name of ['billing_address_1','billing_city','billing_postcode']) { const field = billing.querySelector(`[name="${name}"]`);if(field){field.required=needsBilling;field.disabled=!needsBilling;} }
+    }
     if (address && needsAddress) address.open = true;
     // Keep the expansion open while a customer types.
     for (const name of ['address_1','city']) {
@@ -37,7 +47,9 @@
       const pricing = form.querySelector('[data-trip-minor]');
       const tripFee = trips() === 2 ? Number(pricing?.dataset.roundTripMinor || 0) : trips() * Number(pricing?.dataset.tripMinor || 0);
       const usd = value => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(value/100);
-      estimate.textContent = `Sharpening: ${usd(subtotal)} · Transport: ${usd(tripFee)} · Estimated subtotal: ${usd(subtotal+tripFee)}, before taxes and disclosed fees. ${paid() ? 'Review the final total and pay on the secure payment screen.' : 'Pay when you collect your knives.'}`;
+      for (const option of mode?.options || []) if(option.dataset.label) option.textContent=`${option.dataset.label} — ${usd(subtotal)} sharpening + ${usd(Number(option.dataset.feeMinor))} trip fee / order`;
+      estimate.textContent = `Sharpening: ${usd(subtotal)} · Trip fee: ${usd(tripFee)} per order · Estimated subtotal: ${usd(subtotal+tripFee)}, before taxes and disclosed fees. ${paid() ? 'Final tax and total on the payment screen.' : 'Pay when you collect your knives.'}`;
+      const handoffCost = form.querySelector('#handoff-cost'); if(handoffCost)handoffCost.textContent=`Sharpening ${usd(subtotal)} + ${usd(tripFee)} trip fee per order = ${usd(subtotal+tripFee)} before tax. ${trips() ? `${trips()} merchant trip${trips()===1?'':'s'}.` : 'You drop off and collect.'}`;
       quantities[0].setCustomValidity(quantities.some(q=>Number(q.value)>0) ? '' : 'Choose at least one knife.');
     }
   }

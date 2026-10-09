@@ -4,7 +4,7 @@ defined('ABSPATH') || exit;
 final class Plugin {
     public static function boot(): void {
         if (!class_exists('WooCommerce')) return;
-        BookingSession::boot();ListingCheckout::boot();
+        BookingSession::boot();ListingCheckout::boot();BookingCheckoutFields::boot();
         BookingSeller::boot();BookingOrderBridge::boot();BookingOutbox::boot();BookingLifecycle::boot();
         add_action('woocommerce_cart_calculate_fees',[Booking::class,'nativeFees'],25);
         add_action('rest_api_init',[Api::class,'register']);

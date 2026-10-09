@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "KnifeRevive Agent Commerce",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review. Native refund acceptance does not prove bank arrival."
   },
   "servers": [
@@ -2109,22 +2109,23 @@
             "properties": {
               "modes": {
                 "type": "array",
-                "minItems": 4,
-                "maxItems": 4,
+                "minItems": 5,
+                "maxItems": 5,
                 "uniqueItems": true,
                 "items": {
                   "enum": [
-                    "pay_later_dropoff",
                     "prepaid_dropoff",
+                    "prepaid_dropoff_delivery",
                     "prepaid_pickup",
-                    "prepaid_pickup_delivery"
+                    "prepaid_pickup_delivery",
+                    "pay_later_dropoff"
                   ]
                 }
               },
               "handoff_options": {
                 "type": "array",
-                "minItems": 4,
-                "maxItems": 4,
+                "minItems": 5,
+                "maxItems": 5,
                 "items": {
                   "$ref": "#/components/schemas/BookingHandoffOption"
                 }
@@ -2144,10 +2145,11 @@
         "properties": {
           "mode": {
             "enum": [
-              "pay_later_dropoff",
               "prepaid_dropoff",
+              "prepaid_dropoff_delivery",
               "prepaid_pickup",
-              "prepaid_pickup_delivery"
+              "prepaid_pickup_delivery",
+              "pay_later_dropoff"
             ]
           },
           "return_mode": {
@@ -2194,22 +2196,23 @@
           },
           "modes": {
             "type": "array",
-            "minItems": 4,
-            "maxItems": 4,
+            "minItems": 5,
+            "maxItems": 5,
             "uniqueItems": true,
             "items": {
               "enum": [
-                "pay_later_dropoff",
                 "prepaid_dropoff",
+                "prepaid_dropoff_delivery",
                 "prepaid_pickup",
-                "prepaid_pickup_delivery"
+                "prepaid_pickup_delivery",
+                "pay_later_dropoff"
               ]
             }
           },
           "handoff_options": {
             "type": "array",
-            "minItems": 4,
-            "maxItems": 4,
+            "minItems": 5,
+            "maxItems": 5,
             "items": {
               "$ref": "#/components/schemas/BookingHandoffOption"
             }
@@ -2260,10 +2263,11 @@
           },
           "mode": {
             "enum": [
-              "pay_later_dropoff",
               "prepaid_dropoff",
+              "prepaid_dropoff_delivery",
               "prepaid_pickup",
-              "prepaid_pickup_delivery"
+              "prepaid_pickup_delivery",
+              "pay_later_dropoff"
             ]
           },
           "preferred_date": {
@@ -2296,7 +2300,10 @@
             "if": {
               "properties": {
                 "mode": {
-                  "const": "prepaid_pickup_delivery"
+                  "enum": [
+                    "prepaid_pickup_delivery",
+                    "prepaid_dropoff_delivery"
+                  ]
                 }
               },
               "required": [

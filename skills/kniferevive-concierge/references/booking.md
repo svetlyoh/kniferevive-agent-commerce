@@ -12,44 +12,44 @@ remaining capacity; do not hard-code the merchant's daily limit or treat an
 unpaid order as a reservation. A linked unpaid drop-off request can appear in
 the seller's Local Pickup list before the service day is confirmed.
 
-For prepaid options 2–4 only, GET `/booking-coverage?postal_code=94565` classifies
-an exact five-digit ZIP. Option 1 skips ZIP lookup and requires customer travel
+For prepaid options 1–4 only, GET `/booking-coverage?postal_code=94565` classifies
+an exact five-digit ZIP. Option 5 skips ZIP lookup and requires customer travel
 to the Pittsburg drop-off location; do not demand a ZIP for it.
 Pickup and prepayment are offered only in Contra Costa and Santa Clara counties.
 Other Bay Area ZIPs receive: “Pickup service is not available in your area but
 will be available in the near future.” Offer customer drop-off and pay at collection.
 Outside the Bay Area: “We do not currently offer sharpening services in your area.
 We are operating in the SF Bay Area only.” Do not offer merchant trips or prepaid
-booking outside eligible coverage. Do not claim this checks option 1 eligibility.
+booking outside eligible coverage. Do not claim this checks option 5 eligibility.
 Unknown or cross-county ZIPs need merchant street-address review. The bundled
 2020 Census ZCTA index is a coverage screen, not a complete current USPS directory.
 Do not infer county from a ZIP prefix or claim an unknown ZIP is outside the region.
 
-Offer four choices using live `handoff_options` and their service/payment flags:
-Backend 0.5.6 advertises four distinct `modes` as well as four `handoff_options`.
-Use those live labels, fees and coverage flags. On older backends the fourth
-choice is the composite pickup/delivery selection below; do not omit it merely
-because the legacy mode array has three entries. When live access is challenged, provide the
-first-party form without claiming only three choices or disabled prepayment.
+Offer five choices from live `handoff_options` in this order (backend 0.5.7):
 
-- Option 1: `mode=pay_later_dropoff`, `return_mode=customer_collection` — customer
-  drops off and pays when collecting; no online payment or merchant transport fee.
-- Option 2: `mode=prepaid_dropoff`, `return_mode=customer_collection` — customer
-  drops off and prepays online; no merchant transport fee.
-- Option 3: `mode=prepaid_pickup`, `return_mode=customer_collection` — KnifeRevive
-  picks up and the customer collects; current new-request transport fee is $6.
-- Option 4: `mode=prepaid_pickup_delivery`, optional `return_mode=courier_delivery` — KnifeRevive
-  picks up and delivers back, the “comeback combo”; current new-request transport
-  fee is $11 total. This distinct API mode selects return delivery when omitted;
-  an explicitly conflicting collection value is rejected. Legacy
-  `mode=prepaid_pickup` plus `return_mode=courier_delivery` is still supported and
-  maps to the same idempotent draft. Stored/status responses keep that canonical
-  format so existing checkout, quoted prices and order references remain intact.
+1. `prepaid_dropoff`, `customer_collection`: you drop off and collect, prepay
+   online; $0 trip fee.
+2. `prepaid_dropoff_delivery`, optional `courier_delivery`: you drop off,
+   “we bring it back”; one $6 delivery trip.
+3. `prepaid_pickup`, `customer_collection`: we pick up, you collect; one $6 trip.
+4. `prepaid_pickup_delivery`, optional `courier_delivery`: pickup and return
+   delivery, the “comeback combo”; $11 total trip fee.
+5. `pay_later_dropoff`, `customer_collection`: you drop off and collect, pay at
+   pickup; $0 trip fee and no online payment.
 
-Options 2–4 require Continue to Payment and completed native payment before
-merchant booking review/notifications. All requested service days still require
-merchant confirmation after payment. Obtain live transport prices; the combined
-fee is a total, not two $6 charges. Existing requests retain their original quote.
+Trip fees apply once per order, never per knife; all options also charge the
+selected sharpening services. Always display service cost + trip fee, before
+configured tax. These are taxable native fees, not the site's flat parcel
+shipping policy. Existing requests retain their frozen transport and tax values.
+Both delivery aliases default to `courier_delivery` and reject conflicting
+collection. Status/storage retain canonical `prepaid_dropoff` or `prepaid_pickup`
+plus `courier_delivery`. Older composite input remains supported.
+
+Options 1–4 require completed payment before merchant review/notifications.
+Service days need merchant confirmation afterward. The human flow has two
+screens: booking details (“Your knife game plan”) then KnifeRevive secure payment.
+Billing can differ from the consent-bound service address. If live access is
+challenged, provide the human form without inventing unavailable choices.
 An 8-inch chef's knife matches the configured Large Knife Sharpening definition;
 use its live price ($7 at setup). Do not generalize this to unconfigured size limits.
 Catalog service and transport subtotals exclude applicable tax and other fees.
@@ -68,7 +68,7 @@ Idempotency-Key:
 ```
 
 IDs and dates are examples; discover actual services and an available future day.
-Omit `postal_code` for option 1. Options 2–4 require the eligible five-digit ZIP.
+Omit `postal_code` for option 5. Options 1–4 require the eligible five-digit ZIP.
 Draft creation accepts service choices and optional short service `notes`, not
 `customer` or `pickup_address`. The human enters and approves sharing these on
 the private first-party form. Do not put PII in service notes. Never put addresses or session tokens
@@ -128,7 +128,7 @@ live `prepayment_enabled=true`. It returns the original protected native listing
 review. Follow the listing checkout guide for an actual all-in quote and customer
 payment. Retries return the same intent; never create another payment after an
 uncertain outcome. Payment success comes from native verified order status.
-When disabled, explain that prepaid checkout is unavailable and offer option 1
+When disabled, explain that prepaid checkout is unavailable and offer option 5
 if the customer can drop off and collect. Do not submit a prepaid choice as an
 unpaid merchant booking or silently change its handoff.
 
