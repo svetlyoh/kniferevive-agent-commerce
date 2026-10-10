@@ -26,7 +26,9 @@ for slug, version in [("kniferevive-listing", "1.0.0"), ("kniferevive-concierge"
             if re.search(rb"(?:sk_live_|whsec_)[A-Za-z0-9]{16,}", payload):
                 raise SystemExit("Credential-like literal in package")
             if file.suffix == ".md":
-                for target in re.findall(r"\]\(([^)]+)\)", payload.decode("utf-8")):
+                markdown = re.sub(r"```.*?```", "", payload.decode("utf-8"), flags=re.DOTALL)
+                markdown = re.sub(r"`[^`]*`", "", markdown)
+                for target in re.findall(r"\]\(([^)]+)\)", markdown):
                     if "://" in target or target.startswith("#"):
                         continue
                     resolved = (file.parent / target.split("#", 1)[0]).resolve()
