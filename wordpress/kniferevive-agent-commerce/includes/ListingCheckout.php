@@ -399,7 +399,7 @@ final class ListingCheckout {
             if(count($orders)!==1)Domain::fail('PAYMENT_UNRESOLVED','Find and reconcile the original native order manually; exactly one match is required.',409);
             $order=$orders[0];$items=[];foreach($order->get_items() as $item)$items[]=['product_id'=>$item->get_product_id(),'quantity'=>(int)$item->get_quantity()];usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
             if($items!==$d['selection']['items'] || $order->get_meta('_krev_listing_quote_hash')!==($d['quote']['quote_hash']??'')
-                || $order->get_payment_method()!==$d['context']['payment_method'] || self::minor($order->get_total())!==$d['quote']['total_minor']
+                || !self::matchesNativeGateway($order,$d) || self::minor($order->get_total())!==$d['quote']['total_minor']
                 || (!empty($d['order_id']) && (int)$d['order_id']!==$order->get_id()))Domain::fail('PAYMENT_UNRESOLVED','Original order binding differs from the reviewed intent.',409);
             $d['order_id']=$order->get_id();$d['handoff_state']='order_linked';Store::update($id,$d);return $order->get_id();
         });
@@ -411,15 +411,26 @@ final class ListingCheckout {
     public static function validatePayOrder(\WC_Order $order): void {
         $id=$order->get_meta('_krev_listing_intent');if(!Domain::validId($id))return;
         $row=Store::get($id,'listing');$method=wc_clean(wp_unslash($_POST['payment_method']??''));
-        if((int)$row['data']['order_id']!==$order->get_id() || $method!==$row['data']['context']['payment_method']
+        if((int)$row['data']['order_id']!==$order->get_id() || ($method!==$row['data']['context']['payment_method'] && !($method===$order->get_payment_method() && self::matchesNativeGateway($order,$row['data'])))
             || self::minor($order->get_total())!==$row['data']['quote']['total_minor']
             || $order->get_meta('_krev_listing_quote_hash')!==$row['data']['quote']['quote_hash'])throw new \Exception('Use the original reviewed payment method and amount; contact KnifeRevive before a different payment.');
         if(isset($row['data']['selection']['booking_id']))Booking::paymentSelection($row['data']['selection']['booking_id']);
     }
+    /** Official Stripe UPE records Cash App under its native subtype after checkout. */
+    private static function matchesNativeGateway(\WC_Order $order,array $data): bool {
+        $expected=$data['context']['payment_method'];$actual=$order->get_payment_method();
+        if($actual===$expected)return true;
+        $booking=$data['selection']['booking_id']??'';
+        return $expected==='stripe' && $actual==='stripe_cashapp' && Domain::validId($booking)
+            && $order->get_meta('_krev_service_booking')===$booking
+            && class_exists('WC_Stripe_UPE_Payment_Method_Cash_App_Pay')
+            && is_callable(['WC_Stripe_Order_Helper','get_instance'])
+            && \WC_Stripe_Order_Helper::get_instance()->get_stripe_upe_payment_type($order)===\WC_Stripe_UPE_Payment_Method_Cash_App_Pay::STRIPE_ID;
+    }
     public static function paymentObserved(int $orderId): void {
         $order=wc_get_order($orderId);$id=$order?$order->get_meta('_krev_listing_intent'):null;
         if(!Domain::validId($id) || !$order->is_paid() || !$order->get_date_paid() || !$order->get_transaction_id())return;
-        Store::lock('listing:'.$id,static function()use($id,$order){$row=Store::get($id,'listing');$d=$row['data'];if((int)($d['order_id']??0)!==$order->get_id() || $order->get_payment_method()!==$d['context']['payment_method'])return;
+        Store::lock('listing:'.$id,static function()use($id,$order){$row=Store::get($id,'listing');$d=$row['data'];if((int)($d['order_id']??0)!==$order->get_id() || !self::matchesNativeGateway($order,$d))return;
             $d['native_payment_observed']=['gateway'=>$order->get_payment_method(),'reference_hash'=>hash('sha256',$order->get_transaction_id()),'observed_at'=>time()];Store::update($id,$d);
         });
     }
