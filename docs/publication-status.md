@@ -1,4 +1,16 @@
-## Current skill/plugin 0.6.0 — all-category and Google-feed attribute search
+## GitHub source 0.6.1; ClawHub latest 0.6.0 — direct import currently blocked
+
+October 10, 2026: GitHub [skill 0.6.1](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.6.1)
+updates the existing skill's install instructions to use the complete GitHub
+folder and retain one active installation with the same identity. All nine
+GitHub-hosted files match the release manifest and skill validation passed.
+ClawHub's server-side GitHub importer failed twice before review/publication;
+the existing listing remains 0.6.0. No duplicate, renamed fork or local ClawHub
+upload was created for 0.6.1. See [source, importer and Muse guidance](github-skill-install-0.6.1.md)
+and [file hashes](skill-release-manifest-0.6.1.json). A new server-resolved GitHub
+provenance record and exact-version ClawHub audit for 0.6.1 are not claimed.
+
+## Current published skill/plugin 0.6.0 — all-category and Google-feed attribute search
 
 October 10, 2026: portable KnifeRevive Concierge **0.6.0** is published on
 [GitHub](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.6.0)
