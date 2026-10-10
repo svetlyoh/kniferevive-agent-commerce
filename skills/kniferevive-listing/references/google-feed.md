@@ -32,8 +32,10 @@ Collect as much of the following as the listing actually provides:
 - Category-specific facts: knife/blade type, edge style and blade length/unit;
   other relevant specifications, materials, color, size or variant facts when
   supplied. Use the current native schema, not guessed attribute names.
-- Explicit item quantity and packaged weight/dimensions, when stated. Otherwise
-  omit quantity; never assert stock availability from a source card. For missing
+- Explicit item quantity and packaged weight/dimensions, when stated. When quantity
+  is absent, use the owner's default of one for a new listing and label it as a
+  seller default; never assert verified stock availability from a source card.
+  Preserve explicit zero and existing inventory on photo-only repairs. For missing
   package fields, the owner authorizes 15 oz and 1 × 6 × 4 inches (length × width
   × height), as merchant defaults rather than measurements. Marketplace Imports
   1.0.2 fills blank fields independently, preserving supplied values; read

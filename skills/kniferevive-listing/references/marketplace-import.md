@@ -6,6 +6,11 @@ Resolve the referenced item from the current Muse chat. If several are possible,
 ask which one. This instruction authorizes preparation, not buying inventory,
 messaging the original seller or asserting ownership of another seller's item.
 
+Read [photo recovery and verification](photos.md) before extraction. Collect a
+photo manifest with gallery positions and measured pixels. Incomplete galleries
+and small-only sources must be disclosed before preparation. When repairing an
+existing listing, update its photos in place; never create another product.
+
 1. Use the host's actual browser/source tools to open the referenced Facebook
    listing when accessible. Copy title, item description, stated condition,
    brand/model/specifications, the explicitly USD item price, direct canonical
@@ -45,7 +50,7 @@ messaging the original seller or asserting ownership of another seller's item.
 2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
    HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
    on October 10, 2026. An identifying User-Agent may be
-   `KnifeRevive-Listing/1.0.3`. If the response is a hosting HTML challenge,
+   `KnifeRevive-Listing/1.0.4`. If the response is a hosting HTML challenge,
    distinguish it from an API JSON error. Do not spoof a browser, solve challenges
    or transfer browser cookies. If the supported client remains blocked, report
    that the import was not prepared and direct the seller to ListLab through
@@ -93,8 +98,13 @@ messaging the original seller or asserting ownership of another seller's item.
 }
 ```
 
-   Native optional listing fields are advertised by the schema. Omit quantity,
-   shipping policy, return policy and identifiers when not known. Extract actual
+   Native optional listing fields are advertised by the schema. If quantity is
+   absent, send `quantity: 1` as the owner's new-listing default; preserve explicit
+   quantities including zero. Marketplace Imports 1.0.3 also fills omitted/blank
+   quantity with one for newly prepared drafts. The seller checks availability;
+   this is not a verified Facebook stock count. Preserve existing inventory on
+   photo-only repairs. Omit shipping policy, return policy and identifiers when
+   not known. Extract actual
    packaged weight/dimensions with units when given and convert to the schema's
    store units before submitting. For missing package fields, let Marketplace
    Imports 1.0.2 fill the owner's defaults: 15 oz and 1 × 6 × 4 inches, length ×

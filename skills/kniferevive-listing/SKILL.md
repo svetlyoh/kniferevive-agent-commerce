@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.3"
+  version: "1.0.4"
 ---
 
 # KnifeRevive Listing
@@ -14,6 +14,10 @@ separate Meta bot. It uses Muse's existing authorized browser/source, HTTP and
 link-opening tools; installing instructions does not add those tools.
 
 Read [the listing workflow](references/marketplace-import.md) before preparation.
+Read [photo recovery](references/photos.md) before collecting images. Verify
+each gallery position and decoded pixel dimensions; a preview or one accessible
+image is not a complete gallery. Use the largest source-served version of each
+photo, preserving its signed URL. Flag small/missing photos before preparation.
 Open the actual source listing, extract its title, description, condition,
 brand/model/specifications, explicit USD price and every real item photo. Open
 the complete listing gallery and collect all distinct photos in source order,
@@ -22,6 +26,9 @@ at the first photo or search-card thumbnail. Report incomplete gallery access
 and any import-limit overflow as described in the listing workflow. Map facts
 to the live category attribute schema; retain unmatched facts in the description
 and omit unknowns. Keep preparation scoped to the item the user selected.
+When source quantity is absent, default `quantity` to **1** as the owner's
+inventory default, not a verified Facebook stock count. Preserve explicit
+quantities (including zero) and existing listing inventory on photo repairs.
 Prefill `short_description` with the same text as `description`. Extract the
 manufacturer brand when available. For knives, identify the stated knife/blade
 type, cutting-edge style and blade length with its units; map those facts to the

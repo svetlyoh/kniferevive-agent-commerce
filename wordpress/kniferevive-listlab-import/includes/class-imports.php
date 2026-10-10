@@ -38,6 +38,7 @@ final class KREV_Marketplace_Imports {
     public static function schema( WP_REST_Request $request ) {
         $schema = ( new KREV_ListLab_REST() )->schema( $request );
         $package_defaults = KREV_Import_Package_Defaults::schema();
+        $package_defaults['inventory_default'] = array( 'quantity' => 1, 'applies' => 'New Marketplace drafts with omitted/blank quantity only; explicit quantity including zero and later seller inventory are preserved.' );
         return self::response( array( 'version' => KREV_IMPORT_VERSION, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls' ), 'max_images' => 10, 'package_defaults' => $package_defaults, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
     }
 
@@ -75,6 +76,8 @@ final class KREV_Marketplace_Imports {
         // Imported drafts prefill both descriptions identically, including review edits.
         // Native ListLab edits after draft creation remain independent and are never overwritten on retry.
         $listing['short_description'] = $listing['description'] ?? '';
+        // Owner's new-listing inventory default; never overwrite explicit zero.
+        if ( ! isset( $listing['quantity'] ) || '' === $listing['quantity'] ) $listing['quantity'] = '1';
         foreach ( array( 'category_id', 'quantity', 'shipping_policy_id', 'return_policy_id', 'featured_image_id' ) as $field ) {
             if ( isset( $listing[ $field ] ) && '' !== $listing[ $field ] && ! preg_match( '/^\d{1,9}$/D', (string) $listing[ $field ] ) ) return self::fail( 'import_integer', $field . ' must be a non-negative whole number.' );
         }

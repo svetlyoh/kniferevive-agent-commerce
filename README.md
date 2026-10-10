@@ -2,7 +2,7 @@
 
 The new [Muse Marketplace → ListLab importer](docs/muse-listlab-import-1.0.0.md)
 adds a separate WooCommerce companion plugin with category pricing controls and
-private seller completion links. The separate [KnifeRevive Listing 1.0.3 skill](skills/kniferevive-listing/SKILL.md)
+private seller completion links. The separate [KnifeRevive Listing 1.0.4 skill](skills/kniferevive-listing/SKILL.md)
 routes “List this on KnifeRevive” to that workflow. Concierge 0.6.3 handles shopping
 and sharpening. See [installation and validation](docs/kniferevive-listing-skill-1.0.0.md)
 and [description/knife attribute prefilling in 1.0.1](docs/marketplace-import-1.0.1.md).

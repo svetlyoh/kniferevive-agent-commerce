@@ -45,6 +45,11 @@ checkImport( $status->get_data()['data']['source_url'] === 'https://www.facebook
 checkImport( ! str_contains( $status->get_data()['data']['listing']['description'], '<script>' ), 'source executable markup stripped' );
 checkImport( $status->get_data()['data']['listing']['short_description'] === $status->get_data()['data']['listing']['description'], 'short description prefills from sanitized long description' );
 checkImport( $schema->get_data()['package_defaults']['store_values']['weight'] === '0.9375', 'public schema advertises 15 oz in native pounds' );
+checkImport( $schema->get_data()['package_defaults']['inventory_default']['quantity'] === 1 && $status->get_data()['data']['listing']['quantity'] === '1', 'schema and preparation expose owner quantity default one' );
+$quantity_blank = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'quantity' => '' ) ) );
+checkImport( $quantity_blank->get_data()['data']['listing']['quantity'] === '1', 'blank quantity defaults to one' );
+$quantity_zero = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'quantity' => '0' ) ) );
+checkImport( $quantity_zero->get_data()['data']['listing']['quantity'] === '0', 'explicit zero stock is preserved' );
 checkImport( $status->get_data()['data']['listing']['weight'] === '0.9375' && array_intersect_key( $status->get_data()['data']['listing'], array_flip( array( 'length', 'width', 'height' ) ) ) === array( 'length' => '1', 'width' => '6', 'height' => '4' ), 'omitted package fields prefill defaults' );
 $package_preview = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'weight' => '2.25', 'length' => '12', 'width' => '', 'height' => '0' ) ) );
 $package_fields = $package_preview->get_data()['data']['listing'];
@@ -83,6 +88,7 @@ checkImport( $claimed->get_status() === 201, 'native ListLab writer creates draf
 $id = $claimed->get_data()['listing']['id']; $product = wc_get_product( $id );
 checkImport( $product->get_status() === 'draft', 'incomplete listing never published' );
 checkImport( $product->get_regular_price() === '30.00' && $product->get_stock_quantity() === 2, 'calculated price and supplied quantity preserved' );
+checkImport( $product->get_status() === 'draft', 'quantity default and seller override never automatically publish' );
 checkImport( (int) get_post_field( 'post_author', $id ) === $seller, 'draft is seller-owned' );
 checkImport( $product->get_meta( '_krev_import_source_price' ) === '25.00', 'original Facebook price retained separately' );
 checkImport( $product->get_short_description() === $product->get_description() && $product->get_description() !== '', 'native ListLab draft retains identical descriptions' );
@@ -144,7 +150,7 @@ $attribute_claim = importCall( 'claim', array( 'token' => $attribute_token, 'exp
 $attribute_product = wc_get_product( $attribute_claim->get_data()['listing']['id'] );
 checkImport( in_array( 'Intel Core i5', wp_get_object_terms( $attribute_product->get_id(), 'pa_processor', array( 'fields' => 'names' ) ), true ), 'copied CPU stored as real native attribute' );
 checkImport( $attribute_product->get_attributes()['pa_processor']->get_visible(), 'copied specification visible for storefront/feed projection' );
-checkImport( $attribute_product->get_stock_quantity() === 0 && $attribute_product->get_status() === 'draft', 'unknown inventory creates no available published stock' );
+checkImport( $attribute_product->get_stock_quantity() === 1 && $attribute_product->get_status() === 'draft', 'omitted inventory defaults to one while product remains a draft' );
 $knife = get_term_by( 'slug', 'chefs-knife', 'product_cat' );
 if ( ! $knife ) { $made = wp_insert_term( 'Synthetic chefs knife', 'product_cat', array( 'slug' => 'chefs-knife' ) ); $knife = get_term( $made['term_id'], 'product_cat' ); }
 if ( ! taxonomy_exists( 'product_brand' ) ) register_taxonomy( 'product_brand', 'product' );

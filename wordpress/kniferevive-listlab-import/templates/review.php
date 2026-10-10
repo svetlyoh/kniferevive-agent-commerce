@@ -12,7 +12,8 @@
     <button id="krev-import-refresh" type="button">Refresh price</button>
     <label>Listing title <input id="krev-import-title" maxlength="200" required></label>
     <label>Description <textarea id="krev-import-description" rows="7" maxlength="16000"></textarea></label>
-    <label>Quantity you have available <input id="krev-import-quantity" type="number" min="0" step="1" placeholder="Complete in ListLab if unknown"></label>
+    <label>Quantity you have available <input id="krev-import-quantity" type="number" min="0" step="1" placeholder="1"></label>
+    <p>Quantity defaults to 1 when omitted. Check the number you have available; this is a store default, not a verified Facebook stock count.</p>
     <p>Blank shipping fields use the store defaults: 15 oz packaged weight and 1 × 6 × 4 inches (length × width × height). Check or replace them in ListLab; entered values take priority.</p>
     <div id="krev-import-photos" class="krev-import-photos"></div>
     <p><small>Photos are copied only after you create your seller draft. If a Facebook image link expires, add that photo in ListLab.</small></p>
