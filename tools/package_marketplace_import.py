@@ -1,11 +1,13 @@
 """Package Marketplace Imports and the portable skill; deterministic LF source bytes."""
 from pathlib import Path
-import hashlib, json, re, zipfile
+import hashlib, json, re, zipfile, subprocess
 
 root = Path(__file__).resolve().parents[1]
 out = root / "dist"
 out.mkdir(exist_ok=True)
 manifest = {"plugin_version": "1.0.0", "skill_version": "0.6.2", "components": {}}
+source_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+manifest["source_commit"] = source_commit
 for folder, archive in [("wordpress/kniferevive-listlab-import", "kniferevive-listlab-import-1.0.0.zip"), ("skills/kniferevive-concierge", "kniferevive-concierge-0.6.2.zip")]:
     base = root / folder
     entries = []
@@ -14,6 +16,9 @@ for folder, archive in [("wordpress/kniferevive-listlab-import", "kniferevive-li
             if file.is_symlink() or file.name.startswith(".") or file.suffix in {".log", ".sql", ".db", ".pyc"}:
                 raise SystemExit("Forbidden package file: " + str(file))
             payload = file.read_bytes().replace(b"\r\n", b"\n")
+            source = subprocess.check_output(["git", "show", source_commit + ":" + file.relative_to(root).as_posix()], cwd=root)
+            if payload != source:
+                raise SystemExit("Commit source differs; commit component edits before packaging: " + str(file))
             if re.search(rb"(?:sk_live_|whsec_)[A-Za-z0-9]{16,}", payload):
                 raise SystemExit("Credential-like literal in package")
             name = file.relative_to(base.parent).as_posix()

@@ -1,0 +1,102 @@
+{
+  "plugin_version": "1.0.0",
+  "skill_version": "0.6.2",
+  "components": {
+    "kniferevive-listlab-import-1.0.0.zip": {
+      "sha256": "97b9eefc4ddfe82fb44feac4a2b28bd4ad7997d123aa657c90da826d04fda01e",
+      "files": [
+        {
+          "path": "kniferevive-listlab-import/assets/review.css",
+          "sha256": "7fa02964d4b9015e5f1f123ee6eca695f901a3399b5ef3748e880786f6484caa",
+          "bytes": 1352
+        },
+        {
+          "path": "kniferevive-listlab-import/assets/review.js",
+          "sha256": "14ecb26aad7db8c708672ecfc6965b873e5ed5dd94168a8f1a1160db9eb02d5f",
+          "bytes": 5311
+        },
+        {
+          "path": "kniferevive-listlab-import/includes/class-imports.php",
+          "sha256": "7e8b45a1c45fb2ad9890f1c951b3dea3dbd0a70f6dd4a42606d281eeba4c95a3",
+          "bytes": 23729
+        },
+        {
+          "path": "kniferevive-listlab-import/includes/class-pricing.php",
+          "sha256": "17b90bb57e8d3fda6140fa9928a3e1bc47717f9948b4b9af00074dbecba4d8b0",
+          "bytes": 6952
+        },
+        {
+          "path": "kniferevive-listlab-import/kniferevive-listlab-import.php",
+          "sha256": "90e491def01142d842177cbd80f981162dbd777b377fb29aa3c9a81e5d95793b",
+          "bytes": 1034
+        },
+        {
+          "path": "kniferevive-listlab-import/LICENSE",
+          "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+          "bytes": 919
+        },
+        {
+          "path": "kniferevive-listlab-import/templates/review.php",
+          "sha256": "3e351632628ea6001d6d5522598b1b394020eb82e9de042905cb6dc38c44d44c",
+          "bytes": 2919
+        }
+      ]
+    },
+    "kniferevive-concierge-0.6.2.zip": {
+      "sha256": "eac1909ab2483d1030ef22dd2d9762b4e84e0a64df86af131c10414b8099b898",
+      "files": [
+        {
+          "path": "kniferevive-concierge/LICENSE",
+          "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+          "bytes": 919
+        },
+        {
+          "path": "kniferevive-concierge/references/api.md",
+          "sha256": "f25b3bbec5d18fd87538e17d97a149d3e62c30dcb97ab2dfa7413b40ab696094",
+          "bytes": 6448
+        },
+        {
+          "path": "kniferevive-concierge/references/booking.md",
+          "sha256": "1150da4334fd6eb989ea2dd260da41fb9472138d5191839bbd7b4501865cf5b3",
+          "bytes": 13213
+        },
+        {
+          "path": "kniferevive-concierge/references/installation.md",
+          "sha256": "ef7b3433f85e86973943bf443ef2c91ce3fd5139f7d742e82c94f11905908cf0",
+          "bytes": 14686
+        },
+        {
+          "path": "kniferevive-concierge/references/listing-checkout.md",
+          "sha256": "10e97a4148745fa567da1e7f6cb53df04b9788376fcab7fbf6b0925e15fd914f",
+          "bytes": 4463
+        },
+        {
+          "path": "kniferevive-concierge/references/marketplace-import.md",
+          "sha256": "3b19261d3c9d2979a76b4f4f57e25da3011708499ea0dc13e5f12fa6eb57718f",
+          "bytes": 5371
+        },
+        {
+          "path": "kniferevive-concierge/references/payments.md",
+          "sha256": "e70bf7d6cc28166ecbe6dd51c4ca2f5c60ed5701b6969a52ab5bcfd312e1d0d8",
+          "bytes": 4063
+        },
+        {
+          "path": "kniferevive-concierge/references/product-discovery.md",
+          "sha256": "2b7cdd65fd67f87c494af3968dce09edb7eed9c642b87ecf26de053f667d0253",
+          "bytes": 4980
+        },
+        {
+          "path": "kniferevive-concierge/references/sharpening.md",
+          "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e",
+          "bytes": 2128
+        },
+        {
+          "path": "kniferevive-concierge/SKILL.md",
+          "sha256": "8414416f49d085220542f872009de0af31cf69be29ac176af93fee065daf5742",
+          "bytes": 15660
+        }
+      ]
+    }
+  },
+  "source_commit": "1207d4a0995f359b5b7d929f867790d7ba568ff2"
+}
