@@ -11,7 +11,13 @@ final class ListingCheckout {
         add_action('woocommerce_store_api_checkout_order_processed',[self::class,'blockOrder'],5);
         add_action('woocommerce_payment_complete',[self::class,'paymentObserved'],200);
         // Order-pay is a native retry surface too; prevent changing the accepted gateway.
-        add_action('woocommerce_before_pay_action',[self::class,'validatePayOrder'],5);
+        add_action('woocommerce_before_pay_action',static function($order){
+            try{self::validatePayOrder($order);}catch(\Throwable $e){
+                wc_add_notice($e instanceof Fault?$e->getMessage():'Your original KnifeRevive payment needs review. No new payment was started.','error');
+                $bookingId=(string)$order->get_meta('_krev_service_booking');
+                wp_safe_redirect(Domain::validId($bookingId)?add_query_arg(['krev_agent'=>'booking','booking'=>$bookingId,'payment'=>'1'],home_url('/')):$order->get_checkout_payment_url());exit;
+            }
+        },5);
         add_action('woocommerce_cart_emptied',[self::class,'clearBrowserIntent']);
     }
     public static function clearBrowserIntent(): void {
@@ -414,7 +420,27 @@ final class ListingCheckout {
         if((int)$row['data']['order_id']!==$order->get_id() || ($method!==$row['data']['context']['payment_method'] && !($method===$order->get_payment_method() && self::matchesNativeGateway($order,$row['data'])))
             || self::minor($order->get_total())!==$row['data']['quote']['total_minor']
             || $order->get_meta('_krev_listing_quote_hash')!==$row['data']['quote']['quote_hash'])throw new \Exception('Use the original reviewed payment method and amount; contact KnifeRevive before a different payment.');
-        if(isset($row['data']['selection']['booking_id']))Booking::paymentSelection($row['data']['selection']['booking_id']);
+        if(isset($row['data']['selection']['booking_id'])){
+            $bookingId=$row['data']['selection']['booking_id'];$booking=Booking::get($bookingId,Api::bookingOwner($bookingId));
+            if(self::bookingOrder($booking)?->get_id()!==$order->get_id())throw new \Exception('Use this booking’s original KnifeRevive order.');
+            Booking::paymentSelection($bookingId);
+        }
+    }
+    /** A linked order is retried in place, never replaced by a new cart/intent. */
+    public static function bookingOrder(array $booking): ?\WC_Order {
+        $id=$booking['data']['listing_intent']??'';if(!Domain::validId($id))return null;
+        $row=Store::get($id,'listing');$d=$row['data'];
+        if(($d['selection']['booking_id']??'')!==$booking['id'] || $row['owner']!==($booking['data']['checkout_owner']??$booking['owner']))Domain::fail('FORBIDDEN','Use the original booking order.',403);
+        if(empty($d['order_id']))return null;
+        $order=wc_get_order((int)$d['order_id']);$items=[];
+        if(!$order)Domain::fail('PAYMENT_UNRESOLVED','KnifeRevive needs to review the original order.',409);
+        foreach($order->get_items() as $item)$items[]=['product_id'=>$item->get_product_id(),'quantity'=>(int)$item->get_quantity()];
+        usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
+        if($order->get_meta('_krev_listing_intent')!==$id || $order->get_meta('_krev_service_booking')!==$booking['id']
+            || $order->get_meta('_krev_listing_quote_hash')!==($d['quote']['quote_hash']??'') || $items!==$d['selection']['items']
+            || self::minor($order->get_total())!==$d['quote']['total_minor'] || strtolower($order->get_currency())!=='usd'
+            || !self::matchesNativeGateway($order,$d))Domain::fail('PAYMENT_UNRESOLVED','The original order differs from your saved booking. Contact KnifeRevive before paying.',409);
+        return $order;
     }
     /** Official Stripe UPE records Cash App under its native subtype after checkout. */
     private static function matchesNativeGateway(\WC_Order $order,array $data): bool {

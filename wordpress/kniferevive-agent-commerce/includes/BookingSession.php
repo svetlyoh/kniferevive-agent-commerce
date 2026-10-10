@@ -16,11 +16,17 @@ final class BookingSession {
         add_filter('woocommerce_persistent_cart_enabled',static fn($enabled)=>WC()->session instanceof BookingNativeSession?false:$enabled,100);
     }
     public static function resolve(string $handler): string {
-        $private=($_GET['krev_agent']??'')==='booking';$tagged=isset($_GET['krev_booking_checkout']) && (!empty($_GET['wc-ajax']) || wp_doing_ajax());
+        $private=($_GET['krev_agent']??'')==='booking';
+        $orderPay=isset($_GET['krev_booking_checkout'],$_GET['krev_order_payment'],$_GET['pay_for_order'],$_GET['key']);
+        $tagged=isset($_GET['krev_booking_checkout']) && (!empty($_GET['wc-ajax']) || wp_doing_ajax() || $orderPay);
         if(!$private && !$tagged)return $handler;
         $id=(string)wp_unslash($private?($_GET['booking']??''):$_GET['krev_booking_checkout']);
         if(!Domain::validId($id)){if($tagged)Domain::fail('AUTHORIZATION_REQUIRED','Use the private booking checkout.',403);return $handler;}
-        try{Booking::get($id,Api::bookingOwner($id));}catch(\Throwable $e){if($tagged)Domain::fail('AUTHORIZATION_REQUIRED','Use the private booking checkout.',403);return $handler;}
+        try{
+            Booking::get($id,Api::bookingOwner($id));
+            // WooCommerce has not registered order storage yet. The original
+            // order/key binding is checked at wp_loaded, before native pay_action.
+        }catch(\Throwable $e){if($tagged)Domain::fail('AUTHORIZATION_REQUIRED','Use the private booking checkout.',403);return $handler;}
         self::$id=$id;require_once __DIR__.'/BookingNativeSession.php';return BookingNativeSession::class;
     }
     public static function ajaxUrl(string $url,string $id): string {

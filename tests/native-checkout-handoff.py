@@ -63,4 +63,20 @@ result = json.loads(send(checkout_url, pay).read().decode())
 assert result['result'] == 'failure', result
 assert 'Synthetic browser must not initiate payment.' in result['messages'], result
 assert 'Choose your sharpening day' not in result['messages'], result
-print('PASS: both native URLs retain booking; unauthorized browser denied; Cash App selection reaches fenced processor through original booking, quote and native order hooks. No external charge/email.')
+order_id = re.search(r'Original order (\d+)\.', result['messages'])[1]
+resume_url = base + '/?' + urllib.parse.urlencode({'krev_agent': 'booking', 'booking': booking, 'payment': '1'})
+resume = client.open(resume_url).read().decode()
+assert 'Pick up where you left off' in resume and 'KnifeRevive order ' + order_id in resume
+resume_inputs = Inputs()
+resume_inputs.feed(resume)
+native = send(resume_url, resume_inputs.values)
+native_html = native.read().decode()
+assert '/order-pay/' + order_id in native.url or urllib.parse.parse_qs(urllib.parse.urlparse(native.url).query).get('order-pay') == [order_id], native.url
+assert urllib.parse.parse_qs(urllib.parse.urlparse(native.url).query)['krev_booking_checkout'] == [booking]
+assert 'woocommerce-pay-nonce' in native_html, re.sub('<[^>]*>', ' ', native_html)[-1800:]
+native_inputs = Inputs()
+native_inputs.feed(native_html)
+native_inputs.values.update({'payment_method': 'stripe', 'woocommerce_pay': '1'})
+retry = send(native.url, native_inputs.values).read().decode()
+assert 'Original order ' + order_id + '.' in retry, re.sub('<[^>]*>', ' ', retry)[-1800:]
+print('PASS: tagged final checkout; unauthorized browser denied; named recipient reaches fenced processor; booking link reopens original order-pay; retry reaches same order ID. No external charge/email.')

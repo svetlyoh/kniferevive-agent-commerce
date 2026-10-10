@@ -1,0 +1,24 @@
+{
+  "checked_at_utc": "2026-10-10T02:37:16.0374288Z",
+  "version": "0.5.14",
+  "ok": true,
+  "decision": "pass",
+  "reasons": [],
+  "generated_card": {
+    "available": true,
+    "path": "skill-card.md",
+    "url": "https://wry-manatee-359.convex.site/api/v1/skills/kniferevive-concierge/card?ownerHandle=svetlyoh&version=0.5.14",
+    "sha256": "f524231d673234293959f92e6365cf167009efaad7cf60bfac7cf8546674659d",
+    "size": 2919,
+    "contentType": "text/markdown; charset=utf-8"
+  },
+  "security_status": "clean",
+  "security_passed": true,
+  "provenance": {
+    "source": "unavailable",
+    "reason": "No server-resolved GitHub import provenance is stored for this version."
+  },
+  "merchant_backend_version_is_separate": "0.5.16",
+  "skill_0_5_15_published": false,
+  "complete_independent_certification_claimed": false
+}

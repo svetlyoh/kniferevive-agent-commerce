@@ -284,6 +284,13 @@ final class Booking {
         // Caller owns booking + listing locks and has ruled out every order/creation attempt.
         if(in_array($row['data']['booking_state'],['awaiting_payment','requested'],true))self::reservePrepayment($row,true);
     }
+    /** Caller has verified the original Stripe intent still awaits buyer approval. */
+    public static function renewExistingOrderPaymentHold(array $row,\WC_Order $order,object $intent): void {
+        if($order->get_meta('_krev_service_booking')!==$row['id'] || !$order->needs_payment() || $order->get_date_paid() || $order->get_transaction_id()
+            || !in_array($intent->status??'',['requires_payment_method','requires_confirmation','requires_action'],true)
+            || (string)($intent->metadata->order_id??'')!==(string)$order->get_order_number())Domain::fail('PAYMENT_UNRESOLVED','Review the original payment before renewing its service window.',409);
+        if(in_array($row['data']['booking_state'],['awaiting_payment','requested'],true))self::reservePrepayment($row,true);
+    }
     private static function reservePrepayment(array $row,bool $renewUnstarted=false): void {
         $id=$row['id'];$d=$row['data'];$input=$d['input'];$s=Settings::get();
         if(!self::prepaymentEnabled() || $input['mode']==='pay_later_dropoff')Domain::fail('BOOKING_PREPAYMENT_DISABLED','Choose an available prepaid option.',503);

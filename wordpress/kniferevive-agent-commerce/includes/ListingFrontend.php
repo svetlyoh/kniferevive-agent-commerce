@@ -42,6 +42,9 @@ final class ListingFrontend {
     public static function bookingReview(array $row,string $owner,array $values=[]): void {
         $d=$row['data'];$booking=Store::get($d['selection']['booking_id'],'booking');$input=$booking['data']['input'];
         if(!in_array($booking['data']['booking_state'],['awaiting_payment','requested','confirmed'],true)){echo '<p>This booking is closed. Any payment already made needs a separate merchant refund review.</p>';return;}
+        if(!empty($d['order_id'])){
+            echo '<section class="krev-payment-next"><h2>Your saved KnifeRevive order</h2><p>Your booking already has an order. Continue or check that same order here.</p><p><a class="krev-primary-link" href="'.esc_url(add_query_arg(['krev_agent'=>'booking','booking'=>$booking['id'],'payment'=>'1'],home_url('/'))).'">Open my original order payment</a></p></section>';return;
+        }
         if($d['handoff_state']!=='review'){
             if($d['handoff_state']!=='cart_ready' || !empty($d['creation_started']) || !empty($d['order_id'])){echo '<p>An order may already exist. Check this booking’s original order or contact KnifeRevive before paying again.</p>';return;}
             try{if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();ListingCheckout::bookingCart($booking);$ready=true;}catch(\Throwable $e){$ready=false;}
@@ -128,5 +131,5 @@ final class ListingFrontend {
         }
         echo '<button>Calculate native quote</button></form>';
     }
-    private static function hidden(string $owner,string $id): void {echo '<input type="hidden" name="csrf" value="'.esc_attr(self::csrf($owner,$id,intdiv(time(),600))).'">';}
+    public static function hidden(string $owner,string $id): void {echo '<input type="hidden" name="csrf" value="'.esc_attr(self::csrf($owner,$id,intdiv(time(),600))).'">';}
 }

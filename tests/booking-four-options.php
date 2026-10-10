@@ -83,6 +83,27 @@ $_GET=[];
 // Reciprocal synthetic native order: no network or real charge.
 $pi=Store::get(Store::get($pickup['id'])['data']['listing_intent'],'listing');$d=$pi['data'];$order=wc_create_order(['status'=>'pending']);$order->add_product($p,1);$fee=new WC_Order_Item_Fee();$fee->set_name('KnifeRevive merchant transport');$fee->set_total('6.00');$order->add_item($fee);$ship=new WC_Order_Item_Shipping();$ship->set_method_id('local_pickup');$ship->set_method_title('Sharpening service handoff');$ship->set_total(0);$order->add_item($ship);$order->set_payment_method('stripe');$order->set_billing_email('synthetic@example.invalid');$order->update_meta_data('_krev_listing_intent',$pi['id']);$order->update_meta_data('_krev_service_booking',$pickup['id']);$order->update_meta_data('_krev_listing_quote_hash',$d['quote']['quote_hash']);$order->calculate_totals();$order->save();$d['order_id']=$order->get_id();Store::update($pi['id'],$d);dokan()->order->maybe_split_orders($order->get_id());dokan_sync_insert_order($order->get_id());
 fourCheck(!Booking::merchantVisible(Store::get($pickup['id'])),'pending native order alone does not submit prepaid booking');
+$originalPayment=\KnifeRevive\AgentCommerce\BookingOrderPayment::prepare(Store::get($pickup['id']),$owner);$named=wc_get_order($order->get_id());
+fourCheck($named->get_shipping_first_name()==='Synthetic' && $named->get_shipping_last_name()==='buyer' && $named->get_total()===$order->get_total(),'original pending order gains missing consented recipient without repricing');
+fourCheck(str_contains($originalPayment,'krev_order_payment='.$order->get_id()) && (str_contains($originalPayment,'order-pay/'.$order->get_id()) || str_contains($originalPayment,'order-pay='.$order->get_id())),'recovery URL pays the same native order without creating another');
+parse_str(parse_url($originalPayment,PHP_URL_QUERY),$_GET);
+fourCheck(BookingSession::resolve(WC_Session_Handler::class)===BookingNativeSession::class,'original order-pay keeps an authorized isolated booking session');
+\KnifeRevive\AgentCommerce\BookingOrderPayment::validateRoute();
+$_GET['key']='tampered';fourReject(static fn()=>\KnifeRevive\AgentCommerce\BookingOrderPayment::validateRoute(),'AUTHORIZATION_REQUIRED');$_GET=[];
+WC_Stripe_Order_Helper::get_instance()->update_stripe_intent_id($order,'pi_syntheticOriginal16');$order->save();
+$retryProcessorStatus='processing';$retryProcessorAmount=1100;
+$retryProcessor=static function($pre,$args,$url)use(&$retryProcessorStatus,&$retryProcessorAmount,$order){
+ if(!str_ends_with($url,'/payment_intents/pi_syntheticOriginal16'))return $pre;
+ return ['headers'=>[],'body'=>wp_json_encode(['id'=>'pi_syntheticOriginal16','status'=>$retryProcessorStatus,'amount'=>$retryProcessorAmount,'currency'=>'usd','metadata'=>['order_id'=>(string)$order->get_id()]]),'response'=>['code'=>200,'message'=>'OK'],'cookies'=>[]];
+};add_filter('pre_http_request',$retryProcessor,10,3);
+$wpdb->update(Store::table('holds'),['expires'=>time()-1],['attempt_id'=>$pickup['id']]);
+fourReject(static fn()=>\KnifeRevive\AgentCommerce\BookingOrderPayment::prepare(Store::get($pickup['id']),$owner),'PAYMENT_UNRESOLVED');
+fourCheck(!Booking::activePrepaymentHold($pickup['id']),'processing original Stripe intent cannot renew capacity or invite another payment');
+$retryProcessorStatus='requires_payment_method';$retryProcessorAmount=1200;
+fourReject(static fn()=>\KnifeRevive\AgentCommerce\BookingOrderPayment::prepare(Store::get($pickup['id']),$owner),'PAYMENT_UNRESOLVED');
+$retryProcessorAmount=1100;\KnifeRevive\AgentCommerce\BookingOrderPayment::prepare(Store::get($pickup['id']),$owner);
+fourCheck(Booking::activePrepaymentHold($pickup['id']) && ListingCheckout::bookingOrder(Store::get($pickup['id']))->get_id()===$order->get_id(),'verified unpaid original Stripe intent renews capacity for the same order');
+remove_filter('pre_http_request',$retryProcessor,10);
 $order->set_status('processing');$order->set_date_paid(time());$order->save();fourCheck(!Booking::merchantVisible(Store::get($pickup['id'])),'manually paid-looking order does not bypass gateway verification');
 $order->set_transaction_id('synthetic-cashapp-only');$order->set_payment_method('stripe_cashapp');WC_Stripe_Order_Helper::get_instance()->update_stripe_upe_payment_type($order,'card');$order->save();ListingCheckout::paymentObserved($order->get_id());
 fourCheck(ListingCheckout::facts(Store::get($pi['id'],'listing'))['payment_state']==='needs_review','Cash App gateway with mismatched native Stripe subtype cannot verify payment');
@@ -116,6 +137,7 @@ BookingCheckoutFields::review(http_build_query($posted));$deliveryIntent=Listing
 fourCheck($deliveryIntent['data']['context']['billing']==$billing && $deliveryIntent['data']['context']['shipping']==$address,'native billing refresh changes billing only and retains approved trip destination');
 $protected=BookingCheckoutFields::posted(array_replace($posted,['shipping_address_1'=>'Unapproved replacement']));
 fourCheck($protected['shipping_address_1']===$address['address_1'] && $protected['shipping_postcode']==='94565' && !$protected['ship_to_different_address'],'native order payload ignores alternate shipping address');
+fourCheck($protected['shipping_first_name']==='Synthetic' && $protected['shipping_last_name']==='buyer','hidden shipping fields retain the consented recipient despite different billing');
 $s=Settings::get();$s['booking_transport_taxable']=false;update_option('krev_agent_settings',$s,false);WC()->cart->calculate_totals();
 fourCheck(Domain::cents(wc_format_decimal(WC()->cart->get_fee_tax(),2))===60,'existing trip quote retains its taxable snapshot after settings change');
 update_option('woocommerce_calc_taxes','no');

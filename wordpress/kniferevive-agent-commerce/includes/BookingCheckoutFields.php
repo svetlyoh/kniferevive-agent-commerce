@@ -25,8 +25,14 @@ final class BookingCheckoutFields {
         if(!self::active())return $data;
         [$booking,$owner,$intent]=self::original();
         foreach($intent['data']['context']['shipping'] as $field=>$value)$data['shipping_'.$field]=$value;
+        foreach(self::recipient($booking) as $field=>$value)$data['shipping_'.$field]=$value;
         $data['ship_to_different_address']=false;
         return $data;
+    }
+    /** Shipping UI is hidden, but Stripe still requires a named recipient. */
+    public static function recipient(array $booking): array {
+        $parts=explode(' ',trim(wc_clean($booking['data']['input']['customer']['name']??'')),2);
+        return ['first_name'=>$parts[0]??'','last_name'=>$parts[1]??''];
     }
     /** WooCommerce has already checked its native update-review nonce. */
     public static function review(string $serialized): void {

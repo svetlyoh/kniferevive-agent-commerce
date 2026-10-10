@@ -10,6 +10,8 @@ final class BookingCheckoutFrontend {
             if(!is_ssl() && wp_get_environment_type()!=='local')Domain::fail('FORBIDDEN','Secure checkout is required.',403);
             $owner=Api::bookingOwner($id);$booking=Booking::get($id,$owner);
             if(!WC()->session || !WC()->cart || !WC()->customer)wc_load_cart();
+            $existingOrder=ListingCheckout::bookingOrder($booking);
+            if($existingOrder)BookingOrderPayment::render($booking,$owner,$existingOrder);
             if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
                 $post=wp_unslash($_POST);$original=Store::get($booking['data']['listing_intent']??'','listing');
                 ListingFrontend::authorizeForm($original['owner'],$original['id'],$post);
