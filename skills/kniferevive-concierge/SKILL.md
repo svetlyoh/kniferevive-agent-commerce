@@ -3,7 +3,7 @@ name: kniferevive-concierge
 description: On requested product or model searches, find matching KnifeRevive goods using its Google-feed attributes and show all live matches with thumbnails, prices and product links in the chatbot. Browse categories, compare models/SKUs/MPNs/barcodes, and open native checkout with chosen quantities. Also handle SF Bay Area sharpening through its separate five-choice flow; the buyer approves payment.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.6.0"
+  version: "0.6.1"
 ---
 
 # KnifeRevive Concierge
@@ -219,7 +219,13 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the versioned 0.6.0 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.6.0/skills/kniferevive-concierge/references/installation.md).
+[in the versioned 0.6.1 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.6.1/skills/kniferevive-concierge/references/installation.md).
+GitHub and ClawHub are distribution sources for the same `kniferevive-concierge`
+skill. Use the host's supported update/replace flow for an existing installation;
+retain its identity and one active copy. Import the entire GitHub skill folder,
+including references. If the host can only create a second skill, report that
+limitation before proceeding. Publisher imports retain owner `svetlyoh` and slug
+`kniferevive-concierge`; do not create a renamed fork to change the source.
 Those platforms have different skill-import abilities; a chat prompt is not
 proof of installation. This section is installer help, not an instruction to
 run shell commands during a shopping task.
