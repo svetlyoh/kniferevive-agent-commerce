@@ -1,6 +1,7 @@
 """HTTP regression on the loopback-only, synthetic ui-router.php fixture."""
 import http.cookiejar
 import json
+import os
 import re
 import urllib.error
 import urllib.parse
@@ -8,7 +9,9 @@ import urllib.request
 from html import unescape
 from html.parser import HTMLParser
 
-base = 'http://localhost:11080'
+test_port = int(os.environ.get('KREV_TEST_HTTP_PORT', '11080'))
+assert test_port in (11080, 11090), 'Use an approved loopback-only HTTP sandbox port'
+base = f'http://localhost:{test_port}'
 client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 html = client.open(base + '/checkout/?krev_ui_cart=services').read().decode()
 assert 'name="customer_name"' in html

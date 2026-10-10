@@ -22,7 +22,9 @@ product pages for goods. Do not label the production payment pipeline complete.
 The handoff's repository baseline was clean at `88866d2d4824608c546029dc5076e6e6d8aa74d9`.
 During the task, another owner-directed chat implemented confirmed booking status
 on native seller orders and committed `da156a9`. Goods work used an isolated Git
-checkout and was rebased onto that repair, preserving it. The separate test MySQL
+checkout and was rebased onto that repair and `a40263095a79bd43bd30ee3d356b038f2ff3f5f2`
+(Agent Commerce 0.5.18 / Seller Orders 1.1.8 native seller order links), preserving
+both repairs. The separate test MySQL
 instance uses loopback port **11029**, database **krev_agent_sandbox**, prefix
 **krev_sandbox_**, and its own ignored data directory. No Local Sites/production
 wp-config.php, customer database or unowned server was used or stopped.
@@ -49,8 +51,10 @@ configuration's `stripe_environment=test` does not certify the native gateway.
   GTIN, public specifications/images, category detail and weight/dimensions. Empty
   values remain null/empty. SKU uses CRUD; barcode uses native Global Unique ID;
   Model uses existing visible `pa_model-number`; brand hierarchy and MPN priority
-  match the audited installed Merchant Sync code. Production plugin-editor parity
-  remains unverified because admin browser permissions were unavailable.
+  match the audited Merchant Sync sources. Read-only production plugin-editor
+  inspection confirms native GTIN, exact MPN priority, canonical title and the
+  installed Google product-details allowlist. This is source-mapping evidence,
+  separate from Google ingestion/approval.
 - Case/whitespace-normalized exact filters use a hash index with composite exact
   lookup, preserve punctuation/leading zeros, and combine with AND. Search merges
   exact identity and native title/description keyword predicates; SQL pagination
@@ -74,6 +78,19 @@ configuration's `stripe_environment=test` does not certify the native gateway.
   disclosed. Disabled handoff opens/provides the canonical product page. Repo tests
   cannot certify Muse's renderer or its installed skill.
 
+The owner's additional instruction is included in the skill: relevant product
+searches show every matching KnifeRevive item directly in Muse/chatbots with its
+actual thumbnail, current price and canonical product link. Cards/buttons use
+available host primitives; numbered inline images/links are the fallback. Follow
+all result pages and disclose totals/remaining matches when host limits require
+batches. The merchant's native Google-feed detail mapping supplies searchable
+CPU/RAM/GPU, knife, art, coin and spice values. Source attributes are normalized
+without calling Merchant Sync's mutating mapper or exposing its credentials.
+Google publication/approval/rank remains explicitly `not_checked`. This is not
+an assertion that public Google Shopping returned those products. Identity index
+schema 2 adds public feed value text with hashed exact lookups, native term/category
+invalidation and bounded rebuild. Arbitrary private attributes/meta stay excluded.
+
 ## Validation and remaining launch proof
 
 Tests run through the existing fenced WordPress/WooCommerce stack with synthetic
@@ -91,11 +108,23 @@ Native seller-side tests load a captured Seller Orders candidate, documented in
 the evidence. That local stack differs from production versions; simulated
 payments/transfers/refunds are not real processor, seller payout or refund proof.
 
-Production `listing_handoff_enabled`, pricing/live evidence, ceiling and policy
-settings could not be inspected from authorized admin UI: Browser Use refused
-because saved site permissions could not be verified. No security workaround was
-attempted. Exact private setting blockers therefore remain unverified; public
-goods handoff is unavailable. Required operator review is described in
+Admin browser access became available after the session update; the earlier
+permission blocker was not bypassed. Read-only live settings show
+`listing_handoff_enabled=false`, `listing_pricing_verified=false`,
+`listing_live_verified=false`, gateways `[stripe]`, maximum 100000 cents ($1000),
+and empty listing policy URL/version. Native Stripe reports selected live mode
+and needs operator review; no goods payment evidence is certified. Goods handoff
+therefore remains unavailable independently of enabled sharpening.
+
+Native WooCommerce settings sell/ship to the United States, use USD/two decimals,
+and enable taxes/coupons. No explicit shipping zones exist; Rest of world has no
+methods. Dokan per-product/country shipping is disabled. Native block pickup is
+enabled, titled "Pick Up / Drop Off", with no added charge and one enabled pickup
+location at 304 Kapalua Bay Circle, Pittsburg, CA 94565. Checkout uses blocks.
+Only actual native returned rates can be offered; this configuration does not
+establish parcel/local-delivery availability. Synthetic tests additionally cover
+this real block-pickup configuration and location metadata, without changing live
+settings. Required operator review is described in
 [the guide](goods-operator-guide-0.6.0.md) and existing native launch runbook.
 
 No real charge, production order, email, transfer/refund, gateway-mode switch or

@@ -16,20 +16,24 @@ define('WP_ENVIRONMENT_TYPE','local'); define('DISABLE_WP_CRON',true); define('W
 define('WP_DISABLE_FATAL_ERROR_HANDLER',true);
 define('WP_DEBUG_LOG',dirname(__DIR__).'/.runtime/wp-debug.log');
 $setupTest=($argv[2]??'')==='setup';
-define('WP_HOME',$setupTest?'https://kniferevive.com':'http://localhost:11080'); define('WP_SITEURL',WP_HOME);
+$testHttpPort=(int)(getenv('KREV_TEST_HTTP_PORT')?:11080);
+if(!in_array($testHttpPort,[11080,11090],true))throw new RuntimeException('Use an approved loopback-only HTTP sandbox port.');
+define('WP_HOME',$setupTest?'https://kniferevive.com':'http://localhost:'.$testHttpPort); define('WP_SITEURL',WP_HOME);
 define('WP_HTTP_BLOCK_EXTERNAL',true); define('WP_ACCESSIBLE_HOSTS','localhost,127.0.0.1');
 define('WPMU_PLUGIN_DIR',dirname(__DIR__).'/.runtime/mu-plugins');
-define('WPMU_PLUGIN_URL','http://localhost:11080/mu-plugins');
+define('WPMU_PLUGIN_URL',WP_HOME.'/mu-plugins');
 foreach (['AUTH_KEY','SECURE_AUTH_KEY','LOGGED_IN_KEY','NONCE_KEY','AUTH_SALT','SECURE_AUTH_SALT','LOGGED_IN_SALT','NONCE_SALT'] as $key) define($key,'Synthetic test configuration only: '.$key);
 if (!$setupTest) {
     define('KREV_AGENT_STRIPE_TEST_SECRET_KEY','sk_test_synthetic_fixture');
     define('KREV_AGENT_STRIPE_TEST_WEBHOOK_SECRET','synthetic-webhook-fixture-only');
 }
-if (PHP_SAPI==='cli') { $_SERVER['HTTP_HOST']='localhost:11080'; $_SERVER['REQUEST_URI']='/'; $_SERVER['HTTP_ORIGIN']=WP_HOME; }
+if (PHP_SAPI==='cli') { $_SERVER['HTTP_HOST']='localhost:'.$testHttpPort; $_SERVER['REQUEST_URI']='/'; $_SERVER['HTTP_ORIGIN']=WP_HOME; }
 $table_prefix='krev_sandbox_';
 require_once ABSPATH.'wp-includes/plugin.php';
 if(getenv('KREV_BOOKING_UI')==='1')add_filter('upload_dir',static function($u){$u['basedir']=dirname(__DIR__).'/.runtime/ui-media';$u['baseurl']=WP_HOME.'/fixture-media';$u['path']=$u['basedir'];$u['url']=$u['baseurl'];$u['subdir']='';return $u;});
 add_filter('pre_wp_mail',static fn()=>true,PHP_INT_MAX);
+// Fence plugin bootstrap traffic too, before native plugins and init hooks run.
+add_filter('pre_http_request',static function ($pre) { return $pre!==false ? $pre : new WP_Error('test_outbound_blocked','External requests are disabled in the sandbox.'); },PHP_INT_MAX);
 if (getenv('KREV_LISTING_TEST_STACK')==='1') {
     add_filter('option_active_plugins',static function(){
         $plugins=['woocommerce/woocommerce.php','woocommerce-gateway-stripe/woocommerce-gateway-stripe.php','dokan-lite/dokan.php','dokan-pro/dokan-pro.php','kniferevive-stripe-connect/kniferevive-stripe-connect.php','kniferevive-seller-orders/kniferevive-seller-orders.php','kniferevive-seller-commissions/kniferevive-seller-commissions.php','kniferevive-return-policies/kniferevive-return-policies.php','conditional-extra-fees-for-woocommerce/conditional-fees-rule-woocommerce.php'];
@@ -63,5 +67,7 @@ if (getenv('KREV_LISTING_TEST_STACK')==='1') {
 }
 get_role('administrator')->add_cap('manage_woocommerce');
 require_once dirname(__DIR__).'/wordpress/kniferevive-agent-commerce/kniferevive-agent-commerce.php';
+// Pure installed feed mapping configuration; no Merchant Sync credentials or network worker.
+if(getenv('KREV_LISTING_TEST_STACK')==='1' && !class_exists('KREV_PA_Config'))require_once ABSPATH.'wp-content/plugins/kniferevive-product-attributes/includes/class-krev-pa-config.php';
 if(getenv('KREV_BOOKING_UI')!=='1')\KnifeRevive\AgentCommerce\Plugin::boot();
 \KnifeRevive\AgentCommerce\Store::install();

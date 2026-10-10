@@ -27,6 +27,8 @@ if(getenv('KREV_LISTING_UI')==='1'){
         WC()->cart->calculate_totals();WC()->session->set_customer_session_cookie(true);WC()->session->save_data();
     }
     if((int)($_GET['page_id']??0)===(int)get_option('woocommerce_checkout_page_id') && !isset($_GET['order-pay'])){
+        // This standalone router may initialize the cart after wp_loaded; use its native lazy loader.
+        WC()->cart->get_cart();
         echo '<!doctype html><html><head><meta charset="utf-8"><title>Synthetic native WooCommerce checkout</title></head><body><h1>Native WooCommerce checkout</h1>';
         echo do_shortcode('[woocommerce_checkout]');echo '</body></html>';exit;
     }

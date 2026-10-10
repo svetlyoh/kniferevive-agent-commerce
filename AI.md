@@ -8,6 +8,15 @@ The installable skill is `skills/kniferevive-concierge/SKILL.md`; OpenAPI is at
 
 ## Anonymous discovery
 
+For product searches, use live `scope=goods` discovery when advertised. Adapter
+0.6.0 searches the native Google-feed title/description, brand/MPN/GTIN and mapped
+product-detail fields, plus SKU/model. Check `google_feed_attribute_search`.
+Show every matching KnifeRevive item directly in the chatbot with its real
+`images[].thumbnail_url`, title, current price and canonical product link. Follow
+pagination; disclose total/remaining matches if the host requires batches. Feed
+source data does not prove Google approval or public Shopping rank. Native cards
+depend on host support; inline image plus numbered link is the fallback.
+
 Sharpening bookings use `booking.enabled`, independently of legacy direct service
 payments. GET `/booking-options` and `/booking-availability` for live services,
 Pacific service days and request/payment readiness. Backend 0.5.10 exposes five

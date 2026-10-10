@@ -225,6 +225,7 @@ final class ListingCheckout {
             $bookingLaunch=isset($selection['booking_id']) && Settings::get()['booking_launch_approved'] && $context['payment_method']==='stripe';
             if($gateways[$context['payment_method']]->get_option('testmode','unknown')!=='yes' && !Settings::get()['listing_live_verified'] && !$bookingLaunch)Domain::fail('PAYMENT_METHOD_UNAVAILABLE','Live or unknown gateway mode needs separate merchant verification.');
             $rates=[];$missing=false;
+            foreach($selection['items'] as $line)if(wc_get_product($line['product_id'])->needs_shipping() && !$shipping->get_packages())Domain::fail('SHIPPING_UNAVAILABLE','Native shipping has no eligible fulfillment method for these goods.');
             foreach($shipping->get_packages() as $index=>$package){
                 $options=[];foreach($package['rates']??[] as $rate){$meta=$rate->get_meta_data();$options[]=['id'=>$rate->get_id(),'method_id'=>$rate->get_method_id(),'instance_id'=>(int)$rate->get_instance_id(),'label'=>wp_strip_all_tags($rate->get_label()),'cost_minor'=>self::minor($rate->get_cost()),'tax_minor'=>self::minor(array_sum($rate->get_taxes())),
                     'pickup_location'=>isset($meta['pickup_location'])?sanitize_text_field($meta['pickup_location']):null,'pickup_address'=>isset($meta['pickup_address'])?sanitize_text_field($meta['pickup_address']):null];}
@@ -527,7 +528,11 @@ final class ListingCheckout {
     }
     public static function response(array $row,string $owner): array {
         $out=self::status($row['id'],$owner);$out['expires_at']=gmdate('c',(int)$row['expires']);$out['quote']=$row['data']['quote'];
-        if($out['quote'])unset($out['quote']['buyer_context_id'],$out['quote']['native_cart_hash']);
+        if($out['quote']){
+            unset($out['quote']['buyer_context_id'],$out['quote']['native_cart_hash']);
+            // Canonical persisted JSON turns empty maps into arrays; restore the public map shape.
+            foreach($out['quote']['items'] as &$line)if(isset($line['listing']['identifier_sources']))$line['listing']['identifier_sources']=(object)$line['listing']['identifier_sources'];unset($line);
+        }
         $out['quote_expires_at']=isset($row['data']['quote_expires'])?gmdate('c',$row['data']['quote_expires']):null;
         $out['review_url']=add_query_arg(['krev_agent'=>'listing-review','intent'=>$row['id']],home_url('/')).'#session='.rawurlencode(Domain::token($owner));
         return $out;

@@ -37,14 +37,15 @@ final class PrivateBrand {
         }
         echo '<link rel="stylesheet" href="'.esc_url(add_query_arg('ver',VERSION,$assets.'storefront.css')).'"></head><body class="krev-private"><a class="krev-skip" href="#booking-main">Skip to main content</a><header class="krev-header"><a href="'.esc_url(home_url('/')).'" aria-label="KnifeRevive home">'.(self::logo()?:'<span>KnifeRevive</span>').'</a><a href="'.esc_url(home_url('/#knife-sharpening')).'">Sharpening services</a></header><main id="booking-main" tabindex="-1" '.$attributes.'><div id="session-status" role="status"></div>';
     }
-    public static function support(): void {
+    public static function support(bool $goods=false): void {
         echo '<footer class="krev-support"><h2>KnifeRevive Support Crew</h2><p><a href="https://t.me/svetlyoh?text=Hi%20KnifeRevive%20Support%20Crew!%20I%20need%20help%20with%20a%20question%20about%20KnifeRevive." target="_blank" rel="noopener noreferrer">Chat on Telegram</a> · <a href="https://wa.me/14152999611?text=Hi%20KnifeRevive%20Support%20Crew!%20I%20need%20help%20with%20a%20question%20about%20KnifeRevive." target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a> · <a href="mailto:knifereviveofficial@gmail.com?subject=KnifeRevive%20support">Email the Support Crew</a></p>';
-        $s=Settings::get();if($s['booking_policy_url'])echo '<p><a href="'.esc_url($s['booking_policy_url']).'">Service cancellation and refund terms</a></p>';
+        $s=Settings::get();if($goods){if($s['listing_policy_url'])echo '<p><a href="'.esc_url($s['listing_policy_url']).'">Purchase terms</a></p>';if($s['return_policy_url'])echo '<p><a href="'.esc_url($s['return_policy_url']).'">Product returns and refunds</a></p>';}
+        elseif($s['booking_policy_url'])echo '<p><a href="'.esc_url($s['booking_policy_url']).'">Service cancellation and refund terms</a></p>';
         else echo '<p>Online prepayment is not yet available. Contact support about service, cancellation and rescheduling terms before submitting.</p>';
         echo '</footer>';
     }
-    public static function end(bool $booking=false): void {
-        self::support();$assets=plugin_dir_url(FILE).'assets/';echo '</main><script src="'.esc_url(add_query_arg('ver',VERSION,$assets.'storefront.js')).'" defer></script>';
+    public static function end(bool $booking=false,bool $goods=false): void {
+        self::support($goods);$assets=plugin_dir_url(FILE).'assets/';echo '</main><script src="'.esc_url(add_query_arg('ver',VERSION,$assets.'storefront.js')).'" defer></script>';
         if($booking)echo '<script src="'.esc_url(add_query_arg('ver',VERSION,$assets.'booking.js')).'" defer></script>';
         echo '</body></html>';
     }

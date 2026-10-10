@@ -6,4 +6,6 @@ foreach(['woocommerce_shipping_zones','woocommerce_shipping_zone_locations','woo
     if($wpdb->query('TRUNCATE TABLE '.$wpdb->prefix.$name)===false)throw new RuntimeException('Cannot reset synthetic fixture.');
 }
 delete_transient('wc_shipping_method_count');WC_Cache_Helper::invalidate_cache_group('shipping_zones');WC_Cache_Helper::invalidate_cache_group('taxes');WC_Cache_Helper::get_transient_version('shipping',true);
+update_option('woocommerce_pickup_location_settings',['enabled'=>'no']);update_option('pickup_location_pickup_locations',[]);
+$checkout=wc_get_page_id('checkout');if($checkout>0)wp_update_post(['ID'=>$checkout,'post_content'=>'[woocommerce_checkout]']);
 echo 'PASS: fenced native fixtures reset.';

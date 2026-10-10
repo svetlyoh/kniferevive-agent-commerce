@@ -19,6 +19,8 @@ actual deployed/published versions. Installing a skill does not enable checkout.
   offered, or native Inventory → Global Unique ID. Preserve leading zeros. The
   adapter accepts only valid GTIN-8/12/13/14 check digits. Native uniqueness rules
   remain owned by WooCommerce.
+  When native Global Unique ID is empty, audited Merchant Sync legacy GTIN fields
+  are fallback sources; invalid identifiers remain null with validation evidence.
 - Manufacturer: existing `product_brand` assignment. The deepest assigned series
   resolves to its top-level manufacturer, following Merchant Sync semantics.
   Generic store/technology placeholders are omitted; assignment is a seller claim.
@@ -26,7 +28,15 @@ actual deployed/published versions. Installing a skill does not enable checkout.
   `_google_mpn`, `_mpn`, `mpn`. Use the existing integration's product editor;
   this adapter adds no independent MPN editor or writes to these fields.
 - Public specifications/images/weight/dimensions: native product fields and visible
-  attributes. Arbitrary metadata/private attributes are never exposed.
+  attributes. Arbitrary metadata and non-exported private attributes are excluded.
+
+Product search also reads **KnifeRevive Product Attributes**' existing Merchant
+Sync detail allowlist: knife specifications, CPU/RAM/storage/GPU/system, artwork,
+coin and spice details. These explicit public Google-export values can be searched
+even when absent from the title. The skill shows all matching items with real
+thumbnail images and links, following pagination or disclosed chat batches. This
+public source projection neither reads Google credentials nor certifies approval
+or public Google Shopping rank. Non-allowlisted private fields remain excluded.
 
 Draft, private, hidden and ListLab-archived products are excluded. Catalog-only
 and search-only listings remain public in the agent directory. Native global
@@ -45,6 +55,14 @@ available. Classic pickup without structured location data requires buyer/seller
 location confirmation. Delivery is offered only as an available native rate.
 Virtual goods have no delivery-address form or shipping-method selection.
 
+Read-only live audit on October 10: US selling/shipping, taxes/coupons enabled,
+block checkout, no parcel shipping zones, Dokan shipping disabled, and one free
+enabled block pickup location at 304 Kapalua Bay Circle, Pittsburg, CA 94565.
+Pickup is titled "Pick Up / Drop Off". Do not promise delivery from this audit.
+Manage pickup under **Shipping → Local pickup**; block-only settings are distinct
+from classic shipping-zone Local pickup. The adapter uses native availability and
+location metadata; it does not create a shipping method or switch checkout type.
+
 Goods add no sharpening transport fees or booking county/capacity rules. Legitimate
 native marketplace fees and taxes remain. Shipping is unknown until destination,
 gateway and all package choices are supplied. A native zero rate is shown as zero;
@@ -61,6 +79,12 @@ gateway evidence. No flag is enabled by this source change. USD/two-decimal limi
 remain as in the prior adapter. A listed gateway is not proof of live settlement.
 See [the existing launch runbook](listing-checkout-runbook-0.2.0.md) for ordinary
 versus agent checkout, staging payment/transfer/refund comparison and gradual launch.
+
+Live launch blockers: goods handoff, pricing verification and live verification
+are false; only `stripe` is allowed, maximum is $1000, listing policy URL/version
+are empty. Native Stripe is selected live and still needs goods operator review.
+Do not flip verification flags based on synthetic test results. These settings
+were inspected read-only and retained.
 
 Read `/capabilities`: goods handoff is separate from prepaid sharpening. When it
 is unavailable the skill opens the original product page; it must not claim a
@@ -103,5 +127,6 @@ Fenced synthetic native tests cover implementation behavior. Actual native
 processor payment, seller transfer/refund arrival, production shipping/plugin
 parity, and Muse HTTP/cards/selection/browser opening require separate proof.
 This task requests no live charge, production launch-setting change, seller
-transfer or refund. Production admin inspection was unavailable because browser
-permissions could not be verified; this is not evidence that those settings pass.
+transfer or refund. Admin inspection is complete for the controls recorded above;
+native processor settlement, seller payout/refund arrival and Muse rendering still
+need separate verification.

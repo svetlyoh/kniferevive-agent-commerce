@@ -13,6 +13,6 @@ update_option('krev_agent_settings',Settings::validate(['listing_handoff_enabled
 update_option('woocommerce_calc_taxes','no');update_option('permalink_structure','');
 $page=wp_insert_post(['post_title'=>'Synthetic native checkout','post_content'=>'[woocommerce_checkout]','post_type'=>'page','post_status'=>'publish']);update_option('woocommerce_checkout_page_id',$page);
 $owner=Domain::id();Store::put($owner,'session','synthetic-ui',time()+7200,['token_hash'=>hash('sha256',Domain::token($owner))]);
-$intent=ListingCheckout::create(['items'=>[['product_id'=>$p->get_id(),'quantity'=>1]]],$owner,'listing-ui-'.Domain::id());
+$intent=ListingCheckout::create(['scope'=>'goods','items'=>[['product_id'=>$p->get_id(),'quantity'=>2]]],$owner,'listing-ui-'.Domain::id());
 file_put_contents(dirname(__DIR__).'/.runtime/listing-ui-fixture.json',json_encode(ListingCheckout::response($intent,$owner)));
 echo "Synthetic listing UI fixture ready.\n";

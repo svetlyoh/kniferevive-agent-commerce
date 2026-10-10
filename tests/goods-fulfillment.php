@@ -50,4 +50,17 @@ $processor=static function($pre,$args,$url)use(&$processorState,&$processorAmoun
 goodsReject(static fn()=>ListingCheckout::goodsPaymentUrl($intent['id'],$owner),'PAYMENT_UNRESOLVED');$processorState='requires_payment_method';$processorAmount=3501;goodsReject(static fn()=>ListingCheckout::goodsPaymentUrl($intent['id'],$owner),'PAYMENT_UNRESOLVED');$processorAmount=3500;goodsCheck(ListingCheckout::goodsPaymentUrl($intent['id'],$owner)===$retry,'verified unpaid original intent retried without replacement');
 remove_filter('pre_http_request',$processor,10);$order->payment_complete('synthetic-goods-only');goodsCheck(ListingCheckout::status($intent['id'],$owner)['payment_state']==='paid','native paid event evidence');goodsReject(static fn()=>ListingCheckout::goodsPaymentUrl($intent['id'],$owner),'PAYMENT_UNRESOLVED');
 $zone->delete();WC_Cache_Helper::get_transient_version('shipping',true);WC()->cart->empty_cart();WC()->session->set('order_awaiting_payment',null);
+// Match the live store's native block-pickup configuration without inventing a zone.
+$oldCheckout=wc_get_page_id('checkout');$oldPickup=get_option('woocommerce_pickup_location_settings');$oldLocations=get_option('pickup_location_pickup_locations');
+$blockPage=wp_insert_post(['post_title'=>'Synthetic block checkout','post_content'=>'<!-- wp:woocommerce/checkout /-->','post_type'=>'page','post_status'=>'publish']);update_option('woocommerce_checkout_page_id',$blockPage);
+update_option('woocommerce_pickup_location_settings',['enabled'=>'yes','title'=>'Synthetic block pickup','cost'=>'','tax_status'=>'taxable']);
+update_option('pickup_location_pickup_locations',[['name'=>'Synthetic pickup depot','enabled'=>true,'address'=>['address_1'=>'1 Synthetic Depot','address_2'=>'','city'=>'Pittsburg','state'=>'CA','postcode'=>'94565','country'=>'US'],'details'=>'Synthetic collection only']]);
+WC()->shipping()->load_shipping_methods();WC_Cache_Helper::get_transient_version('shipping',true);
+$blockContext=$context;$blockContext['shipping_methods']=['pickup_location:0'];$blockQuote=ListingCheckout::price($q['data']['selection'],$blockContext);
+$blockRate=$blockQuote['shipping_rates'][0]['options'][0];
+goodsCheck($blockQuote['shipping_minor']===0 && $blockQuote['total_minor']===2400 && $blockRate['method_id']==='pickup_location','native block pickup supplies its actual zero rate without a shipping zone');
+goodsCheck($blockRate['pickup_location']==='Synthetic pickup depot' && str_contains($blockRate['pickup_address'],'94565'),'native block pickup name and address reach buyer review');
+update_option('woocommerce_checkout_page_id',$oldCheckout);update_option('woocommerce_pickup_location_settings',$oldPickup);update_option('pickup_location_pickup_locations',$oldLocations);wp_delete_post($blockPage,true);
+WC()->shipping()->load_shipping_methods();WC_Cache_Helper::get_transient_version('shipping',true);$noMethod=$context;$noMethod['shipping_methods']=[];
+goodsReject(static fn()=>ListingCheckout::price($q['data']['selection'],$noMethod),'SHIPPING_UNAVAILABLE');
 echo "$checks goods fulfillment assertions passed. Synthetic processor only.\n";

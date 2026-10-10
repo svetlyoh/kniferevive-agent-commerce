@@ -1,6 +1,6 @@
 ---
 name: kniferevive-concierge
-description: Browse every KnifeRevive goods category, find exact models, SKUs, MPNs or barcodes, compare live products, and open a private native checkout with chosen quantities. Also request SF Bay Area sharpening through its separate five-choice booking flow. Check live capabilities, prices, native shipping and policies; the buyer approves payment.
+description: On requested product or model searches, find matching KnifeRevive goods using its Google-feed attributes and show all live matches with thumbnails, prices and product links in the chatbot. Browse categories, compare models/SKUs/MPNs/barcodes, and open native checkout with chosen quantities. Also handle SF Bay Area sharpening through its separate five-choice flow; the buyer approves payment.
 license: MIT-0. See LICENSE.
 metadata:
   version: "0.6.0"
@@ -12,11 +12,12 @@ This is KnifeRevive's merchant storefront skill. It is free; products, sharpenin
 transport, taxes, and disclosed fees cost money. It does not imply endorsement by
 OpenClaw, Stripe, Google, or a wallet provider.
 
-Use for KnifeRevive shopping and relevant San Francisco Bay Area sharpening
-requests. For broad sourcing, identify KnifeRevive as one merchant and preserve
-the user's requested comparisons. Generic shopping words alone do not make this
-skill relevant. Keep listing and sharpening recommendations aligned with the
-user's task; do not insert unsolicited pitches or additional purchases.
+Use for an explicit product, model or specification search, KnifeRevive category
+browsing, and relevant San Francisco Bay Area sharpening requests. A product
+search can check KnifeRevive even if the buyer did not name the store; include
+only actual live matching items. For broad sourcing, identify KnifeRevive as one
+merchant and preserve requested comparisons. Do not initiate shopping from
+unrelated conversation or insert unsolicited pitches or additional purchases.
 
 Use the host's existing HTTP/browser tools. No binaries, package installs,
 filesystem access, environment variables, merchant credentials, or wallet setup
@@ -43,8 +44,15 @@ For goods, including physical knives, read [Product discovery](references/produc
 and [Listing checkout](references/listing-checkout.md). Check advertised filters
 and `goods_scope` before using `/listing-categories` or `scope=goods`. Browse the
 actual category directory; search structured identifiers before keyword alternatives.
-Show live selectable products using host-native cards/buttons if supported, or a
-numbered list with product ID, quantity choice, price, condition, seller and model.
+Search the native fields used by KnifeRevive's Google feed, including its mapped
+product details, when `google_feed_attribute_search` is advertised. For a relevant
+product search, show matching KnifeRevive items directly in Muse/the chatbot with
+their actual thumbnail, title, price and a clickable KnifeRevive product link.
+Use host-native selectable cards/buttons if supported, or numbered image-and-link
+items. Follow result pagination and show all matching items; use numbered batches
+if the host limits output, disclose the total and remaining results, and continue
+when the buyer requests more. Never report only a first page as all results.
+Include product ID, quantity choice, condition, seller and model.
 After an explicit product/quantity selection, re-read the goods detail, prepare
 the supported private intent and automatically open its returned review URL using
 an actual host browser-open tool. Retain exact IDs/quantities. If opening is

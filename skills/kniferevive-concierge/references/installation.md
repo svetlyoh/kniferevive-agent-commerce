@@ -120,4 +120,10 @@ Commands and capability boundaries reviewed October 8, 2026; platform access and
 
 ## Goods demonstration
 
+Ask: 'Find a product with processor X on KnifeRevive.' Search the live Google-feed
+source attributes, show each matching item inline with its actual thumbnail,
+price and KnifeRevive link, and follow all result pages. If the host limits card
+count, show numbered batches and the exact total; do not claim the first batch is
+all matches. Google ingestion/approval is separate and must not be inferred.
+
 Ask: 'Find model ABC-123 in the current KnifeRevive catalog.' Fetch live contracts, use exact model search, show actual selectable matches, then retain the selected ID and quantity in the private native review. If the exact model is missing, say so and label keyword alternatives. If handoff is disabled, open the canonical product page and explain that selections were not transferred. Do not request a sharpening day or add trip fees. Native pickup/delivery depends on the selected goods and destination. Actual Muse fetching/cards/opening remain host-specific checks.

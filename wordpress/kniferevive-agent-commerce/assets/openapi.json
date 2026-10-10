@@ -701,7 +701,7 @@
             }
           }
         ],
-        "description": "Published non-hidden, non-archived products, including catalog-only/search-only. Goods excludes configured service IDs and sharpening descendants even under mixed assignments. Explicit identity filters combine with AND, normalized case/whitespace (GTIN also strips hyphens). Exact identifier search ranks before title/description keyword matches. Missing identifiers never inferred. Counts/pagination apply after filtering. Search returns DISCOVERY_INDEX_BUILDING until upgrade index is complete."
+        "description": "Published non-hidden, non-archived products, including catalog-only/search-only. Goods excludes configured service IDs and sharpening descendants even under mixed assignments. Explicit identity filters combine with AND, normalized case/whitespace (GTIN also strips hyphens). Exact identifier search ranks first; keyword terms combine with AND across native title/description, identity and the current Google-feed product-details allowlist (at most 20 terms). Source feed attributes do not certify Google approval. Actual images include native thumbnail URLs. Missing identifiers never inferred. Counts/pagination apply after filtering. Search returns DISCOVERY_INDEX_BUILDING until upgrade index is complete."
       }
     },
     "/listings/{product_id}": {
@@ -3134,16 +3134,120 @@
                 "url": {
                   "type": "string"
                 },
+                "thumbnail_url": {
+                  "type": "string"
+                },
                 "alt": {
                   "type": "string"
                 }
               },
               "required": [
                 "url",
+                "thumbnail_url",
                 "alt"
               ],
               "additionalProperties": false
             }
+          },
+          "google_feed_attributes": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "const": "kniferevive_merchant_sync_native_sources"
+              },
+              "google_publication_status": {
+                "const": "not_checked"
+              },
+              "detail_mapping_available": {
+                "type": "boolean"
+              },
+              "productAttributes": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "link": {
+                    "type": "string"
+                  },
+                  "imageLink": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "additionalImageLinks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "brand": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mpn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gtins": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "productDetails": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sectionName": {
+                          "type": "string"
+                        },
+                        "attributeName": {
+                          "type": "string"
+                        },
+                        "attributeValue": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "sectionName",
+                        "attributeName",
+                        "attributeValue"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "link",
+                  "imageLink",
+                  "additionalImageLinks",
+                  "brand",
+                  "mpn",
+                  "gtins",
+                  "productDetails"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "source",
+              "google_publication_status",
+              "detail_mapping_available",
+              "productAttributes"
+            ],
+            "additionalProperties": false
           },
           "category_details": {
             "type": "array",

@@ -38,7 +38,7 @@ final class ListingFrontend {
         if($status){
             echo '<p>Payment: '.esc_html($status['payment_state']).'</p><p>Fulfillment: '.esc_html($status['fulfillment_state']).'</p><p>Appointment: '.esc_html($status['scheduling_state']).'</p><p>Payment verification: '.esc_html($status['payment_verification']).'</p><p>Use your normal WooCommerce receipt/account and the merchant for refund, delivery or scheduling support.</p>';
         }elseif($row){self::review($row,$owner);}
-        echo '<p><a href="'.esc_url(wc_get_cart_url()).'">Review your existing cart</a></p><p><a href="'.esc_url(home_url('/shop/')).'">KnifeRevive listings</a></p>';PrivateBrand::end();exit;
+        echo '<p><a href="'.esc_url(wc_get_cart_url()).'">Review your existing cart</a></p><p><a href="'.esc_url(home_url('/shop/')).'">KnifeRevive listings</a></p>';PrivateBrand::end(false,!isset($row['data']['selection']['booking_id']));exit;
     }
     public static function bookingReview(array $row,string $owner,array $values=[]): void {
         $d=$row['data'];$booking=Store::get($d['selection']['booking_id'],'booking');$input=$booking['data']['input'];

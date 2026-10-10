@@ -7,7 +7,12 @@ Only capabilities returned by the deployed service are actionable.
 All-category goods contracts in adapter 0.6.0: `GET /listing-categories` and
 `GET /listings?scope=goods` with advertised `sku`, `model`, `mpn`, `gtin`, `brand`,
 category, seller and stock filters. Check `identifier_search_ready` and deployed
-OpenAPI; do not call proposed routes against older adapters. `GET /listings/{id}`
+OpenAPI; do not call proposed routes against older adapters. When
+`google_feed_attribute_search=true`, `search` also matches the native Google-feed
+detail attributes. Returned `google_feed_attributes` is merchant source data;
+Google approval remains `not_checked`. Use actual `images[].thumbnail_url` and
+`canonical_url` for inline Muse/chatbot items and follow every result page.
+`GET /listings/{id}`
 also supports `scope=goods`. See [Product discovery](product-discovery.md).
 Goods selections send `scope=goods` to `/listing-checkouts`. Legacy consumers
 may omit scope and retain their documented service access.

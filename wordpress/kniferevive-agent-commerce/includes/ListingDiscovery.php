@@ -7,16 +7,18 @@ final class ListingDiscovery {
     public const FILTERS=['search','sku','model','mpn','gtin','brand','category','seller','stock_status','scope','page','per_page'];
     private const IDENTIFIERS=['sku','model','mpn','gtin','brand'];
     public static function boot(): void {
-        if((int)get_option('krev_agent_identity_schema')!==1)self::install();
+        if((int)get_option('krev_agent_identity_schema')!==2)self::install();
+        $mappingSignature=hash('sha256',wp_json_encode(class_exists('KREV_PA_Config')?\KREV_PA_Config::merchant_details():[]));
+        if(get_option('krev_agent_feed_mapping_signature')!==$mappingSignature){update_option('krev_agent_feed_mapping_signature',$mappingSignature,false);update_option('krev_agent_identity_cursor',0,false);}
         if(!self::ready()){
             // Native taxonomies/product factories are unavailable before WooCommerce init.
             if(did_action('init'))self::batch();else add_action('init',[self::class,'batch'],99);
         }
         add_action('woocommerce_after_product_object_save',static fn($p)=>self::index($p->get_id()));
-        add_action('set_object_terms',static function($id,$terms,$tt,$taxonomy){if($taxonomy==='product_brand' || $taxonomy==='pa_model-number')self::index((int)$id);},20,4);
+        add_action('set_object_terms',static function($id,$terms,$tt,$taxonomy){if(in_array($taxonomy,['product_brand','product_cat'],true) || str_starts_with($taxonomy,'pa_'))self::index((int)$id);},20,4);
         add_action('deleted_post',static function($id){global $wpdb;$wpdb->delete(Store::table('identity'),['product_id'=>$id]);});
-        foreach(['created_term','edited_term','delete_term'] as $hook)add_action($hook,static function($id,$tt,$taxonomy){if(in_array($taxonomy,['product_brand','pa_model-number'],true))update_option('krev_agent_identity_cursor',0,false);},20,3);
-        foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)add_action($hook,static function($mid,$id,$key){if(in_array($key,['_sku','_global_unique_id','_wc_gla_mpn','_google_mpn','_mpn','mpn'],true))self::index((int)$id);},20,3);
+        foreach(['created_term','edited_term','delete_term'] as $hook)add_action($hook,static function($id,$tt,$taxonomy){if(in_array($taxonomy,['product_brand','product_cat'],true) || str_starts_with($taxonomy,'pa_'))update_option('krev_agent_identity_cursor',0,false);},20,3);
+        foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)add_action($hook,static function($mid,$id,$key){if(in_array($key,['_sku','_global_unique_id','_wc_gla_gtin','_gtin','_upc','_ean','gtin','upc','ean','_wc_gla_mpn','_google_mpn','_mpn','mpn'],true))self::index((int)$id);},20,3);
     }
     public static function install(): void {
         global $wpdb;require_once ABSPATH.'wp-admin/includes/upgrade.php';$table=Store::table('identity');$charset=$wpdb->get_charset_collate();
@@ -24,10 +26,11 @@ final class ListingDiscovery {
             product_id bigint unsigned NOT NULL,
             field varchar(16) NOT NULL,
             value_hash char(64) NOT NULL,
+            value_text text NULL,
             PRIMARY KEY  (product_id,field,value_hash),
             KEY exact_value (value_hash,field,product_id)
         ) ENGINE=InnoDB $charset;");
-        update_option('krev_agent_identity_schema',1,false);update_option('krev_agent_identity_cursor',0,false);
+        update_option('krev_agent_identity_schema',2,false);update_option('krev_agent_identity_cursor',0,false);
     }
     /** Upgrade/backfill is bounded and runs on merchant maintenance, never scans per search. */
     public static function batch(): void {
@@ -67,8 +70,10 @@ final class ListingDiscovery {
     public static function identity($p): array {
         $out=['sku'=>self::plain($p->get_sku()),'brand'=>null,'model_number'=>null,'mpn'=>null,'gtin'=>null,'identifier_sources'=>[],'specifications'=>[],'images'=>[],'category_details'=>[]];
         if($out['sku']!==null)$out['identifier_sources']['sku']=['source'=>'woocommerce_sku','verification'=>'seller_claim'];
-        $raw=method_exists($p,'get_global_unique_id')?(string)$p->get_global_unique_id():'';$gtin=self::normalize($raw,'gtin');
-        if($raw!==''){$valid=self::validGtin($gtin);$out['gtin']=$valid?$gtin:null;$out['identifier_sources']['gtin']=['source'=>'woocommerce_global_unique_id','verification'=>'seller_claim','validation'=>$valid?'valid_check_digit':'invalid'];}
+        $raw=method_exists($p,'get_global_unique_id')?(string)$p->get_global_unique_id():(string)get_post_meta($p->get_id(),'_global_unique_id',true);$gtinSource='woocommerce_global_unique_id';
+        if(trim($raw)==='')foreach(['_wc_gla_gtin','_gtin','_upc','_ean','gtin','upc','ean'] as $key)if(($value=self::plain($p->get_meta($key)))!==null){$raw=$value;$gtinSource=$key;break;}
+        $gtin=self::normalize($raw,'gtin');
+        if($raw!==''){$valid=self::validGtin($gtin);$out['gtin']=$valid?$gtin:null;$out['identifier_sources']['gtin']=['source'=>$gtinSource,'verification'=>'seller_claim','validation'=>$valid?'valid_check_digit':'invalid'];}
         foreach(['_wc_gla_mpn','_google_mpn','_mpn','mpn'] as $key)if(($mpn=self::plain($p->get_meta($key)))!==null){$out['mpn']=$mpn;$out['identifier_sources']['mpn']=['source'=>$key,'verification'=>'seller_claim'];break;}
         $brandTerms=taxonomy_exists('product_brand')?wp_get_post_terms($p->get_id(),'product_brand'):[];
         if(!is_wp_error($brandTerms) && $brandTerms){
@@ -84,19 +89,38 @@ final class ListingDiscovery {
             $out['specifications'][]=['name'=>sanitize_text_field(wc_attribute_label($attr->get_name())),'key'=>$attr->get_name(),'values'=>$values,'verification'=>'seller_claim'];
             if($attr->get_name()==='pa_model-number' && count($values)===1){$out['model_number']=$values[0];$out['identifier_sources']['model_number']=['source'=>'pa_model-number','verification'=>'seller_claim'];}
         }
-        foreach(array_slice(array_unique(array_filter([$p->get_image_id(),...$p->get_gallery_image_ids()])),0,20) as $id){$url=wp_get_attachment_image_url($id,'full');if($url && get_post_status($id)==='inherit')$out['images'][]=['url'=>esc_url_raw($url),'alt'=>sanitize_text_field(get_post_meta($id,'_wp_attachment_image_alt',true))];}
+        foreach(array_slice(array_unique(array_filter([$p->get_image_id(),...$p->get_gallery_image_ids()])),0,20) as $id){$url=wp_get_attachment_image_url($id,'full');if($url && in_array(get_post_status($id),['publish','inherit'],true))$out['images'][]=['url'=>esc_url_raw($url),'thumbnail_url'=>esc_url_raw(wp_get_attachment_image_url($id,'woocommerce_thumbnail')?:$url),'alt'=>sanitize_text_field(get_post_meta($id,'_wp_attachment_image_alt',true))];}
         $terms=wp_get_post_terms($p->get_id(),'product_cat');if(!is_wp_error($terms))foreach($terms as $term)$out['category_details'][]=['id'=>(int)$term->term_id,'slug'=>$term->slug,'name'=>sanitize_text_field($term->name),'parent'=>(int)$term->parent];
         $out['weight']=['value'=>self::plain($p->get_weight()),'unit'=>get_option('woocommerce_weight_unit','kg')];
         $out['dimensions']=['length'=>self::plain($p->get_length()),'width'=>self::plain($p->get_width()),'height'=>self::plain($p->get_height()),'unit'=>get_option('woocommerce_dimension_unit','cm')];
+        $out['google_feed_attributes']=self::feedAttributes($p,$out);
         $out['identifier_sources']=(object)$out['identifier_sources'];return $out;
+    }
+    /** Read the same allowlisted native sources as Merchant Sync, without map()'s writes/network. */
+    private static function feedAttributes($p,array $identity): array {
+        $details=[];
+        if(class_exists('KREV_PA_Config')){
+            $mapping=\KREV_PA_Config::merchant_details();
+            foreach(\KREV_PA_Config::groups_for_product($p->get_id()) as $group)foreach($mapping[$group]??[] as $slug=>$names){
+                $taxonomy=wc_attribute_taxonomy_name($slug);if(!taxonomy_exists($taxonomy))continue;
+                $values=wp_get_post_terms($p->get_id(),$taxonomy,['fields'=>'names']);if(is_wp_error($values))continue;natcasesort($values);
+                foreach($values as $value)if(($value=self::plain($value))!==null)$details[]=['sectionName'=>sanitize_text_field($names[0]),'attributeName'=>sanitize_text_field($names[1]),'attributeValue'=>$value];
+            }
+        }
+        $description=wp_strip_all_tags($p->get_short_description());if(trim($description)==='')$description=wp_strip_all_tags($p->get_description());
+        $attributes=['title'=>sanitize_text_field($p->get_name()),'description'=>sanitize_text_field($description),'link'=>get_permalink($p->get_id()),'imageLink'=>$identity['images'][0]['url']??null,
+            'additionalImageLinks'=>array_column(array_slice($identity['images'],1),'url'),'brand'=>$identity['brand'],'mpn'=>$identity['mpn'],'gtins'=>$identity['gtin']!==null?[$identity['gtin']]:[],
+            'productDetails'=>$details];
+        return ['source'=>'kniferevive_merchant_sync_native_sources','google_publication_status'=>'not_checked','detail_mapping_available'=>class_exists('KREV_PA_Config'),'productAttributes'=>$attributes];
     }
     public static function index(int $id): void {
         global $wpdb;if(get_post_type($id)!=='product')return;$p=wc_get_product($id);if(!$p)return;
         $data=self::identity($p);$table=Store::table('identity');$rows=[];
-        foreach(self::IDENTIFIERS as $field){$value=$data[$field==='model'?'model_number':$field];if($value!==null)$rows[]=$wpdb->prepare('(%d,%s,%s)',$id,$field,hash('sha256',self::normalize($value,$field)));}
+        foreach(self::IDENTIFIERS as $field){$value=$data[$field==='model'?'model_number':$field];if($value!==null)$rows[$field]=$wpdb->prepare('(%d,%s,%s,%s)',$id,$field,hash('sha256',self::normalize($value,$field)),$value);}
+        foreach($data['google_feed_attributes']['productAttributes']['productDetails'] as $detail){$value=$detail['attributeValue'];$hash=hash('sha256',self::normalize($value));$rows['feed:'.$hash]=$wpdb->prepare('(%d,%s,%s,%s)',$id,'feed_attribute',$hash,$value);}
         Store::transaction(static function()use($wpdb,$table,$id,$rows){
             if($wpdb->delete($table,['product_id'=>$id])===false)Domain::fail('DATABASE_UNAVAILABLE','Product identity index is unavailable.',503);
-            if($rows && $wpdb->query("INSERT INTO $table (product_id,field,value_hash) VALUES ".implode(',',$rows))===false)Domain::fail('DATABASE_UNAVAILABLE','Product identity index is unavailable.',503);
+            if($rows && $wpdb->query("INSERT INTO $table (product_id,field,value_hash,value_text) VALUES ".implode(',',$rows))===false)Domain::fail('DATABASE_UNAVAILABLE','Product identity index is unavailable.',503);
         });
     }
     private static function scope(array $args,string $default='all_published'): string {
@@ -125,19 +149,25 @@ final class ListingDiscovery {
     private static function exact(?string $field,string $value): string {
         global $wpdb;$table=Store::table('identity');$hash=hash('sha256',self::normalize($value,$field??''));
         if($field==='gtin' && !self::validGtin(self::normalize($value,'gtin')))Domain::fail('INVALID_REQUEST','Use a GTIN with a valid check digit.');
-        if($field===null){$gtinHash=hash('sha256',self::normalize($value,'gtin'));return $wpdb->prepare("EXISTS (SELECT 1 FROM $table i WHERE i.product_id=p.ID AND (i.value_hash=%s OR (i.field='gtin' AND i.value_hash=%s)))",$hash,$gtinHash);}
+        if($field===null){$gtinHash=hash('sha256',self::normalize($value,'gtin'));return $wpdb->prepare("EXISTS (SELECT 1 FROM $table i WHERE i.product_id=p.ID AND i.field IN ('sku','model','mpn','gtin','brand') AND (i.value_hash=%s OR (i.field='gtin' AND i.value_hash=%s)))",$hash,$gtinHash);}
         return $wpdb->prepare("EXISTS (SELECT 1 FROM $table i WHERE i.product_id=p.ID AND i.field=%s AND i.value_hash=%s)",$field,$hash);
     }
     public static function catalog(array $args): array {
         global $wpdb;Domain::fields($args,self::FILTERS);$scope=self::scope($args);$page=Domain::integer($args['page']??1,1,100);$per=Domain::integer($args['per_page']??10,1,100);
         if(!self::ready() && array_intersect(array_keys($args),['search',...self::IDENTIFIERS]))Domain::fail('DISCOVERY_INDEX_BUILDING','Exact product search is being refreshed. Browse categories or use the product page.',503,true);
         $where=self::where($args);$order='p.ID ASC';$search=null;
-        if(isset($args['search'])){$search=Domain::text($args['search'],100);$exact=self::exact(null,$search);$like='%'.$wpdb->esc_like($search).'%';$where.=$wpdb->prepare(" AND ($exact OR p.post_title LIKE %s OR p.post_excerpt LIKE %s OR p.post_content LIKE %s)",$like,$like,$like);$order="$exact DESC, p.ID ASC";}
+        if(isset($args['search'])){
+            $search=Domain::text($args['search'],100);$exact=self::exact(null,$search);$table=Store::table('identity');$keywords=[];$words=preg_split('/\s+/u',trim($search));
+            if(count($words)>20)Domain::fail('INVALID_REQUEST','Use at most twenty product search terms.');
+            foreach($words as $word){$like='%'.$wpdb->esc_like($word).'%';$keywords[]=$wpdb->prepare("(p.post_title LIKE %s OR p.post_excerpt LIKE %s OR p.post_content LIKE %s OR EXISTS (SELECT 1 FROM $table f WHERE f.product_id=p.ID AND (f.value_hash=%s OR f.value_text LIKE %s)))",$like,$like,$like,hash('sha256',self::normalize($word)),$like);}
+            $where.=" AND ($exact OR (".implode(' AND ',$keywords).'))';$order="$exact DESC, p.ID ASC";
+        }
         $total=(int)$wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts p WHERE $where");
         $ids=$wpdb->get_col($wpdb->prepare("SELECT p.ID FROM $wpdb->posts p WHERE $where ORDER BY $order LIMIT %d OFFSET %d",$per,($page-1)*$per));$items=[];
         foreach($ids as $id){try{$item=ListingCheckout::product((int)$id);if($scope==='goods' && self::isSharpening(wc_get_product($id)))continue;}catch(Fault $e){if($e->codeName==='NOT_FOUND')continue;throw $e;}
             $matched=[];foreach(self::IDENTIFIERS as $field){$value=$item[$field==='model'?'model_number':$field];if($value!==null && ((isset($args[$field]) && self::normalize($args[$field],$field)===self::normalize($value,$field)) || ($search!==null && self::normalize($search,$field)===self::normalize($value,$field))))$matched[]=$field;}
-            $item['matched_fields']=$matched?:($search!==null?['keyword']:[]);$item['match_type']=$matched?'exact_identifier':($search!==null?'keyword':'browse');$items[]=$item;
+            $feedMatch=false;if($search!==null)foreach($item['google_feed_attributes']['productAttributes']['productDetails'] as $detail)foreach($words as $word)if(self::normalize($word)===self::normalize($detail['attributeValue']) || mb_stripos($detail['attributeValue'],$word,0,'UTF-8')!==false)$feedMatch=true;
+            $item['matched_fields']=$matched?:($search!==null?($feedMatch?['google_feed_attributes']:['keyword']):[]);$item['match_type']=$matched?'exact_identifier':($search!==null?'keyword':'browse');$items[]=$item;
         }
         return ['schema_version'=>'1.2','scope'=>$scope,'items'=>$items,'page'=>$page,'per_page'=>$per,'total'=>$total,'pages'=>(int)ceil($total/$per),'fetched_at'=>gmdate('c')];
     }
