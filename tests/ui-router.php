@@ -33,7 +33,12 @@ if(getenv('KREV_LISTING_UI')==='1'){
 }
 add_filter('plugins_url',static function ($url,$relative,$plugin) { return str_ends_with($plugin,'kniferevive-agent-commerce.php') ? WP_HOME.'/wp-content/plugins/kniferevive-agent-commerce'.($relative?'/'.$relative:'') : $url; },10,3);
 if(getenv('KREV_STOREFRONT_UI')==='1' && $path==='/checkout/'){
-    add_filter('woocommerce_is_checkout','__return_true');\KnifeRevive\AgentCommerce\StorefrontBooking::render();
+    // Use real WordPress POST query parsing, so reserved fields cannot hide
+    // routing bugs behind a forced woocommerce_is_checkout override.
+    global $wp;
+    $wp->parse_request(['page_id'=>wc_get_page_id('checkout')]);
+    $wp->query_posts();$wp->handle_404();$wp->register_globals();do_action('wp',$wp);
+    \KnifeRevive\AgentCommerce\StorefrontBooking::render();
 }
 if(isset($_GET['wc-ajax'])){WC_AJAX::do_wc_ajax();exit;}
 if(getenv('KREV_BOOKING_UI')==='1' && (isset($_GET['krev_ui_vendor']) || isset($_GET['krev_ui_vendor_orders']))){

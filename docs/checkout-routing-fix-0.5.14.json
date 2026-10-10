@@ -1,0 +1,50 @@
+{
+  "verified_at": "2026-10-09 America/Los_Angeles",
+  "merchant_version": "0.5.14",
+  "portable_skill_version": "0.5.14",
+  "deployment": "WordPress existing plugin replacement succeeded; active plugin version confirmed",
+  "zip_sha256": "65b80752a41f41b3f5b6e7b36bde97f3d671aa86e1ffeecf5e221731d784cb83",
+  "pre_fix": {
+    "details_status": 200,
+    "old_name_post_status": 404,
+    "no_booking_created": true
+  },
+  "regression_assertions": 7,
+  "existing_native_assertions": 216,
+  "storage_modes": [
+    "classic with sync",
+    "HPOS with sync"
+  ],
+  "php_lint": "all plugin files pass",
+  "synthetic_handoff": {
+    "initial_status": 200,
+    "coverage_post_status": 200,
+    "payment_status": 200,
+    "private_checkout": true,
+    "fee_minor": 1100,
+    "native_billing_name_preserved": true,
+    "payment_submitted": false,
+    "mail_blocked": true,
+    "knives": {
+      "small": 2,
+      "large": 1
+    }
+  },
+  "production": {
+    "adapter_version": "0.5.14",
+    "checkout_details_status": 200,
+    "coverage_post_status": 200,
+    "invalid_submit_status": 200,
+    "name_preserved": true,
+    "coverage_verified": "94565",
+    "single_trip_minor": 600,
+    "round_trip_minor": 1100,
+    "booking_created": false,
+    "order_created": false,
+    "payment_submitted": false,
+    "email_sent": false
+  },
+  "live_full_paid_booking_verified": false,
+  "existing_records_migrated": false,
+  "proof_local_path": "C:/Users/Svet/Documents/KnifeRevive_Documentation/diagnostics/checkout-routing-fix-0.5.14.png"
+}

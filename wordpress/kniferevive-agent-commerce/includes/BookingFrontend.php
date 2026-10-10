@@ -12,7 +12,11 @@ final class BookingFrontend {
             if($id){$owner=Api::bookingOwner($id);$row=Booking::get($id,$owner);}
             elseif(isset($_GET['referral'])){$row=Booking::referral((string)wp_unslash($_GET['referral']));$id=$row['id'];$owner=$row['owner'];}
             if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
-                $post=wp_unslash($_POST);self::$values=$post;if(isset($post['mode'])){$post['return_mode']=in_array($post['mode'],['prepaid_pickup_delivery','prepaid_dropoff_delivery'],true)?'courier_delivery':($post['return_mode']??'customer_collection');}
+                $post=wp_unslash($_POST);
+                // WordPress treats POST "name" as a public page-slug query variable.
+                // Keep contact names out of routing on the ordinary /checkout/ page.
+                $post['customer_name']=$post['customer_name']??$post['name']??'';
+                self::$values=$post;if(isset($post['mode'])){$post['return_mode']=in_array($post['mode'],['prepaid_pickup_delivery','prepaid_dropoff_delivery'],true)?'courier_delivery':($post['return_mode']??'customer_collection');}
                 $action=$post['action']??'submit';
                 if($id && in_array($action,['quote','continue','pay'],true)){
                     $intent=Store::get($row['data']['listing_intent']??'','listing');
@@ -51,7 +55,7 @@ final class BookingFrontend {
                         $items=[];foreach((array)($post['quantities']??[]) as $product=>$quantity){if(!ctype_digit((string)$product) || !ctype_digit((string)$quantity))Domain::fail('INVALID_REQUEST','Choose whole knife quantities.');if((int)$quantity>0)$items[]=['product_id'=>(int)$product,'quantity'=>(int)$quantity];}
                         $row=Booking::create(['items'=>$items,'mode'=>$post['mode']??'','preferred_date'=>$post['preferred_date']??'','postal_code'=>$post['postcode']??'','return_mode'=>$post['return_mode']??'customer_collection','notes'=>$post['notes']??''],$owner,$key);$id=$row['id'];
                     }
-                    $contact=['postal_code'=>$post['postcode']??'','notes'=>$post['notes']??'','customer'=>['name'=>$post['name']??'','email'=>$post['email']??'','phone'=>$post['phone']??'']];
+                    $contact=['postal_code'=>$post['postcode']??'','notes'=>$post['notes']??'','customer'=>['name'=>$post['customer_name']??'','email'=>$post['email']??'','phone'=>$post['phone']??'']];
                     if($row['data']['input']['mode']==='prepaid_pickup' || $row['data']['input']['return_mode']==='courier_delivery' || !empty($post['address_1']))$contact['pickup_address']=['address_1'=>$post['address_1']??'','address_2'=>$post['address_2']??'','city'=>$post['city']??'','state'=>'CA','country'=>'US','postcode'=>$post['postcode']??''];
                     $row=Booking::submit($id,$owner,$contact,true);Booking::accessCookie($row);if($row['data']['input']['mode']!=='pay_later_dropoff'){Booking::checkout($id,$owner);$row=Booking::get($id,$owner);$input=$row['data']['input'];$billing=[];foreach(['address_1','address_2','city','state','postcode','country'] as $field)$billing[$field]=(string)($post['billing_'.$field]??'');if(isset($input['pickup_address']) && empty($post['billing_different']))$billing=$input['pickup_address'];$shipping=$input['pickup_address']??array_replace($billing,['postcode'=>$input['postal_code'],'state'=>'CA','country'=>'US']);BookingSession::prepare($row,$owner,['billing'=>$billing,'shipping'=>$shipping,'email'=>$input['customer']['email'],'payment_method'=>'stripe']);StorefrontBooking::complete($row);wp_safe_redirect(add_query_arg(['krev_agent'=>'booking','booking'=>$id,'payment'=>'1'],home_url('/')),303);exit;}StorefrontBooking::complete($row);wp_safe_redirect(add_query_arg(['krev_agent'=>'booking','booking'=>$id],home_url('/')),303);exit;
                 }else Domain::fail('INVALID_REQUEST','Unknown booking action.');
@@ -68,7 +72,7 @@ final class BookingFrontend {
         PrivateBrand::end(true);exit;
     }
     private static function validate(array $post): void {
-        if(!trim((string)($post['name']??'')))self::$errors['name']='Enter your name.';
+        if(!trim((string)($post['customer_name']??'')))self::$errors['customer_name']='Enter your name.';
         if(!is_email((string)($post['email']??'')))self::$errors['email']='Enter a valid contact email.';
         if(($post['mode']??'prepaid_dropoff')!=='pay_later_dropoff' && !preg_match('/^[0-9]{5}$/D',(string)($post['postcode']??'')))self::$errors['postcode']='Enter a five-digit service ZIP code.';
         $paid=($post['mode']??'prepaid_dropoff')!=='pay_later_dropoff';$trip=($post['mode']??'')==='prepaid_pickup' || in_array($post['mode']??'',['prepaid_pickup_delivery','prepaid_dropoff_delivery'],true) || ($post['return_mode']??'')==='courier_delivery';
@@ -113,7 +117,7 @@ final class BookingFrontend {
     private static function contact(array $input,?array $coverage=null): void {
         echo '<fieldset><legend>Your contact &amp; trip address</legend>';
         if(!empty($input['mode']) && $input['mode']!=='pay_later_dropoff'){echo '<input type="hidden" name="mode" value="'.esc_attr($input['mode']).'"><input type="hidden" name="return_mode" value="'.esc_attr($input['return_mode']).'">';self::$values['mode']=$input['mode'];self::coverage($input['postal_code']??'',$coverage);}
-        foreach(['name'=>'Your name','email'=>'Contact email','phone'=>'Phone (optional)'] as $field=>$label)self::field($field,$label,$field==='email'?'email':($field==='phone'?'tel':'text'),$field!=='phone',$input['customer'][$field]??'');
+        foreach(['customer_name'=>'Your name','email'=>'Contact email','phone'=>'Phone (optional)'] as $field=>$label)self::field($field,$label,$field==='email'?'email':($field==='phone'?'tel':'text'),$field!=='phone',$input['customer'][$field==='customer_name'?'name':$field]??'');
         echo '<details data-address-fields data-address-review="'.(!empty($coverage['address_review_required'])?'true':'false').'"'.((($input['mode']??self::$values['mode']??'')==='prepaid_pickup' || in_array(self::$values['mode']??'',['prepaid_pickup_delivery','prepaid_dropoff_delivery'],true) || ($input['return_mode']??self::$values['return_mode']??'')==='courier_delivery' || !empty($coverage['address_review_required']))?' open':'').'><summary>Pickup/delivery address or county review</summary><p>Complete this only for merchant trips or a ZIP requiring county review. For ordinary customer drop-off and collection, leave it blank.</p>';
         foreach(['address_1'=>'Street address','address_2'=>'Apartment (optional)','city'=>'City'] as $field=>$label)self::field($field,$label,'text',false,$input['pickup_address'][$field]??'');
         echo '</details>';self::field('notes','Notes (optional)','text',false,$input['notes']??'');echo '</fieldset>';

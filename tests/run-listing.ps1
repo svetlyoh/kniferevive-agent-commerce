@@ -25,6 +25,7 @@ foreach($taskMode in @('legacy','legacy-no-sync','hpos','hpos-no-sync')) {
         Invoke-SandboxCheck 'tests/integration.php' @() 'behavioral assertions passed.' "operator-regression-$taskMode"
     }
 }
+Invoke-SandboxCheck 'tests/booking-form-routing.php' @() 'booking routing assertions' 'booking-form-routing'
 Remove-Item Env:KREV_LISTING_TEST_STACK
 Invoke-SandboxCheck 'tests/stripe-setup.php' @('setup') 'assertions passed' 'stripe-setup-regression'
 $taskResults | ConvertTo-Json -Depth 4 | Set-Content '.runtime/listing-acceptance-results.json' -Encoding utf8
