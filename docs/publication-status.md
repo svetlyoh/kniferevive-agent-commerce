@@ -1,5 +1,11 @@
 ## Separate Listing 1.0.2
 
+Later signed-in Merchant Center inspection confirmed that the two recent
+imports (3033 and 3036) were submitted automatically but blocked by missing
+packaged shipping weights and pending image retrieval. The Wüsthof brand was
+filled from its stated maker and automatically resubmitted; accurate Used
+condition was retained. [Exact diagnostics and remaining inputs](merchant-center-import-diagnostics-2026-10-10.md).
+
 October 10, 2026: Listing 1.0.2 adds complete Marketplace photo-gallery extraction,
 photo counts and explicit overflow reporting, Google feed preparation, and the
 owner's missing-condition defaults (Gently Used for knives, Used otherwise).
