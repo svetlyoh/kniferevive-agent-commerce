@@ -3,11 +3,14 @@
 if (!in_array(PHP_SAPI,['cli','cli-server'],true)) exit(1);
 $root=$argv[1]??'';
 if (!is_file($root.'/wp-settings.php')) throw new RuntimeException('Supply the WordPress core directory as the first argument.');
-$db=new mysqli('127.0.0.1','root','','',11019);
+$testPort=(int)(getenv('KREV_TEST_DB_PORT')?:11019);
+if(!in_array($testPort,[11019,11029],true))throw new RuntimeException('Use an approved loopback-only sandbox port.');
+define('KREV_TEST_DB_HOST','127.0.0.1:'.$testPort);
+$db=new mysqli('127.0.0.1','root','','',$testPort);
 $db->query('CREATE DATABASE IF NOT EXISTS krev_agent_sandbox CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
 $db->close();
 define('ABSPATH',rtrim(str_replace('\\','/',$root),'/').'/');
-define('DB_NAME','krev_agent_sandbox'); define('DB_USER','root'); define('DB_PASSWORD',''); define('DB_HOST','127.0.0.1:11019');
+define('DB_NAME','krev_agent_sandbox'); define('DB_USER','root'); define('DB_PASSWORD',''); define('DB_HOST',KREV_TEST_DB_HOST);
 define('DB_CHARSET','utf8mb4'); define('DB_COLLATE','');
 define('WP_ENVIRONMENT_TYPE','local'); define('DISABLE_WP_CRON',true); define('WP_DEBUG',true); define('WP_DEBUG_DISPLAY',false);
 define('WP_DISABLE_FATAL_ERROR_HANDLER',true);
@@ -33,7 +36,7 @@ if (getenv('KREV_LISTING_TEST_STACK')==='1') {
         return getenv('KREV_SELLER_ORDERS_CANDIDATE')==='1'?array_values(array_diff($plugins,['kniferevive-seller-orders/kniferevive-seller-orders.php'])):$plugins;
     });
     if(getenv('KREV_SELLER_ORDERS_CANDIDATE')==='1')add_action('muplugins_loaded',static function(){
-        if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Candidate plugin sandbox fence failed.');
+        if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!==KREV_TEST_DB_HOST)throw new RuntimeException('Candidate plugin sandbox fence failed.');
         require dirname(__DIR__).'/.runtime/seller-booking-visibility-20261008/candidate/kniferevive-seller-orders/kniferevive-seller-orders.php';
     });
     add_filter('pre_option_woocommerce_stripe_settings',static fn()=>['enabled'=>'no','testmode'=>'yes']);

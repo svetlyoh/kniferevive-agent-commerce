@@ -7,7 +7,7 @@ final class Api {
         foreach ([
             '/capabilities'=>['GET','capabilities'], '/catalog'=>['GET','catalog'], '/service-area'=>['GET','area'], '/availability'=>['GET','availability'],
             '/openapi'=>['GET','openapi'], '/sessions'=>['POST','session'], '/sessions/attach'=>['POST','attach'], '/quotes'=>['POST','quote'],
-            '/listings'=>['GET','listings'],'/listings/(?P<product_id>[0-9]{1,10})'=>['GET','listing'],
+            '/listing-categories'=>['GET','listingCategories'],'/listings'=>['GET','listings'],'/listings/(?P<product_id>[0-9]{1,10})'=>['GET','listing'],
             '/booking-options'=>['GET','bookingOptions'],'/booking-availability'=>['GET','bookingAvailability'],
             '/booking-coverage'=>['GET','bookingCoverage'],
             '/bookings'=>['POST','bookingCreate'],'/bookings/(?P<id>[a-f0-9]{32})'=>['GET','bookingGet'],
@@ -108,7 +108,7 @@ final class Api {
             'sharpening'=>['status'=>Settings::operational()?'configured':'unconfigured','direct_checkout'=>(bool)$rails,'booking_mode'=>$s['slots']?'scheduled':($s['pending_scheduling']?'pending_scheduling':'unconfigured')],
             'booking'=>['enabled'=>Booking::enabled(),'modes'=>Booking::MODES,'handoff_options'=>Booking::handoffOptions(),'options_url'=>rest_url(self::NS.'/booking-options'),'coverage_url'=>rest_url(self::NS.'/booking-coverage'),'booking_url'=>add_query_arg('krev_agent','booking',home_url('/')),'confirmation'=>'merchant_confirmation_required','prepayment_enabled'=>Booking::prepaymentEnabled(),'authorized_wallet_payment_enabled'=>Booking::walletEnabled(),'direct_wallet_enabled'=>false,'agent_event_push_supported'=>false,'agent_event_polling_supported'=>true,'booking_creates_woocommerce_order'=>BookingOrderBridge::enabled(),'unpaid_order_timing'=>$s['booking_order_timing'],'delegated_card_authorization_supported'=>false,'host_address_grants_supported'=>false],
             'technology'=>['catalog'=>true,'direct_checkout'=>false,'checkout_mode'=>'existing_woocommerce_checkout'],
-            'listings'=>['discovery'=>true,'categories'=>'all_published','handoff_state'=>ListingCheckout::enabled()?'handoff_enabled':'unavailable',
+            'listings'=>['discovery'=>true,'categories'=>'all_published','category_directory_url'=>rest_url(self::NS.'/listing-categories'),'goods_scope'=>true,'search_filters'=>ListingDiscovery::FILTERS,'identifier_search_ready'=>ListingDiscovery::ready(),'identity_verification'=>'seller_claim','handoff_state'=>ListingCheckout::enabled()?'handoff_enabled':'unavailable',
                 'checkout_mode'=>'buyer_completed_native_woocommerce','direct_payment_enabled'=>false,'simple_products'=>true,'variations'=>'unsupported_variation',
                 'configured_gateway_ids'=>$s['listing_gateway_ids'],'gateway_availability'=>'validated_per_native_quote',
                 'multi_seller'=>'separate_buyer_review_required','quote_reserves_stock'=>false,'service_payment_does_not_book_appointment'=>true],
@@ -170,7 +170,14 @@ final class Api {
         $args=$request->get_query_params();foreach(['page','per_page','seller'] as $key)if(isset($args[$key])){if(!ctype_digit((string)$args[$key]))Domain::fail('INVALID_REQUEST','Invalid numeric filter.');$args[$key]=(int)$args[$key];}
         return ListingCheckout::catalog($args);
     }
-    public static function listing($request): array { return ListingCheckout::product((int)$request['product_id']); }
+    public static function listingCategories($request): array {return ListingDiscovery::categories($request->get_query_params());}
+    public static function listing($request): array {
+        $args=$request->get_query_params();Domain::fields($args,['scope']);
+        if(isset($args['scope']) && $args['scope']!=='goods')Domain::fail('INVALID_REQUEST','Use goods scope or omit scope.');
+        $id=(int)$request['product_id'];$product=ListingCheckout::product($id);
+        if(isset($args['scope']) && ListingDiscovery::isSharpening(wc_get_product($id)))Domain::fail('NOT_FOUND','Goods listing unavailable.',404);
+        return $product;
+    }
     public static function listingCreate($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::create(self::body($request),$owner,(string)$request->get_header('Idempotency-Key')),$owner); }
     public static function listingGet($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::get($request['id'],$owner,true),$owner); }
     public static function listingQuote($request): array { $owner=self::owner($request);return ListingCheckout::response(ListingCheckout::quote($request['id'],self::body($request),$owner,(string)$request->get_header('Idempotency-Key')),$owner); }

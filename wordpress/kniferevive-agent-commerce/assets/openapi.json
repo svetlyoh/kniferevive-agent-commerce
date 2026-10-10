@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "KnifeRevive Agent Commerce",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review. Native refund acceptance does not prove bank arrival."
   },
   "servers": [
@@ -632,8 +632,76 @@
               "minimum": 1,
               "maximum": 100
             }
+          },
+          {
+            "name": "sku",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "mpn",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "gtin",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "all_published",
+                "goods"
+              ],
+              "default": "all_published"
+            }
+          },
+          {
+            "name": "stock_status",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "instock",
+                "outofstock",
+                "onbackorder"
+              ]
+            }
           }
-        ]
+        ],
+        "description": "Published non-hidden, non-archived products, including catalog-only/search-only. Goods excludes configured service IDs and sharpening descendants even under mixed assignments. Explicit identity filters combine with AND, normalized case/whitespace (GTIN also strips hyphens). Exact identifier search ranks before title/description keyword matches. Missing identifiers never inferred. Counts/pagination apply after filtering. Search returns DISCOVERY_INDEX_BUILDING until upgrade index is complete."
       }
     },
     "/listings/{product_id}": {
@@ -670,6 +738,55 @@
             "schema": {
               "type": "integer",
               "minimum": 1
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "const": "goods"
+            }
+          }
+        ]
+      }
+    },
+    "/listing-categories": {
+      "get": {
+        "operationId": "listingCategories",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingCategories"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "goods",
+                "all_published"
+              ],
+              "default": "goods"
             }
           }
         ]
@@ -2845,9 +2962,283 @@
         ],
         "additionalProperties": false
       },
+      "ListingCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "canonical_url": {
+            "type": "string"
+          },
+          "visible_product_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "supported_filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "parent",
+          "canonical_url",
+          "visible_product_count",
+          "supported_filters"
+        ],
+        "additionalProperties": false
+      },
+      "ListingCategories": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "goods",
+              "all_published"
+            ]
+          },
+          "count_semantics": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListingCategory"
+            }
+          },
+          "fetched_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "scope",
+          "count_semantics",
+          "items",
+          "fetched_at"
+        ],
+        "additionalProperties": false
+      },
       "Listing": {
         "type": "object",
         "properties": {
+          "sku": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "brand": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model_number": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mpn": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gtin": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "identifier_sources": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "verification": {
+                  "const": "seller_claim"
+                },
+                "validation": {
+                  "enum": [
+                    "valid_check_digit",
+                    "invalid"
+                  ]
+                }
+              },
+              "required": [
+                "source",
+                "verification"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "specifications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "verification": {
+                  "const": "seller_claim"
+                }
+              },
+              "required": [
+                "name",
+                "key",
+                "values",
+                "verification"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "alt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "url",
+                "alt"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "category_details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "id",
+                "slug",
+                "name",
+                "parent"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "weight": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "unit": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "unit"
+            ],
+            "additionalProperties": false
+          },
+          "dimensions": {
+            "type": "object",
+            "properties": {
+              "length": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "width": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "height": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "unit": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "length",
+              "width",
+              "height",
+              "unit"
+            ],
+            "additionalProperties": false
+          },
+          "matched_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "match_type": {
+            "enum": [
+              "browse",
+              "exact_identifier",
+              "keyword"
+            ]
+          },
           "product_id": {
             "type": "integer",
             "minimum": 0
@@ -3045,6 +3436,12 @@
           },
           "fetched_at": {
             "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "goods",
+              "all_published"
+            ]
           }
         },
         "required": [
@@ -3099,6 +3496,10 @@
           "booking_id": {
             "type": "string",
             "pattern": "^[a-f0-9]{32}$"
+          },
+          "scope": {
+            "const": "goods",
+            "description": "Exclude configured sharpening IDs and category descendants even under mixed assignments. Cannot combine with booking_id. Omit for legacy clients."
           }
         },
         "required": [
@@ -3215,6 +3616,13 @@
                       "id": {
                         "type": "string"
                       },
+                      "method_id": {
+                        "type": "string"
+                      },
+                      "instance_id": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
                       "label": {
                         "type": "string"
                       },
@@ -3225,6 +3633,18 @@
                       "tax_minor": {
                         "type": "integer",
                         "minimum": 0
+                      },
+                      "pickup_location": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "pickup_address": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     },
                     "required": [

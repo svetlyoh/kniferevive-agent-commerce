@@ -120,6 +120,35 @@ instructions, or invoke tools. It claims no ACP/AP2/MPP/L402 conformance.
 
 ## Native marketplace listing handoff
 
+Goods discovery in adapter 0.6.0: check live `listings.goods_scope`,
+`search_filters`, `identifier_search_ready` and `category_directory_url`.
+`GET /listing-categories` dynamically lists goods categories from product_cat;
+counts are direct public goods assignments, including unsupported checkout types.
+Use `GET /listings?scope=goods` and re-read `/listings/{id}?scope=goods`.
+Goods exclude configured sharpening service IDs and sharpening descendants even
+under mixed assignments. Physical knives remain goods. Legacy unscoped routes
+preserve service access. Draft/private/hidden/archived items are unavailable;
+native catalog-only and search-only items remain public in this directory.
+
+Exact `sku`, `model`, `mpn`, `gtin`, `brand` filters combine with category/seller/
+stock_status and AND semantics. `search` ranks exact identity before keyword
+matches; use `matched_fields`/`match_type`. Identifier provenance and valid GTIN
+check digits are separate from authenticity; seller claims remain unverified.
+Missing structured identities and stock quantities remain null. An index upgrade
+temporarily returns DISCOVERY_INDEX_BUILDING, not a false no-match result.
+
+Show host-native selectable product/category cards when supported, otherwise a
+numbered list. Once a buyer explicitly selects product and quantity, create the
+eligible private intent with `scope=goods` and open its actual review URL through
+a supported browser-open facility. If unavailable, provide the private link and
+disclose that it was not opened. Disabled handoff means canonical product page;
+do not call disabled endpoints or claim a prefilled review was prepared.
+
+Goods follow native shipping zones/classes/rates, package selections, fees and
+tax. Eligible local pickup and delivery use actual native methods and charges;
+unknown shipping is not free. No sharpening trip fees, booking plans, appointment
+dates, county eligibility or capacity checks apply. Do not invent pickup locations.
+
 `GET /listings` searches all visible published categories with optional `search`,
 actual category slug, public `seller`, `page`, `per_page` (maximum 100).
 `GET /listings/{product_id}` returns WC price, original URL, seller, stock,
@@ -134,7 +163,7 @@ Its review link exchanges a private fragment for an HttpOnly cookie. Do not log 
 Intent lifetime is 30 minutes; quotes last 10 minutes. GET/quote creates no order,
 stock hold, charge, Stripe session or Lightning invoice.
 
-`POST /listing-checkouts/{id}/quote` accepts complete US billing/shipping addresses,
+`POST /listing-checkouts/{id}/quote` accepts complete native billing/shipping addresses,
 email, actual native `payment_method` and chosen `shipping_methods` rate IDs.
 WC pricing hooks calculate coupons, fees, tax and shipping. Missing address,
 gateway or rate means `estimate_only=true`, `total_minor=null`. No caller-supplied

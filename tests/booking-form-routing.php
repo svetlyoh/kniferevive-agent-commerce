@@ -3,7 +3,7 @@
 ob_start();set_exception_handler(static function(Throwable $e){fwrite(STDERR,'FAIL: '.$e->getMessage()."\n");exit(1);});
 require __DIR__.'/sandbox-bootstrap.php';
 use KnifeRevive\AgentCommerce\{BookingFrontend,Settings};
-if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Sandbox fence failed');
+if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!==KREV_TEST_DB_HOST)throw new RuntimeException('Sandbox fence failed');
 $checks=0;
 function routeCheck(bool $ok,string $label):void{global $checks;if(!$ok)throw new RuntimeException($label);++$checks;echo "PASS: $label\n";}
 $checkout=(int)get_option('woocommerce_checkout_page_id');

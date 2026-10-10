@@ -20,6 +20,12 @@ foreach($taskMode in @('legacy','legacy-no-sync','hpos','hpos-no-sync')) {
     Invoke-SandboxCheck 'tests/booking.php' @() 'booking assertions passed.' "booking-$taskMode"
     Invoke-SandboxCheck 'tests/booking-bridge.php' @() 'booking bridge assertions passed.' "booking-bridge-$taskMode"
     Invoke-SandboxCheck 'tests/booking-lifecycle.php' @() 'lifecycle assertions passed.' "booking-lifecycle-$taskMode"
+    Invoke-SandboxCheck 'tests/listing-discovery.php' @() 'goods discovery assertions passed.' "goods-discovery-$taskMode"
+    Invoke-SandboxCheck 'tests/goods-fulfillment.php' @() 'goods fulfillment assertions passed.' "goods-fulfillment-$taskMode"
+    if($taskMode -in @('legacy','hpos')) {
+        Invoke-SandboxCheck 'tests/booking-four-options.php' @() 'four-option assertions passed.' "booking-five-options-$taskMode"
+        Invoke-SandboxCheck 'tests/storefront-booking.php' @() 'storefront assertions' "storefront-$taskMode"
+    }
     if($taskMode -in @('legacy','hpos')) {
         Remove-Item Env:KREV_LISTING_TEST_STACK
         Invoke-SandboxCheck 'tests/integration.php' @() 'behavioral assertions passed.' "operator-regression-$taskMode"

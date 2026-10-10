@@ -12,6 +12,7 @@ samples.update(json.loads((ROOT / '.runtime/listing-contract-samples.json').read
 samples.update(json.loads((ROOT / '.runtime/booking-contract-samples.json').read_text()))
 samples.update(json.loads((ROOT / '.runtime/lifecycle-contract-samples.json').read_text()))
 samples.update(json.loads((ROOT / '.runtime/booking-options-contract-samples.json').read_text()))
+samples.update(json.loads((ROOT / '.runtime/goods-contract-samples.json').read_text()))
 for name, sample in samples.items():
     schema = {'$ref': f'#/components/schemas/{name}', 'components': contract['components']}
     Draft202012Validator.check_schema(schema)

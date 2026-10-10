@@ -3,7 +3,7 @@
 ob_start();set_exception_handler(static function(\Throwable $e){fwrite(STDERR,'FAIL: '.$e->getMessage()."\n");exit(1);});
 require __DIR__.'/sandbox-bootstrap.php';
 use KnifeRevive\AgentCommerce\{Api,Booking,BookingSession,Domain,Fault,Settings,Store,StorefrontBooking};
-if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Sandbox fence failed');
+if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!==KREV_TEST_DB_HOST)throw new RuntimeException('Sandbox fence failed');
 $checks=0;function sfCheck($ok,$label){global $checks;if(!$ok)throw new RuntimeException($label);++$checks;echo "PASS: $label\n";}
 function sfReject(callable $fn,$code){try{$fn();}catch(Fault $e){sfCheck($e->codeName===$code,'rejects '.$code);return;}throw new RuntimeException('Missing rejection '.$code);}
 function sfSave(){WC()->cart->calculate_totals();WC()->session->set('cart',WC()->cart->get_cart_for_session());WC()->session->save_data();}

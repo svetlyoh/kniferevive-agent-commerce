@@ -55,7 +55,7 @@ final class ListingCheckout {
         return null;
     }
     private static function eligible($p,bool $booking=false): string {
-        if (!$p || $p->get_status()!=='publish' || $p->get_catalog_visibility()==='hidden') return 'unavailable';
+        if (!ListingDiscovery::publicProduct($p)) return 'unavailable';
         if (!$p->is_type('simple')) return 'unsupported_variation';
         if (!$p->is_purchasable() || !$p->is_in_stock() || $p->backorders_allowed()) return 'unavailable';
         $seller=(int)get_post_field('post_author',$p->get_id());
@@ -89,14 +89,14 @@ final class ListingCheckout {
     }
     public static function product(int $id): array {
         $p=wc_get_product($id);
-        if (!$p || $p->get_status()!=='publish' || $p->get_catalog_visibility()==='hidden' || $p->is_type('variation')) Domain::fail('NOT_FOUND','Listing unavailable.',404);
+        if (!ListingDiscovery::publicProduct($p)) Domain::fail('NOT_FOUND','Listing unavailable.',404);
         $modified=$p->get_date_modified(); $terms=Commerce::isService($p)?self::serviceTerms($id):null;$return=self::returnPolicy($id);
         $variants=[];
         if ($p->is_type('variable')) foreach (array_slice($p->get_children(),0,100) as $variant) {
             $v=wc_get_product($variant);
             if ($v && $v->get_status()==='publish') $variants[]=['variation_id'=>$v->get_id(),'attributes'=>$v->get_variation_attributes(),'in_stock'=>$v->is_in_stock(),'checkout_eligibility'=>'unsupported_variation'];
         }
-        return ['product_id'=>$id,'title'=>wp_strip_all_tags($p->get_name()),'type'=>$p->get_type(),'canonical_url'=>get_permalink($id),
+        return array_merge(ListingDiscovery::identity($p),['matched_fields'=>[],'match_type'=>'browse','product_id'=>$id,'title'=>wp_strip_all_tags($p->get_name()),'type'=>$p->get_type(),'canonical_url'=>get_permalink($id),
             'categories'=>wp_get_post_terms($id,'product_cat',['fields'=>'slugs']),'seller'=>self::seller((int)get_post_field('post_author',$id)),
             'condition'=>wp_strip_all_tags($p->get_attribute('pa_condition'))?:null,'condition_verification'=>'seller_claim',
             'currency'=>get_woocommerce_currency(),'unit_price_minor'=>$p->get_price()==='' || wc_get_price_decimals()!==2 ? null : Domain::cents(wc_format_decimal($p->get_price(),2)),
@@ -105,21 +105,15 @@ final class ListingCheckout {
             'fulfillment_type'=>Commerce::isService($p)?'service':($p->needs_shipping()?'shipping':'virtual'),
             'fulfillment_note'=>$terms['fulfillment_note']??null,'policy_url'=>$terms['terms_url']??(Settings::get()['listing_policy_url']?:null),
             'return_policy'=>$return,'return_policy_url'=>$return?home_url('/return-policy/'):(Settings::get()['return_policy_url']?:null),
-            'updated_at'=>$modified?$modified->date('c'):null];
+            'updated_at'=>$modified?$modified->date('c'):null]);
     }
     public static function catalog(array $args): array {
-        Domain::fields($args,['search','category','seller','page','per_page']);
-        $page=Domain::integer($args['page']??1,1,100);$per=Domain::integer($args['per_page']??10,1,100);
-        $query=['status'=>'publish','limit'=>$per,'page'=>$page,'paginate'=>true,'orderby'=>'ID','order'=>'ASC','visibility'=>'visible'];
-        if (isset($args['search'])) $query['s']=Domain::text($args['search'],100);
-        if (isset($args['category'])) { $slug=Domain::text($args['category'],100); if (!preg_match('/^[a-z0-9-]+$/D',$slug)) Domain::fail('INVALID_REQUEST','Use a category slug.');$query['category']=[$slug]; }
-        if (isset($args['seller'])) $query['author']=Domain::integer($args['seller'],1,PHP_INT_MAX);
-        $found=wc_get_products($query);$items=[];
-        foreach ($found->products as $p) if (!$p->is_type('variation')) $items[]=self::product($p->get_id());
-        return ['schema_version'=>'1.1','items'=>$items,'page'=>$page,'per_page'=>$per,'total'=>(int)$found->total,'pages'=>(int)$found->max_num_pages,'fetched_at'=>gmdate('c')];
+        return ListingDiscovery::catalog($args);
     }
     private static function selection(array $input): array {
-        Domain::fields($input,['items','coupons','source','booking_id'],['items']);
+        Domain::fields($input,['items','coupons','source','booking_id','scope'],['items']);
+        if(isset($input['scope']) && $input['scope']!=='goods')Domain::fail('INVALID_REQUEST','Only goods selection scope is supported.');
+        if(isset($input['scope'],$input['booking_id']))Domain::fail('INVALID_REQUEST','Goods cannot include a sharpening booking.');
         $booking=isset($input['booking_id']);
         if($booking){if(!Domain::validId($input['booking_id']))Domain::fail('INVALID_REQUEST','Invalid booking reference.');Booking::paymentSelection($input['booking_id']);}
         if (!is_array($input['items']) || !array_is_list($input['items']) || !$input['items'] || count($input['items'])>10) Domain::fail('INVALID_REQUEST','Use one to ten listing lines.');
@@ -130,6 +124,7 @@ final class ListingCheckout {
             $id=Domain::integer($item['product_id'],1,PHP_INT_MAX);$qty=Domain::integer($item['quantity'],1,30);$quantity+=$qty;
             if (isset($seen[$id]) || $quantity>50) Domain::fail('INVALID_REQUEST','Use unique products and at most 50 units.');
             $p=wc_get_product($id);$state=self::eligible($p,$booking);
+            if(($input['scope']??null)==='goods' && ListingDiscovery::isSharpening($p))Domain::fail('SERVICE_EXCLUDED','Use the dedicated sharpening booking flow.');
             if (in_array($state,['unsupported_variation','requires_selection'],true)) Domain::fail('UNSUPPORTED_VARIATION','Use the listing page to select unsupported variations or add-ons.');
             if ($state==='needs_manual_review') Domain::fail('NEEDS_MANUAL_REVIEW','Sharpening fulfillment terms must be verified before native prepayment.');
             if ($state!=='handoff_only' || !$p->has_enough_stock($qty) || ($p->is_sold_individually() && $qty!==1)) Domain::fail('LISTING_UNAVAILABLE','A selected listing or quantity is unavailable.');
@@ -170,9 +165,12 @@ final class ListingCheckout {
     private static function address(array $address): array {
         Domain::fields($address,['address_1','address_2','city','state','postcode','country'],['address_1','city','state','postcode','country']);
         foreach($address as &$value) $value=Domain::text($value,150);unset($value);
-        if (!$address['address_1'] || !$address['city'] || $address['country']!=='US'
-            || !isset(WC()->countries->get_states('US')[$address['state']]) || !\WC_Validation::is_postcode($address['postcode'],'US')) Domain::fail('INVALID_REQUEST','Use a complete valid US address.');
-        $address['postcode']=wc_format_postcode($address['postcode'],'US');$address['address_2']=$address['address_2']??'';return $address;
+        $country=$address['country'];$countries=WC()->countries->get_allowed_countries();
+        if(!isset($countries[$country]))Domain::fail('INVALID_REQUEST','Use a country supported by the native store.');
+        $fields=WC()->countries->get_address_fields($country,'billing_');$states=WC()->countries->get_states($country);
+        if(!$address['address_1'] || !$address['city'] || (!empty($fields['billing_state']['required']) && !$address['state']) || (is_array($states) && $states && !isset($states[$address['state']]))
+            || (!empty($fields['billing_postcode']['required']) && !$address['postcode']) || ($address['postcode'] && !\WC_Validation::is_postcode($address['postcode'],$country)))Domain::fail('INVALID_REQUEST','Use a complete valid native address.');
+        $address['postcode']=wc_format_postcode($address['postcode'],$country);$address['address_2']=$address['address_2']??'';return $address;
     }
     private static function context(array $input): array {
         Domain::fields($input,['billing','shipping','email','payment_method','shipping_methods']);
@@ -228,7 +226,8 @@ final class ListingCheckout {
             if($gateways[$context['payment_method']]->get_option('testmode','unknown')!=='yes' && !Settings::get()['listing_live_verified'] && !$bookingLaunch)Domain::fail('PAYMENT_METHOD_UNAVAILABLE','Live or unknown gateway mode needs separate merchant verification.');
             $rates=[];$missing=false;
             foreach($shipping->get_packages() as $index=>$package){
-                $options=[];foreach($package['rates']??[] as $rate)$options[]=['id'=>$rate->get_id(),'label'=>wp_strip_all_tags($rate->get_label()),'cost_minor'=>self::minor($rate->get_cost()),'tax_minor'=>self::minor(array_sum($rate->get_taxes()))];
+                $options=[];foreach($package['rates']??[] as $rate){$meta=$rate->get_meta_data();$options[]=['id'=>$rate->get_id(),'method_id'=>$rate->get_method_id(),'instance_id'=>(int)$rate->get_instance_id(),'label'=>wp_strip_all_tags($rate->get_label()),'cost_minor'=>self::minor($rate->get_cost()),'tax_minor'=>self::minor(array_sum($rate->get_taxes())),
+                    'pickup_location'=>isset($meta['pickup_location'])?sanitize_text_field($meta['pickup_location']):null,'pickup_address'=>isset($meta['pickup_address'])?sanitize_text_field($meta['pickup_address']):null];}
                 if(!$options)Domain::fail('SHIPPING_UNAVAILABLE','Native shipping has no eligible rate for this destination.');
                 $selected=$context['shipping_methods'][$index]??null;
                 if($selected!==null && !isset($package['rates'][$selected]))Domain::fail('SHIPPING_UNAVAILABLE','Choose a current native shipping rate.');
@@ -380,6 +379,17 @@ final class ListingCheckout {
         $context=$d['context'];foreach(['billing','shipping'] as $kind)foreach($context[$kind] as $field=>$value){$actual=(string)$order->{'get_'.$kind.'_'.$field}();if($actual!==$value)Domain::fail('QUOTE_CHANGED','The checkout address changed. Review an updated quote.',409);}
         if(strtolower($order->get_billing_email())!==strtolower($context['email']))Domain::fail('QUOTE_CHANGED','The checkout identity changed. Review an updated quote.',409);
         $fresh=self::price($d['selection'],$context);if(!hash_equals($fresh['quote_hash']??'',$d['quote']['quote_hash']))Domain::fail('QUOTE_CHANGED','The listing, seller or policy changed. Review an updated quote.',409);
+        self::orderFulfillment($order,$d);
+    }
+    /** Bind actual native shipping instances and coupons, even if totals happen to match. */
+    private static function orderFulfillment(\WC_Order $order,array $d): void {
+        $lines=array_values($order->get_items('shipping'));$packages=$d['quote']['shipping_rates'];
+        if(count($lines)!==count($packages))Domain::fail('QUOTE_CHANGED','The native shipping packages changed.',409);
+        foreach($packages as $index=>$package){$selected=null;foreach($package['options'] as $rate)if($rate['id']===$package['selected'])$selected=$rate;$line=$lines[$index];
+            if(!$selected || $line->get_method_id()!==$selected['method_id'] || (int)$line->get_instance_id()!==$selected['instance_id'] || self::minor($line->get_total())!==$selected['cost_minor'] || self::minor($line->get_total_tax())!==$selected['tax_minor'])Domain::fail('QUOTE_CHANGED','The native shipping method or rate changed.',409);
+            foreach(['pickup_location','pickup_address'] as $key)if($selected[$key]!==null && sanitize_text_field((string)$line->get_meta($key))!==$selected[$key])Domain::fail('QUOTE_CHANGED','The native pickup location changed.',409);
+        }
+        $coupons=$order->get_coupon_codes();sort($coupons);if($coupons!==$d['selection']['coupons'] || strtolower($order->get_currency())!=='usd')Domain::fail('QUOTE_CHANGED','The native discount or currency changed.',409);
     }
     public static function bindOrder(\WC_Order $order): void {
         $row=self::nativeIntent();if(!$row)return;
@@ -424,7 +434,35 @@ final class ListingCheckout {
             $bookingId=$row['data']['selection']['booking_id'];$booking=Booking::get($bookingId,Api::bookingOwner($bookingId));
             if(self::bookingOrder($booking)?->get_id()!==$order->get_id())throw new \Exception('Use this booking’s original KnifeRevive order.');
             Booking::paymentSelection($bookingId);
+        }else{
+            self::originalGoodsOrder($row);
         }
+    }
+    /** Scope grants review access; native order-pay still enforces key, ownership, email and nonce. */
+    public static function goodsPaymentUrl(string $id,string $owner): string {
+        $row=self::get($id,$owner,true);if(!empty($row['data']['selection']['booking_id']))Domain::fail('FORBIDDEN','Use the booking payment page.',403);
+        return self::originalGoodsOrder($row)->get_checkout_payment_url();
+    }
+    private static function originalGoodsOrder(array $row): \WC_Order {
+        $d=$row['data'];self::requireEnabled();$order=empty($d['order_id'])?null:wc_get_order((int)$d['order_id']);
+        if(!$order || !$order->needs_payment() || !$order->has_status(['pending','failed']) || $order->get_date_paid() || $order->get_transaction_id() || !empty($d['native_payment_observed']))Domain::fail('PAYMENT_UNRESOLVED','Check the original payment with KnifeRevive before paying again.',409);
+        $items=[];foreach($order->get_items() as $line){if($line->get_variation_id())Domain::fail('PAYMENT_UNRESOLVED','Original selection needs merchant review.',409);$items[]=['product_id'=>$line->get_product_id(),'quantity'=>(int)$line->get_quantity()];}
+        usort($items,static fn($a,$b)=>$a['product_id']<=>$b['product_id']);
+        if($items!==$d['selection']['items'] || $order->get_meta('_krev_listing_intent')!==$row['id'] || $order->get_meta('_krev_listing_quote_hash')!==($d['quote']['quote_hash']??'') || !self::matchesNativeGateway($order,$d) || self::minor($order->get_total())!==$d['quote']['total_minor'])Domain::fail('PAYMENT_UNRESOLVED','Original order binding changed. Contact KnifeRevive.',409);
+        self::orderFulfillment($order,$d);
+        foreach(['billing','shipping'] as $kind)foreach($d['context'][$kind] as $field=>$value)if((string)$order->{'get_'.$kind.'_'.$field}()!==$value)Domain::fail('QUOTE_CHANGED','The original destination changed.',409);
+        if(strtolower($order->get_billing_email())!==strtolower($d['context']['email']))Domain::fail('QUOTE_CHANGED','The original buyer identity changed.',409);
+        if((int)$row['expires']<time() || ($d['quote_expires']??0)<time())Domain::fail('INTENT_EXPIRED','Ask KnifeRevive to review the same original order. Do not replace an expired payment.',410);
+        $fresh=self::price($d['selection'],$d['context']);if(!hash_equals($fresh['quote_hash']??'',$d['quote']['quote_hash']))Domain::fail('QUOTE_CHANGED','The original items or fulfillment need review.',409);
+        // Reuse the installed gateway's recovery API; never create or replace a Stripe intent.
+        if($order->get_payment_method()!=='stripe' || !class_exists('WC_Stripe_Order_Helper'))Domain::fail('PAYMENT_UNRESOLVED','This gateway needs native merchant recovery.',409);
+        $intentId=\WC_Stripe_Order_Helper::get_instance()->get_stripe_intent_id($order);
+        if($intentId){
+            if(!is_string($intentId) || !preg_match('/^pi_[a-zA-Z0-9]+$/D',$intentId) || !class_exists('WC_Stripe_API'))Domain::fail('PAYMENT_UNRESOLVED','Original payment needs merchant review.',409);
+            $intent=\WC_Stripe_API::retrieve('payment_intents/'.$intentId);
+            if(is_wp_error($intent) || ($intent->id??'')!==$intentId || !in_array($intent->status??'',['requires_payment_method','requires_confirmation','requires_action'],true) || (int)($intent->amount??-1)!==$d['quote']['total_minor'] || ($intent->currency??'')!==strtolower($order->get_currency()) || (string)($intent->metadata->order_id??'')!==(string)$order->get_order_number())Domain::fail('PAYMENT_UNRESOLVED','The original gateway outcome is uncertain. Contact KnifeRevive.',409);
+        }
+        return $order;
     }
     /** A linked order is retried in place, never replaced by a new cart/intent. */
     public static function bookingOrder(array $booking): ?\WC_Order {

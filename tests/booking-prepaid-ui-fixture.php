@@ -2,7 +2,7 @@
 /** Fenced, disposable UI fixtures. Native test gateway cannot process a payment. */
 require __DIR__.'/sandbox-bootstrap.php';
 use KnifeRevive\AgentCommerce\{Domain,Settings,Store,Booking};
-if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!=='127.0.0.1:11019')throw new RuntimeException('Sandbox fence failed');
+if(DB_NAME!=='krev_agent_sandbox' || DB_HOST!==KREV_TEST_DB_HOST)throw new RuntimeException('Sandbox fence failed');
 wp_set_current_user(0);$wpdb->query('DELETE FROM '.Store::table('holds')." WHERE slot_id LIKE 'booking-%'");
 $vendor=wp_insert_user(['user_login'=>'prepay-ui-'.Domain::id(),'user_pass'=>Domain::id(),'user_email'=>Domain::id().'@example.invalid','role'=>'seller']);update_user_meta($vendor,'dokan_enable_selling','yes');
 $term=get_term_by('slug','knife-sharpening','product_cat');$services=[];

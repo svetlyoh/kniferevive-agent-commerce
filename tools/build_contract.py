@@ -95,7 +95,17 @@ S["WalletInvoice"] = obj({"booking_id": opaque, "state": {"enum": ["settled", "a
 nullable = {"type": ["string", "null"]}
 nullable_minor = {"type": ["integer", "null"], "minimum": 0}
 S["ListingReturnPolicy"] = obj({"source": {"const": "native_product_return_policy"}, "name": string, "label": string, "description": string, "type": string, "days": integer, "fee_terms": string}, ["source", "name", "label", "description", "type", "days", "fee_terms"])
+S["ListingCategory"] = obj({"id": integer, "slug": string, "name": string, "parent": integer, "canonical_url": string, "visible_product_count": integer, "supported_filters": array(string)}, ["id", "slug", "name", "parent", "canonical_url", "visible_product_count", "supported_filters"])
+S["ListingCategories"] = obj({"schema_version": string, "scope": {"enum": ["goods", "all_published"]}, "count_semantics": string, "items": array(ref("ListingCategory")), "fetched_at": string}, ["schema_version", "scope", "count_semantics", "items", "fetched_at"])
 S["Listing"] = obj({
+    **{field: nullable for field in ["sku", "brand", "model_number", "mpn", "gtin"]},
+    "identifier_sources": {"type": "object", "additionalProperties": obj({"source": string, "verification": {"const": "seller_claim"}, "validation": {"enum": ["valid_check_digit", "invalid"]}}, ["source", "verification"])},
+    "specifications": array(obj({"name": string, "key": string, "values": array(string), "verification": {"const": "seller_claim"}}, ["name", "key", "values", "verification"])),
+    "images": array(obj({"url": string, "alt": string}, ["url", "alt"])),
+    "category_details": array(obj({"id": integer, "slug": string, "name": string, "parent": integer}, ["id", "slug", "name", "parent"])),
+    "weight": obj({"value": nullable, "unit": string}, ["value", "unit"]),
+    "dimensions": obj({**{field: nullable for field in ["length", "width", "height"]}, "unit": string}, ["length", "width", "height", "unit"]),
+    "matched_fields": array(string), "match_type": {"enum": ["browse", "exact_identifier", "keyword"]},
     "product_id": integer, "title": string, "type": string, "canonical_url": string,
     "categories": array(string), "seller": obj({"id": integer, "display_name": string}, ["id", "display_name"]),
     "condition": nullable, "condition_verification": {"const": "seller_claim"}, "currency": string,
@@ -108,13 +118,15 @@ S["Listing"] = obj({
     "policy_url": nullable, "return_policy_url": nullable, "return_policy": {"anyOf": [ref("ListingReturnPolicy"), {"type": "null"}]}, "updated_at": nullable
 }, ["product_id", "canonical_url", "seller", "checkout_eligibility", "direct_payment_enabled", "inventory_reserved"])
 S["Listings"] = obj({"schema_version": string, "items": array(ref("Listing")), "page": integer, "per_page": integer, "total": integer, "pages": integer, "fetched_at": string}, ["schema_version", "items", "page", "per_page", "total", "pages", "fetched_at"])
+S["Listings"]["properties"]["scope"] = {"enum": ["goods", "all_published"]}
 S["ListingInput"] = obj({"items": S["QuoteInput"]["properties"]["items"], "coupons": {"type": "array", "items": string, "maxItems": 5}, "source": {"type": "string", "maxLength": 80}, "booking_id": opaque}, ["items"])
+S["ListingInput"]["properties"]["scope"] = {"const": "goods", "description": "Exclude configured sharpening IDs and category descendants even under mixed assignments. Cannot combine with booking_id. Omit for legacy clients."}
 S["ListingQuoteInput"] = obj({"billing": ref("Address"), "shipping": ref("Address"), "email": {"type": "string", "format": "email"}, "payment_method": string, "shipping_methods": {"type": "array", "items": string, "maxItems": 10}})
 S["ListingQuote"] = obj({
     "currency": {"const": "USD"},
     "items": array(obj({"product_id": integer, "quantity": integer, "listing": ref("Listing"), "subtotal_minor": integer, "total_minor": integer, "tax_minor": integer}, ["product_id", "quantity", "listing"])),
     "total_minor": nullable_minor, "estimate_only": {"type": "boolean"}, "reason": nullable,
-    "shipping_rates": array(obj({"package_index": integer, "selected": nullable, "options": array(obj({"id": string, "label": string, "cost_minor": integer, "tax_minor": integer}, ["id", "label", "cost_minor", "tax_minor"]))}, ["package_index", "selected", "options"])),
+    "shipping_rates": array(obj({"package_index": integer, "selected": nullable, "options": array(obj({"id": string, "method_id": string, "instance_id": integer, "label": string, "cost_minor": integer, "tax_minor": integer, "pickup_location": nullable, "pickup_address": nullable}, ["id", "label", "cost_minor", "tax_minor"]))}, ["package_index", "selected", "options"])),
     "fees": array(obj({"name": string, "total_minor": integer, "tax_minor": integer}, ["name", "total_minor", "tax_minor"])),
     "tax_minor": nullable_minor, "shipping_minor": nullable_minor, "discount_minor": nullable_minor,
     "payment_methods": array(string), "payment_method": string, "policy_url": string, "policy_version": string,
@@ -157,6 +169,11 @@ route("/catalog", "GET", "catalog", "Catalog", query=[("category", {"enum": ["te
 route("/service-area", "GET", "area", query=[("postal_code", postal, True)])
 route("/listings", "GET", "listings", "Listings", query=[("search", string, False), ("category", string, False), ("seller", {"type": "integer", "minimum": 1}, False), ("page", {"type": "integer", "minimum": 1, "maximum": 100}, False), ("per_page", {"type": "integer", "minimum": 1, "maximum": 100}, False)])
 route("/listings/{product_id}", "GET", "listing", "Listing")
+paths["/listings"]["get"]["parameters"] += [{"name": name, "in": "query", "required": False, "schema": {"type": "string", "maxLength": 100}} for name in ["sku", "model", "mpn", "gtin", "brand"]]
+paths["/listings"]["get"]["parameters"] += [{"name": "scope", "in": "query", "schema": {"enum": ["all_published", "goods"], "default": "all_published"}}, {"name": "stock_status", "in": "query", "schema": {"enum": ["instock", "outofstock", "onbackorder"]}}]
+paths["/listings"]["get"]["description"] = "Published non-hidden, non-archived products, including catalog-only/search-only. Goods excludes configured service IDs and sharpening descendants even under mixed assignments. Explicit identity filters combine with AND, normalized case/whitespace (GTIN also strips hyphens). Exact identifier search ranks before title/description keyword matches. Missing identifiers never inferred. Counts/pagination apply after filtering. Search returns DISCOVERY_INDEX_BUILDING until upgrade index is complete."
+paths["/listings/{product_id}"]["get"]["parameters"].append({"name": "scope", "in": "query", "schema": {"const": "goods"}})
+route("/listing-categories", "GET", "listingCategories", "ListingCategories", query=[("scope", {"enum": ["goods", "all_published"], "default": "goods"}, False)])
 route("/listing-checkouts", "POST", "listingCreate", "ListingIntent", "ListingInput", True, True)
 route("/listing-checkouts/{id}", "GET", "listingGet", "ListingIntent", private=True)
 route("/listing-checkouts/{id}/quote", "POST", "listingQuote", "ListingIntent", "ListingQuoteInput", True, True)
@@ -173,7 +190,7 @@ route("/orders/{id}", "GET", "statusOrder", "Status", private=True)
 route("/orders/{id}/change-requests", "POST", "change", body="ChangeInput", private=True, idem=True)
 route("/stripe/webhook", "POST", "webhook")
 paths["/stripe/webhook"]["post"]["description"] = "Stripe-Signature on the unmodified raw request body is mandatory. This is a processor callback, not a shopper mutation."
-contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.7.0", "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review. Native refund acceptance does not prove bank arrival."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}, "BookingAccess": {"type": "apiKey", "in": "header", "name": "X-Krev-Booking"}}, "schemas": S}}
+contract = {"openapi": "3.1.0", "info": {"title": "KnifeRevive Agent Commerce", "version": "1.8.0", "description": "Verify deployed capabilities before use. Booking requests and payment are independent. Draft contact fields are unsupported; use protected human review. Native refund acceptance does not prove bank arrival."}, "servers": [{"url": "https://kniferevive.com/wp-json/kniferevive-agent/v1"}], "paths": paths, "components": {"securitySchemes": {"ShopperSession": {"type": "apiKey", "in": "header", "name": "X-Krev-Agent-Session"}, "BookingAccess": {"type": "apiKey", "in": "header", "name": "X-Krev-Booking"}}, "schemas": S}}
 payload = json.dumps(contract, indent=2) + "\n"
 for file in [ROOT / "openapi/kniferevive-agent-v1.yaml", ROOT / "wordpress/kniferevive-agent-commerce/assets/openapi.json"]:
     file.parent.mkdir(parents=True, exist_ok=True)

@@ -17,6 +17,7 @@ final class ListingFrontend {
             if($isStatus)$status=ListingCheckout::status($id,$owner);
             elseif(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
                 $post=wp_unslash($_POST);self::authorizeForm($owner,$id,$post);
+                if(($post['action']??'')==='resume_order'){wp_safe_redirect(ListingCheckout::goodsPaymentUrl($id,$owner),303);exit;}
                 if(($post['action']??'')==='continue'){
                     if(($post['accept']??'')!=='yes')Domain::fail('AUTHORIZATION_REQUIRED','Review and accept the current purchase and terms.',403);
                     $url=ListingCheckout::handoff($id,$owner,(string)($post['quote_hash']??''));
@@ -98,6 +99,11 @@ final class ListingFrontend {
             }
         }
         echo '</ul>';
+        if(!empty($d['order_id']) && !isset($d['selection']['booking_id'])){
+            $status=ListingCheckout::status($row['id'],$owner);echo '<p>Your original native order is saved. Payment: '.esc_html($status['payment_state']).'.</p>';
+            if($status['payment_state']==='pending'){echo '<form method="post">';self::hidden($owner,$row['id']);echo '<input type="hidden" name="action" value="resume_order"><button>Continue payment for this order</button></form><p>If your wallet already charged you, check that original payment first.</p>';}
+            echo '<p><a href="'.esc_url($status['status_url']).'">Check original purchase status</a></p>';return;
+        }
         if($d['handoff_state']!=='review'){
             echo '<p>This intent has already been handed to its original checkout browser. Do not start another payment if its outcome is uncertain.</p><p><a href="'.esc_url(isset($d['selection']['booking_id'])?add_query_arg(['krev_agent'=>'booking','booking'=>$d['selection']['booking_id'],'payment'=>'1'],home_url('/')):wc_get_checkout_url()).'">Resume original native checkout</a></p><p><a href="'.esc_url(add_query_arg(['krev_agent'=>'listing-status','intent'=>$row['id']],home_url('/'))).'">Check original purchase status</a></p>';return;
         }
@@ -106,6 +112,11 @@ final class ListingFrontend {
             foreach($q['fees'] as $fee)echo '<p>'.esc_html($fee['name'].' — $'.Domain::decimal($fee['total_minor'])).'</p>';
             echo '<p>Discount: $'.esc_html(Domain::decimal($q['discount_minor'])).'</p><p>Shipping: $'.esc_html(Domain::decimal($q['shipping_minor'])).'</p><p>Taxes: $'.esc_html(Domain::decimal($q['tax_minor'])).'</p><p><strong>All-in total: $'.esc_html(Domain::decimal($q['total_minor'])).' USD</strong></p><p>Native payment method: '.esc_html($q['payment_method']).'. The gateway may require a login or independent payment approval.</p>';
             foreach($q['shipping_rates'] as $package)foreach($package['options'] as $rate)if($rate['id']===$package['selected'])echo '<p>Selected shipping: '.esc_html($rate['label']).'</p>';
+            foreach($q['shipping_rates'] as $package)foreach($package['options'] as $rate)if($rate['id']===$package['selected'] && in_array($rate['method_id'],['local_pickup','pickup_location'],true)){
+                if($rate['pickup_location'])echo '<p>Pickup location: '.esc_html($rate['pickup_location']).'</p>';
+                if($rate['pickup_address'])echo '<p>Pickup address: '.esc_html($rate['pickup_address']).'</p>';
+                if(!$rate['pickup_location'] && !$rate['pickup_address'])echo '<p>Confirm the pickup location shown by the native method or with your seller before paying.</p>';
+            }
             echo '<p>Quote valid until '.esc_html(gmdate('c',$d['quote_expires'])).'. <a href="'.esc_url($q['policy_url']).'">Purchase terms</a> · <a href="'.esc_url($q['return_policy_url']).'">Return and refund policy</a></p><form method="post">';
             self::hidden($owner,$row['id']);echo '<input type="hidden" name="action" value="continue"><input type="hidden" name="quote_hash" value="'.esc_attr($q['quote_hash']).'"><label><input type="checkbox" name="accept" value="yes" required> I accept these items, seller, fulfillment, total and policies. Continue to native checkout; I will authorize payment there.</label><button>Continue to secure payment</button></form>';
         }else echo '<p><strong>Estimate only:</strong> enter complete addresses, choose the actual gateway and a native shipping rate where required. The total is unknown until those checks pass.</p>';
@@ -127,6 +138,7 @@ final class ListingFrontend {
         $gateways=WC()->payment_gateways()->payment_gateways();foreach(Settings::get()['listing_gateway_ids'] as $id)if(isset($gateways[$id]) && $gateways[$id]->enabled==='yes')echo '<option value="'.esc_attr($id).'" '.selected($c['payment_method']??'',$id,false).'>'.esc_html(wp_strip_all_tags($gateways[$id]->get_title())).'</option>';
         echo '</select></label>';
         foreach($q['shipping_rates']??[] as $package){echo '<label>Shipping package '.esc_html((string)($package['package_index']+1)).'<select name="shipping_methods['.esc_attr((string)$package['package_index']).']" required>';
+            echo '<option value="">Choose a native shipping method</option>';
             foreach($package['options'] as $option)echo '<option value="'.esc_attr($option['id']).'" '.selected($package['selected']??'',$option['id'],false).'>'.esc_html($option['label'].' — $'.Domain::decimal($option['cost_minor']+$option['tax_minor'])).'</option>';echo '</select></label>';
         }
         echo '<button>Calculate native quote</button></form>';

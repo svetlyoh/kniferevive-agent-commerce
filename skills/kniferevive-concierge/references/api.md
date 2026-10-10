@@ -4,6 +4,14 @@ Production base: `https://kniferevive.com/wp-json/kniferevive-agent/v1`.
 Use the merchant's `/openapi` endpoint for the exact released JSON contract.
 Only capabilities returned by the deployed service are actionable.
 
+All-category goods contracts in adapter 0.6.0: `GET /listing-categories` and
+`GET /listings?scope=goods` with advertised `sku`, `model`, `mpn`, `gtin`, `brand`,
+category, seller and stock filters. Check `identifier_search_ready` and deployed
+OpenAPI; do not call proposed routes against older adapters. `GET /listings/{id}`
+also supports `scope=goods`. See [Product discovery](product-discovery.md).
+Goods selections send `scope=goods` to `/listing-checkouts`. Legacy consumers
+may omit scope and retain their documented service access.
+
 For unpaid or optionally prepaid sharpening bookings, use the separate
 `booking.enabled` capability and [booking workflow](booking.md). It does not
 require legacy `/quotes` or `sharpening.direct_checkout`; a disabled legacy
@@ -59,7 +67,7 @@ with a draft, independently of the general two-hour shopper token. See
 
 Send `Accept: application/json`. When the host's existing HTTP tool offers a
 protocol setting, prefer HTTP/2 for this API. If it supports an identifying
-User-Agent, identify this client honestly as `KnifeRevive-Concierge/0.5.14`.
+User-Agent, identify this client honestly as `KnifeRevive-Concierge/0.6.0`.
 Credentials, browser cookies and WordPress login are unnecessary for discovery.
 
 On October 9, 2026, PowerShell 7's default HTTP/1.1 request received a hosting
