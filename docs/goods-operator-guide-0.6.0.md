@@ -123,6 +123,12 @@ order to bypass uncertain payment.
 
 ## Verification boundary
 
+Plugin and portable skill 0.6.0 are deployed/published. Live Google-feed source
+search, exact model search, thumbnails/links and complete pagination passed.
+The registry/isolated download matches all nine authored skill file hashes.
+ClawHub security is clean, while full verification still reports a missing
+registry-generated Skill Card. See the release evidence for exact findings.
+
 Fenced synthetic native tests cover implementation behavior. Actual native
 processor payment, seller transfer/refund arrival, production shipping/plugin
 parity, and Muse HTTP/cards/selection/browser opening require separate proof.

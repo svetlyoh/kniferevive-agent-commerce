@@ -11,11 +11,18 @@ selectable host presentation guidance, preserved product/quantity review,
 site-native shipping and protected original-order recovery. Physical knives are
 included; sharpening services use the dedicated unchanged booking branch.
 
-This record distinguishes source implementation/testing, deployment, publication,
-registry verification and live payment/host proof. Final observations and package
-hashes are recorded in the companion JSON evidence and release manifest. Until
-deployment and listing launch readiness are verified, bots must use canonical
-product pages for goods. Do not label the production payment pipeline complete.
+Plugin **0.6.0 is deployed and active**. Portable skill **0.6.0 is published** on
+[GitHub](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.6.0)
+and [ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge), where it is latest.
+Live search is ready; goods checkout remains disabled by the retained launch
+gates, so bots use canonical product pages. Actual Muse rendering and real
+payment/seller/refund settlement remain unverified.
+
+Tested source commit: `75092826ccf05aabf1306607407ff8350ed9a221`. Immutable
+`plugin-v0.6.0` / `skill-v0.6.0` tags point to manifest commit
+`5510486faa2d852e9d46418df95a445f7012c769`; bundled source is identical.
+See [exact release evidence](concierge-release-evidence-0.6.0.json) and
+[archive/per-file hashes](concierge-release-manifest-0.6.0.json).
 
 ## Baseline and concurrency
 
@@ -104,8 +111,15 @@ later expected rates. Details/counts are captured after execution, not inferred
 from historical reports. HTTP/browser review and native payment-handoff fixtures,
 schema/source parity, PHP lint and skill validation have separate evidence.
 
-Native seller-side tests load a captured Seller Orders candidate, documented in
-the evidence. That local stack differs from production versions; simulated
+The full classic/HPOS matrix (synchronization on/off) passed. Final focused checks
+passed 60 discovery, 25 fulfillment and 75 listing assertions; browser review
+preserved quantity 2 into native checkout, and HTTP recovery reached the same
+original booking order. Contract schemas/source parity, skill validation and all
+57 PHP files passed. The matrix preceded final focused source fixes; the evidence
+records each run without claiming every late change received another full matrix.
+
+Native seller-side tests load captured Seller Orders 1.1.8, also observed active
+in production. Other local stack versions/configuration can differ; simulated
 payments/transfers/refunds are not real processor, seller payout or refund proof.
 
 Admin browser access became available after the session update; the earlier
@@ -133,13 +147,31 @@ native test-account payment/webhook, seller accounting/transfer/refund, producti
 plugin/tax/shipping parity and actual Muse JSON/cards/selection/browser opening
 remain release/launch proof, not assertions of completion.
 
+The production WordPress ZIP update visibly completed successfully from 0.5.18
+to 0.6.0; the installed row shows active 0.6.0. Read-only post-upgrade settings
+confirmed the same goods gates, gateway IDs, maximum and empty policies, with
+booking enabled/approved. Seller Orders stayed at 1.1.8. Anonymous capabilities
+advertise goods/feed search and a completed index. Discovery returns **28 goods
+in 11 categories**. Searching `Intel Integrated Graphics` returns Dell product
+2417 with `matched_fields=[google_feed_attributes]`, thumbnail and canonical URL.
+Exact model `4562/20` returns product 538. The `knife` search returns **16 distinct
+results across four pages** at five per page; pagination and counts matched.
+Post-upgrade sharpening discovery retains all five options and 0/600/600/1100/0
+cent trip fees. No buyer intent/order was created by these public reads.
+
 ## Packages, release and rollback
 
 `tools/package.py` produces explicit plugin and portable skill archives with
 archive and per-file SHA-256/byte manifests. Final hashes, commits and publication
 status are recorded separately after packaging; any changed bundled file requires
 new archives. Registry-generated Skill Cards are never authored as substitutes.
-Exact-version ClawHub findings must be checked when that version is published.
+Exact-version ClawHub inspection shows latest 0.6.0, clean/benign security with
+high confidence and no warnings. All nine registry and isolated-download file
+hashes match the release manifest. Full `skill verify --version 0.6.0` separately
+returns `ok=false`, `card.missing`; the requested registry-generated card is
+unavailable, server-resolved GitHub import provenance is unavailable and signature
+is unsigned. VirusTotal/SkillSpector report objects are null. No card was authored
+or uploaded, and these absent checks are not claimed as passing certification.
 
 See [operator recovery/rollback](goods-operator-guide-0.6.0.md). Preserve original
 orders and financial ledgers; disable goods launch before restoring a preceding

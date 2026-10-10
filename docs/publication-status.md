@@ -1,4 +1,31 @@
-## Current skill 0.5.14 — verified public API client compatibility
+## Current skill/plugin 0.6.0 — all-category and Google-feed attribute search
+
+October 10, 2026: portable KnifeRevive Concierge **0.6.0** is published on
+[GitHub](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.6.0)
+and [ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge), where it is latest.
+Merchant plugin **0.6.0** is deployed/active, preserving Seller Orders **1.1.8**
+and the preceding booking/seller repairs. Search uses native Google-feed attributes
+and the skill requires every matching item with its real thumbnail and product
+link. Live reads verified 28 goods in 11 categories, an actual Google-feed GPU
+match, exact model search and all 16 knife results over four pages.
+
+Goods launch settings remain disabled; canonical product-page checkout fallback
+applies. Sharpening remains enabled with all five choices and $6/$11 trip fees.
+No real charge/order/transfer/refund, gateway-mode switch or launch-setting change
+was performed for this release. Actual Muse renderer/browser integration remains
+unverified. See [implementation](all-category-concierge-0.6.0.md),
+[operator guide](goods-operator-guide-0.6.0.md),
+[exact evidence](concierge-release-evidence-0.6.0.json) and
+[package hashes](concierge-release-manifest-0.6.0.json).
+
+Exact-version security is clean/benign, high confidence, no warnings. All nine
+registry and isolated-download file hashes match release tag commit
+`5510486faa2d852e9d46418df95a445f7012c769`. Full verification separately reports
+`card.missing`; generated card and server-resolved import provenance are unavailable,
+signature unsigned, VirusTotal/SkillSpector reports null. No substitute Skill Card
+was authored. Earlier passing versions do not certify 0.6.0.
+
+## Historical skill 0.5.14 — verified public API client compatibility
 
 Portable skill **0.5.14** is published on GitHub and ClawHub. The merchant backend is now **0.5.17**, with Seller Orders **1.1.7** and [confirmed native sharpening status](confirmed-booking-native-orders-0.5.17.md). The prior [0.5.16 recipient-name and original-order payment recovery](recipient-and-original-order-payment-0.5.16.md) remains deployed. The [saved-booking/Cash App payment handoff repair](cashapp-booking-handoff-0.5.15.md) deployed and verified in the fenced native checkout tests. Version 0.5.14 fixed a WordPress contact-name query collision that returned 404 on ordinary storefront booking submission. Live coverage/validation POSTs now return HTTP 200; the private native payment handoff passes in the fenced sandbox. See [the checkout repair and deployment evidence](checkout-routing-fix-0.5.14.md). Public production discovery returns all five choices with $6 single-trip and $11 round-trip fee labels. PowerShell HTTP/2, Node fetch, Python urllib and native curl returned HTTP 200 JSON anonymously; PowerShell HTTP/1.1 still returns a hosting HTML challenge. Private booking lookup remains protected with HTTP 401. No hosting or payment settings changed. See [the client comparison and diagnostic](public-api-client-compatibility-0.5.14.md).
 
