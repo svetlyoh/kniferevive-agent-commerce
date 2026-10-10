@@ -5,10 +5,12 @@ import hashlib, json, re, zipfile, subprocess
 root = Path(__file__).resolve().parents[1]
 out = root / "dist"
 out.mkdir(exist_ok=True)
-manifest = {"plugin_version": "1.0.0", "skill_version": "0.6.2", "components": {}}
+plugin_version = re.search(r"KREV_IMPORT_VERSION', '([^']+)'", (root / "wordpress/kniferevive-listlab-import/kniferevive-listlab-import.php").read_text()).group(1)
+skill_version = re.search(r'version: "([^"]+)"', (root / "skills/kniferevive-listing/SKILL.md").read_text()).group(1)
+manifest = {"plugin_version": plugin_version, "skill_name": "kniferevive-listing", "skill_version": skill_version, "components": {}}
 source_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
 manifest["source_commit"] = source_commit
-for folder, archive in [("wordpress/kniferevive-listlab-import", "kniferevive-listlab-import-1.0.0.zip"), ("skills/kniferevive-concierge", "kniferevive-concierge-0.6.2.zip")]:
+for folder, archive in [("wordpress/kniferevive-listlab-import", f"kniferevive-listlab-import-{plugin_version}.zip"), ("skills/kniferevive-listing", f"kniferevive-listing-{skill_version}.zip")]:
     base = root / folder
     entries = []
     with zipfile.ZipFile(out / archive, "w", zipfile.ZIP_DEFLATED) as bundle:
@@ -28,4 +30,4 @@ for folder, archive in [("wordpress/kniferevive-listlab-import", "kniferevive-li
             entries.append({"path": name, "sha256": hashlib.sha256(payload).hexdigest(), "bytes": len(payload)})
     manifest["components"][archive] = {"sha256": hashlib.sha256((out / archive).read_bytes()).hexdigest(), "files": entries}
 (out / "marketplace-import-release-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-print("Packaged Marketplace Imports 1.0.0 and Concierge 0.6.2 with exact file hashes.")
+print(f"Packaged Marketplace Imports {plugin_version} and Listing {skill_version} with exact file hashes.")

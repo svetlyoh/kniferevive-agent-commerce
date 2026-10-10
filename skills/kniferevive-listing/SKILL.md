@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # KnifeRevive Listing
@@ -18,6 +18,11 @@ Open the actual source listing, extract its title, description, condition,
 brand/model/specifications, explicit USD price and real item photos. Map facts
 to the live category attribute schema; retain unmatched facts in the description
 and omit unknowns. Keep preparation scoped to the item the user selected.
+Prefill `short_description` with the same text as `description`. Extract the
+manufacturer brand when available. For knives, identify the stated knife/blade
+type, cutting-edge style and blade length with its units; map those facts to the
+category and native attributes advertised by the live schema. Blade length is
+not overall length or shipping-package length. Do not invent missing measurements.
 
 Use the Marketplace Imports companion API at
 `https://kniferevive.com/wp-json/kniferevive-listlab-import/v1`. Read its live

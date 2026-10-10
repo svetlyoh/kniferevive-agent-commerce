@@ -11,8 +11,9 @@ out = root / "dist"
 out.mkdir(exist_ok=True)
 commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
 manifest = {"source_commit": commit, "components": {}}
-for slug, version in [("kniferevive-listing", "1.0.0"), ("kniferevive-concierge", "0.6.3")]:
+for slug in ["kniferevive-listing", "kniferevive-concierge"]:
     base = root / "skills" / slug
+    version = re.search(r'version: "([^"]+)"', (base / "SKILL.md").read_text()).group(1)
     entries = []
     archive = out / f"{slug}-{version}.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
@@ -41,4 +42,4 @@ for slug, version in [("kniferevive-listing", "1.0.0"), ("kniferevive-concierge"
             entries.append({"path": name, "sha256": hashlib.sha256(payload).hexdigest(), "bytes": len(payload)})
     manifest["components"][archive.name] = {"version": version, "sha256": hashlib.sha256(archive.read_bytes()).hexdigest(), "files": entries}
 (out / "listing-skill-release-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-print("Packaged Listing 1.0.0 and Concierge 0.6.3; all references and committed file hashes verified.")
+print("Packaged current Listing and Concierge; all references and committed file hashes verified.")

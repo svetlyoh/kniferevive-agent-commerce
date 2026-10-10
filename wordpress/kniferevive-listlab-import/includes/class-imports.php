@@ -70,6 +70,9 @@ final class KREV_Marketplace_Imports {
             if ( ! is_scalar( $value ) || is_bool( $value ) ) return self::fail( 'import_field_type', $key . ' must be text or a number.' );
             $listing[ $key ] = in_array( $key, array( 'description', 'short_description' ), true ) ? sanitize_textarea_field( $value ) : sanitize_text_field( $value );
         }
+        // Imported drafts prefill both descriptions identically, including review edits.
+        // Native ListLab edits after draft creation remain independent and are never overwritten on retry.
+        $listing['short_description'] = $listing['description'] ?? '';
         foreach ( array( 'category_id', 'quantity', 'shipping_policy_id', 'return_policy_id', 'featured_image_id' ) as $field ) {
             if ( isset( $listing[ $field ] ) && '' !== $listing[ $field ] && ! preg_match( '/^\d{1,9}$/D', (string) $listing[ $field ] ) ) return self::fail( 'import_integer', $field . ' must be a non-negative whole number.' );
         }

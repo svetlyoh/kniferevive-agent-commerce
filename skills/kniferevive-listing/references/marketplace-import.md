@@ -17,10 +17,19 @@ messaging the original seller or asserting ownership of another seller's item.
    Retain item facts; omit the original seller's contact details and payment links.
    For a login wall/missing content, use the user's supplied details/images or
    ask for the missing title/price/photo. Do not pretend to have read the page.
+   Set `short_description` equal to the cleaned long `description`; preserve the
+   same item facts rather than generating a different summary. Extract brand
+   from the listing's brand field/title/text when stated, keeping the maker
+   separate from model/series. For knives, extract the knife/blade type (for
+   example chef's knife, paring knife or cleaver), edge style (straight,
+   serrated, Granton etc.), blade length and its stated unit. Do not substitute
+   overall length, estimate measurements from a photo, or infer steel/brand
+   from an unverified model guess. Keep missing brand/length unknown and name
+   those missing fields in the handoff so the seller can complete them.
 2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
    HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
    on October 10, 2026. An identifying User-Agent may be
-   `KnifeRevive-Listing/1.0.0`. If the response is a hosting HTML challenge,
+   `KnifeRevive-Listing/1.0.1`. If the response is a hosting HTML challenge,
    distinguish it from an API JSON error. Do not spoof a browser, solve challenges
    or transfer browser cookies. If the supported client remains blocked, report
    that the import was not prepared and direct the seller to ListLab through
@@ -33,6 +42,14 @@ messaging the original seller or asserting ownership of another seller's item.
    values, not guessed taxonomy names. Preserve unmatched factual specifications
    in the description. “Used - like new” is still used; do not manufacture
    restoration/warranty evidence or mark an item sharpened from a photo.
+   Use the live brand field (currently `product_brand`), matching a maker option
+   ID when available; use supported text for a new stated maker only when the
+   schema allows it. Knife type selects the matching product category. The
+   current knife schema exposes `pa_blade-length` and `pa_edge-type`; re-check
+   them rather than inventing `pa_blade-type`. Put blade shape/profile in the
+   description if no matching field exists. Preserve measurement units and
+   precision (for example `8 inches`); match an existing equivalent option when
+   unambiguous. Do not put blade length into the shipping `length` field.
 3. POST `/prepare` with the extracted data. Example (category/attribute IDs below
    must be replaced with real schema values):
 
@@ -44,6 +61,7 @@ messaging the original seller or asserting ownership of another seller's item.
   "category_id": 123,
   "title": "Seller's actual item title",
   "description": "Actual item facts and stated condition; unknowns omitted.",
+  "short_description": "Actual item facts and stated condition; unknowns omitted.",
   "attributes": {},
   "image_urls": ["https://scontent.example.fbcdn.net/actual-item-photo.jpg"]
 }

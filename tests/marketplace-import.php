@@ -40,6 +40,9 @@ $token = importToken( $prepared ); checkImport( strlen( $token ) === 64, '256-bi
 $status = importCall( 'status', array( 'token' => $token ) );
 checkImport( $status->get_data()['data']['source_url'] === 'https://www.facebook.com/marketplace/item/123456789/', 'source link canonicalized without tracking' );
 checkImport( ! str_contains( $status->get_data()['data']['listing']['description'], '<script>' ), 'source executable markup stripped' );
+checkImport( $status->get_data()['data']['listing']['short_description'] === $status->get_data()['data']['listing']['description'], 'short description prefills from sanitized long description' );
+$description_preview = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'description' => "Edited source facts\nSecond line", 'short_description' => 'Old summary' ) ) );
+checkImport( $description_preview->get_data()['data']['listing']['short_description'] === "Edited source facts\nSecond line", 'review edits refresh short description with the long text' );
 importError( importCall( 'status', array( 'token' => str_repeat( 'a', 64 ) ) ), 'import_missing' );
 importError( importCall( 'claim', array( 'token' => $token, 'authorized_to_list' => true, 'expected_price' => '30.00' ) ), 'rest_forbidden' );
 $subscriber = wp_insert_user( array( 'user_login' => 'import-subscriber-' . wp_generate_uuid4(), 'user_pass' => wp_generate_password(), 'role' => 'subscriber' ) ); wp_set_current_user( $subscriber );
@@ -67,10 +70,12 @@ checkImport( $product->get_status() === 'draft', 'incomplete listing never publi
 checkImport( $product->get_regular_price() === '30.00' && $product->get_stock_quantity() === 2, 'calculated price and supplied quantity preserved' );
 checkImport( (int) get_post_field( 'post_author', $id ) === $seller, 'draft is seller-owned' );
 checkImport( $product->get_meta( '_krev_import_source_price' ) === '25.00', 'original Facebook price retained separately' );
+checkImport( $product->get_short_description() === $product->get_description() && $product->get_description() !== '', 'native ListLab draft retains identical descriptions' );
 checkImport( $claimed->get_data()['listing']['edit_url'] !== '' && $claimed->get_data()['listing']['view_url'] === '', 'native completion link without false public URL' );
-$product->set_name( 'Seller edited title' ); $product->save();
+$product->set_name( 'Seller edited title' ); $product->set_short_description( 'Seller edited summary' ); $product->save();
 $again = importCall( 'claim', array( 'token' => $token, 'expected_price' => '30.00', 'authorized_to_list' => true, 'changes' => array( 'title' => 'Do not overwrite' ) ) );
 checkImport( $again->get_data()['listing']['id'] === $id && $again->get_data()['listing']['title'] === 'Seller edited title', 'retry returns same product and preserves seller edits' );
+checkImport( wc_get_product( $id )->get_short_description() === 'Seller edited summary', 'retries preserve independently edited seller summary' );
 wp_set_current_user( 0 ); $second_ticket = importCall( 'prepare', $payload ); $second_token = importToken( $second_ticket ); wp_set_current_user( $seller );
 $repeat_source = importCall( 'claim', array( 'token' => $second_token, 'expected_price' => '30.00', 'authorized_to_list' => true ) );
 checkImport( $repeat_source->get_data()['listing']['id'] === $id, 'different ticket for same seller/source returns original draft' );
@@ -112,4 +117,23 @@ $attribute_product = wc_get_product( $attribute_claim->get_data()['listing']['id
 checkImport( in_array( 'Intel Core i5', wp_get_object_terms( $attribute_product->get_id(), 'pa_processor', array( 'fields' => 'names' ) ), true ), 'copied CPU stored as real native attribute' );
 checkImport( $attribute_product->get_attributes()['pa_processor']->get_visible(), 'copied specification visible for storefront/feed projection' );
 checkImport( $attribute_product->get_stock_quantity() === 0 && $attribute_product->get_status() === 'draft', 'unknown inventory creates no available published stock' );
+$knife = get_term_by( 'slug', 'chefs-knife', 'product_cat' );
+if ( ! $knife ) { $made = wp_insert_term( 'Synthetic chefs knife', 'product_cat', array( 'slug' => 'chefs-knife' ) ); $knife = get_term( $made['term_id'], 'product_cat' ); }
+if ( ! taxonomy_exists( 'product_brand' ) ) register_taxonomy( 'product_brand', 'product' );
+foreach ( array( 'blade-length', 'edge-type' ) as $slug ) {
+    if ( ! wc_attribute_taxonomy_id_by_name( $slug ) ) wc_create_attribute( array( 'name' => $slug, 'slug' => $slug, 'type' => 'select' ) );
+    if ( ! taxonomy_exists( 'pa_' . $slug ) ) register_taxonomy( 'pa_' . $slug, 'product' );
+}
+$knife_payload = $payload; $knife_payload['source_url'] = 'https://www.facebook.com/marketplace/item/999999996/'; $knife_payload['category_id'] = $knife->term_id;
+$knife_payload['description'] = 'Wusthof chef knife, 8 inches blade, straight edge.'; $knife_payload['short_description'] = 'Stale summary';
+$knife_payload['attributes'] = array( 'product_brand' => array( 'Wusthof' ), 'pa_blade-length' => array( '8 inches' ), 'pa_edge-type' => array( 'Straight' ) );
+wp_set_current_user( 0 ); $knife_prepared = importCall( 'prepare', $knife_payload ); checkImport( $knife_prepared->get_status() === 201, 'brand and knife specification payload accepted' );
+$knife_token = importToken( $knife_prepared ); wp_set_current_user( $seller );
+$knife_claim = importCall( 'claim', array( 'token' => $knife_token, 'expected_price' => '30.00', 'authorized_to_list' => true, 'changes' => array( 'description' => "Wusthof chef knife\n8 inches blade, straight edge." ) ) );
+checkImport( $knife_claim->get_status() === 201, 'native knife draft created with extracted attributes' );
+$knife_product = wc_get_product( $knife_claim->get_data()['listing']['id'] );
+checkImport( $knife_product->get_short_description() === "Wusthof chef knife\n8 inches blade, straight edge." && $knife_product->get_description() === $knife_product->get_short_description(), 'final review description prefills both native fields' );
+checkImport( in_array( 'Wusthof', wp_get_object_terms( $knife_product->get_id(), 'product_brand', array( 'fields' => 'names' ) ), true ), 'extracted maker stored in native brand taxonomy' );
+checkImport( in_array( '8 inches', wp_get_object_terms( $knife_product->get_id(), 'pa_blade-length', array( 'fields' => 'names' ) ), true ) && $knife_product->get_length() === '', 'blade length preserves units and leaves package length unknown' );
+checkImport( in_array( 'Straight', wp_get_object_terms( $knife_product->get_id(), 'pa_edge-type', array( 'fields' => 'names' ) ), true ) && in_array( $knife->term_id, $knife_product->get_category_ids(), true ), 'knife type and edge style stored in native category and attribute' );
 echo "$passed marketplace import assertions passed.\n"; ob_end_flush();
