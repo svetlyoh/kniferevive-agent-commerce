@@ -1,3 +1,19 @@
+## Marketplace Imports 1.0.2 live; separate Listing 1.0.3 on GitHub
+
+October 10, 2026: the companion was updated in place on kniferevive.com and its
+live schema verified at 1.0.2. Blank shipping fields default to 15 oz and
+1 × 6 × 4 inches, converted to store units; entered values take priority.
+Listing 1.0.3 describes these estimates and is published on GitHub. Actual
+Muse installation remains unverified. All 88 native assertions, PHP syntax,
+skill validation and packaged source/reference checks passed.
+
+Native saves of products 3033 and 3036 applied the default weight and triggered
+successful automatic uploads. Product 3033's existing 5 × 4 × 8-inch dimensions
+were preserved; product 3036 received the default dimensions. Merchant Center
+now reports neither missing-weight error. Both are under review with image
+retrieval pending; the fork also has a Discover Used-condition restriction and
+an upcoming image-size warning. See [deployment and validation](marketplace-import-1.0.2.md).
+
 ## Separate Listing 1.0.2
 
 Later signed-in Merchant Center inspection confirmed that the two recent

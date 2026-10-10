@@ -25,5 +25,25 @@ entered values, metric conversion, virtual exclusions and request-scope cleanup.
 PHP syntax checks passed for all five plugin PHP files. Skill validation and
 package source/reference verification are performed before publication.
 
-Deployment and the two live product updates are recorded separately after
-verification; Google approval and image crawl completion are not implied.
+## Verified live deployment, October 10, 2026
+
+WordPress confirmed the in-place plugin update, and the live public schema
+returned version 1.0.2 with the requested package defaults. GitHub publishes
+Marketplace Imports 1.0.2 and Listing skill 1.0.3; all four release asset hashes
+match the local artifacts. Actual Muse installation remains unverified.
+
+Native ListLab saves filled only the blank fields on the two recent imports:
+
+| Product | Weight | Package dimensions (L × W × H) | Automatic API upload (UTC) |
+| --- | --- | --- | --- |
+| 3033, Cuisinart Electric Knife | 0.9375 lb | 5 × 4 × 8 in, existing values preserved | 2026-10-10 19:57:13 |
+| 3036, Wüsthof Culinar fork | 0.9375 lb | 1 × 6 × 4 in, defaults | 2026-10-10 19:55:38 |
+
+Signed-in Merchant Center inspection after processing confirmed that missing
+shipping weight is no longer reported for either product. Both are under
+review, with an image-retrieval issue remaining. The fork also retains its
+Discover restriction for accurate Used condition and an upcoming image-size
+warning. No Google approval is claimed. No manual feed refresh was needed.
+
+The isolated local database used for the 88 assertions was identified by its
+exact loopback port and workspace data directory, then shut down.
