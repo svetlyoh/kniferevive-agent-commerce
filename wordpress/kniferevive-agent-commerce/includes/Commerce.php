@@ -4,7 +4,9 @@ defined('ABSPATH') || exit;
 
 final class Commerce {
     public static function isService($product): bool {
-        return $product && has_term('knife-sharpening', 'product_cat', $product->get_parent_id() ?: $product->get_id());
+        if(!$product)return false;
+        if($product->get_parent_id())$product=wc_get_product($product->get_parent_id());
+        return ListingDiscovery::isSharpening($product);
     }
     public static function catalog(array $args): array {
         Domain::fields($args, ['category','search','page','per_page']);

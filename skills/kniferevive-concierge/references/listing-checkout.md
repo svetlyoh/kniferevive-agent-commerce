@@ -25,7 +25,7 @@ Do not bypass access controls or infer working payment methods from logos.
    `review_url` with the host's actual browser-open facility so the buyer enters PII on KnifeRevive.
    If unavailable, provide the private link and disclose that automatic opening was unsupported.
    Alternatively, with permission, `/listing-checkouts/{id}/quote` accepts complete
-   US `billing`, `shipping`, `email`, enabled `payment_method` and chosen native
+   native `billing`, `shipping`, `email`, enabled `payment_method` and chosen native
    `shipping_methods`. Use a fresh idempotency key for each changed/repriced quote.
    Missing context/rate means `estimate_only=true`, `total_minor=null`, never free.
 5. Disclose items, discounts, fees, shipping, tax, USD total, seller, purchase/return

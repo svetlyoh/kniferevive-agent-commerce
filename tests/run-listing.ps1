@@ -4,6 +4,10 @@ $taskExtensions=(Join-Path (Split-Path $PhpPath) 'ext').Replace('\','/')
 $taskArgs=@('-n','-d',"extension_dir=$taskExtensions",'-d','extension=mysqli','-d','extension=mbstring','-d','extension=openssl','-d','extension=curl','-d','memory_limit=512M')
 $taskResults=@()
 function Invoke-SandboxCheck([string]$Script,[string[]]$Extra,[string]$Marker,[string]$Label) {
+    if($Script -ne 'tests/storage-mode.php') {
+        $taskClean=& $PhpPath @taskArgs 'tests/clean-native-fixtures.php' $WordPressRoot 2>&1
+        if($LASTEXITCODE -ne 0 -or -not (($taskClean -join "`n").Contains('fenced native fixtures reset.'))){throw "Synthetic fixture reset failed before $Label"}
+    }
     $taskOutput=& $PhpPath @taskArgs $Script $WordPressRoot @Extra 2>&1
     $taskExit=$LASTEXITCODE
     $taskOutput | Set-Content ".runtime/$Label.txt" -Encoding utf8

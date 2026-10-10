@@ -27,7 +27,7 @@ final class ListingFrontend {
                 }
                 if(($post['action']??'')!=='quote')Domain::fail('INVALID_REQUEST','Unknown review action.');
                 $context=['email'=>$post['email']??'','payment_method'=>$post['payment_method']??'','shipping_methods'=>array_values((array)($post['shipping_methods']??[]))];
-                foreach(['billing','shipping'] as $kind)foreach(['address_1','address_2','city','state','postcode','country'] as $field)$context[$kind][$field]=(string)($post[$kind.'_'.$field]??'');
+                foreach(['billing','shipping'] as $kind){if($kind==='shipping' && !isset($post['shipping_country']))continue;foreach(['address_1','address_2','city','state','postcode','country'] as $field)$context[$kind][$field]=(string)($post[$kind.'_'.$field]??'');}
                 $row=ListingCheckout::quote($id,$context,$owner,'buyer-listing-quote-'.Domain::digest($context).'-'.Domain::id());
                 $message='Review the refreshed quote. No payment has been created.';
             }
@@ -130,7 +130,8 @@ final class ListingFrontend {
             }
         }
         echo '<label>Receipt email<input name="email" type="email" maxlength="254" required value="'.esc_attr($c['email']??'').'"></label>';
-        foreach(['billing'=>'Billing','shipping'=>'Delivery'] as $kind=>$label){echo '<fieldset><legend>'.esc_html($label.' address').'</legend>';
+        $needsShipping=false;foreach($d['selection']['items'] as $line)if(wc_get_product($line['product_id'])?->needs_shipping())$needsShipping=true;
+        foreach(['billing'=>'Billing','shipping'=>'Delivery'] as $kind=>$label){if($kind==='shipping' && !$needsShipping)continue;echo '<fieldset><legend>'.esc_html($label.' address').'</legend>';
             foreach(['address_1'=>'Street address','address_2'=>'Apartment (optional)','city'=>'City','state'=>'State code','postcode'=>'Postal code','country'=>'Country code'] as $field=>$text){$value=$c[$kind][$field]??($field==='country'?'US':'');echo '<label>'.esc_html($label.' '.$text).'<input name="'.esc_attr($kind.'_'.$field).'" maxlength="150" '.($field==='address_2'?'':'required').' value="'.esc_attr($value).'"></label>';}
             echo '</fieldset>';
         }

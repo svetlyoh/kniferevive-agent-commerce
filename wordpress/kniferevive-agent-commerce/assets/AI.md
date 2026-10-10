@@ -163,7 +163,7 @@ Its review link exchanges a private fragment for an HttpOnly cookie. Do not log 
 Intent lifetime is 30 minutes; quotes last 10 minutes. GET/quote creates no order,
 stock hold, charge, Stripe session or Lightning invoice.
 
-`POST /listing-checkouts/{id}/quote` accepts complete US billing/shipping addresses,
+`POST /listing-checkouts/{id}/quote` accepts complete native billing/shipping addresses,
 email, actual native `payment_method` and chosen `shipping_methods` rate IDs.
 WC pricing hooks calculate coupons, fees, tax and shipping. Missing address,
 gateway or rate means `estimate_only=true`, `total_minor=null`. No caller-supplied

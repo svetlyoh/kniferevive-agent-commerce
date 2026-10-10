@@ -26,6 +26,7 @@ foreach($categories as $category)checkGoods(in_array($category,$slugs,true),'cat
 checkGoods(!in_array('knife-sharpening',$slugs,true) && !in_array('child-sharpening',$slugs,true),'sharpening categories excluded');
 checkGoods(ListingDiscovery::catalog(['scope'=>'goods','category'=>'art'])['total']===1,'mixed and configured services excluded before counting');
 checkGoods(ListingDiscovery::catalog(['category'=>'knife-sharpening'])['total']===2,'legacy service discovery includes descendant');
+checkGoods(ListingCheckout::product($child->get_id())['checkout_eligibility']==='needs_manual_review','unscoped descendant is still a service, not an approved goods purchase');
 $physical=$products['chefs-knife'];$physical->set_virtual(false);$physical->save();checkGoods(ListingCheckout::product($physical->get_id())['fulfillment_type']==='shipping','physical knives included');
 $target=$products['technology'];$target->set_sku('SKU-00 A');$target->set_global_unique_id('00012345600012');$target->update_meta_data('_wc_gla_mpn','MPN-001');$target->update_meta_data('_mpn','Conflicting-ignored');$target->save();
 $modelId=wc_attribute_taxonomy_id_by_name('pa_model-number');if(!$modelId){$modelId=wc_create_attribute(['name'=>'Model','slug'=>'model-number','type'=>'select']);delete_transient('wc_attribute_taxonomies');WC_Cache_Helper::invalidate_cache_group('woocommerce-attributes');}
@@ -33,7 +34,7 @@ if(!taxonomy_exists('pa_model-number'))register_taxonomy('pa_model-number','prod
 $modelTerm=term_exists('Model-00 A','pa_model-number')?:wp_insert_term('Model-00 A','pa_model-number');
 $model=new WC_Product_Attribute();$model->set_id((int)$modelId);$model->set_name('pa_model-number');$model->set_visible(true);$model->set_options([(int)$modelTerm['term_id']]);$target->set_attributes([$model]);$target->save();ListingDiscovery::index($target->get_id());
 if(!taxonomy_exists('product_brand'))register_taxonomy('product_brand','product',['hierarchical'=>true,'public'=>true]);
-$brand=term_exists('Synthetic Manufacturer','product_brand')?:wp_insert_term('Synthetic Manufacturer','product_brand');$series=term_exists('Synthetic Series','product_brand')?:wp_insert_term('Synthetic Series','product_brand',['parent'=>$brand['term_id']]);wp_update_term($series['term_id'],'product_brand',['parent'=>$brand['term_id']]);wp_set_object_terms($target->get_id(),[(int)$series['term_id']],'product_brand');
+$brand=term_exists('Synthetic Manufacturer','product_brand')?:wp_insert_term('Synthetic Manufacturer','product_brand');wp_update_term((int)$brand['term_id'],'product_brand',['name'=>'Synthetic Manufacturer']);$series=term_exists('Synthetic Series','product_brand')?:wp_insert_term('Synthetic Series','product_brand',['parent'=>$brand['term_id']]);wp_update_term($series['term_id'],'product_brand',['parent'=>$brand['term_id']]);wp_set_object_terms($target->get_id(),[(int)$series['term_id']],'product_brand');
 ListingDiscovery::batch();$identity=ListingCheckout::product($target->get_id());
 checkGoods($identity['gtin']==='00012345600012','GTIN leading zeros');checkGoods($identity['mpn']==='MPN-001','MPN source priority');
 checkGoods($identity['brand']==='Synthetic Manufacturer','manufacturer ancestor rather than series');checkGoods($identity['model_number']==='Model-00 A','stored public model attribute');
