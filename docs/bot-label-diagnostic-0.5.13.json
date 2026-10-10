@@ -1,0 +1,1617 @@
+{
+  "date": "2026-10-09",
+  "skill_version": "0.5.13",
+  "registry_latest": "0.5.13",
+  "authored_files_match": [
+    {
+      "path": "LICENSE",
+      "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361"
+    },
+    {
+      "path": "references/api.md",
+      "sha256": "44a8328160e70a0063288c510034000084c10c396c344e8fd2dd640a940bad2b"
+    },
+    {
+      "path": "references/booking.md",
+      "sha256": "1150da4334fd6eb989ea2dd260da41fb9472138d5191839bbd7b4501865cf5b3"
+    },
+    {
+      "path": "references/installation.md",
+      "sha256": "89e3d5f6e91dbd576fd6b08cdf9dace089c25d9f1826ac65a79b0515e9e2e765"
+    },
+    {
+      "path": "references/listing-checkout.md",
+      "sha256": "a2b7a750976e073969779b3caa8e3139f52729180f821589abda0043115aab07"
+    },
+    {
+      "path": "references/payments.md",
+      "sha256": "e70bf7d6cc28166ecbe6dd51c4ca2f5c60ed5701b6969a52ab5bcfd312e1d0d8"
+    },
+    {
+      "path": "references/sharpening.md",
+      "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e"
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "1a27dd5ee90f3238d783a46c8f2833daa03f6d7db4d28517462184be2733d678"
+    }
+  ],
+  "registry_only_files": [
+    "skill-card.md"
+  ],
+  "verification": {
+    "schema": "clawhub.skill.verify.v1",
+    "ok": true,
+    "decision": "pass",
+    "reasons": [],
+    "slug": "kniferevive-concierge",
+    "displayName": "KnifeRevive Concierge - SF Bay Area Sharpening, AI Tech",
+    "pageUrl": "https://clawhub.ai/svetlyoh/skills/kniferevive-concierge",
+    "publisherHandle": "svetlyoh",
+    "publisherDisplayName": "svetlyoh",
+    "publisherProfileUrl": "https://clawhub.ai/svetlyoh",
+    "version": "0.5.13",
+    "resolvedFrom": "version",
+    "tag": null,
+    "createdAt": 1791588678229,
+    "card": {
+      "available": true,
+      "path": "skill-card.md",
+      "url": "https://wry-manatee-359.convex.site/api/v1/skills/kniferevive-concierge/card?ownerHandle=svetlyoh&version=0.5.13",
+      "sha256": "fdb8fea08d392def8a79c692d4ade3dbffdc6c0d1931a45450b278db0624ac2d",
+      "size": 3082,
+      "contentType": "text/markdown; charset=utf-8"
+    },
+    "artifact": {
+      "sourceFingerprint": "54e8a4275e9905cc85e212fc9c8d2f409c3a8987140b2151894b4493c17a7049",
+      "bundleFingerprints": [
+        "ed0ea216d9eb67ce8c79775cb2bb7b2ca47fdce668afec9e00171ef82073afb4"
+      ],
+      "files": [
+        {
+          "path": "LICENSE",
+          "size": 919,
+          "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361",
+          "contentType": "application/octet-stream"
+        },
+        {
+          "path": "references/api.md",
+          "size": 4001,
+          "sha256": "44a8328160e70a0063288c510034000084c10c396c344e8fd2dd640a940bad2b",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/booking.md",
+          "size": 13213,
+          "sha256": "1150da4334fd6eb989ea2dd260da41fb9472138d5191839bbd7b4501865cf5b3",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/installation.md",
+          "size": 10396,
+          "sha256": "89e3d5f6e91dbd576fd6b08cdf9dace089c25d9f1826ac65a79b0515e9e2e765",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/listing-checkout.md",
+          "size": 3977,
+          "sha256": "a2b7a750976e073969779b3caa8e3139f52729180f821589abda0043115aab07",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/payments.md",
+          "size": 4063,
+          "sha256": "e70bf7d6cc28166ecbe6dd51c4ca2f5c60ed5701b6969a52ab5bcfd312e1d0d8",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "references/sharpening.md",
+          "size": 2128,
+          "sha256": "62ac4036d506e5e7ee169d9a2018d0488d2f799499d0f81aa465799278d7e02e",
+          "contentType": "text/markdown"
+        },
+        {
+          "path": "SKILL.md",
+          "size": 13090,
+          "sha256": "1a27dd5ee90f3238d783a46c8f2833daa03f6d7db4d28517462184be2733d678",
+          "contentType": "text/markdown"
+        }
+      ]
+    },
+    "provenance": {
+      "source": "unavailable",
+      "reason": "No server-resolved GitHub import provenance is stored for this version."
+    },
+    "security": {
+      "status": "clean",
+      "passed": true,
+      "rawStatus": "clean",
+      "verdict": "benign",
+      "confidence": "high",
+      "summary": "This skill is a disclosed KnifeRevive shopping and sharpening concierge that uses existing browser/HTTP capabilities and repeatedly requires customer approval before checkout, payment, booking, wallet use, or persistence.",
+      "model": null,
+      "checkedAt": 1791589492527,
+      "scannerReports": {
+        "aig": {
+          "version": "2.1.0",
+          "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/Schemata/sarif-schema-2.1.0.json",
+          "runs": [
+            {
+              "tool": {
+                "driver": {
+                  "name": "aig-skill-scan",
+                  "version": "0.2.2",
+                  "informationUri": "https://github.com/Tencent/AI-Infra-Guard",
+                  "rules": [
+                    {
+                      "id": "T01",
+                      "name": "Skill Instruction Hijacking",
+                      "shortDescription": {
+                        "text": "Alters the agent's current session goals or safety constraints when the skill is loaded"
+                      }
+                    },
+                    {
+                      "id": "T02",
+                      "name": "Agent Memory Poisoning",
+                      "shortDescription": {
+                        "text": "Writes attacker-controlled rules into persistent memory so they continue to affect future sessions"
+                      }
+                    },
+                    {
+                      "id": "T03",
+                      "name": "Remote Payload Retrieval and Execution",
+                      "shortDescription": {
+                        "text": "Fetches code from an external URL, allowing the effective payload to change after skill review"
+                      }
+                    },
+                    {
+                      "id": "T04",
+                      "name": "Embedded Malicious Code",
+                      "shortDescription": {
+                        "text": "Ships malicious scripts inside the skill package and executes them locally when invoked"
+                      }
+                    },
+                    {
+                      "id": "T05",
+                      "name": "Unauthorized Access and Privilege Escalation",
+                      "shortDescription": {
+                        "text": "Breaks least-privilege boundaries by obtaining permissions beyond the task's legitimate needs"
+                      }
+                    },
+                    {
+                      "id": "T06",
+                      "name": "System Persistence",
+                      "shortDescription": {
+                        "text": "Installs cross-session backdoors, hooks, services, or scheduled tasks that survive the skill run"
+                      }
+                    },
+                    {
+                      "id": "T07",
+                      "name": "Tool Hijacking and Spoofing",
+                      "shortDescription": {
+                        "text": "Modifies, wraps, spoofs, or replaces tools so legitimate-looking calls execute attacker logic"
+                      }
+                    },
+                    {
+                      "id": "T08",
+                      "name": "Insecure Dependencies",
+                      "shortDescription": {
+                        "text": "Introduces malicious packages or components through dependency confusion, typosquatting, or unsafe sources"
+                      }
+                    },
+                    {
+                      "id": "T09",
+                      "name": "Insecure Skill Coding Practices",
+                      "shortDescription": {
+                        "text": "Exposes exploitable flaws such as hardcoded secrets, command injection, plaintext sensitive data, or unsafe temp files"
+                      }
+                    },
+                    {
+                      "id": "other",
+                      "name": "Other Risk",
+                      "shortDescription": {
+                        "text": "Security issues not covered by the T01-T09 classification"
+                      }
+                    }
+                  ]
+                }
+              },
+              "results": [],
+              "properties": {
+                "securityScore": 100,
+                "primaryLanguage": "Markdown",
+                "llm": "gpt-5.6",
+                "startTime": 1791589442.877467,
+                "endTime": 1791589462.355476
+              }
+            }
+          ]
+        },
+        "skillspector": {
+          "skill": {
+            "name": "kniferevive-concierge",
+            "source": "/tmp/clawhub-codex-scan-v57597wnzs31dh1904mtcazymd8fzre2-rg9Hor/clawscan-skillspector-82696931/artifact",
+            "scanned_at": "2026-10-09T23:44:02.054873+00:00"
+          },
+          "risk_assessment": {
+            "score": 45,
+            "severity": "MEDIUM",
+            "recommendation": "CAUTION",
+            "max_issue_severity": "HIGH"
+          },
+          "components": [
+            {
+              "path": "LICENSE",
+              "type": "other",
+              "lines": 7,
+              "executable": false,
+              "size_bytes": 919,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            },
+            {
+              "path": "SKILL.md",
+              "type": "markdown",
+              "lines": 204,
+              "executable": false,
+              "size_bytes": 13090,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            },
+            {
+              "path": "references/api.md",
+              "type": "markdown",
+              "lines": 59,
+              "executable": false,
+              "size_bytes": 4001,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            },
+            {
+              "path": "references/booking.md",
+              "type": "markdown",
+              "lines": 198,
+              "executable": false,
+              "size_bytes": 13213,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            },
+            {
+              "path": "references/installation.md",
+              "type": "markdown",
+              "lines": 119,
+              "executable": false,
+              "size_bytes": 10396,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            },
+            {
+              "path": "references/listing-checkout.md",
+              "type": "markdown",
+              "lines": 55,
+              "executable": false,
+              "size_bytes": 3977,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            },
+            {
+              "path": "references/payments.md",
+              "type": "markdown",
+              "lines": 71,
+              "executable": false,
+              "size_bytes": 4063,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            },
+            {
+              "path": "references/sharpening.md",
+              "type": "markdown",
+              "lines": 39,
+              "executable": false,
+              "size_bytes": 2128,
+              "source_url": null,
+              "source_identity": null,
+              "source_digest": null
+            }
+          ],
+          "structured_summaries": [],
+          "issues": [
+            {
+              "id": "P6",
+              "finding_id": "finding-ba75be8723d14495a1311613e1f35056",
+              "category": "System Prompt Leakage",
+              "pattern": "Direct Prompt Extraction",
+              "severity": "HIGH",
+              "confidence": 0.85,
+              "location": {
+                "file": "references/installation.md",
+                "start_line": 44,
+                "end_line": null
+              },
+              "finding": "display rules",
+              "explanation": "Skill contains instructions that could directly expose system prompts, internal rules, or hidden instructions to users or external parties.",
+              "remediation": "Remove any instructions that reveal, print, or output system prompts or internal rules. System instructions should never be exposed to end users.",
+              "code_snippet": "A $7 sharpening selection must display `$7 + $6 trip fee` on each single-trip\nbutton and `$7 + $11 round-trip fee` on the combo. The unpaid option is last\nand says \u201cnothing due now\u201d. If it still says \u201c+ fee\u201d or places unpaid first, inspect\nthe active skill copy/session; do not claim the new display rules are loaded.\n\nBefore installing any third-party agent skill, review its files and permissions. This skill's shopping instructions do **not** grant your assistant a new bank account, wallet, payment credential, or blanket permission to purchase. Agent capabilities differ by platform.\n",
+              "intent": null,
+              "tags": [
+                "System Prompt Leakage",
+                "llm-unconfirmed"
+              ],
+              "evidence": {},
+              "match_fingerprint": "a68ebd5a8f5499a099b5d1dd71f50b2a352943856b8d649f2e95aaee534ad01b",
+              "occurrences": [
+                {
+                  "file": "references/installation.md",
+                  "start_line": 44,
+                  "end_line": null
+                }
+              ]
+            },
+            {
+              "id": "EA2",
+              "finding_id": "finding-89a5450cc5a84a59b7a85f0cfc04881e",
+              "category": "Excessive Agency",
+              "pattern": "Autonomous Decision Making",
+              "severity": "MEDIUM",
+              "confidence": 0.75,
+              "location": {
+                "file": "references/installation.md",
+                "start_line": 90,
+                "end_line": null
+              },
+              "finding": "without verification",
+              "explanation": "Skill enables autonomous high-impact decisions without human-in-the-loop verification. Critical operations (destructive commands, financial transactions, data deletion) should require explicit user confirmation.",
+              "remediation": "Add human-in-the-loop confirmation for destructive, irreversible, or high-impact operations. Never auto-execute commands that modify files, send data, or alter system state.",
+              "code_snippet": "\n## Meta Muse (personal AI agent) \u2014 paste this prompt\n\n> Please review the public **KnifeRevive Concierge** skill at https://clawhub.ai/svetlyoh/skills/kniferevive-concierge and its source at https://github.com/svetlyoh/kniferevive-agent-commerce/tree/main/skills/kniferevive-concierge. I want you to use its documented procedures **when I explicitly ask** for relevant San Francisco Bay Area knife-sharpening services or KnifeRevive Annex technology listings. Read `SKILL.md` plus its `references/api.md`, `references/sharpening.md`, and `references/payments.md` before adopting the workflow. If Muse provides an actual user-approved custom-skill import/install facility, explain it and ask for approval before enabling it. Otherwise, save the relevant rules as a reusable goal or standing instruction **if your app supports that**, and say plainly that this is not a native ClawHub install. Keep KnifeRevive identified as one merchant, preserve comparisons when requested, confirm live capabilities and exact availability, and never claim an appointment is booked or payment completed without verification. Do not purchase, reserve, transfer funds, create a wallet, or enter credentials unless I separately authorize the specific transaction and the required merchant approval flow is completed. Tell me exactly what was saved or installed and what remains unsupported.\n\n**Developer note \u2014 Muse Code, not Muse personal-agent app:** Muse Code can install compatible local `SKILL.md` skill folders. Use a reviewed downloaded copy of the **entire** ClawHub skill directory (including references), validate it with `muse skills validate <path>`, then install it using `muse skills install <path> --scope user` and check `muse skills list`. The developer tool is separate from the consumer Muse agent. Do not assume a Muse personal-agent chat installs local Muse Code skills.\n",
+              "intent": null,
+              "tags": [
+                "Excessive Agency",
+                "llm-unconfirmed"
+              ],
+              "evidence": {},
+              "match_fingerprint": "fe5d1711651a4715ab1d9b8451c549b9733b35dcee753a00cc95b0754ef2c699",
+              "occurrences": [
+                {
+                  "file": "references/installation.md",
+                  "start_line": 90,
+                  "end_line": null
+                }
+              ]
+            },
+            {
+              "id": "SDI-1",
+              "finding_id": "finding-ce75a9ae78fe436d967630cc75747d5b",
+              "category": null,
+              "pattern": null,
+              "severity": "MEDIUM",
+              "confidence": 0.97,
+              "location": {
+                "file": "references/listing-checkout.md",
+                "start_line": 3,
+                "end_line": 5
+              },
+              "finding": null,
+              "explanation": "The skill documentation expands behavior from a knife-sharpening concierge into broad marketplace shopping across unrelated categories such as art, technology, spices, and coins. That scope expansion increases the chance the agent will perform transactions outside the user-expected domain, weakening least-privilege and making misuse or policy bypass more likely in a payment-adjacent flow.",
+              "remediation": "Restrict the documented flow to the manifest-approved KnifeRevive use cases only, or update the manifest and trust boundaries to explicitly authorize broader marketplace shopping. Add hard scope checks so the agent refuses categories and listings outside sharpening/listing-concierge intent, and document category allowlists enforced at runtime.",
+              "code_snippet": null,
+              "intent": null,
+              "tags": [],
+              "evidence": {},
+              "match_fingerprint": null,
+              "occurrences": [
+                {
+                  "file": "references/listing-checkout.md",
+                  "start_line": 3,
+                  "end_line": 5
+                }
+              ]
+            },
+            {
+              "id": "EA3",
+              "finding_id": "finding-fde884c0647b4a1bae58be8df2adfe35",
+              "category": "Excessive Agency",
+              "pattern": "Scope Creep",
+              "severity": "LOW",
+              "confidence": 0.7,
+              "location": {
+                "file": "LICENSE",
+                "start_line": 7,
+                "end_line": null
+              },
+              "finding": "NOT LIMITED TO",
+              "explanation": "Skill's behavior or capabilities extend beyond its stated purpose. Scope creep allows an agent to perform actions unrelated to its documented functionality, increasing the attack surface.",
+              "remediation": "Limit the skill's scope to its documented purpose. Remove instructions that enable the agent to perform actions outside its stated functionality.",
+              "code_snippet": "\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+              "intent": null,
+              "tags": [
+                "Excessive Agency",
+                "llm-unconfirmed"
+              ],
+              "evidence": {},
+              "match_fingerprint": "e89530c367266aa328ed88bf9475086c891da0ff38badf80bf35bae6b13345e0",
+              "occurrences": [
+                {
+                  "file": "LICENSE",
+                  "start_line": 7,
+                  "end_line": null
+                }
+              ]
+            },
+            {
+              "id": "SDI-4",
+              "finding_id": "finding-9c82884df94f49d280423b9ebf92c17a",
+              "category": null,
+              "pattern": null,
+              "severity": "LOW",
+              "confidence": 0.63,
+              "location": {
+                "file": "references/listing-checkout.md",
+                "start_line": 5,
+                "end_line": 5
+              },
+              "finding": null,
+              "explanation": "The manifest emphasizes requesting SF Bay Area knife sharpening with various fulfillment modes, but this document states the flow does not book appointments and later says sharpening remains not booked in this flow. That is an intent-level divergence between the skill's described concierge purpose and the documented behavior of this specific flow.",
+              "remediation": "Clarify in the documentation that this file only handles product/listing checkout and explicitly excludes appointment booking, or adjust the manifest to distinguish shopping checkout from sharpening-request booking flows.",
+              "code_snippet": null,
+              "intent": null,
+              "tags": [
+                "llm-unconfirmed"
+              ],
+              "evidence": {},
+              "match_fingerprint": null,
+              "occurrences": [
+                {
+                  "file": "references/listing-checkout.md",
+                  "start_line": 5,
+                  "end_line": 5
+                }
+              ]
+            }
+          ],
+          "suppressed_count": 0,
+          "suppressed": [],
+          "metadata": {
+            "has_executable_scripts": false,
+            "skillspector_version": "2.11.2",
+            "llm_requested": true,
+            "llm_available": true,
+            "meta_analysis_applied": true,
+            "inference_usage": [
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 4705,
+                "completion_tokens": 14,
+                "cached_tokens": 3840,
+                "reasoning_tokens": 0,
+                "total_tokens": 4719
+              },
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1547,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 1561
+              },
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 4649,
+                "completion_tokens": 14,
+                "cached_tokens": 3840,
+                "reasoning_tokens": 0,
+                "total_tokens": 4663
+              },
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 2449,
+                "completion_tokens": 14,
+                "cached_tokens": 1792,
+                "reasoning_tokens": 0,
+                "total_tokens": 2463
+              },
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 3984,
+                "completion_tokens": 14,
+                "cached_tokens": 3840,
+                "reasoning_tokens": 0,
+                "total_tokens": 3998
+              },
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 2331,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 2345
+              },
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1882,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 1896
+              },
+              {
+                "node": "semantic_developer_intent",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 2380,
+                "completion_tokens": 325,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 2705
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1569,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 1583
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 4006,
+                "completion_tokens": 14,
+                "cached_tokens": 3840,
+                "reasoning_tokens": 0,
+                "total_tokens": 4020
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 4727,
+                "completion_tokens": 14,
+                "cached_tokens": 3840,
+                "reasoning_tokens": 0,
+                "total_tokens": 4741
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 4671,
+                "completion_tokens": 14,
+                "cached_tokens": 3840,
+                "reasoning_tokens": 0,
+                "total_tokens": 4685
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 2471,
+                "completion_tokens": 14,
+                "cached_tokens": 1792,
+                "reasoning_tokens": 0,
+                "total_tokens": 2485
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 2353,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 2367
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1904,
+                "completion_tokens": 14,
+                "cached_tokens": 1792,
+                "reasoning_tokens": 0,
+                "total_tokens": 1918
+              },
+              {
+                "node": "semantic_quality_policy",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 2402,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 2416
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1101,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 1115
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 4259,
+                "completion_tokens": 14,
+                "cached_tokens": 3840,
+                "reasoning_tokens": 0,
+                "total_tokens": 4273
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 2003,
+                "completion_tokens": 14,
+                "cached_tokens": 1792,
+                "reasoning_tokens": 0,
+                "total_tokens": 2017
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 4203,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 4217
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 3538,
+                "completion_tokens": 14,
+                "cached_tokens": 2816,
+                "reasoning_tokens": 0,
+                "total_tokens": 3552
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1934,
+                "completion_tokens": 14,
+                "cached_tokens": 1792,
+                "reasoning_tokens": 0,
+                "total_tokens": 1948
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1885,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 1899
+              },
+              {
+                "node": "semantic_security_discovery",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1436,
+                "completion_tokens": 14,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 1450
+              },
+              {
+                "node": "meta_analyzer",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1296,
+                "completion_tokens": 171,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 1467
+              },
+              {
+                "node": "meta_analyzer",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 1946,
+                "completion_tokens": 396,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "total_tokens": 2342
+              },
+              {
+                "node": "meta_analyzer",
+                "request_kind": "structured_output",
+                "provider": "openai",
+                "model": "gpt-5.4-2026-03-05",
+                "model_source": "provider_response",
+                "usage_source": "provider_response",
+                "prompt_tokens": 3764,
+                "completion_tokens": 382,
+                "cached_tokens": 2816,
+                "reasoning_tokens": 0,
+                "total_tokens": 4146
+              }
+            ],
+            "llm_calls_attempted": 4,
+            "llm_calls_succeeded": 4
+          },
+          "execution_successful": true,
+          "analysis_completeness": {
+            "total_components": 8,
+            "scanned_components": 7,
+            "coverage_percent": 87.5,
+            "is_complete": false,
+            "status": "partial",
+            "execution_successful": true,
+            "fully_inspected_files": 7,
+            "partially_inspected_files": 1,
+            "entirely_uninspected_files": 0,
+            "ledger_exceptions": [
+              {
+                "outcome": "partial",
+                "phase": "static",
+                "reason_code": "obfuscated_instruction_text",
+                "message": "Obfuscated instruction text could not be fully evaluated by the deterministic layer.",
+                "path": "SKILL.md",
+                "start_line": null,
+                "end_line": null,
+                "fatal": false,
+                "analyzers": [
+                  "static_patterns_agent_snooping",
+                  "static_patterns_anti_refusal",
+                  "static_patterns_deserialization",
+                  "static_patterns_excessive_agency",
+                  "static_patterns_harmful_content",
+                  "static_patterns_memory_poisoning",
+                  "static_patterns_privilege_escalation",
+                  "static_patterns_prompt_injection",
+                  "static_patterns_rogue_agent",
+                  "static_patterns_ssrf",
+                  "static_patterns_supply_chain",
+                  "static_patterns_system_prompt_leakage",
+                  "static_patterns_tool_misuse"
+                ]
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 3,
+                "end_line": 3,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 6,
+                "end_line": 6,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 21,
+                "end_line": 21,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 94,
+                "end_line": 94,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 107,
+                "end_line": 107,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 112,
+                "end_line": 112,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 118,
+                "end_line": 118,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 133,
+                "end_line": 133,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 149,
+                "end_line": 149,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 170,
+                "end_line": 170,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 178,
+                "end_line": 178,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 183,
+                "end_line": 183,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 194,
+                "end_line": 194,
+                "fatal": false
+              },
+              {
+                "outcome": "partial",
+                "phase": "reference_resolution",
+                "reason_code": "reference_unresolved",
+                "message": "A local path-like reference could not be resolved unambiguously.",
+                "path": "SKILL.md",
+                "start_line": 198,
+                "end_line": 198,
+                "fatal": false
+              }
+            ],
+            "scope_exclusions": [],
+            "analyzer_statuses": [
+              {
+                "analyzer_id": "artifact_integrity",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "behavioral_ast",
+                "status": "not_applicable",
+                "planned_work": 0,
+                "completed": 0,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0,
+                "reason_code": "no_applicable_files",
+                "message": "No files matched this analyzer's applicability contract."
+              },
+              {
+                "analyzer_id": "behavioral_taint_tracking",
+                "status": "not_applicable",
+                "planned_work": 0,
+                "completed": 0,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0,
+                "reason_code": "no_applicable_files",
+                "message": "No files matched this analyzer's applicability contract."
+              },
+              {
+                "analyzer_id": "bundled_execution_surface",
+                "status": "not_applicable",
+                "planned_work": 0,
+                "completed": 0,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0,
+                "reason_code": "no_applicable_files",
+                "message": "No files matched this analyzer's applicability contract."
+              },
+              {
+                "analyzer_id": "mcp_least_privilege",
+                "status": "not_applicable",
+                "planned_work": 0,
+                "completed": 0,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0,
+                "reason_code": "no_applicable_files",
+                "message": "No files matched this analyzer's applicability contract."
+              },
+              {
+                "analyzer_id": "mcp_rug_pull",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "mcp_tool_poisoning",
+                "status": "completed",
+                "planned_work": 1,
+                "completed": 1,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "meta_analyzer",
+                "status": "completed",
+                "planned_work": 3,
+                "completed": 3,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "semantic_developer_intent",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "semantic_quality_policy",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "semantic_security_discovery",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_agent_snooping",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_anti_refusal",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_data_exfiltration",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_deserialization",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_excessive_agency",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_harmful_content",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_memory_poisoning",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_output_handling",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_privilege_escalation",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_prompt_injection",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_rogue_agent",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_ssrf",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_supply_chain",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_system_prompt_leakage",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_patterns_tool_misuse",
+                "status": "degraded",
+                "planned_work": 8,
+                "completed": 7,
+                "partial": 1,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              },
+              {
+                "analyzer_id": "static_yara",
+                "status": "completed",
+                "planned_work": 8,
+                "completed": 8,
+                "partial": 0,
+                "skipped": 0,
+                "failed": 0,
+                "unaccounted": 0
+              }
+            ],
+            "references": [
+              {
+                "source_path": "SKILL.md",
+                "line": 3,
+                "column": 105,
+                "evidence": "pare KnifeRevive listings and request SF Bay Area knife sharpening with prepaid drop-off/collection, delivery-only, pickup, pickup plus delivery, or drop-off/pa",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 3,
+                "column": 174,
+                "evidence": "th prepaid drop-off/collection, delivery-only, pickup, pickup plus delivery, or drop-off/pay at collection. Check required coverage, live prices and policies; p",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 6,
+                "column": 13,
+                "evidence": "version: \"0.5.13\"",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 21,
+                "column": 25,
+                "evidence": "Use the host's existing HTTP/browser tools. No binaries, package installs,",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 26,
+                "column": 22,
+                "evidence": "Read [the API guide](references/api.md) before requests. Fetch live capabilities",
+                "target_path": "references/api.md",
+                "status": "resolved",
+                "disposition": "analyzed"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 42,
+                "column": 20,
+                "evidence": "[Listing checkout](references/listing-checkout.md). Search `/listings`, select",
+                "target_path": "references/listing-checkout.md",
+                "status": "resolved",
+                "disposition": "analyzed"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 50,
+                "column": 56,
+                "evidence": "For sharpening bookings, first read [Booking requests](references/booking.md).",
+                "target_path": "references/booking.md",
+                "status": "resolved",
+                "disposition": "analyzed"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 94,
+                "column": 12,
+                "evidence": "show `trip fee/order` in a customer button; explain per-order charging separately.",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 107,
+                "column": 31,
+                "evidence": "receipts preserving the older mode/return representation. Older quotes retain",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 112,
+                "column": 8,
+                "evidence": "Check `booking.enabled` independently of `sharpening.direct_checkout`. Unpaid",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 118,
+                "column": 1,
+                "evidence": "drop-off/pay at pickup is last, skips ZIP checking and requires no online payment.",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 133,
+                "column": 20,
+                "evidence": "the human approves contact/address sharing on the private first-party form.",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 147,
+                "column": 86,
+                "evidence": "For separately enabled legacy scheduled prepaid sharpening, read [the service guide](references/sharpening.md). Check postal",
+                "target_path": "references/sharpening.md",
+                "status": "resolved",
+                "disposition": "analyzed"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 149,
+                "column": 11,
+                "evidence": "necessary contact/address details through the private merchant review page when",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 159,
+                "column": 26,
+                "evidence": "Read [the payment guide](references/payments.md) for the chosen workflow. Native",
+                "target_path": "references/payments.md",
+                "status": "resolved",
+                "disposition": "analyzed"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 167,
+                "column": 20,
+                "evidence": "[Booking requests](references/booking.md). A merchant's permission to accept",
+                "target_path": "references/booking.md",
+                "status": "resolved",
+                "disposition": "analyzed"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 170,
+                "column": 12,
+                "evidence": "The native order/invoice preparation may still require a human checkout step;",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 178,
+                "column": 36,
+                "evidence": "or follow arbitrary API redirects. Quote/session links are private; keep tokens",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 183,
+                "column": 36,
+                "evidence": "appointment states separately. Say paid/booked only when merchant verification",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 194,
+                "column": 26,
+                "evidence": "openclaw skills install @svetlyoh/kniferevive-concierge",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 198,
+                "column": 64,
+                "evidence": "PowerShell instructions, a shared install option, and separate copy/paste",
+                "target_path": null,
+                "status": "missing",
+                "disposition": "partial"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 200,
+                "column": 34,
+                "evidence": "[Installation and agent prompts](references/installation.md), also available",
+                "target_path": "references/installation.md",
+                "status": "resolved",
+                "disposition": "analyzed"
+              },
+              {
+                "source_path": "SKILL.md",
+                "line": 201,
+                "column": 34,
+                "evidence": "[in the versioned 0.5.13 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.5.13/skills/kniferevive-concierge/references/installation.",
+                "target_path": null,
+                "status": "rejected",
+                "disposition": "out_of_scope"
+              }
+            ],
+            "limitations": [
+              "Analyzer static_patterns_agent_snooping status: degraded.",
+              "Analyzer static_patterns_anti_refusal status: degraded.",
+              "Analyzer static_patterns_deserialization status: degraded.",
+              "Analyzer static_patterns_excessive_agency status: degraded.",
+              "Analyzer static_patterns_harmful_content status: degraded.",
+              "Analyzer static_patterns_memory_poisoning status: degraded.",
+              "Analyzer static_patterns_privilege_escalation status: degraded.",
+              "Analyzer static_patterns_prompt_injection status: degraded.",
+              "Analyzer static_patterns_rogue_agent status: degraded.",
+              "Analyzer static_patterns_ssrf status: degraded.",
+              "Analyzer static_patterns_supply_chain status: degraded.",
+              "Analyzer static_patterns_system_prompt_leakage status: degraded.",
+              "Analyzer static_patterns_tool_misuse status: degraded."
+            ],
+            "findings_before_filtering": 5,
+            "findings_after_filtering": 5
+          }
+        }
+      }
+    },
+    "signature": {
+      "status": "unsigned"
+    }
+  },
+  "security": {
+    "status": "clean",
+    "hasWarnings": true,
+    "checkedAt": 1791589492527,
+    "model": null,
+    "hasScanResult": true,
+    "sha256hash": "f6a802e62b5934547f76cdec0df215822b648c1e82cbd9785e6c21b0f3ea237d",
+    "virustotalUrl": "https://www.virustotal.com/gui/file/f6a802e62b5934547f76cdec0df215822b648c1e82cbd9785e6c21b0f3ea237d",
+    "scanners": {
+      "vt": null,
+      "skillspector": {
+        "status": "suspicious",
+        "normalizedStatus": "suspicious",
+        "score": 45,
+        "severity": "MEDIUM",
+        "recommendation": "CAUTION",
+        "issueCount": 5,
+        "checkedAt": 1791589492527
+      },
+      "llm": {
+        "status": "clean",
+        "verdict": "benign",
+        "normalizedStatus": "clean",
+        "confidence": "high",
+        "summary": "This skill is a disclosed KnifeRevive shopping and sharpening concierge that uses existing browser/HTTP capabilities and repeatedly requires customer approval before checkout, payment, booking, wallet use, or persistence.",
+        "dimensions": [
+          {
+            "detail": "The skill says no binaries, package installs, filesystem access, environment variables, merchant credentials, or wallet setup are required; it uses existing HTTP/browser tools and first-party merchant pages.",
+            "label": "Credentials",
+            "name": "environment_proportionality",
+            "rating": "ok"
+          },
+          {
+            "detail": "Installation documentation includes normal OpenClaw commands and copy/paste prompts for other agents, including optional saved instructions, but frames them as user-approved installation or reference use rather than automatic execution.",
+            "label": "Install Mechanism",
+            "name": "install_mechanism",
+            "rating": "note"
+          },
+          {
+            "detail": "Instructions emphasize live capability checks, exact merchant origins, treating product/API text as data, no arbitrary redirects, no embedded product instructions, and no auto-submission of checkout or payment forms.",
+            "label": "Instruction Scope",
+            "name": "instruction_scope",
+            "rating": "ok"
+          },
+          {
+            "detail": "Some cross-agent setup prompts may create persistent private instructions if the target app supports them, but they require user approval and disclose what was saved; no hidden services, hooks, or background workers are present.",
+            "label": "Persistence & Privilege",
+            "name": "persistence_privilege",
+            "rating": "note"
+          },
+          {
+            "detail": "The artifacts consistently describe KnifeRevive listing lookup, comparison, checkout handoff, and SF Bay Area sharpening requests; payment-adjacent behavior is disclosed and tied to that merchant workflow.",
+            "label": "Purpose & Capability",
+            "name": "purpose_capability",
+            "rating": "ok"
+          }
+        ],
+        "guidance": "Before installing, understand that this skill can guide an agent through merchant lookup, quote preparation, private checkout links, booking requests, and possibly an already-authorized Lightning wallet payment. Use it only with agents whose browser, HTTP, and wallet tools you trust, and confirm totals, merchant identity, coverage, appointment state, and payment state yourself before approving any transaction.",
+        "findings": "[P6] unexpected: The cited text is a fee-display/version-check instruction and a warning about reviewing permissions; it does not ask the agent to reveal system prompts or hidden instructions.\n[EA2] unexpected: The cited Meta Muse prompt requires explicit user requests, approval before enabling, and no purchase, reservation, wallet creation, credential entry, or payment completion claim without separate authorization and verification.\n[SDI-1] expected: The listing checkout flow covers KnifeRevive-published goods beyond sharpening, but the main skill description already includes KnifeRevive listings and the flow limits checkout to selected products, one seller, live capabilities, and human payment approval.\n[EA3] unexpected: The cited MIT license language is standard software permission and warranty text, not runtime authority or an instruction expanding agent behavior.\n[SDI-4] expected: The listing checkout document explicitly says that product checkout does not book appointments, which clarifies rather than conflicts with the separate sharpening booking workflow.",
+        "agenticRiskFindings": null,
+        "riskSummary": null,
+        "model": null,
+        "checkedAt": 1791589492527
+      }
+    }
+  },
+  "screenshot_observation": {
+    "unpaid_first": true,
+    "amount_free_paid_transport_labels": true,
+    "display_failure_confirmed": true
+  },
+  "active_bot_file_read_verified": false,
+  "bot_host_identified": false,
+  "root_cause": "not_yet_determined",
+  "candidate_causes": [
+    "stale_or_uninvoked_instructions",
+    "separate_button_renderer",
+    "model_noncompliance"
+  ],
+  "bot_display_prompt": "bot-label-diagnostic-0.5.13.md",
+  "code_or_skill_changed": false,
+  "booking_payment_or_email_created": false
+}
