@@ -1,4 +1,16 @@
-## Marketplace Imports 1.0.0 active; Concierge 0.6.2 on GitHub
+## Separate Listing 1.0.0 and Concierge 0.6.3 on GitHub
+
+October 10, 2026: at the owner's request, seller imports moved into the separate
+`kniferevive-listing` skill, version 1.0.0. Concierge 0.6.3 removes that branch
+and its import reference, preserving buyer shopping and sharpening. Install the
+Listing skill independently; update an older combined Concierge in place to
+avoid overlapping triggers. See [the release and Muse install prompt](kniferevive-listing-skill-1.0.0.md).
+The companion plugin is unchanged. A read-only HTTP/2 request returned its live
+schema version 1.0.0, USD and 21 categories. Actual Muse installation, Facebook
+extraction and import remain unverified. ClawHub remains 0.6.0; these new skills
+are distributed from GitHub.
+
+## Marketplace Imports 1.0.0 active; historical Concierge 0.6.2 on GitHub
 
 October 10, 2026: the new companion plugin and portable skill implement Muse
 Facebook-item preparation, category markup and private seller completion in

@@ -4,11 +4,8 @@ Production base: `https://kniferevive.com/wp-json/kniferevive-agent/v1`.
 Use the merchant's `/openapi` endpoint for the exact released JSON contract.
 Only capabilities returned by the deployed service are actionable.
 
-Seller import preparation uses the separate Marketplace Imports companion
-namespace `https://kniferevive.com/wp-json/kniferevive-listlab-import/v1` when
-deployed. Read [Marketplace imports](marketplace-import.md) for its public schema,
-bounded preparation and private seller completion. These routes are not shopper
-checkout/session endpoints; anonymous preparation grants no seller write access.
+Seller import preparation belongs to the separate `kniferevive-listing` skill
+and companion API, not these shopper checkout/session endpoints.
 
 All-category goods contracts in adapter 0.6.0: `GET /listing-categories` and
 `GET /listings?scope=goods` with advertised `sku`, `model`, `mpn`, `gtin`, `brand`,

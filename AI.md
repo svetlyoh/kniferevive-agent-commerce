@@ -6,7 +6,7 @@ the referenced Facebook item's facts/source price/images with `/prepare`, and
 open the returned private review link. Merchant category markup excludes native
 shipping. Preparation creates no product; the seller signs in and completes a
 native ListLab draft. See [the import contract](docs/muse-listlab-import-1.0.0.md)
-and [the portable workflow](skills/kniferevive-concierge/references/marketplace-import.md).
+and [the portable workflow](skills/kniferevive-listing/references/marketplace-import.md).
 
 Version 1 base: `https://kniferevive.com/wp-json/kniferevive-agent/v1`.
 This repository is a local release candidate. Check the deployed `/capabilities`

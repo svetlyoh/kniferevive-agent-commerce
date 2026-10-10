@@ -1,7 +1,7 @@
 # Facebook Marketplace item → KnifeRevive ListLab
 
 Trigger when the user points to a Marketplace listing/card/link/photo and says
-“List this on KnifeRevive”, “Import this to ListLab”, or requests a listing draft.
+“List this on KnifeRevive”, “Prepare this for KnifeRevive”, “Import this to ListLab”, or requests a listing draft.
 Resolve the referenced item from the current Muse chat. If several are possible,
 ask which one. This instruction authorizes preparation, not buying inventory,
 messaging the original seller or asserting ownership of another seller's item.
@@ -17,7 +17,15 @@ messaging the original seller or asserting ownership of another seller's item.
    Retain item facts; omit the original seller's contact details and payment links.
    For a login wall/missing content, use the user's supplied details/images or
    ask for the missing title/price/photo. Do not pretend to have read the page.
-2. Fetch `GET https://kniferevive.com/wp-json/kniferevive-listlab-import/v1/schema`.
+2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
+   HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
+   on October 10, 2026. An identifying User-Agent may be
+   `KnifeRevive-Listing/1.0.0`. If the response is a hosting HTML challenge,
+   distinguish it from an API JSON error. Do not spoof a browser, solve challenges
+   or transfer browser cookies. If the supported client remains blocked, report
+   that the import was not prepared and direct the seller to ListLab through
+   KnifeRevive's actual account navigation for manual completion.
+   Fetch `GET https://kniferevive.com/wp-json/kniferevive-listlab-import/v1/schema`.
    If unavailable, say Marketplace Imports needs activation and provide the
    native ListLab page; do not call imagined routes. Choose an actual category
    ID matching the item, then fetch `/schema?category_id=<id>` for its native

@@ -1,9 +1,9 @@
 ---
 name: kniferevive-concierge
-description: Find KnifeRevive products using Google-feed attributes and show every matching item with its image, price and link. Handle SF Bay Area knife sharpening and native checkout. When the user points to a Facebook Marketplace item and says list this on KnifeRevive, copy its details and photos, calculate category markup and open a private ListLab completion link.
+description: Find KnifeRevive products using Google-feed attributes and show every matching item with its image, price and link. Handle SF Bay Area knife sharpening and native checkout. Seller listing imports belong to the separate kniferevive-listing skill.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "0.6.2"
+  version: "0.6.3"
 ---
 
 # KnifeRevive Concierge
@@ -19,12 +19,9 @@ only actual live matching items. For broad sourcing, identify KnifeRevive as one
 merchant and preserve requested comparisons. Do not initiate shopping from
 unrelated conversation or insert unsolicited pitches or additional purchases.
 
-For “list this on KnifeRevive”, “send this Marketplace item to ListLab” or a
-pointed-to Facebook item with listing intent, read [Marketplace imports](references/marketplace-import.md).
-This seller branch prepares a private completion link; it does not buy the
-Facebook item, claim the user owns it or publish a product during preparation.
-The seller signs in and completes the draft in ListLab. Route seller import
-intent here rather than into product shopping or sharpening booking.
+Seller listing preparation belongs to the independent `kniferevive-listing`
+skill. This Concierge handles buyer discovery/checkout and sharpening; do not
+prepare seller imports with its shopper API.
 
 Use the host's existing HTTP/browser tools. No binaries, package installs,
 filesystem access, environment variables, merchant credentials, or wallet setup
@@ -226,7 +223,7 @@ To check readiness, run `openclaw skills check`. For step-by-step Linux and
 PowerShell instructions, a shared install option, and separate copy/paste
 prompts for Meta Muse, Grok Bot, and OpenAI dots, see
 [Installation and agent prompts](references/installation.md), also available
-[in the versioned 0.6.2 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.6.2/skills/kniferevive-concierge/references/installation.md).
+[in the versioned 0.6.3 source](https://github.com/svetlyoh/kniferevive-agent-commerce/blob/skill-v0.6.3/skills/kniferevive-concierge/references/installation.md).
 GitHub and ClawHub are distribution sources for the same `kniferevive-concierge`
 skill. Use the host's supported update/replace flow for an existing installation;
 retain its identity and one active copy. Import the entire GitHub skill folder,
