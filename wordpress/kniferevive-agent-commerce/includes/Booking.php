@@ -232,7 +232,7 @@ final class Booking {
             $saved=Store::get($id,'booking');BookingEvents::record($saved,'booking.confirmed');BookingOutbox::enqueue($saved,'confirmed');
         });});
         BookingOrderBridge::transition($id,'confirmed');
-        $linked=BookingOrderBridge::linked(Store::get($id,'booking'));if($linked){$linked->update_meta_data('_krev_booking_confirmation','confirmed');$linked->save();}
+        BookingSeller::confirmedOrder(Store::get($id,'booking'));
         self::notify($id,'confirmed');
     }
     public static function cancel(string $id,string $owner): array {

@@ -119,6 +119,16 @@ fourCheck($saved['data']['booking_state']==='requested' && Booking::merchantVisi
 $count=(int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.Store::table('records')." WHERE kind='booking_mail' AND owner=%s",$pickup['id']));fourCheck($count===3,'verified payment queues customer seller and admin notifications');
 BookingLifecycle::observeOrder($order->get_id());Booking::response(Store::get($pickup['id']));fourCheck((int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.Store::table('records')." WHERE kind='booking_mail' AND owner=%s",$pickup['id']))===$count,'duplicate hooks and polling never duplicate booking notification jobs');
 Booking::confirm($pickup['id'],true);fourCheck(Store::get($pickup['id'])['data']['booking_state']==='confirmed','seller confirms day after native payment');
+if(getenv('KREV_SELLER_ORDERS_CANDIDATE')==='1'){
+    $confirmedPaid=wc_get_order($order->get_id());
+    fourCheck($confirmedPaid->get_meta('_krev_booking_confirmation')==='confirmed' && $confirmedPaid->get_meta('_krev_requested_service_day')===$date && $confirmedPaid->get_meta('_krev_sharpening_stage')==='handoff','prepaid confirmation synchronizes the same original order with the native sharpening workflow');
+    fourCheck($confirmedPaid->is_paid() && $confirmedPaid->get_transaction_id()==='synthetic-four-options-only' && (float)$confirmedPaid->get_total()===11.0,'native paid evidence and service plus single-trip total survive confirmation');
+    wp_set_current_user($vendor);$paidCards=array_values(array_filter(BookingSeller::appointments([],'local-pickup'),static fn($c)=>$c['order_id']===$order->get_id()));
+    fourCheck(count($paidCards)===1 && $paidCards[0]['sharpening_stage']['key']==='handoff' && $paidCards[0]['payment']==='Paid','owning seller sees confirmed prepaid pickup in Local Pickup with native stage and paid state');wp_set_current_user($admin);
+    \KREV_Sharpening_Workflow::change_stage($confirmedPaid,'pay','Synthetic native readiness stage only.');Booking::confirm($pickup['id'],true);
+    $readyCard=array_values(array_filter(BookingSeller::appointments([],'local-pickup'),static fn($c)=>$c['order_id']===$order->get_id()))[0];
+    fourCheck($readyCard['sharpening_stage']['key']==='pay' && $readyCard['sharpening_stage']['label']===\KREV_Sharpening_Assets::stages()['pay']['label'],'prepaid Pay stage remains visible even though the payment step is already completed');
+}
 fourReject(static fn()=>ListingCheckout::resumeBookingCart($pickup['id'],$owner),'PAYMENT_UNRESOLVED');
 Booking::cancel($combo['id'],$owner);fourCheck(!Booking::merchantVisible(Store::get($combo['id'])),'cancelled unpaid prepaid request does not reach seller inbox');
 // New billing/fee policy: actual native tax engine, fixed address, per-order fee for three knives.

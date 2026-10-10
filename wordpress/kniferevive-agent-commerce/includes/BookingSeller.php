@@ -25,24 +25,47 @@ final class BookingSeller {
         $out=[];foreach($rows as $r){$r['data']=json_decode($r['data'],true,32,JSON_THROW_ON_ERROR);if(self::can($r) && Booking::merchantVisible($r))$out[]=$r;if(count($out)>=50)break;}return $out;
     }
     /** Read-only adapter for the first-party Seller Orders screen. References are not access grants. */
+    private static function localOrder(array $row): ?\WC_Order {
+        $seller=self::seller($row);$i=$row['data']['input'];$order=BookingLifecycle::order($row);
+        if(!$seller || !$order || (int)$order->get_meta('_dokan_vendor_id')!==$seller || $order->has_status(['cancelled','refunded','failed']))return null;
+        if($i['mode']==='pay_later_dropoff' && ((int)$order->get_meta('_krev_booking_seller')!==$seller || $i['return_mode']!=='customer_collection'))return null;
+        $shipping=array_values($order->get_items('shipping'));
+        if(count($shipping)!==1 || $shipping[0]->get_method_id()!=='local_pickup')return null;
+        $expected=[];foreach($i['items'] as $item)$expected[(int)$item['product_id']]=(int)$item['quantity'];
+        foreach($order->get_items() as $item){$id=$item->get_product_id();if(!isset($expected[$id]) || $expected[$id]!==$item->get_quantity())return null;unset($expected[$id]);}
+        return !$expected && count($order->get_items())?$order:null;
+    }
+    /** Confirmation attaches the original order to the native workflow, never advances receipt/payment. */
+    public static function confirmedOrder(array $row): void {
+        if($row['data']['booking_state']!=='confirmed' || !self::can($row) || !Booking::merchantVisible($row))return;
+        $order=self::localOrder($row);if(!$order)return;
+        if(class_exists('KREV_Sharpening_Orders'))\KREV_Sharpening_Orders::initialize($order);
+        $order->update_meta_data('_krev_booking_confirmation','confirmed');
+        $order->update_meta_data('_krev_requested_service_day',$row['data']['input']['preferred_date']);
+        if(!$order->get_meta('_krev_sharpening_handoff'))$order->update_meta_data('_krev_sharpening_handoff',BookingLifecycle::handoffLabel($row['data']['input']));
+        $order->save();
+    }
     public static function appointments(array $cards,string $tab,int $page=1): array {
         if(!is_user_logged_in() || !in_array($tab,['local-pickup','all'],true))return $cards;
         foreach(self::rows() as $row){
             $d=$row['data'];$i=$d['input'];$seller=self::seller($row);
             if(!$seller || !in_array($d['booking_state'],['requested','confirmed'],true))continue;
-            $order=BookingLifecycle::order($row);
-            if(!$order || (int)$order->get_meta('_dokan_vendor_id')!==$seller)continue;
-            if($i['mode']==='pay_later_dropoff' && ((int)$order->get_meta('_krev_booking_seller')!==$seller || $i['return_mode']!=='customer_collection'))continue;
-            $shipping=array_values($order->get_items('shipping'));
-            if(count($shipping)!==1 || $shipping[0]->get_method_id()!=='local_pickup')continue;
-            $expected=[];foreach($i['items'] as $item)$expected[(int)$item['product_id']]=(int)$item['quantity'];
-            $items=[];foreach($order->get_items() as $item){$id=$item->get_product_id();if(!isset($expected[$id]) || $expected[$id]!==$item->get_quantity()){ $items=[];break; }unset($expected[$id]);$items[]=$item->get_name().' × '.$item->get_quantity();}
-            if(!$items || $expected)continue;
+            $order=self::localOrder($row);if(!$order)continue;
+            $items=[];foreach($order->get_items() as $item)$items[]=$item->get_name().' × '.$item->get_quantity();
+            $stage=null;$orderUrl='';
+            if($d['booking_state']==='confirmed' && class_exists('KREV_Sharpening_Workflow') && \KREV_Sharpening_Orders::is_sharpening_order($order)){
+                $native=\KREV_Sharpening_Workflow::dto($order);
+                foreach($native['stages'] as $step)if($step['key']===$native['current_stage']){$stage=['key'=>$step['key'],'label'=>$step['label'],'icon'=>$step['icon']];break;}
+                if($native['workflow_completed'])$stage=['key'=>'completed','label'=>'Completed','icon'=>''];
+                if(\KREV_Orders_Permissions::is_operator())$orderUrl=trailingslashit(wc_get_account_endpoint_url('sharpening-orders')).$order->get_id().'/';
+                elseif(function_exists('dokan_get_navigation_url'))$orderUrl=wp_nonce_url(add_query_arg(['order_id'=>$order->get_id()],dokan_get_navigation_url('orders')),'dokan_view_order');
+            }
             $cards[]=['order_id'=>$order->get_id(),'order_number'=>$order->get_order_number(),'items'=>$items,'date'=>$i['preferred_date'],
                 'handoff'=>($i['mode']==='prepaid_pickup'?'KnifeRevive pickup':'Customer drop-off').' · '.($i['return_mode']==='courier_delivery'?'KnifeRevive return delivery':'Customer collection'),
                 'state'=>$d['booking_state']==='confirmed'?'Service day confirmed':'Requested — confirmation required',
                 'order_status'=>wc_get_order_status_name($order->get_status()),'payment'=>$order->is_paid()?'Paid':($i['mode']==='pay_later_dropoff'?'Unpaid — pay when you collect':'Online payment — '.$order->get_status()),
                 'total'=>html_entity_decode(wp_strip_all_tags($order->get_formatted_order_total()),ENT_QUOTES,'UTF-8'),
+                'sharpening_stage'=>$stage,'order_url'=>$orderUrl,
                 'review_url'=>add_query_arg('booking',$row['id'],self::url())];
         }return $cards;
     }

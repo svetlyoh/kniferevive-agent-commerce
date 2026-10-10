@@ -99,6 +99,24 @@ $d=Store::get($row['id'])['data'];$d['address_consent']['expires_at']=time()-1;S
 Booking::shareConsent($row['id'],$owner,true);Booking::revokeConsent($row['id'],$owner);bridgeCheck(BookingAuthorization::address(Booking::get($row['id'],$owner))==='revoked','sharing grant can be revoked independently of payment');
 bridgeReject(static fn()=>Booking::confirm($row['id']),'ADDRESS_AUTHORIZATION_REQUIRED');Booking::shareConsent($row['id'],$owner,true);
 wp_set_current_user($vendor);Booking::confirm($row['id']);bridgeCheck(Booking::get($row['id'],$owner)['data']['booking_state']==='confirmed','owning seller may confirm without administrator power');
+if(getenv('KREV_SELLER_ORDERS_CANDIDATE')==='1'){
+    $confirmedOrder=wc_get_order($order->get_id());
+    bridgeCheck($confirmedOrder->get_meta('_krev_sharpening_stage')==='handoff' && $confirmedOrder->get_meta('_krev_booking_confirmation')==='confirmed','unpaid confirmation initializes the native handoff stage and order confirmation');
+    bridgeCheck($confirmedOrder->has_status('pending') && !$confirmedOrder->is_paid() && $confirmedOrder->get_total()==='7.00','confirmation neither charges nor changes native financial state');
+    $confirmedCard=array_values(array_filter(BookingSeller::appointments([],'local-pickup'),static fn($c)=>$c['order_id']===$order->get_id()))[0];
+    bridgeCheck($confirmedCard['sharpening_stage']['label']===KREV_Sharpening_Assets::stages()['handoff']['label'] && str_contains($confirmedCard['order_url'],'order_id='.$order->get_id()),'owning seller card uses native stage wording and authorized original-order link');
+    bridgeCheck(!KREV_Orders_Permissions::is_operator(),'confirmation never grants the seller global sharpening operator access');
+    wp_set_current_user($admin);$historyBefore=count(KREV_Sharpening_Workflow::history($order->get_id()));Booking::confirm($row['id']);
+    bridgeCheck(count(KREV_Sharpening_Workflow::history($order->get_id()))===$historyBefore,'confirmation replay does not duplicate workflow initialization');
+    $advanced=KREV_Sharpening_Workflow::change_stage(wc_get_order($order->get_id()),'hone-test','Synthetic progression only.');
+    bridgeCheck(!is_wp_error($advanced),'native operator can advance the original sharpening order');Booking::confirm($row['id']);
+    $confirmedCard=array_values(array_filter(BookingSeller::appointments([],'local-pickup'),static fn($c)=>$c['order_id']===$order->get_id()))[0];
+    bridgeCheck($confirmedCard['sharpening_stage']['key']==='hone-test' && wc_get_order($order->get_id())->get_meta('_krev_sharpening_stage')==='hone-test','reconfirmation preserves and displays progressed native status');
+    $_GET['tab']='local-pickup';ob_start();(new KREV_Orders_Endpoints())->seller_orders();$confirmedHtml=ob_get_clean();unset($_GET['tab']);
+    bridgeCheck(substr_count($confirmedHtml,'Knife Sharpening #'.$order->get_order_number())===1 && str_contains($confirmedHtml,'Hone &amp; test') && str_contains($confirmedHtml,'Service day confirmed'),'confirmed native status and booking confirmation render in a single Local Pickup order card');
+    bridgeCheck(str_contains($confirmedCard['order_url'],'sharpening-orders') && str_contains($confirmedHtml,'View Order') && str_contains($confirmedHtml,'Review booking'),'operator has native workflow and separate booking review links');
+    wp_set_current_user($other);bridgeCheck(BookingSeller::appointments([],'local-pickup')===[],'confirmed workflow cannot leak to another seller');wp_set_current_user($admin);
+}
 wp_set_current_user($admin);$paidPref=Booking::create(array_replace($input,['mode'=>'prepaid_dropoff','postal_code'=>'94565']),$owner,'bridge-paid-preference-'.Domain::id());Booking::submit($paidPref['id'],$owner,$contact,true);
 bridgeReject(static fn()=>BookingOrderBridge::ensure($paidPref['id']),'ORDER_BRIDGE_INELIGIBLE');bridgeReject(static fn()=>Booking::checkout($paidPref['id'],$owner),'BOOKING_PREPAYMENT_DISABLED');
 update_user_meta($vendor,'dokan_enable_selling','no');bridgeCheck(!BookingSeller::seller($row),'disabled seller loses request access');bridgeReject(static fn()=>BookingOrderBridge::ensure($row['id']),'SELLER_UNAVAILABLE');update_user_meta($vendor,'dokan_enable_selling','yes');
