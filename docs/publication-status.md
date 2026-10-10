@@ -4,7 +4,8 @@ October 10, 2026: GitHub [skill 0.6.1](https://github.com/svetlyoh/kniferevive-a
 updates the existing skill's install instructions to use the complete GitHub
 folder and retain one active installation with the same identity. All nine
 GitHub-hosted files match the release manifest and skill validation passed.
-ClawHub's server-side GitHub importer failed twice before review/publication;
+ClawHub's server-side GitHub importer failed five times before review/publication,
+including three owner-requested retries with a list refresh and clean reload;
 the existing listing remains 0.6.0. No duplicate, renamed fork or local ClawHub
 upload was created for 0.6.1. See [source, importer and Muse guidance](github-skill-install-0.6.1.md)
 and [file hashes](skill-release-manifest-0.6.1.json). A new server-resolved GitHub

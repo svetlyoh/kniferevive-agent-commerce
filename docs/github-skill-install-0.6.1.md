@@ -35,6 +35,11 @@ was selected. Repository refresh observed the updated GitHub source. Clicking
 Review selected failed in `githubImport:previewGitHubImportCandidate` with a
 server error; a clean page reload and single-candidate retry failed again.
 Observed request references were `7d04c912e9836baf` and `333e8d391bcb9362`.
+At the owner's request, three additional controlled retries also failed: a
+direct retry, a retry after Update list, and a clean-reload retry with only
+KnifeRevive selected. Their request references were `0b7ce426b11b2982`,
+`70de5cf05aeb4905` and `2bed9948e94b4477` (17:07–17:09 UTC, October 10).
+All five observed attempts failed at the same preview action before review.
 The error did not explain its cause. No claim about the underlying cause is made.
 
 The form never reached the version/owner/license/publish review. No final publish
