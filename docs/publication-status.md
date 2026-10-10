@@ -1,3 +1,16 @@
+## Marketplace Imports and separate Listing 1.0.1
+
+October 10, 2026: Marketplace Imports was updated in place to 1.0.1 on
+kniferevive.com; WordPress confirmed success and the live HTTP/2 schema returned
+1.0.1 with 21 categories. New imported drafts copy sanitized long description
+into short description, including private review edits, while preserving later
+seller edits on retries. Listing 1.0.1 adds explicit brand and knife type,
+blade-length/unit and edge-style extraction instructions using the native schema.
+All 77 fenced native assertions, PHP lint and skill validation passed. See
+[the change and validation record](marketplace-import-1.0.1.md). Actual Muse
+installation remains unverified; update the existing Listing identity in place
+from GitHub. Concierge 0.6.3 is unchanged; no new ClawHub publication is claimed.
+
 ## Separate Listing 1.0.0 and Concierge 0.6.3 on GitHub
 
 October 10, 2026: at the owner's request, seller imports moved into the separate

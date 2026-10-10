@@ -21,7 +21,9 @@ preservation, and native knife brand/category/blade-length/edge-style storage.
 PHP lint and skill validation are checked before packaging. No production
 product/order or real Facebook photo was imported during implementation tests.
 
-Deployment and actual Muse installation are verified separately. Update the
+WordPress confirmed the in-place update on October 10, 2026, and an HTTP/2 live
+schema read returned plugin version 1.0.1 and 21 categories. Actual Muse skill
+installation/extraction remains unverified. Update the
 existing Listing skill in place from the complete versioned GitHub folder:
 https://github.com/svetlyoh/kniferevive-agent-commerce/tree/kniferevive-listing-v1.0.1/skills/kniferevive-listing
 Keep its identity and one active copy; Concierge 0.6.3 is unchanged.
