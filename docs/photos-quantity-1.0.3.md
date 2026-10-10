@@ -45,7 +45,20 @@ No larger source variant was exposed through the inspected image controls,
 `src` or `srcset`; this is recovery of the best available Facebook versions,
 not proof of camera-original access or Google image compliance.
 
-Live deployment and the final product-save verification are recorded separately.
+Marketplace Imports 1.0.3 was updated in place on kniferevive.com. WordPress
+reported a successful update, and the live HTTP/2 schema returned version 1.0.3,
+`max_images: 10` and `package_defaults.inventory_default.quantity: 1`.
+
+Both recovered attachments were saved to existing product 3041 through the
+native product editor as the cover and one gallery image. WordPress confirmed the product update;
+reloading native ListLab showed exactly two uploaded photos, Cover photo and
+Photo 2. The old cropped attachment was replaced as cover without deleting it
+from the media library. Existing quantity zero and other product fields were
+preserved. Quantity one is the default for new imports, not an inventory reset
+for existing products. The saved ListLab gallery screenshot and live schema
+JSON are in the owner's `releases/marketplace-import-1.0.3` documentation folder.
+GitHub tags and release archives are published; their SHA-256 digests were
+verified against the local packages. Actual Muse installation remains unverified.
 
 ## Muse update prompt
 

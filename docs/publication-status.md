@@ -1,3 +1,22 @@
+## Marketplace Imports 1.0.3 live; separate Listing 1.0.4 on GitHub
+
+October 10, 2026: Marketplace Imports was updated in place on kniferevive.com.
+WordPress confirmed success and the live schema returned 1.0.3 with default
+new-import quantity one. Explicit quantities, including zero, and later seller
+inventory edits are preserved. Listing 1.0.4 includes a per-photo gallery
+recovery procedure and a deterministic selection helper, preserving observed
+signed source URLs, gallery order and reporting small/missing photos or overflow.
+The import limit remains ten photos. GitHub tags/releases and package digests
+were verified. All 92 native assertions, 11 photo-selection tests, PHP syntax,
+skill validation and package checks passed. Actual Muse installation remains
+unverified.
+
+The owner's selected Thyme & Table product 3041 now has both Facebook gallery
+photos saved as cover and gallery, verified after a native ListLab reload.
+Both Facebook-served sources are 443 × 960; a larger camera original was not
+exposed. The previous cover was a 403 × 403 crop. Existing quantity zero and
+other listing fields were preserved. See [recovery and deployment](photos-quantity-1.0.3.md).
+
 ## Marketplace Imports 1.0.2 live; separate Listing 1.0.3 on GitHub
 
 October 10, 2026: the companion was updated in place on kniferevive.com and its
