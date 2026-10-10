@@ -1,6 +1,12 @@
+## Current skill 0.5.14 — verified public API client compatibility
+
+Portable skill **0.5.14** is published on GitHub and ClawHub. The merchant backend remains **0.5.13**. Public production discovery returns all five choices with $6 single-trip and $11 round-trip fee labels. PowerShell HTTP/2, Node fetch, Python urllib and native curl returned HTTP 200 JSON anonymously; PowerShell HTTP/1.1 still returns a hosting HTML challenge. Private booking lookup remains protected with HTTP 401. No hosting or payment settings changed. See [the client comparison and diagnostic](public-api-client-compatibility-0.5.14.md).
+
+All eight authored registry files and an isolated download match the tagged source. Record exact-version security findings from [publication evidence](skill-publication-0.5.14.json); no previous audit certifies this version. The buyer's bot HTTP access, active skill and renderer remain unverified. No booking, order, payment, refund or email was created during the fix.
+
 # Publication status
 
-## Current backend 0.5.13 and published skill 0.5.13
+## Previous skill 0.5.13 and current backend 0.5.13
 
 Agent Commerce **0.5.13** and Seller Orders **1.1.6** are deployed with owner-approved prepaid sharpening requests, seller cancellation/refund receipt handling, administrator pickup ZIP controls and capacity 4. The [0.5.11 storefront adapter](storefront-sharpening-checkout-0.5.11.md) brings ordinary sharpening-cart checkout into the shared booking flow and preserves other cart products. The [0.5.10 review and coupon patch](booking-review-coupon-0.5.10.md) adds “nothing due now”, working review controls and a green native coupon panel. The [0.5.7 implementation](booking-trip-fees-two-screens-0.5.7.md) advertises five choices, with unpaid customer drop-off/collection last. One pickup or delivery costs $6 per order; pickup plus delivery is $11. New trip fees are taxable native fees, independent of the parcel shipping policy. Existing records retain their original financial treatment.
 

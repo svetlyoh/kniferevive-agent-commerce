@@ -4,11 +4,11 @@ A merchant storefront skill and WooCommerce adapter. **Agent Commerce 0.5.13** i
 
 Installed/published versions and payment gates are recorded in [publication status](docs/publication-status.md), [0.4.2 skill evidence](docs/skill-publication-0.4.2.md) and [live seller visibility/capacity evidence](docs/seller-booking-visibility-0.4.2.md). A release does not enable payments. Real payment, seller settlement/refund and policy checks remain required. See the [inventory/webhook audit](docs/listing-checkout-audit-0.2.0.md) and [native checkout runbook](docs/listing-checkout-runbook-0.2.0.md).
 
-[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.5.13](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.5.13) · [0.5.13 audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.5.13)
+[Get the skill on ClawHub](https://clawhub.ai/svetlyoh/kniferevive-concierge) · [Download 0.5.14](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.5.14) · [0.5.14 audit](https://clawhub.ai/svetlyoh/skills/kniferevive-concierge/security-audit?version=0.5.14)
 
 ## Install with OpenClaw
 
-Current skill **0.5.13** uses visible “$6 trip fee” and “$11 round-trip fee” labels, reads merchant-configured fees for new choices, and is published on ClawHub and available from the [versioned GitHub skill folder](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.5.13/skills/kniferevive-concierge). All eight registry files and a fresh isolated CLI download match the tagged source. Its public audit shows Pass. A later full verification now passes with the generated card available; additional scanning has medium caution findings. See [current evidence and bot display diagnosis](docs/bot-label-diagnostic-0.5.13.md). See [publication evidence](docs/skill-publication-0.5.13.md). Both booking discovery endpoints expose five distinct choices, including delivery-only `prepaid_dropoff_delivery`; see the [five-choice implementation record](docs/booking-trip-fees-two-screens-0.5.7.md) and [GitHub update instructions](skills/kniferevive-concierge/references/installation.md#install-the-current-github-skill).
+Current skill **0.5.14** retains visible numeric trip fees and adds verified HTTP client compatibility guidance. Public production discovery works with PowerShell HTTP/2, Node fetch, Python urllib and curl; the failing PowerShell HTTP/1.1 client still receives a hosting HTML challenge. See [the live evidence and read-only diagnostic](docs/public-api-client-compatibility-0.5.14.md). All eight published registry files and an isolated download match the [immutable GitHub skill source](https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.5.14/skills/kniferevive-concierge). The affected buyer bot and renderer still need their own fresh API read; no remote reload or payment is claimed. See [this version's publication/security record](docs/skill-publication-0.5.14.md) and [the five-choice implementation](docs/booking-trip-fees-two-screens-0.5.7.md).
 
 From an already installed OpenClaw environment, in a Linux terminal or Windows
 PowerShell:
@@ -28,7 +28,7 @@ workspace directory. This is a registry download; use the native commands above
 for an active OpenClaw workspace. Published version example:
 
 ```sh
-clawhub install @svetlyoh/kniferevive-concierge --version 0.5.13
+clawhub install @svetlyoh/kniferevive-concierge --version 0.5.14
 ```
 
 Check the [exact-version publication evidence](docs/skill-publication-0.4.2.md) for audit results, warnings and provenance limits. Earlier passes do not certify a new version. The Skill Card is registry-generated; author-written installation help appears in SKILL.md and the linked guide.
