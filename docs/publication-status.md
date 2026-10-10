@@ -1,12 +1,16 @@
-## Marketplace Imports 1.0.0 and Concierge 0.6.2 candidate
+## Marketplace Imports 1.0.0 active; Concierge 0.6.2 on GitHub
 
 October 10, 2026: the new companion plugin and portable skill implement Muse
 Facebook-item preparation, category markup and private seller completion in
 native ListLab. Source validation passed 67 fenced native assertions, PHP/JS
 checks and skill validation. See [implementation and deployment boundaries](muse-listlab-import-1.0.0.md)
-and [the plan](muse-listlab-import-plan.md). Live installation and the actual Muse
-host are separate verification steps; ClawHub remains 0.6.0 until a new release
-is confirmed in that registry.
+and [the plan](muse-listlab-import-plan.md). The owner approved installation and
+activation, and WordPress confirmed the live plugin active at version 1.0.0.
+Its live WooCommerce settings show default 20% markup, $0 fixed addition, $0
+minimum, $0.01 rounding and category override controls. A shell schema request
+received browser verification; the in-app browser blocked the JSON URL. Actual
+Muse extraction and API access remain unverified. ClawHub inspection still shows
+0.6.0; use the complete GitHub 0.6.2 skill folder for the new workflow.
 
 ## GitHub source 0.6.1; ClawHub latest 0.6.0 — direct import currently blocked
 

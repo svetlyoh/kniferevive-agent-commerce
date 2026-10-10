@@ -101,10 +101,21 @@ frontmatter validation passed. Browser review verifies the $25/$30 separation,
 seller login requirement and native draft completion handoff. No payment/order
 pipeline was modified or exercised by this plugin.
 
-Plugin deployment, exact-version ClawHub publication and actual Muse extraction/
-automatic skill discovery are recorded separately; source/package tests do not
-certify those integrations. Do not claim a live Marketplace import until the
-merchant plugin and the 0.6.2 host skill have been installed and checked.
+On October 10, 2026, after the owner's approval, WordPress confirmed successful
+installation and activation of Marketplace Imports 1.0.0 on kniferevive.com.
+The live pricing page shows the default 20% markup and category override controls.
+A direct shell request to the public schema received browser verification, and
+the in-app browser blocked the JSON URL. These checks do not establish Muse API
+access. ClawHub inspection still shows 0.6.0; the complete 0.6.2 skill is on GitHub.
+Actual Muse extraction, automatic skill discovery, API access and real Facebook
+photo import remain unverified. No production listing was created during these
+deployment checks.
+
+The skill delegates reading the user-referenced Facebook listing and extracting
+attributes to Muse's real browser/source tools. No separate Meta bot is required.
+The WordPress plugin receives the extracted payload; it does not add a Facebook
+browser import button. The seller completes and publishes the native ListLab
+draft. A browser extension/bookmarklet would be a separate client integration.
 
 Rollback: deactivate **KnifeRevive Marketplace Imports**. Native products/media
 already created remain in ListLab. The plugin does not modify ListLab files,
