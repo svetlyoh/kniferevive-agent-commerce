@@ -1,0 +1,154 @@
+{
+  "checked_at_utc": "2026-10-10T00:16:48.3186383Z",
+  "result": "public_discovery_pass",
+  "adapter_version": "0.5.13",
+  "checks": [
+    {
+      "path": "/capabilities",
+      "status": 200,
+      "http_version": "2.0",
+      "content_type": "application/json; charset=UTF-8"
+    },
+    {
+      "path": "/booking-options",
+      "status": 200,
+      "http_version": "2.0",
+      "content_type": "application/json; charset=UTF-8"
+    },
+    {
+      "path": "/booking-availability",
+      "status": 200,
+      "http_version": "2.0",
+      "content_type": "application/json; charset=UTF-8"
+    },
+    {
+      "path": "/booking-coverage?postal_code=94565",
+      "status": 200,
+      "http_version": "2.0",
+      "content_type": "application/json; charset=UTF-8"
+    }
+  ],
+  "service_prices": [
+    {
+      "product_id": 1963,
+      "title": "Small Knife Sharpening",
+      "unit_price_minor": 500,
+      "currency": "USD"
+    },
+    {
+      "product_id": 1964,
+      "title": "Large Knife Sharpening",
+      "unit_price_minor": 700,
+      "currency": "USD"
+    }
+  ],
+  "handoff_options": [
+    {
+      "mode": "prepaid_dropoff",
+      "label": "You drop off + collect at shop · prepay — $0 trip fee",
+      "transport_fee_minor": 0,
+      "zip_required": true,
+      "payment_required": true
+    },
+    {
+      "mode": "prepaid_dropoff_delivery",
+      "label": "You drop off · they deliver · prepay — $6 trip fee",
+      "transport_fee_minor": 600,
+      "zip_required": true,
+      "payment_required": true
+    },
+    {
+      "mode": "prepaid_pickup",
+      "label": "They pick up from you · you collect at shop · prepay — $6 trip fee",
+      "transport_fee_minor": 600,
+      "zip_required": true,
+      "payment_required": true
+    },
+    {
+      "mode": "prepaid_pickup_delivery",
+      "label": "They pick up + deliver · comeback combo · prepay — $11 round-trip fee",
+      "transport_fee_minor": 1100,
+      "zip_required": true,
+      "payment_required": true
+    },
+    {
+      "mode": "pay_later_dropoff",
+      "label": "You drop off + collect at shop · pay at pickup · nothing due now — $0 trip fee",
+      "transport_fee_minor": 0,
+      "zip_required": false,
+      "payment_required": false
+    }
+  ],
+  "single_trip_fee_minor": 600,
+  "combined_trip_fee_minor": 1100,
+  "postal_code_checked": "94565",
+  "coverage": {
+    "postal_code": "94565",
+    "coverage_state": "eligible",
+    "service_available": true,
+    "pickup_eligible": true,
+    "prepayment_eligible": true,
+    "address_review_required": false,
+    "counties": [
+      "Contra Costa"
+    ],
+    "message": "You’re in! We serve this ZIP. Pickup and online payment are available; KnifeRevive confirms your day and address after review.",
+    "source_url": "https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt",
+    "geography_vintage": "2020 Census ZCTA / county"
+  },
+  "booking_availability_response_received": true,
+  "booking_or_order_created": false,
+  "payment_or_refund_sent": false,
+  "buyer_bot_runtime_verified": false,
+  "client_comparison": [
+    {
+      "client": "PowerShell 7 Invoke-WebRequest",
+      "http_version": "1.1",
+      "status": 403,
+      "response": "hosting HTML browser challenge"
+    },
+    {
+      "client": "PowerShell 7 Invoke-WebRequest",
+      "http_version": "2.0",
+      "status": 200,
+      "response": "valid five-option JSON"
+    },
+    {
+      "client": "PowerShell 7 Invoke-RestMethod",
+      "http_version": "2.0",
+      "status": 200,
+      "response": "valid five-option JSON"
+    },
+    {
+      "client": "native curl, default configuration",
+      "status": 200,
+      "response": "valid five-option JSON"
+    },
+    {
+      "client": "Node fetch",
+      "status": 200,
+      "response": "valid five-option JSON"
+    },
+    {
+      "client": "Python urllib",
+      "status": 200,
+      "response": "valid five-option JSON"
+    }
+  ],
+  "private_route_without_authorization": {
+    "path": "/bookings/00000000000000000000000000000000",
+    "status": 401,
+    "code": "AUTHORIZATION_REQUIRED",
+    "response": "JSON"
+  },
+  "hosting_settings_changed": false,
+  "merchant_plugin_changed": false,
+  "login_or_cookies_used_for_api_checks": false,
+  "challenge_solved_or_cookie_transferred": false,
+  "hosting_rule_identified": false,
+  "limitations": [
+    "Affected buyer bot HTTP tool and rendering remain unverified.",
+    "Client-specific HTTP/1.1 challenge persists; no hosting exception was applied.",
+    "Read-only discovery is not proof of paid checkout, refund settlement or appointment confirmation."
+  ]
+}

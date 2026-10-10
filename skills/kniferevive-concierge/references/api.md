@@ -53,7 +53,28 @@ checking or merchant assistance, not a fresh charge.
 
 Booking-specific routes accept the private `X-Krev-Booking` capability returned
 with a draft, independently of the general two-hour shopper token. See
-[Booking requests](booking.md) for its narrow scope and expiry. Use JSON Accept;
-if the host HTTP tool supports an identifying User-Agent, identify this merchant
-client honestly (e.g. KnifeRevive-Concierge/0.5.13). A hosting challenge or non-JSON
-response is not an API result. Use the human booking page; never bypass the challenge.
+[Booking requests](booking.md) for its narrow scope and expiry.
+
+## HTTP client compatibility
+
+Send `Accept: application/json`. When the host's existing HTTP tool offers a
+protocol setting, prefer HTTP/2 for this API. If it supports an identifying
+User-Agent, identify this client honestly as `KnifeRevive-Concierge/0.5.14`.
+Credentials, browser cookies and WordPress login are unnecessary for discovery.
+
+On October 9, 2026, PowerShell 7's default HTTP/1.1 request received a hosting
+403 browser challenge; the same URL and headers using HTTP/2 returned HTTP 200
+JSON. Node fetch, Python urllib and curl also successfully read the anonymous
+booking-options API. This is a tested client compatibility setting, not a
+guarantee for every bot host. Do not assume one client's 403 means the service,
+prepayment or any menu choice is disabled.
+
+Accept prices only after a successful JSON response with the expected fields.
+Read all five `handoff_options` in returned order, their numeric
+`transport_fee_minor` values, and live `services[].unit_price_minor`. Preserve
+the numeric trip fee in every customer label. Report the actual response status
+if access fails; distinguish a hosting HTML challenge from a JSON API error.
+Do not solve challenges, spoof a browser, transfer browser cookies, use alternate
+origins, or install another HTTP client during a shopping task. If the configured
+host tool still receives a challenge, use the human booking page and explain
+that live API access from this bot needs merchant/hosting review.

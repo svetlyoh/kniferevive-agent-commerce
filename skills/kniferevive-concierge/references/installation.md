@@ -2,7 +2,7 @@
 
 **KnifeRevive Concierge** helps an agent look up relevant KnifeRevive technology listings and San Francisco Bay Area knife-sharpening offerings, compare facts and terms, and prepare a **customer-authorized** checkout handoff only when the merchant's documented capabilities are actually enabled. Browsing and quotes are free; products, sharpening, taxes, fulfillment, and applicable fees are not.
 
-Skill release: **0.5.13**. Check the exact version's ClawHub publication and audit
+Skill release: **0.5.14**. Check the exact version's ClawHub publication and audit
 status before installing; earlier registry audits do not certify this release.
 Installation does not enable merchant payment gates; check live capabilities
 before use.
@@ -20,7 +20,7 @@ chat prompt alone.
 
 Resolve the current `main` commit, then obtain the entire skill folder at that
 commit: `SKILL.md`, `LICENSE`, and all six files in `references/`. Verify installed
-files against that same commit and check `metadata.version: "0.5.13"`. Backend
+files against that same commit and check `metadata.version: "0.5.14"`. Backend
 and skill metadata are separate version declarations. A download pinned
 to older commit `b80efa7` still contains skill 0.5.1 even though its backend is 0.5.4.
 
@@ -29,15 +29,15 @@ check the active workspace/shared-skill path for another copy, and start a new
 agent session so it reloads the instructions. Preserve unrelated skills and
 credentials. A cached session can keep old instructions even after files change.
 The registry commands below install the registry's latest published version,
-not `main`. For an exact 0.5.13 registry download, use an already installed
+not `main`. For an exact 0.5.14 registry download, use an already installed
 ClawHub CLI after confirming that version is published:
 
 ```text
-clawhub install @svetlyoh/kniferevive-concierge --version 0.5.13
+clawhub install @svetlyoh/kniferevive-concierge --version 0.5.14
 ```
 
 An existing installation should use its host's supported update/replace flow.
-After updating, verify the active copy's version is 0.5.13 and start a new agent session.
+After updating, verify the active copy's version is 0.5.14 and start a new agent session.
 A $7 sharpening selection must display `$7 + $6 trip fee` on each single-trip
 button and `$7 + $11 round-trip fee` on the combo. The unpaid option is last
 and says “nothing due now”. If it still says “+ fee” or places unpaid first, inspect
