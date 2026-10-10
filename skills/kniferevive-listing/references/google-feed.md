@@ -32,8 +32,12 @@ Collect as much of the following as the listing actually provides:
 - Category-specific facts: knife/blade type, edge style and blade length/unit;
   other relevant specifications, materials, color, size or variant facts when
   supplied. Use the current native schema, not guessed attribute names.
-- Explicit item quantity and package weight/dimensions, when stated. Otherwise
-  leave them for the seller; never assert stock availability from a source card.
+- Explicit item quantity and packaged weight/dimensions, when stated. Otherwise
+  omit quantity; never assert stock availability from a source card. For missing
+  package fields, the owner authorizes 15 oz and 1 × 6 × 4 inches (length × width
+  × height), as merchant defaults rather than measurements. Marketplace Imports
+  1.0.2 fills blank fields independently, preserving supplied values; read
+  `/schema.package_defaults` for the configured store units and converted values.
 
 Use only fields advertised by `/schema`. Map brand/condition/specifications to
 native `attributes`. If an MPN or other extracted fact has no supported import

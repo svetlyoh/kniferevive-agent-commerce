@@ -14,6 +14,7 @@ final class KREV_Marketplace_Imports {
             return;
         }
         add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
+        KREV_Import_Package_Defaults::boot();
         add_action( 'admin_menu', array( 'KREV_Import_Pricing', 'menu' ) );
         add_action( 'template_redirect', array( __CLASS__, 'review_page' ), 1 );
         add_action( 'woocommerce_account_listlab_endpoint', array( __CLASS__, 'listlab_link' ), 5 );
@@ -36,7 +37,8 @@ final class KREV_Marketplace_Imports {
 
     public static function schema( WP_REST_Request $request ) {
         $schema = ( new KREV_ListLab_REST() )->schema( $request );
-        return self::response( array( 'version' => KREV_IMPORT_VERSION, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls' ), 'max_images' => 10, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
+        $package_defaults = KREV_Import_Package_Defaults::schema();
+        return self::response( array( 'version' => KREV_IMPORT_VERSION, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls' ), 'max_images' => 10, 'package_defaults' => $package_defaults, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
     }
 
     public static function source_url( $value ) {
@@ -82,6 +84,7 @@ final class KREV_Marketplace_Imports {
         $quote = KREV_Import_Pricing::quote( $data['source_price'] ?? '', $category );
         if ( is_wp_error( $quote ) ) return $quote;
         foreach ( array( 'weight', 'length', 'width', 'height' ) as $field ) if ( ! empty( $listing[ $field ] ) && ! preg_match( '/^\d+(?:\.\d{1,4})?$/D', (string) $listing[ $field ] ) ) return self::fail( 'import_decimal', $field . ' must be a non-negative number in the store units.' );
+        $listing = KREV_Import_Package_Defaults::fill( $listing );
         $attrs = $listing['attributes'] ?? array();
         $schema = KREV_ListLab_Attributes::schema( $category );
         $allowed = array_column( $schema, 'taxonomy' );

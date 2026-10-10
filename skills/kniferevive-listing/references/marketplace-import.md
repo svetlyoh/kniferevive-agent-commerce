@@ -45,7 +45,7 @@ messaging the original seller or asserting ownership of another seller's item.
 2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
    HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
    on October 10, 2026. An identifying User-Agent may be
-   `KnifeRevive-Listing/1.0.2`. If the response is a hosting HTML challenge,
+   `KnifeRevive-Listing/1.0.3`. If the response is a hosting HTML challenge,
    distinguish it from an API JSON error. Do not spoof a browser, solve challenges
    or transfer browser cookies. If the supported client remains blocked, report
    that the import was not prepared and direct the seller to ListLab through
@@ -94,7 +94,15 @@ messaging the original seller or asserting ownership of another seller's item.
 ```
 
    Native optional listing fields are advertised by the schema. Omit quantity,
-   shipping policy, return policy, dimensions and identifiers when not known.
+   shipping policy, return policy and identifiers when not known. Extract actual
+   packaged weight/dimensions with units when given and convert to the schema's
+   store units before submitting. For missing package fields, let Marketplace
+   Imports 1.0.2 fill the owner's defaults: 15 oz and 1 × 6 × 4 inches, length ×
+   width × height. It fills each blank independently and preserves entered
+   values. Read `package_defaults.store_values` and its unit fields; do not send
+   `15` as pounds or treat a default as a Facebook fact. With an older companion,
+   pass the schema-supported fields only when the actual store units are known;
+   otherwise flag the package defaults for native completion.
    Facebook seller location/delivery offers do not become KnifeRevive shipping
    policies. Copy a SKU/GTIN only when explicitly stated, preserving leading
    zeros. Supply actual original Facebook CDN URLs; the server accepts bounded

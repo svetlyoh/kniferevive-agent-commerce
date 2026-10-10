@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.2"
+  version: "1.0.3"
 ---
 
 # KnifeRevive Listing
@@ -33,6 +33,13 @@ If Facebook omits condition, use the owner's default **Gently Used** for knives
 and **Used** for every other category, in the category's structured condition
 field. Label it as a seller default in the description and handoff. Both map to
 Google's canonical `used`; do not send `gently used` as a Google enum.
+
+For missing shipping package fields, use the merchant's defaults: **15 oz**
+and **1 × 6 × 4 inches (length × width × height)**. Marketplace Imports 1.0.2
+fills blanks and advertises converted store-unit values in `/schema` under
+`package_defaults`. Preserve supplied package measurements; label defaults as
+merchant estimates, not extracted or measured facts. Never substitute blade
+length for shipping dimensions.
 
 Use the Marketplace Imports companion API at
 `https://kniferevive.com/wp-json/kniferevive-listlab-import/v1`. Read its live

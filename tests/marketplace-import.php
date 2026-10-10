@@ -8,12 +8,15 @@ require_once ABSPATH . 'wp-content/plugins/kniferevive-product-attributes/includ
 require_once ABSPATH . 'wp-content/plugins/kniferevive-product-attributes/includes/class-krev-pa-condition-resolver.php';
 require_once dirname( __DIR__ ) . '/wordpress/kniferevive-listlab-import/kniferevive-listlab-import.php';
 KREV_Marketplace_Imports::boot();
+add_action( 'rest_api_init', static function() { ( new KREV_ListLab_REST() )->register(); } );
 $passed = 0;
 function checkImport( $ok, $label ) { global $passed; if ( ! $ok ) throw new RuntimeException( $label ); ++$passed; echo "PASS: $label\n"; }
 function importCall( $action, $data, $method = 'POST' ) { $request = new WP_REST_Request( $method, '/kniferevive-listlab-import/v1/' . $action ); $request->set_header( 'content-type', 'application/json' ); if ( $method === 'GET' ) foreach ( $data as $k => $v ) $request->set_param( $k, $v ); else $request->set_body( wp_json_encode( $data ) ); return rest_do_request( $request ); }
 function importToken( $response ) { parse_str( wp_parse_url( $response->get_data()['review_url'], PHP_URL_FRAGMENT ), $fragment ); return $fragment['import']; }
 function importError( $response, $code ) { checkImport( $response->get_data()['code'] === $code, $code ); }
 delete_option( KREV_Import_Pricing::OPTION );
+update_option( 'woocommerce_weight_unit', 'lbs' );
+update_option( 'woocommerce_dimension_unit', 'in' );
 delete_transient( 'krev_import_rate_' . hash_hmac( 'sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown', wp_salt( 'nonce' ) ) );
 $root = wp_insert_term( 'Synthetic import parent ' . wp_generate_uuid4(), 'product_cat' )['term_id'];
 $child = wp_insert_term( 'Synthetic import child ' . wp_generate_uuid4(), 'product_cat', array( 'parent' => $root ) )['term_id'];
@@ -41,6 +44,18 @@ $status = importCall( 'status', array( 'token' => $token ) );
 checkImport( $status->get_data()['data']['source_url'] === 'https://www.facebook.com/marketplace/item/123456789/', 'source link canonicalized without tracking' );
 checkImport( ! str_contains( $status->get_data()['data']['listing']['description'], '<script>' ), 'source executable markup stripped' );
 checkImport( $status->get_data()['data']['listing']['short_description'] === $status->get_data()['data']['listing']['description'], 'short description prefills from sanitized long description' );
+checkImport( $schema->get_data()['package_defaults']['store_values']['weight'] === '0.9375', 'public schema advertises 15 oz in native pounds' );
+checkImport( $status->get_data()['data']['listing']['weight'] === '0.9375' && array_intersect_key( $status->get_data()['data']['listing'], array_flip( array( 'length', 'width', 'height' ) ) ) === array( 'length' => '1', 'width' => '6', 'height' => '4' ), 'omitted package fields prefill defaults' );
+$package_preview = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'weight' => '2.25', 'length' => '12', 'width' => '', 'height' => '0' ) ) );
+$package_fields = $package_preview->get_data()['data']['listing'];
+checkImport( $package_fields['weight'] === '2.25' && $package_fields['length'] === '12' && $package_fields['width'] === '6' && $package_fields['height'] === '0', 'per-field defaults preserve supplied measurements and explicit zero' );
+$bad_package = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'weight' => '-1' ) ) );
+importError( $bad_package, 'import_decimal' );
+update_option( 'woocommerce_weight_unit', 'kg' ); update_option( 'woocommerce_dimension_unit', 'cm' );
+$metric_preview = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'weight' => '', 'length' => '', 'width' => '', 'height' => '' ) ) );
+$metric_fields = $metric_preview->get_data()['data']['listing'];
+checkImport( abs( (float) $metric_fields['weight'] - 0.4252 ) < 0.0001 && $metric_fields['length'] === '2.54' && $metric_fields['width'] === '15.24' && $metric_fields['height'] === '10.16', 'defaults convert ounces and inches to configured metric units' );
+update_option( 'woocommerce_weight_unit', 'lbs' ); update_option( 'woocommerce_dimension_unit', 'in' );
 $description_preview = importCall( 'preview', array( 'token' => $token, 'changes' => array( 'description' => "Edited source facts\nSecond line", 'short_description' => 'Old summary' ) ) );
 checkImport( $description_preview->get_data()['data']['listing']['short_description'] === "Edited source facts\nSecond line", 'review edits refresh short description with the long text' );
 importError( importCall( 'status', array( 'token' => str_repeat( 'a', 64 ) ) ), 'import_missing' );
@@ -71,6 +86,19 @@ checkImport( $product->get_regular_price() === '30.00' && $product->get_stock_qu
 checkImport( (int) get_post_field( 'post_author', $id ) === $seller, 'draft is seller-owned' );
 checkImport( $product->get_meta( '_krev_import_source_price' ) === '25.00', 'original Facebook price retained separately' );
 checkImport( $product->get_short_description() === $product->get_description() && $product->get_description() !== '', 'native ListLab draft retains identical descriptions' );
+checkImport( $product->get_weight() === '0.9375' && $product->get_length() === '1' && $product->get_width() === '6' && $product->get_height() === '4', 'imported draft stores default shipping package for native feed mapping' );
+$product->set_weight( '2.25' ); $product->set_length( '12' ); $product->set_width( '' ); $product->save();
+checkImport( wc_get_product( $id )->get_weight() === '2.25' && wc_get_product( $id )->get_length() === '12' && wc_get_product( $id )->get_width() === '6', 'later imported-listing saves fill blanks while preserving seller weights' );
+$unrelated = new WC_Product_Simple(); $unrelated->set_name( 'Unrelated blank synthetic product' ); $unrelated->save();
+checkImport( wc_get_product( $unrelated->get_id() )->get_weight() === '', 'ordinary WooCommerce saves outside ListLab/imports are unchanged' );
+$virtual = new WC_Product_Simple(); $virtual->set_name( 'Virtual synthetic imported service' ); $virtual->set_virtual( true ); $virtual->update_meta_data( '_krev_import_source_url', $payload['source_url'] ); $virtual->save();
+checkImport( wc_get_product( $virtual->get_id() )->get_weight() === '', 'virtual services do not receive a parcel default' );
+$manual_request = new WP_REST_Request( 'POST', '/kniferevive/v1/listings' ); $manual_request->set_header( 'content-type', 'application/json' );
+$manual_request->set_body( wp_json_encode( array( 'title' => 'Manual ListLab default package', 'category_id' => $child, 'description' => 'Synthetic item', 'regular_price' => '30', 'weight' => '', 'width' => '9' ) ) );
+$manual_response = rest_do_request( $manual_request );
+checkImport( $manual_response->get_status() === 200 && $manual_response->get_data()['weight'] === '0.9375' && $manual_response->get_data()['dimensions'] === array( 'length' => '1', 'width' => '9', 'height' => '4' ), 'native ListLab REST saves default only missing package fields' );
+$after_manual = new WC_Product_Simple(); $after_manual->set_name( 'Outside ListLab after request' ); $after_manual->save();
+checkImport( wc_get_product( $after_manual->get_id() )->get_weight() === '', 'ListLab defaults context ends with its request' );
 checkImport( $claimed->get_data()['listing']['edit_url'] !== '' && $claimed->get_data()['listing']['view_url'] === '', 'native completion link without false public URL' );
 $product->set_name( 'Seller edited title' ); $product->set_short_description( 'Seller edited summary' ); $product->save();
 $again = importCall( 'claim', array( 'token' => $token, 'expected_price' => '30.00', 'authorized_to_list' => true, 'changes' => array( 'title' => 'Do not overwrite' ) ) );
@@ -134,6 +162,6 @@ checkImport( $knife_claim->get_status() === 201, 'native knife draft created wit
 $knife_product = wc_get_product( $knife_claim->get_data()['listing']['id'] );
 checkImport( $knife_product->get_short_description() === "Wusthof chef knife\n8 inches blade, straight edge." && $knife_product->get_description() === $knife_product->get_short_description(), 'final review description prefills both native fields' );
 checkImport( in_array( 'Wusthof', wp_get_object_terms( $knife_product->get_id(), 'product_brand', array( 'fields' => 'names' ) ), true ), 'extracted maker stored in native brand taxonomy' );
-checkImport( in_array( '8 inches', wp_get_object_terms( $knife_product->get_id(), 'pa_blade-length', array( 'fields' => 'names' ) ), true ) && $knife_product->get_length() === '', 'blade length preserves units and leaves package length unknown' );
+checkImport( in_array( '8 inches', wp_get_object_terms( $knife_product->get_id(), 'pa_blade-length', array( 'fields' => 'names' ) ), true ) && $knife_product->get_length() === '1', 'blade length is separate from the owner’s default package length' );
 checkImport( in_array( 'Straight', wp_get_object_terms( $knife_product->get_id(), 'pa_edge-type', array( 'fields' => 'names' ) ), true ) && in_array( $knife->term_id, $knife_product->get_category_ids(), true ), 'knife type and edge style stored in native category and attribute' );
 echo "$passed marketplace import assertions passed.\n"; ob_end_flush();
