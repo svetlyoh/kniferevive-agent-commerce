@@ -2,7 +2,7 @@
 
 **KnifeRevive Concierge** helps an agent look up all published KnifeRevive goods categories and exact model/identifier matches and San Francisco Bay Area knife-sharpening offerings, compare facts and terms, and prepare a **customer-authorized** checkout handoff only when the merchant's documented capabilities are actually enabled. Browsing and quotes are free; products, sharpening, taxes, fulfillment, and applicable fees are not.
 
-GitHub skill source version: **0.6.1**. This file alone does not establish deployment or publication. Check the exact version's ClawHub publication and audit
+GitHub skill source version: **0.6.2**. This file alone does not establish deployment or publication. Check the exact version's ClawHub publication and audit
 status before installing; earlier registry audits do not certify this release.
 Installation does not enable merchant payment gates; check live capabilities
 before use.
@@ -13,16 +13,16 @@ Current GitHub source: https://github.com/svetlyoh/kniferevive-agent-commerce/tr
 ## Install the current GitHub skill
 
 Use your host's supported GitHub skill-import facility with repository
-`svetlyoh/kniferevive-agent-commerce`, release ref `skill-v0.6.1`, and directory
+`svetlyoh/kniferevive-agent-commerce`, release ref `skill-v0.6.2`, and directory
 `skills/kniferevive-concierge`. The complete versioned folder is:
-https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.6.1/skills/kniferevive-concierge
+https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.6.2/skills/kniferevive-concierge
 A native import facility may be unavailable on a
 particular bot; do not invent a platform command or claim installation from a
 chat prompt alone.
 
 Resolve the requested release ref (or `main` if explicitly choosing current source), then obtain the entire skill folder at that
 commit: `SKILL.md`, `LICENSE`, and all files in `references/`. Verify installed
-files against that same commit and check `metadata.version: "0.6.1"`. Backend
+files against that same commit and check `metadata.version: "0.6.2"`. Backend
 and skill metadata are separate version declarations. A download pinned
 to older commit `b80efa7` still contains skill 0.5.1 even though its backend is 0.5.4.
 
@@ -31,15 +31,15 @@ check the active workspace/shared-skill path for another copy, and start a new
 agent session so it reloads the instructions. Preserve unrelated skills and
 credentials. A cached session can keep old instructions even after files change.
 The registry commands below install the registry's latest published version,
-not `main`. For an exact 0.6.1 registry download, use an already installed
+not `main`. For an exact 0.6.2 registry download, use an already installed
 ClawHub CLI after confirming that version is published:
 
 ```text
-clawhub install @svetlyoh/kniferevive-concierge --version 0.6.1
+clawhub install @svetlyoh/kniferevive-concierge --version 0.6.2
 ```
 
 An existing installation should use its host's supported update/replace flow.
-After updating, verify the active copy's version is 0.6.1 and start a new agent session.
+After updating, verify the active copy's version is 0.6.2 and start a new agent session.
 A $7 sharpening selection must display `$7 + $6 trip fee` on each single-trip
 button and `$7 + $11 round-trip fee` on the combo. The unpaid option is last
 and says “nothing due now”. If it still says “+ fee” or places unpaid first, inspect
@@ -109,7 +109,7 @@ Open a new agent session if necessary. There is no special PowerShell download s
 
 ## Meta Muse (personal AI agent) — paste this prompt
 
-> Update my existing **KnifeRevive Concierge** skill in place from this GitHub source: https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.6.1/skills/kniferevive-concierge. Use your actual supported import/update facility and obtain the entire folder, including `SKILL.md`, `LICENSE` and every reference. Keep the identity `kniferevive-concierge`; check for an existing workspace/shared copy and retain one active installation. Do not create a second skill, renamed fork or duplicate standing instruction. If your interface can only create a new separate skill, tell me the limitation before changing anything. If native skills are unsupported, update the existing persistent instruction only if your app supports it, and say that no native install occurred. Verify active version **0.6.1** and reload its instructions. When I request a product/model/specification search, check live KnifeRevive Google-feed source attributes and show all matching items directly in this chat with real thumbnails, current prices and canonical product links, following every page. Use cards when supported and numbered image/link items otherwise. Keep sharpening in its dedicated flow, check live capabilities and leave contact sharing/final payment to the documented buyer-controlled process. Tell me exactly what was updated and what remains unsupported.
+> Update my existing **KnifeRevive Concierge** skill in place from this GitHub source: https://github.com/svetlyoh/kniferevive-agent-commerce/tree/skill-v0.6.2/skills/kniferevive-concierge. Use your actual supported import/update facility and obtain the entire folder, including `SKILL.md`, `LICENSE` and every reference. Keep the identity `kniferevive-concierge`; check for an existing workspace/shared copy and retain one active installation. Do not create a second skill, renamed fork or duplicate standing instruction. If your interface can only create a new separate skill, tell me the limitation before changing anything. If native skills are unsupported, update the existing persistent instruction only if your app supports it, and say that no native install occurred. Verify active version **0.6.2** and reload its instructions. When I request a product/model/specification search, check live KnifeRevive Google-feed source attributes and show all matching items directly in this chat with real thumbnails, current prices and canonical product links, following every page. Use cards when supported and numbered image/link items otherwise. Keep sharpening in its dedicated flow, check live capabilities and leave contact sharing/final payment to the documented buyer-controlled process. Tell me exactly what was updated and what remains unsupported.
 
 **Developer note — Muse Code, not Muse personal-agent app:** Muse Code can install compatible local `SKILL.md` skill folders. Use a reviewed downloaded copy of the **entire** ClawHub skill directory (including references), validate it with `muse skills validate <path>`, then install it using `muse skills install <path> --scope user` and check `muse skills list`. The developer tool is separate from the consumer Muse agent. Do not assume a Muse personal-agent chat installs local Muse Code skills.
 
@@ -122,6 +122,34 @@ Open a new agent session if necessary. There is no special PowerShell download s
 > Please review the **KnifeRevive Concierge** skill at https://clawhub.ai/svetlyoh/skills/kniferevive-concierge and its complete public source at https://github.com/svetlyoh/kniferevive-agent-commerce/tree/main/skills/kniferevive-concierge. I want this workflow available to you **only when I request** relevant KnifeRevive goods shopping or SF Bay Area sharpening help. Read `SKILL.md` and the API, sharpening, and payment reference documents. If your dot can use supported local/custom skills through a computer I have explicitly connected, explain the permissions and ask before importing the reviewed skill to that local environment. Otherwise, treat the documentation as a reusable reference or proposed custom instruction and be clear that no OpenClaw skill has been installed into your dot. Browse and compare honestly, fetch the merchant's live capabilities, and require verified customer consent and payment/booking confirmation before describing any purchase or reservation as complete. Do not initiate payments, wallets, reservations, seller messaging, or background promotion without my express request. Report which instructions, if any, are actually persistent.
 
 ## What the skill can and cannot do
+
+### Muse custom catalog and seller imports
+
+The owner’s Muse host reports custom skills are discovered in
+`~/workspace/skills`, while its old OpenClaw CLI folder is outside that catalog.
+On that host, update the complete existing skill at
+`~/workspace/skills/kniferevive-concierge`, retain one active copy, reload and
+verify discovery from a fresh chat. Confirm the actual catalog path on another
+host rather than assuming this report applies everywhere.
+
+For version 0.6.2, also read `references/marketplace-import.md`. After the merchant
+activates **KnifeRevive Marketplace Imports**, saying “List this on KnifeRevive”
+under a Facebook Marketplace item prepares its real details, images and source
+price, applies merchant category pricing and opens a private completion link.
+The seller signs in, creates a ListLab draft, then finishes and publishes there.
+Skill installation alone does not deploy the companion plugin or add Muse tools.
+Test extraction, HTTP preparation and browser opening on the actual Muse account.
+
+Suggested setup prompt:
+
+> Update the existing KnifeRevive Concierge to 0.6.2 from its complete published
+> source in your active custom skill catalog. On this Muse host use
+> ~/workspace/skills/kniferevive-concierge, preserve identity and one active copy,
+> and verify discovery in a fresh chat. When I point to a Facebook Marketplace
+> item and say “List this on KnifeRevive”, use marketplace-import.md to prepare
+> its details, photos and category-adjusted price and open my private ListLab
+> completion link. Check the live import schema first. Report missing plugin or
+> host facilities instead of claiming an import or publication succeeded.
 
 - It uses an agent's **existing** authorized browser/HTTP capabilities; it does not automatically add tools, accounts, checkout access, or wallet spending authority.
 - It checks live merchant capabilities before using the KnifeRevive agent commerce API. If disabled or unavailable, it directs you to the normal KnifeRevive web pages.

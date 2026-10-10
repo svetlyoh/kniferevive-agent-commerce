@@ -1,3 +1,13 @@
+## Marketplace Imports 1.0.0 and Concierge 0.6.2 candidate
+
+October 10, 2026: the new companion plugin and portable skill implement Muse
+Facebook-item preparation, category markup and private seller completion in
+native ListLab. Source validation passed 67 fenced native assertions, PHP/JS
+checks and skill validation. See [implementation and deployment boundaries](muse-listlab-import-1.0.0.md)
+and [the plan](muse-listlab-import-plan.md). Live installation and the actual Muse
+host are separate verification steps; ClawHub remains 0.6.0 until a new release
+is confirmed in that registry.
+
 ## GitHub source 0.6.1; ClawHub latest 0.6.0 — direct import currently blocked
 
 October 10, 2026: GitHub [skill 0.6.1](https://github.com/svetlyoh/kniferevive-agent-commerce/releases/tag/skill-v0.6.1)
