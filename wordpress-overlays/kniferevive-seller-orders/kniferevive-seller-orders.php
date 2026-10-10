@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KnifeRevive Seller Orders
  * Description: Native WooCommerce seller fulfillment, marketplace shipping policies, merchandise returns, and knife-sharpening workflow.
- * Version: 1.1.7
+ * Version: 1.1.8
  * Author: KnifeRevive
  * Requires at least: 6.6
  * Requires PHP: 8.0
@@ -13,7 +13,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KREV_ORDERS_VERSION', '1.1.7' );
+define( 'KREV_ORDERS_VERSION', '1.1.8' );
 // UI-only update: retain the existing schema without scheduling an unnecessary backfill.
 define( 'KREV_ORDERS_SCHEMA_VERSION', '1.1.4' );
 define( 'KREV_ORDERS_FILE', __FILE__ );

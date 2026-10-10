@@ -15,6 +15,7 @@ final class BookingSeller {
     public static function url(): string {return function_exists('dokan_get_navigation_url')?add_query_arg('krev_booking_inbox','1',dokan_get_navigation_url('')):home_url('/');}
     public static function boot(): void {
         add_filter('krev_seller_orders_appointments',[self::class,'appointments'],10,3);
+        add_filter('krev_sharpening_order_can_view',[self::class,'canViewOrder'],10,2);
         add_filter('dokan_get_dashboard_nav',static function($nav){$nav['krev-bookings']=['title'=>'Sharpening requests','icon'=>'<i class="fas fa-calendar" aria-hidden="true"></i>','url'=>self::url(),'pos'=>35];return $nav;});
         // Query-based entry avoids rewrite flushes and supports old/new dashboard routing.
         add_action('template_redirect',static function(){if(isset($_GET['krev_booking_inbox']))self::render();},-1);
@@ -34,6 +35,19 @@ final class BookingSeller {
         $expected=[];foreach($i['items'] as $item)$expected[(int)$item['product_id']]=(int)$item['quantity'];
         foreach($order->get_items() as $item){$id=$item->get_product_id();if(!isset($expected[$id]) || $expected[$id]!==$item->get_quantity())return null;unset($expected[$id]);}
         return !$expected && count($order->get_items())?$order:null;
+    }
+    /** Read access is bound to this seller's original booking order, not a global capability. */
+    public static function canViewOrder(bool $allowed,\WC_Order $order): bool {
+        if($allowed)return true;
+        if(!is_user_logged_in())return false;
+        $id=(string)($order->get_meta('_krev_service_booking')?:$order->get_meta('_krev_unpaid_booking'));
+        if(!$id)return false;
+        try {
+            $row=Store::get($id,'booking');
+            if(self::seller($row)!==get_current_user_id() || !Booking::merchantVisible($row) || !in_array($row['data']['booking_state'],['requested','confirmed'],true))return false;
+            $linked=self::localOrder($row);
+            return $linked && $linked->get_id()===$order->get_id();
+        }catch(\Throwable $e){return false;}
     }
     /** Confirmation attaches the original order to the native workflow, never advances receipt/payment. */
     public static function confirmedOrder(array $row): void {
@@ -57,8 +71,7 @@ final class BookingSeller {
                 $native=\KREV_Sharpening_Workflow::dto($order);
                 foreach($native['stages'] as $step)if($step['key']===$native['current_stage']){$stage=['key'=>$step['key'],'label'=>$step['label'],'icon'=>$step['icon']];break;}
                 if($native['workflow_completed'])$stage=['key'=>'completed','label'=>'Completed','icon'=>''];
-                if(\KREV_Orders_Permissions::is_operator())$orderUrl=trailingslashit(wc_get_account_endpoint_url('sharpening-orders')).$order->get_id().'/';
-                elseif(function_exists('dokan_get_navigation_url'))$orderUrl=wp_nonce_url(add_query_arg(['order_id'=>$order->get_id()],dokan_get_navigation_url('orders')),'dokan_view_order');
+                $orderUrl=trailingslashit(wc_get_account_endpoint_url('sharpening-orders')).$order->get_id().'/';
             }
             $cards[]=['order_id'=>$order->get_id(),'order_number'=>$order->get_order_number(),'items'=>$items,'date'=>$i['preferred_date'],
                 'handoff'=>($i['mode']==='prepaid_pickup'?'KnifeRevive pickup':'Customer drop-off').' · '.($i['return_mode']==='courier_delivery'?'KnifeRevive return delivery':'Customer collection'),
@@ -95,7 +108,7 @@ final class BookingSeller {
             echo '<p>'.esc_html(implode(' · ',$i['customer'])).'</p>';
             if(isset($i['pickup_address']))echo '<p>'.esc_html(implode(', ',$i['pickup_address'])).'</p>';
             echo '<p>'.($order?'WooCommerce order '.esc_html($order->get_order_number()).' · '.esc_html($order->get_status()):'No WooCommerce order yet.').'</p>';
-            if($order){$url=current_user_can('manage_woocommerce')?$order->get_edit_order_url():(function_exists('dokan_get_navigation_url')?wp_nonce_url(add_query_arg(['order_id'=>$order->get_id()],dokan_get_navigation_url('orders')),'dokan_view_order'):'');if($url)echo '<p><a href="'.esc_url($url).'">'.(current_user_can('manage_woocommerce')?'View WooCommerce order':'View seller order').'</a></p>';}
+            if($order){$url=trailingslashit(wc_get_account_endpoint_url('sharpening-orders')).$order->get_id().'/';echo '<p><a href="'.esc_url($url).'">View Order</a></p>';}
             if($d['booking_state']==='requested'){echo '<form method="post"><input type="hidden" name="csrf" value="'.esc_attr(wp_create_nonce('krev_seller_booking')).'"><input type="hidden" name="booking_id" value="'.esc_attr($row['id']).'"><label><input type="checkbox" name="address_reviewed" value="yes"> I verified the exact trip address and county, where required.</label><button'.($capacityReady?'':' disabled').'>Confirm requested day</button></form>';}
             $refund=BookingLifecycle::refunds($order);echo '<p>Refund: '.esc_html($refund['refund_state']).' · Recorded $'.esc_html(Domain::decimal($refund['refund_recorded_minor'])).' · Gateway accepted $'.esc_html(Domain::decimal($refund['refund_gateway_accepted_minor'])).'. Arrival in the buyer account is not verified.</p>';
             if($d['booking_state']!=='cancelled')echo '<form method="post"><input type="hidden" name="csrf" value="'.esc_attr(wp_create_nonce('krev_seller_booking')).'"><input type="hidden" name="booking_id" value="'.esc_attr($row['id']).'"><input type="hidden" name="action" value="cancel"><label><input type="checkbox" name="cancel_approved" value="yes" required> Cancel this service booking. Any online payment needs separate refund review.</label><button>Cancel service booking</button></form>';

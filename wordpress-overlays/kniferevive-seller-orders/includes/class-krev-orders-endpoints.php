@@ -85,7 +85,7 @@ final class KREV_Orders_Endpoints {
 		$order_id = absint( $value );
 		if ( $order_id ) {
 			$order = wc_get_order( $order_id );
-			if ( ! $order || ! KREV_Sharpening_Orders::is_sharpening_order( $order ) || ( ! KREV_Orders_Permissions::is_operator() && ! KREV_Orders_Permissions::customer_can_view_order( $order ) ) ) { wc_print_notice( __( 'Sharpening order not found.', 'kniferevive-seller-orders' ), 'error' ); return; }
+			if ( ! KREV_Sharpening_Orders::can_view_order( $order ) ) { wc_print_notice( __( 'Sharpening order not found.', 'kniferevive-seller-orders' ), 'error' ); return; }
 			$sharpening = KREV_Sharpening_Workflow::dto( $order ); include KREV_ORDERS_PATH . 'templates/sharpening-order-detail.php'; return;
 		}
 		$result = KREV_Sharpening_Orders::orders_for_current_user(); include KREV_ORDERS_PATH . 'templates/sharpening-orders.php';

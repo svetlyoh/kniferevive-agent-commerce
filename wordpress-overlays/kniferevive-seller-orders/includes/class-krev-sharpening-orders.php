@@ -4,6 +4,13 @@ defined( 'ABSPATH' ) || exit;
 final class KREV_Sharpening_Orders {
 	const CATEGORY = 'knife-sharpening';
 
+	/** Sharpening-only read permission; does not authorize returns or stage writes. */
+	public static function can_view_order( $order ) {
+		if ( ! is_user_logged_in() || ! $order instanceof WC_Order || ! self::is_sharpening_order( $order ) ) { return false; }
+		if ( KREV_Orders_Permissions::is_operator() || KREV_Orders_Permissions::customer_can_view_order( $order ) ) { return true; }
+		return (bool) apply_filters( 'krev_sharpening_order_can_view', false, $order );
+	}
+
 	public static function is_sharpening_product( $product_or_id ) {
 		$product = is_object( $product_or_id ) ? $product_or_id : wc_get_product( absint( $product_or_id ) );
 		if ( ! $product ) {
