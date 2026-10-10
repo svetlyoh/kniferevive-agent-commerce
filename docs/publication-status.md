@@ -1,3 +1,12 @@
+## Separate Listing 1.0.2
+
+October 10, 2026: Listing 1.0.2 adds complete Marketplace photo-gallery extraction,
+photo counts and explicit overflow reporting, Google feed preparation, and the
+owner's missing-condition defaults (Gently Used for knives, Used otherwise).
+It retains explicit source conditions. The live Marketplace Imports companion
+remains 1.0.1 with its 10-photo limit. Actual Muse installation/extraction remains
+unverified. [Release and live feed audit](listing-skill-1.0.2.md).
+
 ## Marketplace Imports and separate Listing 1.0.1
 
 October 10, 2026: Marketplace Imports was updated in place to 1.0.1 on

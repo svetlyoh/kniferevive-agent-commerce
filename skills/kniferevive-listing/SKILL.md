@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # KnifeRevive Listing
@@ -15,7 +15,11 @@ link-opening tools; installing instructions does not add those tools.
 
 Read [the listing workflow](references/marketplace-import.md) before preparation.
 Open the actual source listing, extract its title, description, condition,
-brand/model/specifications, explicit USD price and real item photos. Map facts
+brand/model/specifications, explicit USD price and every real item photo. Open
+the complete listing gallery and collect all distinct photos in source order,
+including photos loaded only after opening or advancing the gallery. Do not stop
+at the first photo or search-card thumbnail. Report incomplete gallery access
+and any import-limit overflow as described in the listing workflow. Map facts
 to the live category attribute schema; retain unmatched facts in the description
 and omit unknowns. Keep preparation scoped to the item the user selected.
 Prefill `short_description` with the same text as `description`. Extract the
@@ -23,6 +27,12 @@ manufacturer brand when available. For knives, identify the stated knife/blade
 type, cutting-edge style and blade length with its units; map those facts to the
 category and native attributes advertised by the live schema. Blade length is
 not overall length or shipping-package length. Do not invent missing measurements.
+Read [Google feed preparation](references/google-feed.md) to collect feed fields
+as far as the source supports them. Preserve any explicitly stated condition.
+If Facebook omits condition, use the owner's default **Gently Used** for knives
+and **Used** for every other category, in the category's structured condition
+field. Label it as a seller default in the description and handoff. Both map to
+Google's canonical `used`; do not send `gently used` as a Google enum.
 
 Use the Marketplace Imports companion API at
 `https://kniferevive.com/wp-json/kniferevive-listlab-import/v1`. Read its live
