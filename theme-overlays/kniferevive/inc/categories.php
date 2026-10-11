@@ -123,9 +123,9 @@ function kr_categories_shortcode(): string
                 </div>
             </article>
             <article class="krev-category-card krev-category-card--collectibles">
-                <a class="krev-category-card__image" href="<?php echo esc_url(kr_metacategory_landing_url('pokemon-cards')); ?>"><?php echo kr_metacategory_image('pokemon-cards'); ?></a>
+                <a class="krev-category-card__image" href="<?php echo esc_url(kr_metacategory_landing_url('collectibles')); ?>"><?php echo kr_metacategory_image('collectibles'); ?></a>
                 <div class="krev-category-card__copy"><p class="krev-category-card__eyebrow">COLLECTIBLES</p><h2><a href="<?php echo esc_url(kr_metacategory_landing_url('collectibles')); ?>">Small pieces, lasting stories.</a></h2><p class="krev-category-card__description">Explore trading cards, stamps, scale models, memorabilia, and collectible finds, organized by their actual product category.</p><a class="krev-category-card__cta" href="<?php echo esc_url(kr_metacategory_landing_url('collectibles')); ?>">Browse Collectibles <span aria-hidden="true">→</span></a>
-                    <div class="krev-category-card__children"><section class="krev-category-child"><h3>Pokémon Cards</h3><p>Individual cards and card collections, with set, card number, rarity, finish, and grade recorded when known.</p><a href="<?php echo esc_url(kr_metacategory_landing_url('pokemon-cards')); ?>">Browse Pokémon Cards <span aria-hidden="true">→</span></a></section></div>
+                    <div class="krev-category-card__children krev-category-card__tech-metas"><section class="krev-category-child"><a class="krev-category-child__image" href="<?php echo esc_url(kr_metacategory_landing_url('pokemon-cards')); ?>"><?php echo kr_metacategory_image('pokemon-cards'); ?></a><div><h3>Pokémon Cards</h3><p>Individual cards and card collections, with set, card number, rarity, finish, and grade recorded when known.</p><a href="<?php echo esc_url(kr_metacategory_landing_url('pokemon-cards')); ?>">Browse Pokémon Cards <span aria-hidden="true">→</span></a></div></section></div>
                 </div>
             </article>
         </section>

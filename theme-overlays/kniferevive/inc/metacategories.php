@@ -45,7 +45,7 @@ function kr_metacategory_image(string $slug): string {
     $term = get_term_by('slug', $slug, 'product_cat');
     $image = $term instanceof WP_Term ? (int) get_term_meta($term->term_id, 'thumbnail_id', true) : 0;
     if ($image && get_post_type($image) === 'attachment') return wp_get_attachment_image($image, 'large', false, ['loading' => 'lazy', 'decoding' => 'async']);
-    $paths = ['home-garden' => 'assets/images/categories/home-garden-2026-10-11.png', 'ai-tech' => 'assets/images/technology/Openclaw2_Feature.png', 'collectibles' => 'assets/images/metacategories/pokemon-cards-placeholder.svg'];
+    $paths = ['home-garden' => 'assets/images/categories/home-garden-2026-10-11.png', 'ai-tech' => 'assets/images/technology/Openclaw2_Feature.png', 'collectibles' => 'assets/images/metacategories/collectibles-2026-10-11.png', 'pokemon-cards' => 'assets/images/metacategories/pokemon-cards-2026-10-11.png', 'iphones' => 'assets/images/metacategories/kniferevive-iphones-1536x1024.png', 'laptops' => 'assets/images/metacategories/kniferevive-laptops-1536x1024.png', 'mini-computers' => 'assets/images/metacategories/kniferevive-mini-computers-1536x1024.png'];
     $label = kr_metacategories()[$slug]['label'] ?? $slug;
     return kr_theme_image($paths[$slug] ?? 'assets/images/metacategories/' . $slug . '-placeholder.svg', $label . ' collection theme', ['loading' => 'lazy', 'decoding' => 'async']);
 }

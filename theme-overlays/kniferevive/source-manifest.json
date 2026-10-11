@@ -1,17 +1,33 @@
 {
-  "version": "2026.10.11.3",
+  "version": "2026.10.11.6",
   "files": [
     {
       "file": "assets/css/metacategories.css",
-      "sha256": "c57b5dff339e846473bef3c05b04f81a600acade1026cc62a7ee4ac520d891b7"
+      "sha256": "1f0f8831595711c1190143a2c1c3ffdb745f764602337865621d23499262acc4"
     },
     {
       "file": "assets/images/categories/home-garden-2026-10-11.png",
       "sha256": "12250edfa34b0cfe4b8cae71c817f09a0519c1a0a462ceaef7de2b6dd15469f5"
     },
     {
+      "file": "assets/images/metacategories/collectibles-2026-10-11.png",
+      "sha256": "28813490122e19a819f1e3b83c14306050e54c8e01c213703afd8123bd9c23c2"
+    },
+    {
       "file": "assets/images/metacategories/iphones-placeholder.svg",
       "sha256": "4d28d468054a4a711441ea7ba3ab2774b9bb4ca3b3bb4e0180deee52a789788a"
+    },
+    {
+      "file": "assets/images/metacategories/kniferevive-iphones-1536x1024.png",
+      "sha256": "21c0a86d8499fa05b651a091ada70204a7ae9710c493c5990f25daf5047f949a"
+    },
+    {
+      "file": "assets/images/metacategories/kniferevive-laptops-1536x1024.png",
+      "sha256": "f2ee6dbca3a2941a086ea346fcd25ceac52fc47289560dafc8ae378864fab130"
+    },
+    {
+      "file": "assets/images/metacategories/kniferevive-mini-computers-1536x1024.png",
+      "sha256": "094b62a0d4c0b2af9e678587b3bdb021fdad2f185b39e119734a86885c615604"
     },
     {
       "file": "assets/images/metacategories/laptops-placeholder.svg",
@@ -20,6 +36,10 @@
     {
       "file": "assets/images/metacategories/mini-computers-placeholder.svg",
       "sha256": "b1099b3e72d7a88be90f88ec8ecd9f1a482cbd135cf8789db5bcb380fac2bbb1"
+    },
+    {
+      "file": "assets/images/metacategories/pokemon-cards-2026-10-11.png",
+      "sha256": "0ffb94732f9052a1058f0f3d09a4ab9d32d57b3d93634343839672ac033c5f22"
     },
     {
       "file": "assets/images/metacategories/pokemon-cards-placeholder.svg",
@@ -39,15 +59,15 @@
     },
     {
       "file": "inc/categories.php",
-      "sha256": "98253a9ed0de970a66f7595a5268c929ed8c04dac6c40f0284fe5642f147941c"
+      "sha256": "a371502c3a69ddd85bc0b41cbc6fd77bfeacfa7deaab277165b773d07ae9b3e2"
     },
     {
       "file": "inc/metacategories.php",
-      "sha256": "ac84ffba9200cb32d49dcc31dc2286c1ac7ee4caa0636628d6f3da429cb9b4f1"
+      "sha256": "31e795d362d974983db7621c0551100dfc90249fc0e5b1ccf9c053cdadb547ca"
     },
     {
       "file": "style.css",
-      "sha256": "d71cdb972d813e88abd255d281f80b10e9fb5e4e750b0db519f0318df5b50d38"
+      "sha256": "fb493e04e8e9b9cc65ae8a0312d25660ae1b63571ac5dd00ffe6e11bcab5ab78"
     },
     {
       "file": "templates/page-collectibles.html",

@@ -9,6 +9,9 @@
 .krev-category-card__tech-metas .krev-category-child { display:grid; grid-template-columns:120px minmax(0,1fr); align-items:center; gap:18px; min-width:0; }
 .krev-category-card__tech-metas .krev-category-child__image { display:block; width:100%; max-width:100%; min-width:0; margin:0; min-height:0; overflow:hidden; }
 .krev-category-child__image img { display:block; width:100%; max-width:100%; height:auto; aspect-ratio:3/2; object-fit:cover; border-radius:6px; }
+.krev-category-card--technology .krev-category-child h3 { color:#f3f9fb; }
+.krev-category-card--technology .krev-category-child p { color:#afc0cb; }
+.krev-category-card--technology .krev-category-child a { color:#7ce5e8; }
 @media(min-width:850px) { .kr-tech-meta-feature { grid-template-columns:1fr 1fr; } .kr-tech-meta-section:nth-of-type(even) .kr-tech-meta-feature figure { order:2; } }
 @media(max-width:1360px) { body:is(.krev-categories-page,.kr-tech-desk-page,.kr-other-finds-page) .kr-header-actions a.kr-sell-button { display:none; } }
 .kr-tech-meta-section { scroll-margin-top:120px; }

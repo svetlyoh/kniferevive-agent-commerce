@@ -76,7 +76,7 @@ techCheck((bool) array_filter($children, static fn($row) => strpos($row['url'], 
 techCheck(!(bool) array_filter($children, static fn($row) => strpos($row['url'], 'kr_google_category=328') !== false), 'empty unrelated Google laptop category is omitted beneath Mini-Computers');
 $sections = kr_tech_metacategory_sections();
 techCheck(strpos($sections, 'id="iphones"') !== false && strpos($sections, 'id="laptops"') !== false && strpos($sections, 'id="mini-computers"') !== false, 'all three Tech sections and collection inventories render');
-techCheck(strpos($sections, 'data-kr-tech-carousel') !== false && strpos($sections, 'placeholder.svg') !== false, 'live product carousel and explicit theme placeholders are rendered');
+techCheck(strpos($sections, 'data-kr-tech-carousel') !== false && strpos($sections, 'collection theme') !== false, 'live product carousel and shared collection theme images are rendered');
 $mainQuery = $wp_query; $originalMain = $wp_the_query;
 $collectionQuery = new WP_Query(); $wp_query = $wp_the_query = $collectionQuery;
 $collectionQuery->query(['post_type' => 'product', 'kr_collection' => 'mini-computers', 'posts_per_page' => 100, 'fields' => 'ids']);
