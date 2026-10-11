@@ -24,7 +24,7 @@ $root_id = (int) $root->term_id;
 update_option( KREV_PA_Tech_Categories::PROGRESS, 0, false );
 $total_before = wp_count_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
 do { $report = KREV_PA_Tech_Categories::import_batch(); techCheck( ! is_wp_error( $report ), 'bounded native taxonomy import batch succeeds' ); } while ( $report['completed'] < $report['total'] );
-techCheck( 417 === $report['total'], 'all 417 official Electronics categories are imported' );
+techCheck( 421 === $report['total'], '417 official Electronics categories plus four merchant aliases are imported' );
 $stream = get_term_by( 'slug', 'tech-google-5276', 'product_cat' );
 $desktop = get_term_by( 'slug', 'tech-google-325', 'product_cat' );
 techCheck( (int) $stream->parent === $root_id && (int) $desktop->parent === $root_id, 'streaming devices and desktops are distinct native Tech children' );
@@ -73,4 +73,37 @@ $cleared = $input; $cleared['subcategory_id'] = 0;
 $updated = KREV_ListLab_Product_Writer::save( $cleared, $p->get_id() );
 techCheck( ! is_wp_error( $updated ) && 0 === $updated['subcategory_id'], 'clearing child removes stale category assignment' );
 techCheck( '222' === KREV_Google_Category_Mapper::resolve_for_product( wc_get_product( $p->get_id() ) )['id'], 'unclassified Tech uses Electronics fallback' );
+
+// Four-group expansion: actual term creation, schemas, native persistence and feed IDs.
+if ( ! get_term_by( 'slug', 'art', 'product_cat' ) ) wp_insert_term( 'Synthetic Art', 'product_cat', array( 'slug' => 'art' ) );
+foreach ( array( 'world-coins' => 3, 'art' => 4, 'home-garden' => 1034 ) as $group => $expected ) {
+    update_option( KREV_PA_Tech_Categories::progress_key( $group ), 0, false );
+    do { $group_report = KREV_PA_Tech_Categories::import_batch( 100, $group ); if ( is_wp_error( $group_report ) ) throw new RuntimeException( $group_report->get_error_message() ); } while ( $group_report['completed'] < $group_report['total'] );
+    techCheck( $group_report['total'] === $expected, 'complete official branch imported: ' . $group );
+    $group_root = KREV_PA_Tech_Categories::root_id( $group );
+    $req = new WP_REST_Request(); $req->set_param( 'category_id', $group_root ); $group_schema = ( new KREV_ListLab_REST() )->schema( $req );
+    techCheck( count( $group_schema['subcategories'] ) === $expected && empty( $group_schema['tech_subcategories'] ), 'parent shows its own children only: ' . $group );
+}
+foreach ( array( 'tech-iphones' => '267', 'tech-mobile-devices' => '267', 'tech-smart-watches' => '201', 'tech-apple-watches' => '201' ) as $slug => $google_id ) {
+    $term = get_term_by( 'slug', $slug, 'product_cat' );
+    techCheck( $term && KREV_PA_Tech_Categories::mapping( $term->term_id )['id'] === $google_id && (int) $term->parent === $root_id, 'Tech alias uses official Google mapping: ' . $slug );
+}
+foreach ( array( 'world-coins-google-543607' => '543607', 'art-google-11' => '11', 'home-garden-google-6792' => '6792' ) as $slug => $google_id ) {
+    $term = get_term_by( 'slug', $slug, 'product_cat' ); $parent = (int) $term->parent;
+    $group_input = $input; $group_input['category_id'] = $parent; $group_input['subcategory_id'] = (int) $term->term_id;
+    $group_input['attributes'] = array(); $group_input['return_policy_id'] = 0; $group_input['publish'] = false;
+    $saved = KREV_ListLab_Product_Writer::save( $group_input );
+    techCheck( ! is_wp_error( $saved ) && $saved['category_id'] === $parent && $saved['subcategory_id'] === (int) $term->term_id, 'native parent/child persistence: ' . $slug );
+    techCheck( KREV_Google_Category_Mapper::resolve_for_product( wc_get_product( $saved['id'] ) )['id'] === $google_id, 'exact Google feed category overrides broad parent: ' . $slug );
+    $legacy_group = $group_input; $legacy_group['category_id'] = (int) $term->term_id; unset( $legacy_group['subcategory_id'] );
+    $legacy_saved = KREV_ListLab_Product_Writer::save( $legacy_group, $saved['id'] );
+    techCheck( ! is_wp_error( $legacy_saved ) && $legacy_saved['category_id'] === $parent, 'child-only imports reopen in the correct group: ' . $slug );
+    $bad_group = $group_input; $bad_group['category_id'] = $root_id;
+    techCheck( is_wp_error( KREV_ListLab_Product_Writer::save( $bad_group, $saved['id'] ) ), 'cross-group child rejected before mutation: ' . $slug );
+}
+$home = KREV_PA_Tech_Categories::root_id( 'home-garden' );
+techCheck( KREV_PA_Tech_Categories::mapping( $home ) === array( 'id' => '536', 'path' => 'Home & Garden' ), 'new Home & Garden parent has a valid broad fallback' );
+$before_retry = wp_count_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
+update_option( KREV_PA_Tech_Categories::progress_key( 'art' ), 0, false ); KREV_PA_Tech_Categories::import_batch( 100, 'art' );
+techCheck( $before_retry === wp_count_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) ), 'retrying another category group creates no duplicate terms' );
 echo "$passed native Tech taxonomy assertions passed.\n";

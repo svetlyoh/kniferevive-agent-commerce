@@ -18,6 +18,7 @@ final class KREV_PA_Config {
 			'world-spices'     => array( 'world-spices' ),
 			'knife-sharpening' => array( 'knife-sharpening' ),
 			'other-finds'      => array( 'other_finds' ),
+			'home-garden'      => array( 'home-garden' ),
 		);
 	}
 
@@ -33,6 +34,7 @@ final class KREV_PA_Config {
 			'world-spices' => array( 'condition', 'spice-type', 'country-of-origin', 'spice-form', 'net-weight' ),
 			'knife-sharpening' => array( 'service' ),
 			'other-finds' => array(),
+			'home-garden' => array( 'model-number', 'condition', 'country-of-origin' ),
 		);
 	}
 

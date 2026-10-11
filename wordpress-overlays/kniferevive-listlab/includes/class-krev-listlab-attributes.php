@@ -53,7 +53,7 @@ final class KREV_ListLab_Attributes {
 			$definitions = KREV_PA_Config::all_definitions();
 		} else { $definitions = array(); }
 		$fields = array();
-		if ( taxonomy_exists( 'product_brand' ) && array_intersect( $groups, array( 'knives', 'tech', 'world-spices', 'art' ) ) ) {
+		if ( taxonomy_exists( 'product_brand' ) && array_intersect( $groups, array( 'knives', 'tech', 'world-spices', 'art', 'home-garden' ) ) ) {
 			$brand_terms = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false, 'number' => 0 ) );
 			$fields[] = array( 'slug' => 'brand', 'taxonomy' => 'product_brand', 'label' => in_array( 'art', $groups, true ) ? 'Artist / Brand' : 'Brand', 'field_type' => 'select', 'allow_new_value' => true, 'options' => is_wp_error( $brand_terms ) ? array() : array_map( static function( $term ) { return array( 'id' => (int) $term->term_id, 'name' => $term->name ); }, $brand_terms ) );
 		}

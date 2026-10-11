@@ -1,5 +1,5 @@
 {
-  "version": "0.8.6",
+  "version": "0.8.7",
   "files": [
     {
       "file": "composer.json",
@@ -11,7 +11,7 @@
     },
     {
       "file": "includes/class-krev-admin.php",
-      "sha256": "0f8618c2d41d03e83a671a175bced8a0193b4e23468df8b862f67ac9d2637a20"
+      "sha256": "6d657d4c65e6894da6bf15bb9b1318f1b2062ff508f4577c2bc9d3f76f876fe2"
     },
     {
       "file": "includes/class-krev-cli.php",
@@ -51,11 +51,7 @@
     },
     {
       "file": "kniferevive-merchant-sync.php",
-      "sha256": "36c1fc3a902095a25cf458346b798003b7176007d77cd08975781be73c5b2586"
-    },
-    {
-      "file": "README.md",
-      "sha256": "ebdca3ed87ad2ffb306ad9d3b1ae9af93032d3785bc74d9f86a4f302b516343f"
+      "sha256": "0b8d25060972994bc3ddfcd70fcc3bbca7dc30e89aca66fabc538172bfd09165"
     },
     {
       "file": "tests/run-google-category-mapper.php",
@@ -66,7 +62,7 @@
       "sha256": "491e42cc96be8bc6ef8486e5af6eccf8190696c09c13487e4b9bd91d80b3607e"
     }
   ],
-  "hash_scope": "Git source normalized to LF. Deployment ZIP manifests verify original runtime bytes.",
-  "deployment": "2026-10-10 kniferevive.com",
-  "vendor_note": "Third-party vendor code is omitted here, including Merchant Sync dependencies and ListLab ZXing; apply over the existing plugin. Full runtime is in the owner release ZIP."
+  "hash_scope": "LF-normalized source bytes; release manifest verifies full runtime ZIPs.",
+  "deployment": "2026-10-11 release",
+  "vendor_note": "Third-party vendor code omitted from Git. Complete runtime ZIP retains the installed dependencies."
 }

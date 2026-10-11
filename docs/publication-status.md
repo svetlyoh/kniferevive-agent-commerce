@@ -1,3 +1,15 @@
+## Searchable Google subcategories live
+
+October 11, 2026: Product Attributes 0.3.5, ListLab 1.8.3, and Merchant Sync
+0.8.7 were updated in place. Tech now includes iPhones, mobile devices, smart
+watches, and Apple Watches mapped to the official Mobile Phones/Watches IDs.
+World Coins has three Google choices, Art has four, and the new Home & Garden
+category has all 1,034 Google descendants. All four selectors support searching
+and dropdown selection. The native importer and public schema confirm every
+child is imported and mapped. Existing products and the separate Listing 1.0.5
+skill were preserved. All 221 validation assertions passed; live browser checks
+verified the selectors. See [deployment and mappings](google-subcategories-2026-10-11.md).
+
 ## Marketplace Imports and Listing 1.0.5
 
 October 10, 2026: Marketplace Imports was updated in place from 1.0.4 to 1.0.5.

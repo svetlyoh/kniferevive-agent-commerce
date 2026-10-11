@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-11",
+  "source": "https://www.google.com/basepages/producttype/taxonomy-with-ids.en-US.txt",
+  "counts": {
+    "technology": 421,
+    "world-coins": 3,
+    "art": 4,
+    "home-garden": 1034
+  },
+  "packages": [
+    {
+      "file": "kniferevive-product-attributes-0.3.5.zip",
+      "sha256": "99c925b1fadfab8b5b494e9c634bce5657fcf75d91b182159956b43b5c3a3d31",
+      "bytes": 62315
+    },
+    {
+      "file": "kniferevive-listlab-1.8.3.zip",
+      "sha256": "76bdca424259d77f00347d1822cd4bfa77ca6de908fee2184edfcc40bdeef3db",
+      "bytes": 184948
+    },
+    {
+      "file": "kniferevive-merchant-sync-0.8.7.zip",
+      "sha256": "304db98429194bf359f00524cac0fad2268c9b6de3d03ee0c63aa039b1eb4488",
+      "bytes": 729166
+    }
+  ]
+}

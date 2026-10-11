@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KnifeRevive Merchant Sync
  * Description: Synchronizes eligible WooCommerce products with Google Merchant API v1.
- * Version: 0.8.6
+ * Version: 0.8.7
  * Requires PHP: 8.1
  * Requires Plugins: woocommerce
  * Author: KnifeRevive
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KREV_MERCHANT_SYNC_VERSION', '0.8.6' );
+define( 'KREV_MERCHANT_SYNC_VERSION', '0.8.7' );
 define( 'KREV_MERCHANT_SYNC_FILE', __FILE__ );
 define( 'KREV_MERCHANT_SYNC_DIR', plugin_dir_path( __FILE__ ) );
 

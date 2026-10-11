@@ -1,9 +1,13 @@
 {
-  "version": "0.3.4",
+  "version": "0.3.5",
   "files": [
     {
       "file": "assets/admin-product-attributes.js",
       "sha256": "c27a6ed15969f20442a91bd267c6bd824d421bbee24fa64d97ff34a68da234a6"
+    },
+    {
+      "file": "data/google-category-groups-2026-10-11.json",
+      "sha256": "f7320196ed7015f0b01d38aa96c3f93c8d45f5cffeb36ed159cd1ad4a3bdafc9"
     },
     {
       "file": "data/google-electronics-2026-10-10.json",
@@ -27,7 +31,7 @@
     },
     {
       "file": "includes/class-krev-pa-config.php",
-      "sha256": "4aba9fab3323d009bded40c2e10793f80b34a4ef5f958b75fd47240f48a9fefb"
+      "sha256": "563a3547082ae6a371c6e57ea2fc5ebcac8b3930640b3d4242c1023f3aa0633a"
     },
     {
       "file": "includes/class-krev-pa-editor.php",
@@ -43,22 +47,18 @@
     },
     {
       "file": "includes/class-krev-pa-tech-categories.php",
-      "sha256": "e079f1165fbb8f8d1672f815fa980441f2cacead608555a45f25d4e5861073e4"
+      "sha256": "a893c19f1494f55d0f79052a409da3905f5dd5568e22c256900861e629be3ad0"
     },
     {
       "file": "kniferevive-product-attributes.php",
-      "sha256": "0452743d832b5d741e67c19a20739e7e3fe7bc655d040c0e8f47cf6750c4abb6"
-    },
-    {
-      "file": "README.md",
-      "sha256": "c4726eda1d9716b719dbefd268766c795b365ec1dc71da0f68dc809756101ede"
+      "sha256": "af39877cddf7e183c925c136e7b3b5a771d3309bb0e5c847402c91705b9e7c86"
     },
     {
       "file": "tests/run-condition-policy.php",
       "sha256": "0d196b4f0b658f8d83f7109943ecdc4ddf7a2462f7e5d11dc5f0122d8eaa4746"
     }
   ],
-  "hash_scope": "Git source normalized to LF. Deployment ZIP manifests verify original runtime bytes.",
-  "deployment": "2026-10-10 kniferevive.com",
-  "vendor_note": "Third-party vendor code is omitted here, including Merchant Sync dependencies and ListLab ZXing; apply over the existing plugin. Full runtime is in the owner release ZIP."
+  "hash_scope": "LF-normalized source bytes; release manifest verifies full runtime ZIPs.",
+  "deployment": "2026-10-11 release",
+  "vendor_note": "Third-party vendor code omitted from Git. Complete runtime ZIP retains the installed dependencies."
 }

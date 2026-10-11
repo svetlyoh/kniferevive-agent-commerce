@@ -118,7 +118,7 @@ final class KREV_ListLab_Product_Writer {
 	private static function validate( $d, $publishing ) {
 		$e = $publishing ? self::required_errors( $d ) : array();
 		$category_validation = KREV_ListLab_Categories::validate( $d['category_id'], $d['subcategory_id'] );
-		if ( ! $d['subcategory_valid'] || is_wp_error( $category_validation ) ) $e['subcategory_id'] = 'Choose a valid Tech subcategory.';
+		if ( ! $d['subcategory_valid'] || is_wp_error( $category_validation ) ) $e['subcategory_id'] = 'Choose a valid subcategory for this category.';
 		if ( false === $d['video_url'] ) $e['video_url'] = 'Enter a public HTTPS YouTube or Vimeo video link.';
 		if ( $d['video_id'] && $d['video_url'] ) $e['video_url'] = 'Use one uploaded video or a video link.';
 		if ( ! $d['video_id_valid'] || ( $d['video_id_provided'] && $d['video_id'] && ! KREV_ListLab_Video_Handler::authorized_video( $d['video_id'] ) ) ) $e['video_id'] = 'Choose a video uploaded by your account or from an authorized shared folder.';

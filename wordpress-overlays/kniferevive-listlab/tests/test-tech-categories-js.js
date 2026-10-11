@@ -34,5 +34,14 @@ vm.runInNewContext(section('  const select = ', '  const base = ') + section('  
   assert.equal(state.listing.category_id,3);
   assert.equal(state.listing.subcategory_id,0,'leaving Tech clears the stale Tech selection');
   assert.equal(context.childField(state.listing,schemaData),'');
-  console.log('17 Tech selector behavior assertions passed.');
+  for (const [parent, child, label] of [[3,4,'Art'],[5,6,'World Coins'],[7,8,'Home & Garden']]) {
+    const groupSchema = {...schemaData, categories:[...categories,{id:child,parent,is_subcategory:true,subcategory_parent_id:parent,name:'Google child'}],subcategory_parent_id:parent,subcategory_label:label+' subcategory',subcategories:[{id:child,name:'Google child'}],tech_subcategories:[]};
+    state.schema=groupSchema;
+    assert.equal(context.selectCategory({categories:[child]}).parent,parent,'legacy child selects its actual group parent');
+    assert.equal(context.selectCategory({categories:[child]}).child,child);
+    assert.match(context.childField({categories:[child]},groupSchema),new RegExp(label.replace('&','&amp;')+' subcategory'));
+    assert.match(context.childField({category_id:parent,subcategory_id:child},groupSchema),/data-field="subcategory_id"/);
+    assert.equal(context.childField({category_id:1},groupSchema),'','other parent cannot display stale group children');
+  }
+  console.log('32 category selector behavior assertions passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

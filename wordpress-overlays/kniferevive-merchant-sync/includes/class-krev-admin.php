@@ -308,9 +308,9 @@ final class KREV_Admin {
 		<hr style="margin:28px 0 22px">
 		<h2>Google Product Category Mapping</h2>
 		<?php if ( $automatic ) : ?>
-		<details><summary><?php echo esc_html( count( $automatic ) . ' Tech subcategories mapped automatically to Google Electronics' ); ?></summary>
-		<p>These mappings come from the official Google taxonomy snapshot. Select the matching Tech subcategory in ListLab.</p>
-		<table class="widefat striped"><thead><tr><th>Tech subcategory</th><th>Google ID</th><th>Google taxonomy path</th></tr></thead><tbody>
+		<details><summary><?php echo esc_html( count( $automatic ) . ' subcategories mapped automatically to Google' ); ?></summary>
+		<p>These mappings come from the official Google taxonomy snapshot. Select the matching subcategory in ListLab.</p>
+		<table class="widefat striped"><thead><tr><th>Subcategory</th><th>Google ID</th><th>Google taxonomy path</th></tr></thead><tbody>
 		<?php foreach ( $automatic as $row ) echo '<tr><td>' . esc_html( $row['term']->name ) . '</td><td>' . esc_html( $row['mapping']['id'] ) . '</td><td>' . esc_html( $row['mapping']['path'] ) . '</td></tr>'; ?>
 		</tbody></table></details>
 		<?php endif; ?>
