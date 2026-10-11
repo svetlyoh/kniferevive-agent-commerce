@@ -26,6 +26,9 @@ def select_photos(data, max_images=10, allow_small=False, allow_partial=False):
         raise ValueError("expected_count must be a positive integer when present")
     if data.get("gallery_complete") is not True or (expected is not None and expected != len(grouped)):
         issues.append({"code": "incomplete_gallery", "expected": expected, "found": len(grouped)})
+    inventory = data.get("inventory")
+    if not isinstance(inventory, dict) or inventory.get("basis") not in ("gallery_controls", "gallery_counter", "verified_end_or_wrap") or type(inventory.get("source_count")) is not int or inventory["source_count"] != len(grouped) or inventory.get("visited_positions") != list(range(1, len(grouped) + 1)):
+        issues.append({"code": "unverified_inventory"})
     used_urls = set()
     for position, (identity, candidates) in enumerate(grouped.items(), 1):
         valid = []
@@ -63,6 +66,7 @@ def select_photos(data, max_images=10, allow_small=False, allow_partial=False):
     result = {"ready": not blockers, "found": len(grouped), "selected": len(chosen), "included": min(len(chosen), max_images), "photos": chosen, "overflow_positions": [p["position"] for p in chosen[max_images:]], "issues": issues, "blockers": blockers}
     if result["ready"]:
         result["image_urls"] = [p["url"] for p in chosen[:max_images]]
+        result["photo_manifest"] = {"source_count": inventory["source_count"], "gallery_complete": data.get("gallery_complete") is True, "partial_accepted": allow_partial, "small_accepted": allow_small}
     return result
 
 

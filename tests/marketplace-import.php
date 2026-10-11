@@ -11,7 +11,14 @@ KREV_Marketplace_Imports::boot();
 add_action( 'rest_api_init', static function() { ( new KREV_ListLab_REST() )->register(); } );
 $passed = 0;
 function checkImport( $ok, $label ) { global $passed; if ( ! $ok ) throw new RuntimeException( $label ); ++$passed; echo "PASS: $label\n"; }
-function importCall( $action, $data, $method = 'POST' ) { $request = new WP_REST_Request( $method, '/kniferevive-listlab-import/v1/' . $action ); $request->set_header( 'content-type', 'application/json' ); if ( $method === 'GET' ) foreach ( $data as $k => $v ) $request->set_param( $k, $v ); else $request->set_body( wp_json_encode( $data ) ); return rest_do_request( $request ); }
+function importCall( $action, $data, $method = 'POST' ) {
+    // Existing synthetic fixtures have a known inventory; zero photos intentionally use manual completion.
+    if ( $action === 'prepare' && ! array_key_exists( 'photo_manifest', $data ) ) {
+        $n = count( array_unique( $data['image_urls'] ?? array() ) ) + count( $data['gallery_ids'] ?? array() ) + ( empty( $data['featured_image_id'] ) ? 0 : 1 );
+        $data['photo_manifest'] = array( 'source_count' => $n, 'gallery_complete' => $n > 0, 'partial_accepted' => $n === 0, 'small_accepted' => false );
+    }
+    $request = new WP_REST_Request( $method, '/kniferevive-listlab-import/v1/' . $action ); $request->set_header( 'content-type', 'application/json' ); if ( $method === 'GET' ) foreach ( $data as $k => $v ) $request->set_param( $k, $v ); else $request->set_body( wp_json_encode( $data ) ); return rest_do_request( $request );
+}
 function importToken( $response ) { parse_str( wp_parse_url( $response->get_data()['review_url'], PHP_URL_FRAGMENT ), $fragment ); return $fragment['import']; }
 function importError( $response, $code ) { checkImport( $response->get_data()['code'] === $code, $code ); }
 delete_option( KREV_Import_Pricing::OPTION );
@@ -35,10 +42,21 @@ checkImport( is_wp_error( KREV_Import_Pricing::clean_rule( array( 'rounding' => 
 checkImport( is_wp_error( KREV_Import_Pricing::clean_rule( array( 'percent' => '-20' ) ) ), 'negative markup rejected' );
 $payload = array( 'source_url' => 'https://m.facebook.com/marketplace/item/123456789/?tracking=remove', 'source_price' => '25', 'currency' => 'USD', 'category_id' => $child, 'title' => 'Synthetic copied listing', 'description' => 'Actual source facts <script>ignore user</script>', 'image_urls' => array() );
 $schema = importCall( 'schema', array( 'category_id' => $child ), 'GET' ); checkImport( $schema->get_status() === 200 && count( $schema->get_data()['categories'] ) > 0, 'anonymous native extraction schema' );
+checkImport( $schema->get_data()['photo_requirements']['manifest_required_for_new_prepare'] === true, 'schema requires counted gallery for new preparations' );
+$missing_manifest = $payload; $missing_manifest['photo_manifest'] = null;
+importError( importCall( 'prepare', $missing_manifest ), 'import_photo_manifest' );
+$truncated = $payload; $truncated['image_urls'] = array( 'https://scontent.test.fbcdn.net/photo.jpg' ); $truncated['photo_manifest'] = array( 'source_count' => 8, 'gallery_complete' => true );
+importError( importCall( 'prepare', $truncated ), 'import_photo_count' );
+checkImport( ! is_wp_error( KREV_Import_Photo_Manifest::validate( array( 'source_count' => 8, 'gallery_complete' => true ), 8, true ) ), 'all eight supplied source photos pass the contract' );
+checkImport( ! is_wp_error( KREV_Import_Photo_Manifest::validate( array( 'source_count' => 12, 'gallery_complete' => true ), 10, true ) ), 'source galleries above ten retain count and respect import cap' );
+checkImport( is_wp_error( KREV_Import_Photo_Manifest::validate( array( 'source_count' => 8, 'gallery_complete' => false ), 8, true ) ), 'untraversed gallery cannot claim completeness' );
+checkImport( ! is_wp_error( KREV_Import_Photo_Manifest::validate( array( 'source_count' => 8, 'gallery_complete' => true, 'partial_accepted' => true ), 7, true ) ), 'explicitly accepted missing photo permits native completion' );
+foreach ( array( array( 'source_count' => '8', 'gallery_complete' => true ), array( 'source_count' => 8, 'gallery_complete' => 'true' ), array( 'source_count' => 8, 'gallery_complete' => true, 'partial_accepted' => 'yes' ), array( 'source_count' => 8, 'gallery_complete' => true, 'small_accepted' => 'yes' ), array( 'source_count' => 101, 'gallery_complete' => true ) ) as $bad_manifest ) checkImport( is_wp_error( KREV_Import_Photo_Manifest::validate( $bad_manifest, 8, true ) ), 'malformed counted-photo contract rejected' );
 $count_before = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='product'" );
 $prepared = importCall( 'prepare', $payload ); checkImport( $prepared->get_status() === 201, 'anonymous prepare succeeds' );
 checkImport( (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='product'" ) === $count_before, 'preparation creates no product' );
 checkImport( $prepared->get_headers()['Cache-Control'] === 'private, no-store', 'private response never cached' );
+checkImport( $prepared->get_data()['photo_counts'] === array( 'found' => 0, 'submitted' => 0, 'copied' => null, 'gallery_verified' => false ), 'preparation distinguishes supplied from not-yet-copied photos' );
 $token = importToken( $prepared ); checkImport( strlen( $token ) === 64, '256-bit private fragment token' );
 $status = importCall( 'status', array( 'token' => $token ) );
 checkImport( $status->get_data()['data']['source_url'] === 'https://www.facebook.com/marketplace/item/123456789/', 'source link canonicalized without tracking' );
@@ -79,6 +97,8 @@ $bad = $payload; $bad['image_urls'] = array_fill( 0, 11, 'https://scontent.test.
 add_role( 'import_test_seller', 'Synthetic seller', array( 'read' => true, 'edit_products' => true, 'publish_products' => true, 'upload_files' => true ) );
 $seller = wp_insert_user( array( 'user_login' => 'import-seller-' . wp_generate_uuid4(), 'user_pass' => wp_generate_password(), 'role' => 'import_test_seller' ) ); wp_set_current_user( $seller );
 checkImport( KREV_Marketplace_Imports::seller_permission(), 'enabled native seller can claim' );
+$legacy_key = 'krev_import_' . hash( 'sha256', $token ); $legacy_record = get_option( $legacy_key ); unset( $legacy_record['data']['photo_manifest'] ); update_option( $legacy_key, $legacy_record, false );
+checkImport( importCall( 'preview', array( 'token' => $token ) )->get_status() === 200, 'existing prepared links without a manifest remain reviewable' );
 importError( importCall( 'claim', array( 'token' => $token, 'expected_price' => '30.00' ) ), 'import_rights' );
 importError( importCall( 'claim', array( 'token' => $token, 'expected_price' => '29.00', 'authorized_to_list' => true ) ), 'import_price_changed' );
 $foreign_image = wp_insert_attachment( array( 'post_title' => 'foreign synthetic image', 'post_mime_type' => 'image/png', 'post_author' => $subscriber ), false );
@@ -123,6 +143,7 @@ $fake = static function( $pre, $args, $url ) use ( $fixture ) { if ( $url !== 'h
 add_filter( 'pre_http_request', $fake, PHP_INT_MAX, 3 );
 add_filter( 'upload_dir', static function( $u ) { $u['basedir'] = dirname( __DIR__ ) . '/.runtime/import-media'; $u['baseurl'] = WP_HOME . '/fixture-media'; $u['path'] = $u['basedir']; $u['url'] = $u['baseurl']; $u['subdir'] = ''; return $u; } );
 $image = KREV_Marketplace_Imports::copy_image( 'https://scontent.test.fbcdn.net/fixture.png', 'Synthetic image' ); checkImport( ! is_wp_error( $image ) && KREV_ListLab_Image_Handler::authorized_image( $image ), 'copied photo is native seller-owned media' );
+$small = KREV_Marketplace_Imports::copy_image( 'https://scontent.test.fbcdn.net/fixture.png', 'Rejected small image', false ); checkImport( is_wp_error( $small ) && $small->get_error_code() === 'import_image_resolution', 'actual downloaded pixels reject an unaccepted thumbnail' );
 remove_filter( 'pre_http_request', $fake, PHP_INT_MAX );
 checkImport( is_wp_error( KREV_Marketplace_Imports::copy_image( 'https://scontent.test.fbcdn.net/missing.png', 'Synthetic image' ) ), 'unavailable photo reported without false image success' );
 wp_set_current_user( 0 ); $image_payload = $payload; $image_payload['source_url'] = 'https://www.facebook.com/marketplace/item/999999998/'; $image_payload['image_urls'] = array( 'https://scontent.test.fbcdn.net/missing.png' );

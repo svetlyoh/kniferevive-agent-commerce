@@ -39,7 +39,7 @@ final class KREV_Marketplace_Imports {
         $schema = ( new KREV_ListLab_REST() )->schema( $request );
         $package_defaults = KREV_Import_Package_Defaults::schema();
         $package_defaults['inventory_default'] = array( 'quantity' => 1, 'applies' => 'New Marketplace drafts with omitted/blank quantity only; explicit quantity including zero and later seller inventory are preserved.' );
-        return self::response( array( 'version' => KREV_IMPORT_VERSION, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls' ), 'max_images' => 10, 'package_defaults' => $package_defaults, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
+        return self::response( array( 'version' => KREV_IMPORT_VERSION, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls', 'photo_manifest' ), 'photo_requirements' => array( 'manifest_required_for_new_prepare' => true, 'manifest_fields' => array( 'source_count', 'gallery_complete', 'partial_accepted', 'small_accepted' ), 'minimum_axis_pixels' => 500, 'count_basis' => 'Inspect gallery controls/counter, not metadata URLs. Traverse every source position. Explicit seller acceptance is required for missing/small photos.' ), 'max_images' => 10, 'package_defaults' => $package_defaults, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
     }
 
     public static function source_url( $value ) {
@@ -55,9 +55,9 @@ final class KREV_Marketplace_Imports {
         return $parts && 'https' === ( $parts['scheme'] ?? '' ) && ! isset( $parts['user'] ) && ! isset( $parts['pass'] ) && ! isset( $parts['port'] ) && preg_match( '/(?:^|\.)(?:fbcdn\.net|fbsbx\.com)$/D', $host ) ? esc_url_raw( $value ) : false;
     }
 
-    private static function normalize( $data ) {
+    private static function normalize( $data, $require_manifest = false ) {
         if ( ! is_array( $data ) || strlen( wp_json_encode( $data ) ) > 65536 ) return self::fail( 'import_size', 'Import data must be a JSON object below 64 KB.' );
-        $unknown = array_diff( array_keys( $data ), array_merge( self::FIELDS, array( 'source_url', 'source_price', 'currency', 'image_urls' ) ) );
+        $unknown = array_diff( array_keys( $data ), array_merge( self::FIELDS, array( 'source_url', 'source_price', 'currency', 'image_urls', 'photo_manifest' ) ) );
         if ( $unknown ) return self::fail( 'import_fields', 'Unsupported import field: ' . implode( ', ', $unknown ) );
         $source = self::source_url( $data['source_url'] ?? '' );
         if ( is_wp_error( $source ) ) return $source;
@@ -103,7 +103,10 @@ final class KREV_Marketplace_Imports {
         foreach ( $listing['gallery_ids'] ?? array() as $id ) if ( ! is_scalar( $id ) || ! preg_match( '/^\d{1,9}$/D', (string) $id ) ) return self::fail( 'import_images', 'Gallery image IDs must be whole numbers.' );
         if ( count( array_unique( $images ) ) + count( $listing['gallery_ids'] ?? array() ) + ( empty( $listing['featured_image_id'] ) ? 0 : 1 ) > 10 ) return self::fail( 'import_images', 'Use at most 10 images total.' );
         if ( empty( $listing['title'] ) || strlen( $listing['title'] ) > 200 || strlen( $listing['description'] ?? '' ) > 16000 ) return self::fail( 'import_title', 'Provide a title (up to 200 characters) and a description below 16 KB.' );
-        return array( 'source_url' => $source, 'source_price' => $quote['source_price'], 'currency' => 'USD', 'listing' => $listing, 'image_urls' => array_values( array_unique( $images ) ) );
+        $supplied = count( array_unique( $images ) ) + count( $listing['gallery_ids'] ?? array() ) + ( empty( $listing['featured_image_id'] ) ? 0 : 1 );
+        $manifest = KREV_Import_Photo_Manifest::validate( $data['photo_manifest'] ?? null, $supplied, $require_manifest );
+        if ( is_wp_error( $manifest ) ) return $manifest;
+        return array( 'source_url' => $source, 'source_price' => $quote['source_price'], 'currency' => 'USD', 'listing' => $listing, 'image_urls' => array_values( array_unique( $images ) ), 'photo_manifest' => $manifest );
     }
 
     public static function prepare( WP_REST_Request $request ) {
@@ -114,12 +117,12 @@ final class KREV_Marketplace_Imports {
         if ( $count >= 20 || $site_count >= 200 ) return self::fail( 'import_rate', 'Too many imports. Try again in an hour.', 429 );
         set_transient( $rate, $count + 1, HOUR_IN_SECONDS );
         set_transient( 'krev_import_site_rate', $site_count + 1, HOUR_IN_SECONDS );
-        $data = self::normalize( $request->get_json_params() );
+        $data = self::normalize( $request->get_json_params(), true );
         if ( is_wp_error( $data ) ) return $data;
         $token = bin2hex( random_bytes( 32 ) ); $key = self::key( $token );
         $record = array( 'expires' => time() + self::TTL, 'seller_id' => 0, 'product_id' => 0, 'data' => $data, 'uploaded' => array() );
         if ( ! add_option( $key, $record, '', false ) ) return self::fail( 'import_storage', 'Unable to prepare the import.', 503 );
-        return self::response( array( 'state' => 'prepared', 'expires_in_seconds' => self::TTL, 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) . '#import=' . $token, 'price' => KREV_Import_Pricing::quote( $data['source_price'], $data['listing']['category_id'] ), 'product_created' => false ), 201 );
+        return self::response( array( 'state' => 'prepared', 'expires_in_seconds' => self::TTL, 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) . '#import=' . $token, 'price' => KREV_Import_Pricing::quote( $data['source_price'], $data['listing']['category_id'] ), 'product_created' => false, 'photo_counts' => KREV_Import_Photo_Manifest::counts( $data ) ), 201 );
     }
 
     private static function key( $token ) { return self::PREFIX . hash( 'sha256', $token ); }
@@ -137,7 +140,7 @@ final class KREV_Marketplace_Imports {
         $record = $found[1]; $listing = $record['data']['listing'];
         $schema_request = new WP_REST_Request( 'GET' ); $schema_request->set_param( 'category_id', $listing['category_id'] );
         $schema = ( new KREV_ListLab_REST() )->schema( $schema_request );
-        return self::response( array( 'state' => $record['product_id'] ? 'draft_created' : 'prepared', 'data' => $record['data'], 'price' => KREV_Import_Pricing::quote( $record['data']['source_price'], $listing['category_id'] ), 'schema' => $schema, 'seller_ready' => self::seller_permission(), 'expires_at' => gmdate( 'c', $record['expires'] ), 'listing' => $record['product_id'] ? self::owned_dto( $record['product_id'] ) : null, 'warnings' => $record['warnings'] ?? array() ) );
+        return self::response( array( 'state' => $record['product_id'] ? 'draft_created' : 'prepared', 'data' => $record['data'], 'price' => KREV_Import_Pricing::quote( $record['data']['source_price'], $listing['category_id'] ), 'schema' => $schema, 'seller_ready' => self::seller_permission(), 'expires_at' => gmdate( 'c', $record['expires'] ), 'listing' => $record['product_id'] ? self::owned_dto( $record['product_id'] ) : null, 'warnings' => $record['warnings'] ?? array(), 'photo_counts' => $record['photo_counts'] ?? KREV_Import_Photo_Manifest::counts( $record['data'] ) ) );
     }
 
     private static function changed_data( $request, $record ) {
@@ -146,7 +149,7 @@ final class KREV_Marketplace_Imports {
         // A category switch uses the new native schema; old-category attributes are not carried silently.
         $listing = $record['data']['listing'];
         if ( isset( $changes['category_id'] ) && (int) $changes['category_id'] !== (int) $listing['category_id'] && ! isset( $changes['attributes'] ) ) $listing['attributes'] = array();
-        return self::normalize( array_merge( array( 'source_url' => $record['data']['source_url'], 'source_price' => $record['data']['source_price'], 'currency' => $record['data']['currency'], 'image_urls' => $record['data']['image_urls'] ), $listing, $changes ) );
+        return self::normalize( array_merge( array( 'source_url' => $record['data']['source_url'], 'source_price' => $record['data']['source_price'], 'currency' => $record['data']['currency'], 'image_urls' => $record['data']['image_urls'], 'photo_manifest' => $record['data']['photo_manifest'] ?? null ), $listing, $changes ) );
     }
 
     public static function preview( WP_REST_Request $request ) {
@@ -182,7 +185,7 @@ final class KREV_Marketplace_Imports {
                 $dto = self::owned_dto( $existing );
                 if ( ! $dto || 'trash' === $dto['status'] ) return self::fail( 'import_original', 'The original listing needs seller review. A replacement was not created.', 409 );
                 $record['seller_id'] = get_current_user_id(); $record['product_id'] = $existing; update_option( $key, $record, false );
-                return self::response( array( 'state' => 'existing_listing', 'listing' => $dto, 'warnings' => array_merge( $record['warnings'] ?? array(), array( 'Original listing retained. Repeated imports do not overwrite seller edits.' ) ) ) );
+                return self::response( array( 'state' => 'existing_listing', 'listing' => $dto, 'photo_counts' => $record['photo_counts'] ?? KREV_Import_Photo_Manifest::counts( $record['data'], ( empty( $dto['featured_image'] ) ? 0 : 1 ) + count( $dto['gallery'] ?? array() ) ), 'warnings' => array_merge( $record['warnings'] ?? array(), array( 'Original listing retained. Repeated imports do not overwrite seller edits.' ) ) ) );
             }
             $data = self::changed_data( $request, $record ); if ( is_wp_error( $data ) ) return $data;
             $price = KREV_Import_Pricing::quote( $data['source_price'], $data['listing']['category_id'] ); if ( is_wp_error( $price ) ) return $price;
@@ -194,7 +197,7 @@ final class KREV_Marketplace_Imports {
             foreach ( $data['image_urls'] as $index => $url ) {
                 $image_key = hash( 'sha256', $url ); $id = $record['uploaded'][ $image_key ] ?? 0;
                 if ( $id && KREV_ListLab_Image_Handler::authorized_image( $id ) ) { $images[] = $id; continue; }
-                $id = self::copy_image( $url, $listing['title'] );
+                $id = self::copy_image( $url, $listing['title'], $data['photo_manifest']['small_accepted'] ?? true );
                 if ( is_wp_error( $id ) ) { $warnings[] = 'Photo ' . ( $index + 1 ) . ' could not be copied. Add it in ListLab.'; continue; }
                 $record['uploaded'][ $image_key ] = $id; update_option( $key, $record, false ); $images[] = $id;
             }
@@ -208,12 +211,16 @@ final class KREV_Marketplace_Imports {
             $product->update_meta_data( '_krev_import_source_url', $data['source_url'] );
             $product->update_meta_data( '_krev_import_source_price', $data['source_price'] );
             $product->update_meta_data( '_krev_import_pricing_snapshot', $price );
+            $photo_counts = KREV_Import_Photo_Manifest::counts( $data, ( empty( $dto['featured_image'] ) ? 0 : 1 ) + count( $dto['gallery'] ?? array() ) );
+            $record['photo_counts'] = $photo_counts; update_option( $key, $record, false );
+            $product->update_meta_data( '_krev_import_photo_manifest', $data['photo_manifest'] ?? null );
+            $product->update_meta_data( '_krev_import_photo_counts', $photo_counts );
             $product->save();
-            return self::response( array( 'state' => 'draft_created', 'listing' => self::owned_dto( $dto['id'] ), 'price' => $price, 'warnings' => $warnings ), 201 );
+            return self::response( array( 'state' => 'draft_created', 'listing' => self::owned_dto( $dto['id'] ), 'price' => $price, 'warnings' => $warnings, 'photo_counts' => $photo_counts ), 201 );
         } finally { if ( $source_lock ) delete_option( $source_lock ); delete_option( $key . '_lock' ); }
     }
 
-    public static function copy_image( $url, $title ) {
+    public static function copy_image( $url, $title, $allow_small = true ) {
         if ( ! self::image_url( $url ) ) return self::fail( 'import_image_host', 'Unsupported image host.' );
         require_once ABSPATH . 'wp-admin/includes/file.php'; require_once ABSPATH . 'wp-admin/includes/media.php'; require_once ABSPATH . 'wp-admin/includes/image.php';
         $temp = wp_tempnam( 'krev-import' ); if ( ! $temp ) return self::fail( 'import_image_temp', 'Unable to stage image.' );
@@ -223,6 +230,7 @@ final class KREV_Marketplace_Imports {
             $size = wp_getimagesize( $temp ); $mime = $size['mime'] ?? '';
             $extensions = array( 'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp' );
             if ( ! isset( $extensions[ $mime ] ) || $size[0] > 10000 || $size[1] > 10000 || $size[0] * $size[1] > 25000000 ) return self::fail( 'import_image_type', 'Use a bounded JPEG, PNG or WebP photo.' );
+            if ( ! $allow_small && min( $size[0], $size[1] ) < 500 ) return self::fail( 'import_image_resolution', 'The supplied photo is below 500 pixels on one axis. Use the full gallery image or explicitly accept the disclosed small-source limitation.' );
             $file = array( 'name' => 'marketplace-' . substr( hash( 'sha256', $url ), 0, 16 ) . '.' . $extensions[ $mime ], 'tmp_name' => $temp );
             $id = media_handle_sideload( $file, 0, $title, array( 'post_author' => get_current_user_id() ) );
             return is_wp_error( $id ) ? $id : (int) $id;

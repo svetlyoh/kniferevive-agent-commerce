@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.4"
+  version: "1.0.5"
 ---
 
 # KnifeRevive Listing
@@ -18,6 +18,12 @@ Read [photo recovery](references/photos.md) before collecting images. Verify
 each gallery position and decoded pixel dimensions; a preview or one accessible
 image is not a complete gallery. Use the largest source-served version of each
 photo, preserving its signed URL. Flag small/missing photos before preparation.
+Count the source's gallery controls/counter before choosing image URLs. A count
+of URLs in metadata is not the source photo count. Traverse every position and
+run the photo helper (or its checks if Python is unavailable) before `/prepare`.
+Send the resulting `photo_manifest` and the complete `image_urls` together;
+compare the serialized URL count against the manifest before submitting.
+Marketplace Imports 1.0.5 rejects new preparations without this count contract.
 Open the actual source listing, extract its title, description, condition,
 brand/model/specifications, explicit USD price and every real item photo. Open
 the complete listing gallery and collect all distinct photos in source order,

@@ -31,10 +31,15 @@
     $('krev-target-price').textContent = '$' + p.regular_price;
   }
   function showSpecs(data) { $('krev-import-specs').textContent = JSON.stringify(data.listing.attributes || {}, null, 2); }
+  function photoSummary(counts) {
+    const p = document.createElement('p');
+    p.textContent = counts ? `Photos: ${counts.found ?? 'unknown'} found on Facebook; ${counts.submitted} supplied; ${counts.copied ?? 'not copied yet'} copied to this draft. Source gallery ${counts.gallery_verified ? 'verified by extraction' : 'not verified'}.` : 'Source photo count was not recorded. Check the Facebook gallery before publishing.';
+    return p;
+  }
   function showResult(data) {
     $('krev-import-form').hidden = true;
     const box = $('krev-import-result'); box.replaceChildren(); box.hidden = false;
-    const listing = data.listing;
+    const listing = data.listing; box.append(photoSummary(data.photo_counts));
     if (!listing || !listing.edit_url) { message('The original draft needs seller review in ListLab.'); return; }
     const p = document.createElement('p'); p.textContent = listing.title + ' — ' + listing.status + '. Item price: $' + listing.regular_price + ' + native shipping.'; box.append(p);
     const link = document.createElement('a'); link.className = 'button'; link.href = listing.edit_url; link.textContent = 'Complete listing in ListLab'; box.append(link);
@@ -59,8 +64,8 @@
     $('krev-import-description').value = listing.description || '';
     $('krev-import-quantity').value = listing.quantity ?? '';
     $('krev-import-source').href = state.data.source_url;
-    showPrice(state.price); showSpecs(state.data);
-    for (const url of state.data.image_urls) { const img = document.createElement('img'); img.src = url; img.alt = 'Copied item photo'; img.referrerPolicy = 'no-referrer'; $('krev-import-photos').append(img); }
+    showPrice(state.price); showSpecs(state.data); $('krev-import-photos').append(photoSummary(state.photo_counts));
+    for (const url of state.data.image_urls) { const img = document.createElement('img'); img.src = url; img.alt = 'Supplied item photo'; img.referrerPolicy = 'no-referrer'; $('krev-import-photos').append(img); }
     $('krev-import-form').hidden = false;
     $('krev-import-login').hidden = state.seller_ready;
     $('krev-import-create').disabled = !state.seller_ready;

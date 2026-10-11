@@ -16,12 +16,13 @@ def photo(identity, width=1600, height=1200, kind='viewer'):
 
 class PhotoSelection(unittest.TestCase):
     def setUp(self):
-        self.gallery = {'gallery_complete': True, 'expected_count': 2, 'photos': [photo('first'), photo('second')]}
+        self.gallery = {'gallery_complete': True, 'expected_count': 2, 'inventory': {'basis': 'gallery_controls', 'source_count': 2, 'visited_positions': [1, 2]}, 'photos': [photo('first'), photo('second')]}
 
     def test_full_gallery_source_order_and_signed_urls(self):
         result = module.select_photos(self.gallery)
         self.assertTrue(result['ready'])
         self.assertEqual(result['image_urls'], [p['candidates'][0]['url'] for p in self.gallery['photos']])
+        self.assertEqual(result['photo_manifest']['source_count'], 2)
 
     def test_largest_variant_of_same_photo_not_two_gallery_images(self):
         large = photo('first', 2400, 1800)
@@ -76,6 +77,7 @@ class PhotoSelection(unittest.TestCase):
     def test_overflow_is_retained_without_extra_import(self):
         self.gallery['photos'] = [photo(str(i)) for i in range(12)]
         self.gallery['expected_count'] = 12
+        self.gallery['inventory'] = {'basis': 'gallery_controls', 'source_count': 12, 'visited_positions': list(range(1, 13))}
         result = module.select_photos(self.gallery)
         self.assertTrue(result['ready'])
         self.assertEqual(len(result['image_urls']), 10)
@@ -84,6 +86,22 @@ class PhotoSelection(unittest.TestCase):
     def test_duplicate_url_under_different_positions_needs_review(self):
         self.gallery['photos'][1]['candidates'][0]['url'] = self.gallery['photos'][0]['candidates'][0]['url']
         self.assertFalse(module.select_photos(self.gallery)['ready'])
+
+    def test_one_metadata_image_is_not_one_verified_gallery(self):
+        gallery = {'gallery_complete': True, 'expected_count': 1, 'photos': [photo('metadata', 403, 403)]}
+        result = module.select_photos(gallery, allow_small=True, allow_partial=True)
+        self.assertFalse(result['ready'])
+        self.assertIn('unverified_inventory', [i['code'] for i in result['blockers']])
+
+    def test_unvisited_controls_block_even_when_photo_urls_exist(self):
+        self.gallery['inventory']['visited_positions'] = [1]
+        self.assertFalse(module.select_photos(self.gallery)['ready'])
+
+    def test_eight_verified_portraits_produce_matching_handoff(self):
+        gallery = {'gallery_complete': True, 'expected_count': 8, 'inventory': {'basis': 'gallery_controls', 'source_count': 8, 'visited_positions': list(range(1, 9))}, 'photos': [photo(str(i), 720, 960) for i in range(8)]}
+        result = module.select_photos(gallery)
+        self.assertTrue(result['ready'])
+        self.assertEqual(len(result['image_urls']), result['photo_manifest']['source_count'])
 
 
 if __name__ == '__main__':

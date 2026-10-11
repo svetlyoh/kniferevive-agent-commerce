@@ -48,9 +48,9 @@ means a source-served full photo, not an enlarged screenshot or AI recreation.
    update its photos in place through native ListLab; do not prepare/claim a new
    listing. Preserve inventory and other seller fields unless the user asks.
 
-## Optional deterministic selection check
+## Counted handoff check before preparation
 
-If the host has Python, save only the selected listing's observed photo data to
+Run the helper when Python is available; otherwise enforce the same checks with the host tools. Save only the selected listing's observed photo data to
 a private JSON file and run the bundled helper. It performs no browser access,
 network requests, upload, preparation or publication. Without Python, apply
 the same count/resolution checks using the host's available tools.
@@ -59,6 +59,7 @@ the same count/resolution checks using the host's available tools.
 {
   "gallery_complete": true,
   "expected_count": 2,
+  "inventory": {"basis": "gallery_controls", "source_count": 2, "visited_positions": [1, 2]},
   "photos": [
     {"photo_id": "gallery-1", "candidates": [
       {"url": "https://scontent.example.fbcdn.net/photo-1.jpg?signature=kept", "width": 1600, "height": 1200, "kind": "viewer"}
@@ -87,3 +88,5 @@ includes `image_urls` for preparation. `--allow-small` and `--allow-partial` may
 be used only after the user accepts the reported limitation; the report retains
 it. Keep report files private. The helper trusts host observations and does not
 prove that a CDN URL still works or that the remote file is the camera original.
+
+Inventory proof: record basis as gallery_controls, gallery_counter, or verified_end_or_wrap, the actual source_count and every visited_positions entry. A metadata response with one image provides no gallery inventory proof. The observed Wüsthof failure sent one 403×403 metadata image while the page exposed eight controls and eight 720×960 viewer files. Opening the item and traversing those controls recovered all eight without login. Do not label one accessible metadata image “1 of 1 found.” If the source gallery cannot be inspected, report its count as unknown and pause preparation until the seller accepts a stated incomplete-photo handoff. The helper emits photo_manifest with image_urls; send both together. Never manually shrink source_count to make a truncated URL array pass.

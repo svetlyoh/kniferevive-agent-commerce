@@ -2,15 +2,16 @@
 /**
  * Plugin Name: KnifeRevive Marketplace Imports
  * Description: Prepare Facebook Marketplace items from Muse, apply category pricing and complete seller drafts in ListLab.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Requires Plugins: woocommerce, kniferevive-listlab
  * License: MIT-0
  */
 defined( 'ABSPATH' ) || exit;
-define( 'KREV_IMPORT_VERSION', '1.0.4' );
+define( 'KREV_IMPORT_VERSION', '1.0.5' );
 define( 'KREV_IMPORT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'KREV_IMPORT_URL', plugin_dir_url( __FILE__ ) );
 require_once KREV_IMPORT_PATH . 'includes/class-pricing.php';
+require_once KREV_IMPORT_PATH . 'includes/class-photo-manifest.php';
 require_once KREV_IMPORT_PATH . 'includes/class-package-defaults.php';
 require_once KREV_IMPORT_PATH . 'includes/class-imports.php';
 add_action( 'before_woocommerce_init', static function() {
