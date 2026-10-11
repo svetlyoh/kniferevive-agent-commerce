@@ -5,8 +5,8 @@ shared route predicate for products, pages, native descendants and collection
 filters. Future Tech color/navigation edits belong in that file. See
 [canonical scope and verification](canonical-tech-theme-2026-10-11.md).
 
-October 11, 2026: Product Attributes 0.3.8, ListLab 1.8.5, Merchant Sync 0.8.8,
-Marketplace Imports 1.0.6 and theme 2026.10.11.12 were updated in place through
+October 11, 2026: Product Attributes 0.3.9, ListLab 1.8.5, Merchant Sync 0.8.8,
+Marketplace Imports 1.0.6 and theme 2026.10.11.13 were updated in place through
 native WordPress uploads. All 34 Collectibles children are imported. Six-field
 profiles cover all 1,489 Tech, Home & Garden and Collectibles choices. New
 landing pages, Annex destinations, Tech section links and published-only
@@ -24,6 +24,15 @@ independent from this browsing collection. Follow-up validation passed 148
 native taxonomy/collection/specification assertions and 39 canonical Tech
 route/class/enqueue checks. See the Bluetooth follow-up in the implementation
 document for mapping rules and live proof.
+
+Cell Phone Accessories adds a sixth native Tech collection, fifth alternating
+Tech section, directory description/placeholder artwork, and shared Annex and
+Shop Categories links. Twenty-nine relevant Google types cover cases, chargers,
+protectors, headphones and other phone extras. Broader types use phone title or
+compatibility evidence, or explicit seller selection; Bluetooth headphones may
+appear in both collections. Google feed IDs stay unchanged. Validation passed
+159 native checks and 39 shared Tech route checks; browser QA confirms menus,
+directory and section/black archive, and the live schema exposes the new choice.
 
 Listing 1.0.6 uses GitHub tag `kniferevive-listing-v1.0.6` and updates the
 existing seller skill identity in the active host catalog. Actual Muse

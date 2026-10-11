@@ -12,6 +12,7 @@ function kr_metacategories(): array {
         'laptops' => ['label' => 'Laptops', 'url' => home_url('/technology-trade-desk/#laptops'), 'slugs' => ['technology']],
         'mini-computers' => ['label' => 'Mini-Computers', 'url' => home_url('/technology-trade-desk/#mini-computers'), 'slugs' => ['technology']],
         'bluetooth-gadgets' => ['label' => 'Bluetooth Gadgets', 'url' => home_url('/technology-trade-desk/#bluetooth-gadgets'), 'slugs' => ['technology']],
+        'cell-phone-accessories' => ['label' => 'Cell Phone Accessories', 'url' => home_url('/technology-trade-desk/#cell-phone-accessories'), 'slugs' => ['technology']],
         'ai-tech' => ['label' => 'AI-Tech', 'slugs' => ['technology']],
         'other-finds' => ['label' => 'Other Finds', 'url' => home_url('/other-finds/'), 'slugs' => ['other_finds', 'miscellaneous']],
         'world-coins' => ['label' => 'World Coins', 'slugs' => ['world-coins']],
@@ -31,6 +32,7 @@ function kr_metacategory_description(string $slug): string {
         'laptops' => 'Portable computers, notebooks, docking stations, and accessories for work, learning, and a desk that travels.',
         'mini-computers' => 'Compact PCs, desktop systems, servers, and streaming devices—including Chromecast—for everyday computing and home projects.',
         'bluetooth-gadgets' => 'Bluetooth speakers, headphones, transmitters, keyboards, mice, controllers, and wearable gadgets, with connectivity and condition recorded when known.',
+        'cell-phone-accessories' => 'Chargers, cases, screen protectors, headphones, stands, straps, camera accessories, and other useful phone extras, with compatibility recorded when known.',
         'ai-tech' => 'Configured computers for self-hosted AI tools, automation, and Linux experimentation, including the OpenClaw-ready Dell system.',
         'home-garden' => 'Useful pieces for the home, kitchen, patio, and garden, ready for another home and organized by their actual product type.',
         'collectibles' => 'Trading cards, coins, stamps, models, and memorabilia, with identifying details and condition recorded when known.',
@@ -97,7 +99,7 @@ function kr_metacategory_inventory(): array {
         $google = kr_metacategory_feed_category($product, $terms);
         $groups = [];
         foreach (kr_metacategories() as $slug => $group) {
-            if (in_array($slug, ['iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'ai-tech', 'pokemon-cards'], true)) continue;
+            if (in_array($slug, ['iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'cell-phone-accessories', 'ai-tech', 'pokemon-cards'], true)) continue;
             if (array_intersect($slugs, $group['slugs'])) $groups[] = $slug;
         }
         if (in_array('tech', $groups, true) && class_exists('KREV_PA_Metacategories')) {
@@ -107,8 +109,10 @@ function kr_metacategory_inventory(): array {
             $brandNames = taxonomy_exists('product_brand') ? wp_get_post_terms($id, 'product_brand', ['fields' => 'names']) : [];
             $apple = !is_wp_error($brandNames) && in_array('apple', array_map('strtolower', $brandNames), true);
             $text = $product->get_name();
-            foreach (['iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'ai-tech'] as $slug) {
-                $evidence = $slug === 'bluetooth-gadgets' ? $text . ' ' . $product->get_attribute('pa_connectivity') : $text;
+            foreach (['iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'cell-phone-accessories', 'ai-tech'] as $slug) {
+                $evidence = $text;
+                if ($slug === 'bluetooth-gadgets') $evidence .= ' ' . $product->get_attribute('pa_connectivity');
+                if ($slug === 'cell-phone-accessories') $evidence .= ' ' . $product->get_attribute('pa_compatible-devices');
                 if (KREV_PA_Metacategories::matches($slug, $google ? [$google['id']] : [], $evidence, $apple, $explicit)) $groups[] = $slug;
             }
         }
@@ -157,6 +161,7 @@ function kr_tech_metacategory_sections(): string {
         'laptops' => ['Work from anywhere', 'Laptops', 'Portable computers, notebook accessories, docking stations, and useful equipment for a desk that travels.'],
         'mini-computers' => ['Small systems, useful jobs', 'Mini-Computers', 'Compact PCs, desktop systems, servers, and streaming devices—including Chromecast—for everyday computing and home projects.'],
         'bluetooth-gadgets' => ['Small connections, useful possibilities', 'Bluetooth Gadgets', 'Find Bluetooth speakers, headphones, transmitters, wireless peripherals, controllers, and wearables. Explore the connectivity, compatibility, and condition each seller can verify.'],
+        'cell-phone-accessories' => ['Make your phone your own', 'Cell Phone Accessories', 'Chargers, cases, screen protectors, headphones, stands, straps, and camera extras for your everyday phone. Check each listing for device compatibility, connectivity, and condition.'],
     ];
     $output = '';
     foreach ($copy as $slug => [$kicker, $title, $description]) {
@@ -233,5 +238,5 @@ add_filter('render_block_core/query-title', static function(string $content): st
     }
     return preg_replace_callback('/(<h[1-6]\b[^>]*>).*?(<\/h[1-6]>)/s', static fn($match) => $match[1] . esc_html($title) . $match[2], $content, 1) ?? $content;
 }, 110);
-add_filter('body_class', static function(array $classes): array { $slug = (string) get_query_var('kr_collection'); if (in_array($slug, ['tech', 'iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'ai-tech'], true)) $classes[] = 'kr-ai-catalog'; return $classes; }, 25);
+add_filter('body_class', static function(array $classes): array { $slug = (string) get_query_var('kr_collection'); if (in_array($slug, ['tech', 'iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'cell-phone-accessories', 'ai-tech'], true)) $classes[] = 'kr-ai-catalog'; return $classes; }, 25);
 add_action('wp_enqueue_scripts', static function(): void { wp_enqueue_style('kniferevive-metacategories', get_stylesheet_directory_uri() . '/assets/css/metacategories.css', ['kniferevive-annex'], kr_asset_version('assets/css/metacategories.css')); }, 25);

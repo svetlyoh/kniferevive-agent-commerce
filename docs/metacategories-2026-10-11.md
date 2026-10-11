@@ -67,6 +67,46 @@ schema returns native Bluetooth collection ID 5354 under Tech 1892 alongside
 the four existing choices. Owner diagnostics retain the native test log,
 public schema and `bluetooth-gadgets-tech-section.png` / menu screenshot.
 
+## Cell Phone Accessories follow-up
+
+Cell Phone Accessories (`cell-phone-accessories`) is the sixth native Tech
+collection, with the same directory description, Annex links, Shop Categories
+flyout, fifth alternating Tech section, carousel/empty state and canonical
+black Tech palette. The section anchor is
+`/technology-trade-desk/#cell-phone-accessories`; its SVG illustration is a
+replaceable theme placeholder.
+
+The mapping covers 29 official Google types. Sixteen qualify directly: the
+complete Mobile Phone Accessories branch (cases, charms/straps, stands, camera
+accessories, SIM/prepaid cards and tools, replacement parts), Mobile Phone
+Batteries, Headphones & Headsets and their child types, and Headphone & Headset
+Accessories/Cushions & Tips. Broader Screen Protectors, Power Adapters &
+Chargers, suitable cable types, USB/audio adapters, styluses, flash memory
+cards, General Purpose Batteries and Watches require phone evidence in the
+title or `pa_compatible-devices`, or an explicit native seller assignment.
+The exact paths, direct IDs and candidate IDs are in the collection catalog.
+
+Overlap with Bluetooth Gadgets is intentional and independent: Bluetooth
+headphones can appear in both. A laptop power supply does not become a phone
+accessory from its charger category alone, and phones themselves do not roll
+into this collection. The selected Google subtype, six-field specification
+profile and Merchant Sync IDs remain unchanged. ListLab and Imports obtain
+the added collection choice from the native registry without a skill update.
+
+This follow-up passed 54 native taxonomy, 67 collection and 38 specification
+checks (159 total), plus 39 canonical Tech route/class/enqueue checks, PHP lint
+and complete runtime ZIP/source verification. The owned loopback test DB was
+verified and shut down. Native live replacement confirmed Product Attributes
+0.3.8 → 0.3.9 and theme 2026.10.11.12 → 2026.10.11.13, both successful.
+Browser QA confirms the directory description/destination, top Annex link,
+dark Shop Categories flyout, loaded illustration, fifth alternating Tech
+section and black collection archive. Current inventory has no qualifying
+listings, so the empty state is shown and no Google subtype menu is fabricated.
+The live public Tech schema exposes all six choices, including native Cell
+Phone Accessories ID 5355 under Tech 1892. Owner diagnostics retain
+`phone-accessories-native-tests.txt`, `phone-accessories-live-tech-schema.json`,
+and `cell-phone-accessories-tech-section.png` / menu proof.
+
 ## Muse skill
 
 The separate seller skill is now `kniferevive-listing` **1.0.6**. It reads the live schema, extracts only supported facts for the six fields, separates browsing collections from Google subcategories and preserves complete-gallery extraction. Installation guidance remains in [references/installation.md](../skills/kniferevive-listing/references/installation.md). Update the existing identity in the host's active custom catalog, with one active copy. This release does not install or reload Muse remotely and does not publish the Listing skill on ClawHub. Concierge is unchanged.
@@ -81,7 +121,7 @@ loaded by `inc/tech-theme.php` for the entire Tech tree. See
 
 Final native WordPress/WooCommerce checks: 54 existing category assertions, 44 metacategory assertions and 38 specification/landing-page assertions. Marketplace import regressions: 108. Category selector behavior: 32. Searchable selector DOM checks: 27. Total: **303 assertions**, plus PHP lint and source/package verification. Native tests run only against the fenced `krev_agent_sandbox` DB, port 11029; external HTTP and mail are blocked in that harness.
 
-Live deployment uses WordPress's native in-place plugin/theme upload replacement. Final runtime versions: Product Attributes **0.3.8**, ListLab **1.8.5**, Merchant Sync **0.8.8**, Marketplace Imports **1.0.6**, theme **2026.10.11.12**. Collectibles' bounded native import reports **34 of 34** complete. The final ListLab upload also corrects the searchable collection's accessibility label to match Collectibles or Tech. The image follow-up passed PHP lint and package verification; browser checks confirm all five supplied themes load in the corresponding directory and landing sections. Tech child headings, descriptions and links now have light colors appropriate to their dark directory card. Original image bytes are verified against the supplied files. Desktop/mobile checks preceded this image follow-up; the browser's later viewport override did not take effect, so the new image screenshots are labeled desktop rather than claiming a new mobile pass.
+Live deployment uses WordPress's native in-place plugin/theme upload replacement. Final runtime versions: Product Attributes **0.3.9**, ListLab **1.8.5**, Merchant Sync **0.8.8**, Marketplace Imports **1.0.6**, theme **2026.10.11.13**. Collectibles' bounded native import reports **34 of 34** complete. The final ListLab upload also corrects the searchable collection's accessibility label to match Collectibles or Tech. The image follow-up passed PHP lint and package verification; browser checks confirm all five supplied themes load in the corresponding directory and landing sections. Tech child headings, descriptions and links now have light colors appropriate to their dark directory card. Original image bytes are verified against the supplied files. Desktop/mobile checks preceded this image follow-up; the browser's later viewport override did not take effect, so the new image screenshots are labeled desktop rather than claiming a new mobile pass.
 
 Owner artifacts are in `C:\Users\Svet\Documents\KnifeRevive_Documentation\releases\metacategories-2026-10-11`: complete runtime ZIPs preserving existing vendor dependencies/assets, skill ZIP, SHA-256 manifest and local rollback baselines. Earlier intermediate packages are retained for history; use the versions above and `manifest.json`. Rollback ZIPs are local prechange baselines, not downloaded production database backups. Runtime rollback does not delete imported terms or reverse native product assignments.
 

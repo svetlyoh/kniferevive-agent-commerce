@@ -1,5 +1,5 @@
 {
-  "version": "2026.10.11.12",
+  "version": "2026.10.11.13",
   "files": [
     {
       "file": "assets/css/annex.css",
@@ -24,6 +24,10 @@
     {
       "file": "assets/images/metacategories/bluetooth-gadgets-placeholder.svg",
       "sha256": "d2e9723b74eff36f82ca96561f90236c4d3476838a808f0b9a9c097b08c5c823"
+    },
+    {
+      "file": "assets/images/metacategories/cell-phone-accessories-placeholder.svg",
+      "sha256": "3692fefa99ff0d6f3675178b07f86aac5572ce40ad573917070a6548485d4a13"
     },
     {
       "file": "assets/images/metacategories/collectibles-2026-10-11.png",
@@ -71,15 +75,15 @@
     },
     {
       "file": "inc/annex.php",
-      "sha256": "9232636c20dd4f32846db56888e7f02d556a4c64b41b4f97c05c7ed29f99219a"
+      "sha256": "76fc2cc6bddc42989defe2b495ae99c10e2e13a023d98168d2f88cdc1478b845"
     },
     {
       "file": "inc/categories.php",
-      "sha256": "36672f914d1d9234d4aa5c4859bfbcb5f644af4147cf270e96d8e6cea2d96df2"
+      "sha256": "0ea572b685c9f9ed522b52dd50d41785a7f83947d3ad7aa6ff7dcf1bd90026c1"
     },
     {
       "file": "inc/metacategories.php",
-      "sha256": "d52bc60e28da09d02e057b9fce00e0e446657428d5defe4483f75376a41ec218"
+      "sha256": "a82c258b46033256a7e8c654fd4afc1f5a1a88812b42907951bf463a10e403e1"
     },
     {
       "file": "inc/tech-theme.php",
@@ -87,7 +91,7 @@
     },
     {
       "file": "style.css",
-      "sha256": "0f7f1d6419193643166b150c933ab545776be314c830ac62e700a07b7145d1a7"
+      "sha256": "d9de6142a4885687dbdd4aca4e7a11122730c4973601a8946e39ae9cf97ecaf8"
     },
     {
       "file": "templates/page-collectibles.html",

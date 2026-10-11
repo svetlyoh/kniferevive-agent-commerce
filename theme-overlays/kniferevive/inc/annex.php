@@ -319,6 +319,11 @@ function kr_get_annex_terms(): array
             'category' => kr_find_product_category(['bluetooth-gadgets'], ['Bluetooth Gadgets']),
             'page_url' => kr_metacategory_landing_url('bluetooth-gadgets'),
         ],
+        'cell-phone-accessories' => [
+            'label' => 'Cell Phone Accessories',
+            'category' => kr_find_product_category(['cell-phone-accessories'], ['Cell Phone Accessories']),
+            'page_url' => kr_metacategory_landing_url('cell-phone-accessories'),
+        ],
         'ai-tech' => [
             'label' => 'AI-Tech',
             'category' => kr_find_product_category(['ai-tech'], ['AI-Tech']),
