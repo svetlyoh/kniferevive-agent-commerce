@@ -1,0 +1,677 @@
+.kr-annex-menu {
+  position: relative;
+}
+
+.kr-annex-menu summary {
+  display: flex;
+  min-height: 24px;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.88rem;
+  font-weight: 750;
+  list-style: none;
+  cursor: pointer;
+}
+
+.kr-annex-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.kr-annex-menu summary span {
+  color: var(--kr-accent);
+  font-size: 1rem;
+}
+
+.kr-annex-menu__label {
+  color: inherit;
+}
+
+.kr-annex-menu[open] summary span {
+  transform: rotate(45deg);
+}
+
+.kr-annex-menu-panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 16px);
+  left: 50%;
+  display: grid;
+  width: 248px;
+  padding: 8px;
+  border: 1px solid var(--kr-border);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(17, 17, 17, 0.14);
+  transform: translateX(-50%);
+}
+
+.kr-annex-menu-panel a {
+  padding: 11px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.kr-annex-menu-panel a:hover {
+  background: var(--kr-surface);
+}
+
+.kr-annex-drawer {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #d8c7ba;
+  border-radius: 8px;
+  background: #f8f2ed;
+}
+
+.kr-annex-drawer summary {
+  display: grid;
+  min-height: 44px;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  list-style: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.kr-annex-drawer__label {
+  display: inline-grid;
+  min-width: 0;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+}
+
+.kr-annex-drawer summary::-webkit-details-marker {
+  display: none;
+}
+
+.kr-new-badge {
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: var(--kr-accent);
+  color: #fff;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+
+.kr-annex-chevron {
+  justify-self: end;
+  font-size: 1.25rem;
+  transition: transform 160ms ease;
+}
+
+.kr-annex-drawer details[open] .kr-annex-chevron {
+  transform: rotate(45deg);
+}
+
+/* Technology Trade Desk's drawer is dark. This matches its Annex label to the
+   nearby drawer links without changing menus on the rest of KnifeRevive. */
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer summary,
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer__label {
+  color: #fff;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 690;
+  letter-spacing: normal;
+  line-height: 1.3;
+  text-transform: none;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer summary:hover,
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer__label:hover {
+  color: #24bdcb;
+}
+
+/* The drawer's Annex block has its own light-card rule in the shared theme.
+   Override that surface as well as its links on Technology Trade Desk. */
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: #000;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer-links a {
+  border-top-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer-links a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #24bdcb;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-drawer .kr-annex-drawer .kr-new-badge {
+  background: #087985;
+  color: #fff;
+}
+
+/* Keep the desktop Annex flyout in the Technology Trade Desk's dark system,
+   without changing the light flyout used elsewhere on the site. */
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu summary,
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu__label {
+  color: #fff;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu summary span {
+  color: #24bdcb;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu-panel {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: #000;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu-panel a {
+  color: #fff;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu-panel a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #24bdcb;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu :is(a, summary):focus-visible,
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product, .kr-dell-brand) .kr-annex-menu-panel a:focus-visible {
+  outline-color: #24bdcb;
+}
+
+.kr-annex-drawer-links {
+  display: grid;
+  gap: 4px;
+  padding-top: 6px;
+}
+
+.kr-annex-drawer-links a {
+  padding: 11px 8px;
+  border-top: 1px solid rgba(167, 85, 42, 0.18);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.kr-footer-annex {
+  display: grid;
+  gap: 8px;
+}
+
+.kr-footer-annex a {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  color: #5f6670;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.kr-annex-home {
+  overflow: hidden;
+  padding-block: clamp(68px, 9vw, 120px);
+  border-block: 1px solid #d9c9bc;
+  background:
+    radial-gradient(circle at 90% 12%, rgba(167, 85, 42, 0.14), transparent 33%),
+    #f3ede7;
+}
+
+.kr-annex-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 16px;
+  color: #6d3d26;
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.kr-annex-kicker span {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #6d3d26;
+  color: #fff;
+  font-size: 0.6rem;
+}
+
+.kr-annex-intro {
+  display: grid;
+  max-width: 900px;
+  gap: 18px;
+  margin-bottom: 38px;
+}
+
+.kr-annex-intro h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.8rem, 7vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.kr-annex-intro p {
+  max-width: 680px;
+  margin: 0;
+  color: #514940;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+.kr-annex-card-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.kr-annex-home-card {
+  position: relative;
+  display: grid;
+  min-height: 380px;
+  grid-template-rows: minmax(190px, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid rgba(68, 51, 39, 0.18);
+  border-radius: 10px;
+  background: #fffaf6;
+}
+
+.kr-annex-home-card > div:last-child {
+  display: grid;
+  gap: 8px;
+  padding: 24px;
+}
+
+.kr-annex-home-card p,
+.kr-annex-home-card h3,
+.kr-annex-home-card span {
+  margin: 0;
+}
+
+.kr-annex-home-card p {
+  color: #76523e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.kr-annex-home-card h3 {
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
+}
+
+.kr-annex-home-card > div:last-child > span {
+  min-height: 45px;
+  color: #625b55;
+  font-size: 0.9rem;
+}
+
+.kr-annex-home-card a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(68, 51, 39, 0.15);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.kr-annex-home-media {
+  min-height: 210px;
+  background: #ded7d0;
+}
+
+.kr-annex-home-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kr-annex-home-card--tech {
+  border-color: #263646;
+  background: #08111b;
+  color: #f6fbff;
+}
+
+.kr-annex-home-card--tech .kr-annex-home-media {
+  position: relative;
+  background: #03080d;
+}
+
+.kr-annex-home-card--tech .kr-annex-home-media img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  object-fit: contain;
+}
+
+.kr-annex-home-card--tech p,
+.kr-annex-home-card--tech > div:last-child > span {
+  color: #9edbe0;
+}
+
+.kr-annex-home-card--tech h3 {
+  color: #fff !important;
+}
+
+.kr-annex-home-card--tech a {
+  border-color: rgba(144, 227, 235, 0.25);
+}
+
+.kr-annex-home-card--misc {
+  background: #8f4320;
+  color: #fffaf6;
+}
+
+.kr-annex-home-card--misc h3 {
+  color: #fff;
+}
+
+.kr-annex-home-card--misc p,
+.kr-annex-home-card--misc > div:last-child > span {
+  color: #fff1e7;
+}
+
+.kr-annex-home-card--misc a {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.kr-annex-home-symbol {
+  display: grid;
+  min-height: 210px;
+  place-items: center;
+  background: rgba(66, 28, 11, 0.12);
+  font-family: Georgia, serif;
+  font-size: 9rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.kr-annex-product-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.kr-annex-product-card {
+  display: grid;
+  align-content: start;
+}
+
+.kr-annex-product-image {
+  display: block;
+  overflow: hidden;
+  background: rgba(128, 128, 128, 0.09);
+}
+
+.kr-annex-product-image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+.kr-annex-product-card:hover .kr-annex-product-image img {
+  transform: scale(1.018);
+}
+
+.kr-annex-product-copy {
+  display: grid;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.kr-annex-product-copy h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.kr-annex-product-copy h3 a,
+.kr-annex-card-link {
+  text-decoration: none;
+}
+
+.kr-annex-product-price {
+  font-weight: 750;
+}
+
+.kr-annex-product-copy .kr-product-price-row {
+  margin: 0;
+}
+
+.kr-annex-product-copy .kniferevive-product-subtitle,
+.kr-annex-card-brand {
+  margin: 0;
+  color: #625b55;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.kr-annex-card-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.kr-annex-card-status a {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(167, 85, 42, 0.1);
+  color: #6d3d26;
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.kr-annex-card-link {
+  width: max-content;
+  margin-top: 5px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.kr-annex-empty {
+  padding: 28px;
+  border: 1px dashed currentColor;
+  opacity: 0.75;
+}
+
+.kr-annex-product-brand {
+  margin: 0 0 12px;
+  color: var(--kr-accent);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kr-annex-product-brand span {
+  color: var(--kr-muted);
+}
+
+.kr-art-product .wp-block-woocommerce-product-image-gallery {
+  max-width: 760px;
+}
+
+.kr-art-product .wp-block-post-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 500;
+}
+
+.kr-ai-product,
+.kr-ai-catalog,
+.kr-ai-product .wp-site-blocks,
+.kr-ai-catalog .wp-site-blocks,
+.kr-ai-product .wp-site-blocks main,
+.kr-ai-catalog .wp-site-blocks main {
+  min-height: 100%;
+  background: #07111c !important;
+  color: #f5fbff;
+}
+
+.kr-ai-product .wp-site-blocks main :is(h1, h2, h3, h4, h5, h6, p, li, dt, dd, label),
+.kr-ai-catalog .wp-site-blocks main :is(h1, h2, h3, h4, h5, h6, p, li, dt, dd, label),
+.kr-ai-product .wp-block-post-title,
+.kr-ai-catalog .wp-block-post-title,
+.kr-ai-product .wp-block-woocommerce-product-price,
+.kr-ai-catalog .wp-block-woocommerce-product-price,
+.kr-ai-product .kr-annex-product-brand,
+.kr-ai-catalog .kr-annex-product-brand {
+  color: #f5fbff;
+}
+
+.kr-ai-product .wp-site-blocks main a:not(.button),
+.kr-ai-catalog .wp-site-blocks main a:not(.button) {
+  color: #f5fbff;
+}
+
+.kr-ai-catalog :is(.wc-block-product, .woocommerce ul.products li.product) {
+  background: #0b1521;
+  color: #f5fbff;
+}
+
+/* Technology products and Dell's archive share the same dark panel and teal
+   action treatment used by the Technology Trade Desk. */
+body.kr-ai-product form.cart .single_add_to_cart_button,
+body.kr-dell-brand .woocommerce ul.products li.product .button,
+body.kr-dell-brand .wc-block-product .wp-block-button__link {
+  border-color: #087985;
+  background: #087985;
+  color: #fff;
+}
+
+body.kr-ai-product form.cart .single_add_to_cart_button:hover,
+body.kr-dell-brand .woocommerce ul.products li.product .button:hover,
+body.kr-dell-brand .wc-block-product .wp-block-button__link:hover {
+  border-color: #087985;
+  background: #087985;
+  color: #fff;
+}
+
+.kr-ai-product-note {
+  display: grid;
+  gap: 3px;
+  margin-block: 18px;
+  padding: 14px;
+  border: 1px solid #b9e7e7;
+  border-radius: 6px;
+  background: #e9fbfa;
+  color: #10262a;
+  font-size: 0.86rem;
+}
+
+/* Technology pages use one high-contrast announcement treatment. The
+   /shop/technology/ route resolves to the Trade Desk page; descendants receive
+   kr-ai-catalog or kr-ai-product, including nested product categories. */
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product) :is(
+  .kr-ai-product-note,
+  .kr-lightning-badge,
+  .krev-timed-offer,
+  .kr-tech-disclosure,
+  .kr-whatnot-demo--card,
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) {
+  border-color: #f5ce42 !important;
+  background: #050505 !important;
+  color: #fff !important;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product) :is(
+  .kr-ai-product-note,
+  .kr-lightning-message,
+  .krev-timed-offer,
+  .kr-tech-disclosure,
+  .kr-whatnot-demo--card,
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) :is(p, span, strong, small, b, li, label) {
+  color: #fff !important;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product) :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) a:not(.button) {
+  color: #f5ce42 !important;
+  text-decoration: underline;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product) :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) :is(.button, .wc-block-components-button) {
+  border-color: #f5ce42 !important;
+  background: #f5ce42 !important;
+  color: #111 !important;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product) :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error
+)::before {
+  color: #f5ce42 !important;
+}
+
+body:is(.kr-tech-desk-page, .kr-ai-catalog, .kr-ai-product) :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) :is(a, button):focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (min-width: 680px) {
+  .kr-annex-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .kr-annex-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .kr-annex-home-card {
+    min-height: 500px;
+    grid-template-rows: minmax(260px, 1fr) auto;
+  }
+
+  .kr-annex-home-media,
+  .kr-annex-home-symbol {
+    min-height: 280px;
+  }
+}
+
+@media (min-width: 1180px) {
+  .kr-annex-intro {
+    grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
+    align-items: end;
+  }
+
+  .kr-annex-product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kr-annex-product-image img {
+    transition: none;
+  }
+}

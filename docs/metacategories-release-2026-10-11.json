@@ -5,34 +5,34 @@
     {
       "file": "kniferevive-product-attributes-0.3.7.zip",
       "bytes": 98383,
-      "sha256": "14d25dd13cf6f7c692ce8b6edfd4e96cac2db8b845ac9b50803603566d50d201"
+      "sha256": "95a13b9fb5ba0259f4dabce391835dc744a769d93ccf0e41c02f89a1f629545f"
     },
     {
       "file": "kniferevive-listlab-1.8.5.zip",
       "bytes": 185656,
-      "sha256": "c86380c275910d9ee8b5647d7cfa8d67b27025cac5d919a6a50738c34642642b"
+      "sha256": "060dde884ffd10504229e41f1267b8bd78755461fddefebcfb3a7fbef69947ff"
     },
     {
       "file": "kniferevive-merchant-sync-0.8.8.zip",
       "bytes": 729229,
-      "sha256": "986adf1c3c7d36fe88896b93a8ef09a8e538cf8387319ec2330591a429aa9025"
+      "sha256": "60e7cfbec17d636f5c74148bf22c2474d10d06f4544b5f16ee6e143aa26ecf0a"
     },
     {
       "file": "kniferevive-listlab-import-1.0.6.zip",
       "bytes": 18938,
-      "sha256": "a0f988952f28db0e522e368b08fda1684bd88199da333f20344121a1d8f719df"
+      "sha256": "2912ea979cd85449b6ce03d1b69b59907bdeb46ee597379cc44f7f85e1808e45"
     },
     {
-      "file": "kniferevive-2026.10.11.6.zip",
-      "bytes": 39050219,
-      "sha256": "3ad69d73037ef0fb5c16ad71a841d72cb4fb2895e3c522d53c51901a0de0694a"
+      "file": "kniferevive-2026.10.11.9.zip",
+      "bytes": 39050558,
+      "sha256": "c3888b27ce95972182a6636b957a3315e8cf6821d0a14abef7656abb254a362b"
     }
   ],
   "skill": {
     "file": "kniferevive-listing-1.0.6.zip",
     "version": "1.0.6",
     "bytes": 19263,
-    "sha256": "041e8d35f053d1b8be7f8df4dce031c15bdc66f1adb943da425b5e9e0f50524e"
+    "sha256": "fb6c878af515773e024c6f78583aa56750102dbef8a0589c4f86bd666cfd7ea9"
   },
   "rollback": [
     {

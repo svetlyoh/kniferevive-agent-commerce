@@ -1,7 +1,7 @@
 ## Collections and specification profiles live; Listing 1.0.6
 
 October 11, 2026: Product Attributes 0.3.7, ListLab 1.8.5, Merchant Sync 0.8.8,
-Marketplace Imports 1.0.6 and theme 2026.10.11.6 were updated in place through
+Marketplace Imports 1.0.6 and theme 2026.10.11.9 were updated in place through
 native WordPress uploads. All 34 Collectibles children are imported. Six-field
 profiles cover all 1,489 Tech, Home & Garden and Collectibles choices. New
 landing pages, Annex destinations, Tech section links and published-only

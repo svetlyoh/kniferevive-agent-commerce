@@ -1,9 +1,17 @@
 {
-  "version": "2026.10.11.6",
+  "version": "2026.10.11.9",
   "files": [
     {
+      "file": "assets/css/annex.css",
+      "sha256": "0d70bfa7a5b35bd89b7ad33ade150243960fac32700ff947307da223dccaad17"
+    },
+    {
       "file": "assets/css/metacategories.css",
-      "sha256": "1f0f8831595711c1190143a2c1c3ffdb745f764602337865621d23499262acc4"
+      "sha256": "5aaf737ca93fb0989ca5e2055b759c6b43840714c050987858c3b43f0221be80"
+    },
+    {
+      "file": "assets/css/navigation.css",
+      "sha256": "17cd442c33c890dd55cb043c60d6ca927be9da08271966e1639bbbb0bb28f6fd"
     },
     {
       "file": "assets/images/categories/home-garden-2026-10-11.png",
@@ -67,7 +75,7 @@
     },
     {
       "file": "style.css",
-      "sha256": "fb493e04e8e9b9cc65ae8a0312d25660ae1b63571ac5dd00ffe6e11bcab5ab78"
+      "sha256": "49ccdc240c2b1a9f6d1262a45c694e83abddbc588e6d010cd31131ea6fc481fb"
     },
     {
       "file": "templates/page-collectibles.html",
