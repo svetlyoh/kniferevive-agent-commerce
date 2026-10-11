@@ -1,5 +1,9 @@
 # Collections, Google subcategories and specification profiles
 
+Follow-up: ListLab now restricts Item Condition by subcategory, falling back
+to metacategory and category, and refreshes choices on every context change.
+See [condition policy and deployed versions](category-condition-options-2026-10-11.md).
+
 KnifeRevive now groups published products by browsing collection while retaining their selected Google product classifications. The category directory, shared Annex navigation and Shop Categories flyout use the same destinations. iPhones, Laptops and Mini-Computers open the corresponding Technology Trade Desk section. Home & Garden, Collectibles and Pokémon Cards have native themed landing pages using the Other Finds layout, collection inventories and seller links. Collectibles includes a dedicated Pokémon Cards section. The five theme images for iPhones, Laptops, Mini-Computers, Collectibles and Pokémon Cards are the owner-provided PNGs from the Metacategories folder, copied without modification into the shared directory/section image source. Collectibles has its own directory image and Pokémon has a separate linked thumbnail. Home & Garden retains its generated thematic photo; the exact prompt and built-in generation method are recorded in [the image notes](home-garden-image-generation-2026-10-11.md).
 
 The Shop Categories branch sits between Models and Shop All. Kitchen Knives reuses the saved Knife Type children. Other groups expose only Google subcategories represented by catalog-visible, published listings. Empty groups remain accessible without fake product cards. Archive queries for empty groups return no products. Mini-Computers includes Chromecast's streaming classification and desktop systems; Apple-compatible watches are not misclassified as iPhones. The old Recently Added Tech carousel is replaced by three alternating image/text sections with independent inventories and carousels.

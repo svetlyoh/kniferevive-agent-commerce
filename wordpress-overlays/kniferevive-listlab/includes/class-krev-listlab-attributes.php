@@ -13,12 +13,17 @@ final class KREV_ListLab_Attributes {
 		return in_array( 'knives', KREV_PA_Config::groups_for_category_slugs( $slugs ), true );
 	}
 
-	public static function validate( $category_id, array $submitted, $require_required_fields = false ) {
-		foreach ( self::schema( $category_id ) as $field ) {
+	public static function validate( $category_id, array $submitted, $require_required_fields = false, $meta_id = 0 ) {
+		foreach ( self::schema( $category_id, $meta_id ) as $field ) {
 			$submitted_values = array_values( array_filter( array_map( 'sanitize_text_field', (array) ( $submitted[ $field['taxonomy'] ] ?? array() ) ), static fn( $value ) => '' !== $value ) );
 			if ( $require_required_fields && ! empty( $field['required'] ) && ! $submitted_values ) {
 				return new WP_Error( 'listlab_required_attribute', $field['label'] . ' is required.', array( 'status' => 422, 'errors' => array( $field['taxonomy'] => 'Select an item condition.' ) ) );
 			}
+            if ( 'pa_condition' === $field['taxonomy'] && class_exists( 'KREV_PA_Condition_Options' ) ) {
+                $policy = KREV_PA_Condition_Options::resolve( $category_id, $meta_id );
+                if ( count( $submitted_values ) > 1 ) return new WP_Error( 'listlab_condition_choice', 'Select one item condition.', array( 'status' => 422, 'errors' => array( 'pa_condition' => 'Select one item condition.' ) ) );
+                foreach ( $submitted_values as $value ) if ( ! KREV_PA_Condition_Options::valid_value( $value, $policy ) ) return new WP_Error( 'listlab_condition_choice', 'Choose an item condition available for this category.', array( 'status' => 422, 'errors' => array( 'pa_condition' => 'Choose an item condition available for this category.' ) ) );
+            }
 			if ( 'pa_msrp' !== $field['taxonomy'] ) { continue; }
 			$raw = trim( sanitize_text_field( (string) reset( $submitted_values ) ) );
 			if ( '' !== $raw && ( ! preg_match( '/^\d+(?:\.\d{1,2})?$/', $raw ) || (float) $raw < 0 ) ) {
@@ -30,16 +35,18 @@ final class KREV_ListLab_Attributes {
 
 	public static function validate_product_required_attributes( WC_Product $product ) {
 		$categories  = $product->get_category_ids();
-		$category_id = $categories ? (int) reset( $categories ) : 0;
+		$selection = KREV_ListLab_Categories::selection( $categories );
+        $category_id = $selection['subcategory_id'] ?: $selection['category_id'];
+        $meta_id = class_exists( 'KREV_PA_Metacategories' ) ? KREV_PA_Metacategories::selected( $categories ) : 0;
 		$submitted   = array();
-		foreach ( self::schema( $category_id ) as $field ) {
+		foreach ( self::schema( $category_id, $meta_id ) as $field ) {
 			if ( empty( $field['required'] ) ) { continue; }
 			$submitted[ $field['taxonomy'] ] = wp_get_object_terms( $product->get_id(), $field['taxonomy'], array( 'fields' => 'ids' ) );
 		}
-		return self::validate( $category_id, $submitted, true );
+		return self::validate( $category_id, $submitted, true, $meta_id );
 	}
 
-	public static function schema( $category_id ) {
+	public static function schema( $category_id, $meta_id = 0 ) {
 		$slugs = array(); $groups = array();
 		if ( class_exists( 'KREV_PA_Config' ) ) {
 			$term = get_term( $category_id, 'product_cat' );
@@ -54,6 +61,8 @@ final class KREV_ListLab_Attributes {
 			$definitions = KREV_PA_Config::all_definitions();
 		} else { $definitions = array(); }
 		$fields = array();
+        $condition_policy = class_exists( 'KREV_PA_Condition_Options' ) ? KREV_PA_Condition_Options::resolve( $category_id, $meta_id ) : null;
+        if ( $condition_policy && $condition_policy['names'] && ! in_array( 'condition', $slugs, true ) ) $slugs[] = 'condition';
 		if ( taxonomy_exists( 'product_brand' ) && array_intersect( $groups, array( 'knives', 'tech', 'world-spices', 'art', 'home-garden', 'collectibles' ) ) ) {
 			$brand_terms = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false, 'number' => 0 ) );
 			$fields[] = array( 'slug' => 'brand', 'taxonomy' => 'product_brand', 'label' => in_array( 'art', $groups, true ) ? 'Artist / Brand' : 'Brand', 'field_type' => 'select', 'allow_new_value' => true, 'options' => is_wp_error( $brand_terms ) ? array() : array_map( static function( $term ) { return array( 'id' => (int) $term->term_id, 'name' => $term->name ); }, $brand_terms ) );
@@ -65,8 +74,9 @@ final class KREV_ListLab_Attributes {
 			$terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => false, 'number' => 0 ) );
 			$label = $definitions[ $slug ]['name'] ?? ucwords( str_replace( '-', ' ', $slug ) );
 			if ( 'condition' === $slug && ! in_array( 'knives', $groups, true ) ) { $label = 'Item Condition'; }
-			$required = 'condition' === $slug && array_intersect( $groups, array( 'tech', 'world-spices', 'world-coins', 'home-garden', 'collectibles' ) );
+			$required = 'condition' === $slug && $condition_policy && $condition_policy['names'];
 			$is_tech_condition = 'condition' === $slug && in_array( 'tech', $groups, true );
+            if ( 'condition' === $slug && $condition_policy && ! is_wp_error( $terms ) ) $terms = array_values( array_filter( $terms, static fn( $term ) => KREV_PA_Condition_Options::valid_value( (string) $term->term_id, $condition_policy ) ) );
 			$options = is_wp_error( $terms ) ? array() : array_map( static function( $term ) use ( $is_tech_condition ) {
 				$name = $term->name;
 				if ( $is_tech_condition && 'used' === strtolower( trim( $name ) ) ) { $name = 'Pre-owned'; }
@@ -78,15 +88,15 @@ final class KREV_ListLab_Attributes {
 					if ( 'used' === strtolower( trim( $term->name ) ) ) { $default_value = (string) $term->term_id; break; }
 				}
 			}
-			$fields[] = array( 'slug' => $slug, 'taxonomy' => $taxonomy, 'label' => $label, 'field_type' => 'msrp' === $slug ? 'decimal' : 'select', 'default_value' => $default_value, 'required' => (bool) $required, 'allow_new_value' => true, 'options' => $options );
+			$fields[] = array( 'slug' => $slug, 'taxonomy' => $taxonomy, 'label' => $label, 'field_type' => 'msrp' === $slug ? 'decimal' : 'select', 'default_value' => $default_value, 'required' => (bool) $required, 'allow_new_value' => 'condition' !== $slug, 'condition_policy' => 'condition' === $slug ? $condition_policy : null, 'options' => $options );
 		}
 		return $fields;
 	}
 
-	public static function save( WC_Product $product, $category_id, array $submitted ) {
-		$validation = self::validate( $category_id, $submitted );
+	public static function save( WC_Product $product, $category_id, array $submitted, $meta_id = 0 ) {
+		$validation = self::validate( $category_id, $submitted, false, $meta_id );
 		if ( is_wp_error( $validation ) ) { return $validation; }
-		$schema = self::schema( $category_id ); $allowed = array_column( $schema, 'taxonomy' ); $attributes = $product->get_attributes();
+		$schema = self::schema( $category_id, $meta_id ); $allowed = array_column( $schema, 'taxonomy' ); $attributes = $product->get_attributes();
 		foreach ( $schema as $field ) {
 			$taxonomy = $field['taxonomy']; $values = array_map( 'sanitize_text_field', (array) ( $submitted[ $taxonomy ] ?? array() ) ); $values = array_values( array_filter( $values, static fn( $value ) => '' !== $value ) ); $ids = array();
 			if ( 'pa_msrp' === $taxonomy && $values ) {
@@ -99,6 +109,7 @@ final class KREV_ListLab_Attributes {
 			foreach ( $values as $value ) {
 				$is_custom = str_starts_with( (string) $value, self::CUSTOM_VALUE_PREFIX );
 				$value     = trim( $is_custom ? substr( (string) $value, strlen( self::CUSTOM_VALUE_PREFIX ) ) : (string) $value );
+                if ( 'pa_condition' === $taxonomy && 'pre-owned' === strtolower( $value ) ) $value = 'Used';
 				if ( '' === $value ) { continue; }
 				$term = ! $is_custom && 'pa_msrp' !== $taxonomy && ctype_digit( $value )
 					? get_term( (int) $value, $taxonomy )

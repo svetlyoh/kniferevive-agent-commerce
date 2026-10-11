@@ -43,7 +43,9 @@ existing listing, update its photos in place; never create another product.
    Read [Google feed preparation](google-feed.md). Collect supported required
    and relevant feed facts before creating the handoff. If condition is stated,
    preserve it. Only when it is absent, use **Gently Used** for knives and
-   **Used** for other categories, per the owner's rule. Include “Condition:
+   **Used** for other categories only if allowed by the scoped condition field.
+   Otherwise leave condition blank for seller completion; never infer New for
+   consumables. Include “Condition:
    Gently Used (seller default; Facebook did not specify)” or the corresponding
    Used line in both matching descriptions and identify that default in the
    private handoff. This is a seller default, not a verified source fact.
@@ -58,7 +60,7 @@ existing listing, update its photos in place; never create another product.
    Fetch `GET https://kniferevive.com/wp-json/kniferevive-listlab-import/v1/schema`.
    If unavailable, say Marketplace Imports needs activation and provide the
    native ListLab page; do not call imagined routes. Choose an actual category
-   ID matching the item, then fetch `/schema?category_id=<id>` for its native
+   ID matching the item, then fetch `/schema?category_id=<subcategory-or-category-id>&metacategory_id=<collection-id-or-0>` for its native
    attributes. Use taxonomy keys and existing option IDs or supported text
    values, not guessed taxonomy names. Preserve unmatched factual specifications
    in the description. “Used - like new” is still used; do not manufacture
@@ -74,7 +76,8 @@ existing listing, update its photos in place; never create another product.
    Populate the structured condition attribute (currently `pa_condition`) using
    the selected category's actual option ID or supported text. A condition line
    in the description alone does not set this field. For a source without a
-   condition, select Gently Used for a knife category or Used otherwise. Do not
+   condition, select Gently Used for a knife category or Used otherwise only when
+   that option is available. Do not create a custom condition to bypass the choices. Do not
    replace explicit New, Open Box, Like New or damaged/parts-only condition with
    that fallback. If no condition field is supported, flag the missing merchant
    field for first-party completion rather than claiming feed readiness.

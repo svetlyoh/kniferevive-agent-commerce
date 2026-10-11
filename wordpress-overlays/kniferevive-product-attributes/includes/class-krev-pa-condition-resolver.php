@@ -119,7 +119,7 @@ final class KREV_PA_Condition_Resolver {
 				$review   = null === $merchant;
 				$reason   = $review ? 'Refurbished is selected but required evidence is incomplete.' : 'Resolved from the explicit Merchant condition.';
 			} else {
-				if ( preg_match( '/\b(open[ -]?box|like[ -]?new|used|pre[- ]owned|excellent|good|fair|parts|repair|gently|moderately|heavily)\b/', $normalized_grade ) ) {
+				if ( preg_match( '/\b(open[ -]?box|like[ -]?new|used|pre[- ]owned|excellent|good|fair|parts|repair|gently|moderately|heavily|circulated|uncirculated)\b/', $normalized_grade ) ) {
 					$merchant = $is_tech && $qualified ? 'refurbished' : 'used';
 					$reason   = $is_tech && $qualified ? 'Used tech item has complete refurbishment evidence.' : 'Resolved from the cosmetic/base condition.';
 				} elseif ( $is_explicit_new ) {

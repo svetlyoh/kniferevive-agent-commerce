@@ -100,7 +100,7 @@ final class KREV_PA_Setup {
 		// merchant's existing condition vocabulary.
 		$condition_taxonomy = wc_attribute_taxonomy_name( 'condition' );
 		if ( taxonomy_exists( $condition_taxonomy ) ) {
-			foreach ( array( 'New', 'Used', 'Refurbished', 'Open Box' ) as $name ) {
+			foreach ( array_unique( array_merge( ...array_values( KREV_PA_Condition_Options::profiles() ) ) ) as $name ) {
 				if ( ! term_exists( $name, $condition_taxonomy ) ) {
 					$created = wp_insert_term( $name, $condition_taxonomy );
 					if ( is_wp_error( $created ) ) { $result['errors'][] = sprintf( 'Condition %s: %s', $name, $created->get_error_message() ); }

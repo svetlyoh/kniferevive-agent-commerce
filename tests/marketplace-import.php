@@ -4,8 +4,8 @@ ob_start(); set_exception_handler( static function( Throwable $e ) { fwrite( STD
 require __DIR__ . '/sandbox-bootstrap.php';
 if ( DB_NAME !== 'krev_agent_sandbox' || DB_HOST !== KREV_TEST_DB_HOST || $wpdb->prefix !== 'krev_sandbox_' ) throw new RuntimeException( 'Sandbox fence failed.' );
 require_once ABSPATH . 'wp-content/plugins/kniferevive-listlab/kniferevive-listlab.php';
-require_once ABSPATH . 'wp-content/plugins/kniferevive-product-attributes/includes/class-krev-pa-config.php';
-require_once ABSPATH . 'wp-content/plugins/kniferevive-product-attributes/includes/class-krev-pa-condition-resolver.php';
+require_once ABSPATH . 'wp-content/plugins/kniferevive-product-attributes/kniferevive-product-attributes.php';
+KREV_PA_Setup::ensure_schema();
 require_once dirname( __DIR__ ) . '/wordpress/kniferevive-listlab-import/kniferevive-listlab-import.php';
 KREV_Marketplace_Imports::boot();
 add_action( 'rest_api_init', static function() { ( new KREV_ListLab_REST() )->register(); } );
@@ -164,8 +164,20 @@ foreach ( array( 'condition', 'processor' ) as $slug ) {
     if ( ! $attribute_id ) wc_create_attribute( array( 'name' => $slug, 'slug' => $slug, 'type' => 'select' ) );
     if ( ! taxonomy_exists( 'pa_' . $slug ) ) register_taxonomy( 'pa_' . $slug, 'product' );
 }
-$attribute_payload = $payload; $attribute_payload['source_url'] = 'https://www.facebook.com/marketplace/item/999999997/'; $attribute_payload['category_id'] = $technology->term_id; $attribute_payload['attributes'] = array( 'pa_condition' => array( 'Used' ), 'pa_processor' => array( 'Intel Core i5' ) );
-wp_set_current_user( 0 ); $attribute_prepared = importCall( 'prepare', $attribute_payload ); checkImport( $attribute_prepared->get_status() === 201, 'native category attribute payload accepted' );
+$desktop = null;
+foreach ( get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'parent' => $technology->term_id ) ) as $candidate ) {
+    if ( ( KREV_PA_Tech_Categories::mapping( $candidate->term_id )['id'] ?? '' ) === '325' ) { $desktop = $candidate; break; }
+}
+checkImport( (bool) $desktop, 'desktop subtype fixture exists for processor specification' );
+$attribute_payload = $payload; $attribute_payload['source_url'] = 'https://www.facebook.com/marketplace/item/999999997/'; $attribute_payload['category_id'] = $technology->term_id; $attribute_payload['subcategory_id'] = $desktop->term_id; $attribute_payload['attributes'] = array( 'pa_condition' => array( 'Used' ), 'pa_processor' => array( 'Intel Core i5' ) );
+wp_set_current_user( 0 );
+$invalid_condition_payload = $attribute_payload; $invalid_condition_payload['attributes']['pa_condition'] = array( 'Circulated' );
+importError( importCall( 'prepare', $invalid_condition_payload ), 'listlab_condition_choice' );
+$phone_meta = get_term_by( 'slug', 'cell-phone-accessories', 'product_cat' );
+$meta_schema = importCall( 'schema', array( 'category_id' => $technology->term_id, 'metacategory_id' => $phone_meta->term_id ), 'GET' );
+$meta_condition = array_values( array_filter( $meta_schema->get_data()['attributes'], static fn( $field ) => 'pa_condition' === $field['taxonomy'] ) )[0];
+checkImport( $meta_condition['condition_policy']['source'] === 'metacategory' && ! in_array( 'Refurbished', array_column( $meta_condition['options'], 'name' ), true ), 'public extraction schema respects selected metacategory condition policy' );
+$attribute_prepared = importCall( 'prepare', $attribute_payload ); checkImport( $attribute_prepared->get_status() === 201, 'native category attribute payload accepted' );
 $attribute_token = importToken( $attribute_prepared ); wp_set_current_user( $seller );
 $attribute_claim = importCall( 'claim', array( 'token' => $attribute_token, 'expected_price' => '30.00', 'authorized_to_list' => true ) ); checkImport( $attribute_claim->get_status() === 201, 'native condition/specification draft created' );
 $attribute_product = wc_get_product( $attribute_claim->get_data()['listing']['id'] );

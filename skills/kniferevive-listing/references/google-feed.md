@@ -24,7 +24,9 @@ Collect as much of the following as the listing actually provides:
   mean the manufacturer never assigned one; do not set identifier-exists false
   merely because Facebook omitted identifiers.
 - Structured condition, matching the source when present. When absent, apply
-  the owner's rule: **Gently Used** for knives, **Used** for all other categories.
+  the owner's rule: **Gently Used** for knives, **Used** for other goods only when
+  allowed by the selected subcategory/collection/category condition field. Otherwise
+  leave it blank for seller completion; never assume New for consumables.
   State that it was defaulted, in both descriptions and the private handoff.
   Map it to the real category condition option; both defaults become Google
   `used`. Do not send a descriptive grade as a Google condition enum, infer

@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.6"
+  version: "1.0.7"
 ---
 
 # KnifeRevive Listing
@@ -48,10 +48,15 @@ facts and any genuine SKU, manufacturer part/model code, or barcode. Keep unknow
 fields blank. Use the separate `metacategory_id` for AI-Tech or Pokémon Cards;
 retain the actual Google subcategory for the feed. Pokémon cards normally use
 Google **6997, Collectible Trading Cards**, not a made-up Pokémon taxonomy ID.
-If Facebook omits condition, use the owner's default **Gently Used** for knives
-and **Used** for every other category, in the category's structured condition
-field. Label it as a seller default in the description and handoff. Both map to
-Google's canonical `used`; do not send `gently used` as a Google enum.
+Fetch the condition field for the selected Google subcategory and optional
+`metacategory_id`; its allowed choices follow subcategory → collection → category.
+Preserve the source condition using an equivalent allowed option, retaining its
+exact wording in the description. If no equivalent exists, flag it for seller
+completion. Condition does not allow custom values. When the source omits it,
+use Gently Used for knives or Used for other goods only if that option is allowed;
+label the seller default in both descriptions and the handoff. Otherwise leave
+condition blank for the seller; never infer New for food or consumables.
+Google receives only new, used or qualified refurbished, not descriptive grades.
 
 For missing shipping package fields, use the merchant's defaults: **15 oz**
 and **1 × 6 × 4 inches (length × width × height)**. Marketplace Imports 1.0.2

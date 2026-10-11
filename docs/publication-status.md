@@ -1,4 +1,16 @@
-## Collections and specification profiles live; Listing 1.0.6
+## Category-dependent conditions live; Listing 1.0.7
+
+October 11 follow-up: Product Attributes 0.3.10, ListLab 1.8.6 and Marketplace
+Imports 1.0.7 were updated in place. Item Condition follows subcategory,
+then compatible metacategory, then category. Context changes refresh choices,
+preserve valid selections and clear invalid ones. Restricted choices are also
+validated before draft writes and import preparation. Validation passed 175
+native, 111 import and 16 ListLab DOM checks, plus 11 live schema cases.
+Listing skill 1.0.7 is available at GitHub tag `kniferevive-listing-v1.0.7`;
+Muse installation/reload is still host-side. See
+[condition profiles and release evidence](category-condition-options-2026-10-11.md).
+
+## Collections and specification profiles baseline; Listing 1.0.6
 
 Tech presentation now uses one canonical `assets/css/tech-theme.css` and a
 shared route predicate for products, pages, native descendants and collection

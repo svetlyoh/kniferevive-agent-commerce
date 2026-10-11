@@ -1,5 +1,5 @@
 {
-  "version": "1.0.6",
+  "version": "1.0.7",
   "files": [
     {
       "file": "assets/review.css",
@@ -11,7 +11,7 @@
     },
     {
       "file": "includes/class-imports.php",
-      "sha256": "1b0557e2f7fcc062b9d2ada808520c04e843f134f121fb1ecf3903e761dab883"
+      "sha256": "2128599ab6de8c34e8822f04972223e68a6a4ce23a5c745b9a6c5c81a0f7f86d"
     },
     {
       "file": "includes/class-package-defaults.php",
@@ -27,7 +27,7 @@
     },
     {
       "file": "kniferevive-listlab-import.php",
-      "sha256": "2f8e4842407801ad74dbc547f35683374ed78d7065ede0c9cddb7e0175ce472e"
+      "sha256": "dc37197dac34245abdfca831718307b9f33a583eba02d643be7d70f5118efc7a"
     },
     {
       "file": "LICENSE",

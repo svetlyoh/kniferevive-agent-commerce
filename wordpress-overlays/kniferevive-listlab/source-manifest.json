@@ -1,5 +1,5 @@
 {
-  "version": "1.8.5",
+  "version": "1.8.6",
   "files": [
     {
       "file": "assets/css/account-profile.css",
@@ -27,7 +27,7 @@
     },
     {
       "file": "assets/js/listlab.js",
-      "sha256": "11af8f01c4a34843389bbe7b34fd08b61f980d609d88d39e7a8cacda36259765"
+      "sha256": "b94570539e06476e49a409fdbf2167684c4ff0ae34093043856dc45c312e50d0"
     },
     {
       "file": "assets/js/timed-offers.js",
@@ -43,7 +43,7 @@
     },
     {
       "file": "includes/class-krev-listlab-attributes.php",
-      "sha256": "8bf457d8559b826ae63ab38dc54d97c9efb732ff2a94b80bf638e4534b8f51e3"
+      "sha256": "c637b042e3a882a20767d76cca9aa5a0b4cd8c75e83ec479a8cdafade9ee6459"
     },
     {
       "file": "includes/class-krev-listlab-categories.php",
@@ -75,11 +75,11 @@
     },
     {
       "file": "includes/class-krev-listlab-product-writer.php",
-      "sha256": "0ed24646870cc59b7e6f18c26b6e4ab93cd5e449147d6e5378172ee43cfaf14b"
+      "sha256": "bbdc9489300a44f6a5c906cc6a347077c4674f9ddd17567b80622b880e23934b"
     },
     {
       "file": "includes/class-krev-listlab-rest.php",
-      "sha256": "8286c8610d89551e17b696690bdd342f28dbdafd53d5f1476c489b024889796f"
+      "sha256": "2227aa12eae8977c74f9e8b49684d96ba64f3509e504fb72c98ac513cdc4c35e"
     },
     {
       "file": "includes/class-krev-listlab-timed-offers.php",
@@ -99,7 +99,7 @@
     },
     {
       "file": "kniferevive-listlab.php",
-      "sha256": "0465af9081b48d817ffe96af6208e49672b0f906f058087620c24131c1dc0923"
+      "sha256": "3bac6b612f9b64925fc3ef2aac91cc49413b408c48e23ba2ebaef470f91d4393"
     },
     {
       "file": "templates/listlab.php",

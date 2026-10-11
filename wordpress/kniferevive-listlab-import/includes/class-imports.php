@@ -96,13 +96,15 @@ final class KREV_Marketplace_Imports {
         foreach ( array( 'weight', 'length', 'width', 'height' ) as $field ) if ( ! empty( $listing[ $field ] ) && ! preg_match( '/^\d+(?:\.\d{1,4})?$/D', (string) $listing[ $field ] ) ) return self::fail( 'import_decimal', $field . ' must be a non-negative number in the store units.' );
         $listing = KREV_Import_Package_Defaults::fill( $listing );
         $attrs = $listing['attributes'] ?? array();
-        $schema = KREV_ListLab_Attributes::schema( $effective_category );
+        $schema = KREV_ListLab_Attributes::schema( $effective_category, $meta );
         $allowed = array_column( $schema, 'taxonomy' );
         foreach ( $attrs as $taxonomy => $values ) {
             if ( ! in_array( $taxonomy, $allowed, true ) || ! is_array( $values ) || count( $values ) > 20 ) return self::fail( 'import_attributes', 'Use the selected category’s native attribute schema.' );
             foreach ( $values as $value ) if ( ! is_scalar( $value ) || is_bool( $value ) || strlen( (string) $value ) > 200 ) return self::fail( 'import_attributes', 'Attribute values must be short text or existing term IDs.' );
             $listing['attributes'][ $taxonomy ] = array_map( 'sanitize_text_field', $values );
         }
+        $condition_validation = KREV_ListLab_Attributes::validate( $effective_category, $listing['attributes'] ?? array(), false, $meta );
+        if ( is_wp_error( $condition_validation ) ) return $condition_validation;
         $urls = $data['image_urls'] ?? array();
         if ( ! is_array( $urls ) || count( $urls ) > 10 || count( $listing['gallery_ids'] ?? array() ) > 9 ) return self::fail( 'import_images', 'Use at most 10 images.' );
         $images = array();
@@ -145,7 +147,7 @@ final class KREV_Marketplace_Imports {
     public static function status( WP_REST_Request $request ) {
         $found = self::record( $request ); if ( is_wp_error( $found ) ) return $found;
         $record = $found[1]; $listing = $record['data']['listing'];
-        $schema_request = new WP_REST_Request( 'GET' ); $schema_request->set_param( 'category_id', self::effective_category( $listing ) );
+        $schema_request = new WP_REST_Request( 'GET' ); $schema_request->set_param( 'category_id', self::effective_category( $listing ) ); $schema_request->set_param( 'metacategory_id', absint( $listing['metacategory_id'] ?? 0 ) );
         $schema = ( new KREV_ListLab_REST() )->schema( $schema_request );
         return self::response( array( 'state' => $record['product_id'] ? 'draft_created' : 'prepared', 'data' => $record['data'], 'price' => KREV_Import_Pricing::quote( $record['data']['source_price'], self::effective_category( $listing ) ), 'schema' => $schema, 'seller_ready' => self::seller_permission(), 'expires_at' => gmdate( 'c', $record['expires'] ), 'listing' => $record['product_id'] ? self::owned_dto( $record['product_id'] ) : null, 'warnings' => $record['warnings'] ?? array(), 'photo_counts' => $record['photo_counts'] ?? KREV_Import_Photo_Manifest::counts( $record['data'] ) ) );
     }
@@ -162,7 +164,7 @@ final class KREV_Marketplace_Imports {
     public static function preview( WP_REST_Request $request ) {
         $found = self::record( $request ); if ( is_wp_error( $found ) ) return $found;
         $data = self::changed_data( $request, $found[1] ); if ( is_wp_error( $data ) ) return $data;
-        $s = new WP_REST_Request( 'GET' ); $s->set_param( 'category_id', self::effective_category( $data['listing'] ) );
+        $s = new WP_REST_Request( 'GET' ); $s->set_param( 'category_id', self::effective_category( $data['listing'] ) ); $s->set_param( 'metacategory_id', absint( $data['listing']['metacategory_id'] ?? 0 ) );
         return self::response( array( 'data' => $data, 'price' => KREV_Import_Pricing::quote( $data['source_price'], self::effective_category( $data['listing'] ) ), 'schema' => ( new KREV_ListLab_REST() )->schema( $s ) ) );
     }
 

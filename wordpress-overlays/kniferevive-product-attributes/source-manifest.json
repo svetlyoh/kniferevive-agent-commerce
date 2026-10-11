@@ -1,5 +1,5 @@
 {
-  "version": "0.3.9",
+  "version": "0.3.10",
   "files": [
     {
       "file": "assets/admin-product-attributes.js",
@@ -34,8 +34,12 @@
       "sha256": "ea3a8e24e6aefdb896215c83e9431a4b3ebe5a2ee8a0c11abf7579d84dd01bcd"
     },
     {
+      "file": "includes/class-krev-pa-condition-options.php",
+      "sha256": "b023334cc7fd318c6423dbef1875a505b7e67e4b43ed1262d47a7f644b80cef3"
+    },
+    {
       "file": "includes/class-krev-pa-condition-resolver.php",
-      "sha256": "6fdbde9c94f1b6cf8d19330e2e29137761cc038e54fc6f1dda5ae6e4b68c16a6"
+      "sha256": "13bf25d07582aa9c0a197bd8fbc301e14e80dee813dc7070d0781f2c986a9451"
     },
     {
       "file": "includes/class-krev-pa-config.php",
@@ -55,7 +59,7 @@
     },
     {
       "file": "includes/class-krev-pa-setup.php",
-      "sha256": "ef6024f4c76aba5f7c6c624e5f66196c515d21bba0fffc06304e1f9cb8a8a6f5"
+      "sha256": "c36ac0dbb968b8eefb9c8b300de7b2f7c69e6ab9f2bda97b8b683887160ffb88"
     },
     {
       "file": "includes/class-krev-pa-specifications.php",
@@ -67,7 +71,7 @@
     },
     {
       "file": "kniferevive-product-attributes.php",
-      "sha256": "aaf9266e3175e2cf067d0843c5ae4f0160e50131b8116ce79232756e8fa0c012"
+      "sha256": "2eda8a779a315753adec5150d73b6e5899b3ad48636d9862963c4a07bc34b0eb"
     },
     {
       "file": "tests/run-condition-policy.php",

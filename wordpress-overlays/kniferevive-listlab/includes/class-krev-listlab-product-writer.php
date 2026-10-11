@@ -16,6 +16,10 @@ final class KREV_ListLab_Product_Writer {
 		}
 
 		$clean = self::clean( $data );
+        if ( ! $clean['metacategory_provided'] && class_exists( 'KREV_PA_Metacategories' ) ) {
+            $retained_meta = KREV_PA_Metacategories::selected( $product->get_category_ids() );
+            if ( KREV_PA_Metacategories::valid( $clean['category_id'], $retained_meta ) ) $clean['metacategory_id'] = $retained_meta;
+        }
 		$errors = self::validate( $clean, ! empty( $data['publish'] ) );
 		if ( $errors ) return new WP_Error( 'listlab_validation', 'Please correct the highlighted fields.', array( 'status' => 422, 'errors' => $errors ) );
 		$gtin = self::normalize_gtin( $clean['global_unique_id'] );
@@ -85,7 +89,7 @@ final class KREV_ListLab_Product_Writer {
 		}
 
 		$product = wc_get_product( $id );
-		$attribute_save = KREV_ListLab_Attributes::save( $product, $clean['effective_category_id'], $clean['attributes'] );
+		$attribute_save = KREV_ListLab_Attributes::save( $product, $clean['effective_category_id'], $clean['attributes'], $clean['metacategory_id'] );
 		if ( is_wp_error( $attribute_save ) ) return $attribute_save;
 		if ( taxonomy_exists( 'kr_return_policy' ) ) wp_set_object_terms( $id, $clean['return_policy_id'] ? array( $clean['return_policy_id'] ) : array(), 'kr_return_policy', false );
 		if ( class_exists( 'KREV_PA_Condition_Resolver' ) ) {
@@ -139,8 +143,8 @@ final class KREV_ListLab_Product_Writer {
 		foreach ( array_merge( array( $d['featured_image_id'] ), $d['gallery_ids'] ) as $id ) if ( $id && ! KREV_ListLab_Image_Handler::authorized_image( $id ) ) $e['images'] = 'An image is invalid or not authorized for your account.';
 		if ( count( array_unique( array_filter( array_merge( array( $d['featured_image_id'] ), $d['gallery_ids'] ) ) ) ) > 10 ) $e['images'] = 'A maximum of 10 images is allowed.';
 		if ( is_wp_error( self::normalize_gtin( $d['global_unique_id'] ) ) ) $e['global_unique_id'] = 'Enter a valid 8, 12, 13, or 14 digit GTIN, or leave this optional field blank.';
-		if ( $publishing ) {
-			$attribute_validation = KREV_ListLab_Attributes::validate( $d['effective_category_id'], $d['attributes'], true );
+		{
+			$attribute_validation = KREV_ListLab_Attributes::validate( $d['effective_category_id'], $d['attributes'], $publishing, $d['metacategory_id'] );
 			if ( is_wp_error( $attribute_validation ) ) $e = array_merge( $e, (array) ( $attribute_validation->get_error_data()['errors'] ?? array() ) );
 		}
 		return $e;

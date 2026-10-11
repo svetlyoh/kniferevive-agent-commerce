@@ -183,14 +183,14 @@
     const selectedValue = String(selected || '').startsWith(customAttributePrefix)
       ? String(selected).slice(customAttributePrefix.length)
       : selected;
-    const customSelected = isAttribute && selectedValue && !options.some(value => String(value.id) === String(selectedValue));
+    const customSelected = isAttribute && !attrs.includes('data-restricted') && selectedValue && !options.some(value => String(value.id) === String(selectedValue));
     const customData = customSelected ? ` data-custom-value="${esc(selectedValue)}"` : '';
-    return `<select ${attrs}${customData}><option value="">Select an option</option>${options.map(value => `<option value="${value.id}" ${String(value.id) === String(selectedValue) ? 'selected' : ''}>${esc(value.name)}</option>`).join('')}${customSelected ? `<option value="${esc(selectedValue)}" selected>${esc(selectedValue)} (custom)</option>` : ''}${isAttribute ? '<option value="__custom__">+ Add a custom value…</option>' : ''}</select>`;
+    return `<select ${attrs}${customData}><option value="">Select an option</option>${options.map(value => `<option value="${value.id}" ${String(value.id) === String(selectedValue) ? 'selected' : ''}>${esc(value.name)}</option>`).join('')}${customSelected ? `<option value="${esc(selectedValue)}" selected>${esc(selectedValue)} (custom)</option>` : ''}${isAttribute && !attrs.includes('data-restricted') ? '<option value="__custom__">+ Add a custom value…</option>' : ''}</select>`;
   };
   const base = { id: 0, title: '', subtitle: '', description: '', short_description: '', regular_price: '', sale_price: '', timed_offer: { enabled: false, state: 'none', starts_at: null, ends_at: null, timezone: '' }, whatnot_demo: { enabled: false, url: '', date: '', time: '', timezone: '', state: 'none' }, quantity: 1, sku: '', global_unique_id: '', categories: [], attributes: {}, sharpened: false, condition_resolution: null, refurbishment_evidence: { restoration_confirmed: false, like_new_confirmed: false, warranty_terms: '', needs_review: false }, featured_image: null, gallery: [], shipping_policy: 0, return_policy: 0, weight: '', dimensions: { length: '', width: '', height: '' } };
   const barcodeScanner = { active: false, stream: null, timer: 0, controls: null, reader: null, focus: null, detecting: false };
   const barcodeFormats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'itf'];
-  async function schema(category) { state.schema = await api(`listings/schema?category_id=${Number(category) || 0}`); }
+  async function schema(category, meta = Number(state.listing?.metacategory_id) || 0) { state.schema = await api(`listings/schema?category_id=${Number(category) || 0}&metacategory_id=${meta}`); }
 
   function imageTile(item, index) {
     const name = `${state.listing.title || 'Listing'} ${index === 0 ? 'cover photo' : `photo ${index + 1}`}`;
@@ -321,8 +321,8 @@
 
   function specificationField(attribute, product) {
 	let selected = (product.attributes[attribute.taxonomy] || [])[0] || '';
-	if (!selected && attribute.default_value) {
-	  const defaultOption = (attribute.options || []).find(item => String(item.name).toLowerCase() === String(attribute.default_value).toLowerCase());
+	if (!selected && attribute.default_value && !product.conditionNeedsSelection) {
+	  const defaultOption = (attribute.options || []).find(item => String(item.id) === String(attribute.default_value) || String(item.name).toLowerCase() === String(attribute.default_value).toLowerCase());
 	  selected = defaultOption ? defaultOption.id : '';
 	}
 	if (attribute.taxonomy === 'product_brand') {
@@ -335,9 +335,17 @@
     if (attribute.field_type === 'decimal' || attribute.taxonomy === 'pa_msrp') {
       const option = (attribute.options || []).find(item => String(item.id) === String(selected));
       const value = option ? option.name : selected;
-      return `<label data-field-wrap="${esc(attribute.taxonomy)}">${esc(attribute.label)} <small>Optional</small><input data-attribute="${esc(attribute.taxonomy)}" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(value)}" placeholder="0.00"></label>`;
+      if (attribute.taxonomy === 'pa_condition') {
+      const option = attribute.options.find(item => String(item.id) === String(selected) || String(item.name).toLowerCase() === String(selected).toLowerCase());
+      selected = option ? option.id : '';
     }
-    return `<label data-field-wrap="${esc(attribute.taxonomy)}">${esc(attribute.label)}${attribute.required ? ' <span class="ll-required" aria-hidden="true">*</span><span class="screen-reader-text"> required</span>' : ''}${select(attribute.options, selected, `data-attribute="${esc(attribute.taxonomy)}" ${attribute.required ? 'required aria-required="true"' : ''}`)}</label>`;
+    return `<label data-field-wrap="${esc(attribute.taxonomy)}">${esc(attribute.label)} <small>Optional</small><input data-attribute="${esc(attribute.taxonomy)}" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(value)}" placeholder="0.00"></label>`;
+    }
+    if (attribute.taxonomy === 'pa_condition') {
+      const option = attribute.options.find(item => String(item.id) === String(selected) || String(item.name).toLowerCase() === String(selected).toLowerCase());
+      selected = option ? option.id : '';
+    }
+    return `<label data-field-wrap="${esc(attribute.taxonomy)}">${esc(attribute.label)}${attribute.required ? ' <span class="ll-required" aria-hidden="true">*</span><span class="screen-reader-text"> required</span>' : ''}${select(attribute.options, selected, `data-attribute="${esc(attribute.taxonomy)}" ${attribute.allow_new_value === false ? 'data-restricted="true"' : ''} ${attribute.required ? 'required aria-required="true"' : ''}`)}</label>`;
   }
 
   function refurbishmentEvidence(product, lead, summary = 'Google-qualified refurbished evidence') {
@@ -346,8 +354,9 @@
   }
 
   function conditionControls(product) {
-    if (!state.schema.is_knife && !state.schema.is_tech) return '';
-    if (state.schema.is_tech) return `<div class="ll-condition-controls wide" data-field-wrap="refurbishment_evidence"><p class="ll-classification-preview"><strong>Tech feed condition:</strong> Pre-owned is sent to Google as Used unless the complete evidence below confirms this item is genuinely refurbished.</p>${refurbishmentEvidence(product, 'Complete this only when this pre-owned tech item was professionally restored, looks like new, and has customer-visible warranty coverage.')}</div>`;
+    const allowsRefurbished = state.schema.attributes.some(attribute => attribute.taxonomy === 'pa_condition' && attribute.options.some(option => option.name === 'Refurbished'));
+    if (!state.schema.is_knife && !allowsRefurbished) return '';
+    if (!state.schema.is_knife) return `<div class="ll-condition-controls wide" data-field-wrap="refurbishment_evidence"><p class="ll-classification-preview"><strong>Google feed condition:</strong> Used and pre-owned items need complete restoration, like-new appearance, and warranty evidence to qualify as refurbished.</p>${refurbishmentEvidence(product, 'Complete this only when this item was professionally restored, looks like new, and has customer-visible warranty coverage.')}</div>`;
     const classification = product.sharpened ? 'Refurbished' : (product.condition_resolution?.classification_label || 'Based on actual condition');
     return `<div class="ll-condition-controls wide" data-field-wrap="sharpened"><label class="ll-checkbox"><input data-sharpened type="checkbox" ${product.sharpened ? 'checked' : ''}><span><strong>Sharpened</strong><small>Check if this knife has been sharpened. Adds the Sharp badge and places it under Refurbished on KnifeRevive.</small></span></label><p class="ll-classification-preview"><strong>KnifeRevive classification:</strong> <span data-classification-preview>${esc(classification)}</span></p>${refurbishmentEvidence(product, 'For a sharpened knife with an Item Condition other than New, Google receives Refurbished. Complete these details when supporting a Refurbished condition without checking Sharpened.', 'Additional refurbishment evidence')}</div>`;
   }
@@ -506,7 +515,11 @@
 
   function requiredProgress() {
     const requiredAttributes = state.schema.attributes.filter(attribute => attribute.required);
-    const completeAttributes = requiredAttributes.map(attribute => state.listing.attributes[attribute.taxonomy]?.[0] || attribute.default_value);
+    const completeAttributes = requiredAttributes.map(attribute => {
+      const value = state.listing.attributes[attribute.taxonomy]?.[0] || (!state.listing.conditionNeedsSelection ? attribute.default_value : '');
+      if (attribute.taxonomy !== 'pa_condition') return value;
+      return attribute.options.some(option => String(option.id) === String(value) || option.name.toLowerCase() === String(value).toLowerCase()) ? value : '';
+    });
     return {
       completed: [state.listing.title.trim(), state.images.length, state.listing.description.trim(), state.listing.categories[0], state.listing.quantity !== '' && state.listing.quantity !== null, state.listing.shipping_policy, ...completeAttributes].filter(Boolean).length,
       total: 6 + requiredAttributes.length
@@ -582,7 +595,7 @@
 
   function syncField(field) {
     const key = field.dataset.field;
-    if (key === 'category_id' || key === 'subcategory_id') return;
+    if (key === 'category_id' || key === 'subcategory_id' || key === 'metacategory_id') return;
     if (['length', 'width', 'height'].includes(key)) state.listing.dimensions[key] = field.value;
     else if (key === 'shipping_policy_id') state.listing.shipping_policy = Number(field.value) || 0;
     else if (key === 'return_policy_id') state.listing.return_policy = Number(field.value) || 0;
@@ -678,7 +691,7 @@
     const subcategory = form.querySelector('[data-field="subcategory_id"]');
     if (subcategory) subcategory.onchange = () => changeCategory(subcategory);
     const collection = form.querySelector('[data-field="metacategory_id"]');
-    if (collection) collection.onchange = () => { state.listing.metacategory_id = Number(collection.value) || 0; state.dirty = true; scheduleDraftSave(); };
+    if (collection) collection.onchange = () => changeCategory(collection);
     setupSearchableSelects();
     const gtin = form.querySelector('[data-global-unique-id]');
     if (gtin) {
@@ -820,15 +833,17 @@
     const previousCategory = state.listing.categories[0] || 0, previousSelection = categorySelection(), previousSchema = state.schema;
     const previousMeta = Number(state.listing.metacategory_id) || 0;
     const isSubcategory = field.dataset.field === 'subcategory_id';
-    const parent = isSubcategory ? previousSelection.parent : Number(field.value) || 0;
-    const child = isSubcategory ? Number(field.value) || 0 : 0;
+    const isMeta = field.dataset.field === 'metacategory_id';
+    const parent = isSubcategory || isMeta ? previousSelection.parent : Number(field.value) || 0;
+    const child = isSubcategory ? Number(field.value) || 0 : (isMeta ? previousSelection.child : 0);
+    if (isMeta) state.listing.metacategory_id = Number(field.value) || 0;
     const nextCategory = child || parent;
     state.listing.category_id = parent; state.listing.subcategory_id = child;
     if (parent !== previousSelection.parent) state.listing.metacategory_id = 0;
     const previousAttributes = { ...state.listing.attributes };
     state.listing.categories = [parent, child].filter(Boolean);
     state.schemaLoading = true; state.dirty = true; scheduleDraftSave();
-    app.querySelectorAll('[data-field="category_id"], [data-field="subcategory_id"]').forEach(control => { control.disabled = true; });
+    app.querySelectorAll('[data-field="category_id"], [data-field="subcategory_id"], [data-field="metacategory_id"]').forEach(control => { control.disabled = true; });
     app.querySelectorAll('.ll-search-select input, .ll-search-toggle').forEach(control => { control.disabled = true; });
     const spec = app.querySelector('.ll-specifications');
     if (spec) { spec.classList.add('is-loading'); const grid = spec.querySelector('.ll-schema-fields'); if (grid) { grid.setAttribute('aria-busy', 'true'); grid.innerHTML = '<p class="ll-schema-loading"><span class="ll-spinner" aria-hidden="true"></span>Loading specifications…</p>'; } }
@@ -837,8 +852,12 @@
       const valid = {};
       state.schema.attributes.forEach(attribute => {
         const oldValue = previousAttributes[attribute.taxonomy]?.[0];
-        if (oldValue && (!/^\d+$/.test(String(oldValue)) || attribute.options.some(option => String(option.id) === String(oldValue)))) valid[attribute.taxonomy] = [oldValue];
+        if (attribute.taxonomy === 'pa_condition') {
+          const option = attribute.options.find(option => String(option.id) === String(oldValue) || option.name.toLowerCase() === String(oldValue).toLowerCase());
+          if (option) valid[attribute.taxonomy] = [String(option.id)];
+        } else if (oldValue && (!/^\d+$/.test(String(oldValue)) || attribute.options.some(option => String(option.id) === String(oldValue)))) valid[attribute.taxonomy] = [oldValue];
       });
+      state.listing.conditionNeedsSelection = Boolean(previousAttributes.pa_condition?.[0] && !valid.pa_condition);
       state.listing.attributes = valid; state.schemaLoading = false;
       if (Object.keys(previousAttributes).length > Object.keys(valid).length && previousCategory) showToast('Specifications not available in the new category were removed.');
       renderEditor();
@@ -974,7 +993,7 @@
       state.listing = { ...base, ...candidate.listing, dimensions: { ...base.dimensions, ...(candidate.listing.dimensions || {}) } };
       state.images = candidate.images || []; state.draftKey = candidate.key; state.restoreCandidate = null; state.dirty = true;
       state.video = candidate.video || null; state.videoUrl = candidate.videoUrl || ''; state.videoUpload = null;
-      await schema(state.listing.categories[0]); renderEditor(); showToast('Unsaved listing restored.');
+      await schema(state.listing.subcategory_id || state.listing.category_id || state.listing.categories[0]); renderEditor(); showToast('Unsaved listing restored.');
     };
     if (discard) discard.onclick = () => { const candidate = state.restoreCandidate; if (candidate?.key) { try { localStorage.removeItem(candidate.key); } catch (_) {} } state.restoreCandidate = null; app.querySelector('[data-recovery]')?.remove(); };
   }
