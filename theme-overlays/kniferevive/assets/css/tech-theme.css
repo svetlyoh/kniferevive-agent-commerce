@@ -1,0 +1,303 @@
+/* CANONICAL TECH THEME. All Tech pages, products, collections and descendants use kr-tech-theme. Layout components remain in their shared files. */
+body.kr-tech-theme .kr-drawer .kr-annex-drawer summary,
+body.kr-tech-theme .kr-drawer .kr-annex-drawer__label {
+  color: #fff;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 690;
+  letter-spacing: normal;
+  line-height: 1.3;
+  text-transform: none;
+}
+
+body.kr-tech-theme .kr-drawer .kr-annex-drawer summary:hover,
+body.kr-tech-theme .kr-drawer .kr-annex-drawer__label:hover {
+  color: #24bdcb;
+}
+
+body.kr-tech-theme .kr-drawer .kr-annex-drawer {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: #000;
+}
+
+body.kr-tech-theme .kr-drawer .kr-annex-drawer-links a {
+  border-top-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-drawer .kr-annex-drawer-links a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #24bdcb;
+}
+
+body.kr-tech-theme .kr-drawer .kr-annex-drawer .kr-new-badge {
+  background: #087985;
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-annex-menu summary,
+body.kr-tech-theme .kr-annex-menu__label {
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-annex-menu summary span {
+  color: #24bdcb;
+}
+
+body.kr-tech-theme .kr-annex-menu-panel {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: #000;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+}
+
+body.kr-tech-theme .kr-annex-menu-panel a {
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-annex-menu-panel a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #24bdcb;
+}
+
+body.kr-tech-theme .kr-annex-menu :is(a, summary):focus-visible,
+body.kr-tech-theme .kr-annex-menu-panel a:focus-visible {
+  outline-color: #24bdcb;
+}
+
+body.kr-tech-theme :is(
+  .kr-tech-theme-note,
+  .kr-lightning-badge,
+  .krev-timed-offer,
+  .kr-tech-disclosure,
+  .kr-whatnot-demo--card,
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) {
+  border-color: #f5ce42 !important;
+  background: #050505 !important;
+  color: #fff !important;
+}
+
+body.kr-tech-theme :is(
+  .kr-tech-theme-note,
+  .kr-lightning-message,
+  .krev-timed-offer,
+  .kr-tech-disclosure,
+  .kr-whatnot-demo--card,
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) :is(p, span, strong, small, b, li, label) {
+  color: #fff !important;
+}
+
+body.kr-tech-theme :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) a:not(.button) {
+  color: #f5ce42 !important;
+  text-decoration: underline;
+}
+
+body.kr-tech-theme :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) :is(.button, .wc-block-components-button) {
+  border-color: #f5ce42 !important;
+  background: #f5ce42 !important;
+  color: #111 !important;
+}
+
+body.kr-tech-theme :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error
+)::before {
+  color: #f5ce42 !important;
+}
+
+body.kr-tech-theme :is(
+  .woocommerce-info,
+  .woocommerce-message,
+  .woocommerce-error,
+  .wc-block-components-notice-banner
+) :is(a, button):focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* Technology uses a black navigation system. It is deliberately limited to
+   the Trade Desk, Technology listings, and the Dell brand archive. */
+body.kr-tech-theme .kr-header {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+  background: #000;
+  color: #fff;
+  backdrop-filter: none;
+}
+
+body.kr-tech-theme .kr-header :is(.kr-brand, .kr-header-link, .kr-icon-button, .kr-cart-link, .kr-account-link) {
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-header .kr-icon-button:hover {
+  border-color: rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+body.kr-tech-theme .kr-header .kr-search input[type="search"] {
+  border-color: rgba(255, 255, 255, 0.34);
+  background: #000;
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-header .kr-search input[type="search"]::placeholder {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+body.kr-tech-theme .kr-header .kr-search button,
+body.kr-tech-theme .kr-header-actions a.kr-sell-button {
+  border-color: #087985;
+  background: #087985;
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-header .kr-search button:hover,
+body.kr-tech-theme .kr-header-actions a.kr-sell-button:hover {
+  border-color: #087985;
+  background: #087985;
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-header .kr-cart-count {
+  background: #087985;
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-drawer {
+  border-right-color: rgba(255, 255, 255, 0.22);
+  background: #000;
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-drawer :is(.kr-drawer-header, .kr-drawer-quick-links, .kr-menu-item) {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+body.kr-tech-theme .kr-drawer :is(.kr-brand, .kr-menu-link, .kr-menu-row > span, .kr-submenu-toggle, .kr-drawer-quick-link) {
+  color: #fff;
+}
+
+body.kr-tech-theme .kr-drawer .kr-drawer-quick-link {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: #000;
+}
+
+body.kr-tech-theme .kr-drawer .kr-submenu .kr-menu-item {
+  border-bottom-color: rgba(255, 255, 255, 0.14);
+}
+
+body.kr-tech-theme .kr-drawer .kr-submenu-panel {
+  border-left-color: rgba(255, 255, 255, 0.24);
+}
+
+body.kr-tech-theme .kr-drawer .kr-submenu-view-all {
+  color: #24bdcb;
+}
+
+body.kr-tech-theme .kr-drawer :is(input, select) {
+  border-color: rgba(255, 255, 255, 0.34);
+  background: #000;
+  color: #fff;
+}
+
+.kr-tech-theme,
+.kr-tech-theme,
+.kr-tech-theme .wp-site-blocks,
+.kr-tech-theme .wp-site-blocks,
+.kr-tech-theme .wp-site-blocks main,
+.kr-tech-theme .wp-site-blocks main {
+  min-height: 100%;
+  background: #07111c !important;
+  color: #f5fbff;
+}
+
+.kr-tech-theme .wp-site-blocks main :is(h1, h2, h3, h4, h5, h6, p, li, dt, dd, label),
+.kr-tech-theme .wp-site-blocks main :is(h1, h2, h3, h4, h5, h6, p, li, dt, dd, label),
+.kr-tech-theme .wp-block-post-title,
+.kr-tech-theme .wp-block-post-title,
+.kr-tech-theme .wp-block-woocommerce-product-price,
+.kr-tech-theme .wp-block-woocommerce-product-price,
+.kr-tech-theme .kr-annex-product-brand,
+.kr-tech-theme .kr-annex-product-brand {
+  color: #f5fbff;
+}
+
+.kr-tech-theme .wp-site-blocks main a:not(.button),
+.kr-tech-theme .wp-site-blocks main a:not(.button) {
+  color: #f5fbff;
+}
+
+.kr-tech-theme :is(.wc-block-product, .woocommerce ul.products li.product) {
+  background: #0b1521;
+  color: #f5fbff;
+}
+
+/* Technology products and Dell's archive share the same dark panel and teal
+   action treatment used by the Technology Trade Desk. */
+body.kr-tech-theme form.cart .single_add_to_cart_button,
+body.kr-tech-theme .woocommerce ul.products li.product .button,
+body.kr-tech-theme .wc-block-product .wp-block-button__link {
+  border-color: #087985;
+  background: #087985;
+  color: #fff;
+}
+
+body.kr-tech-theme form.cart .single_add_to_cart_button:hover,
+body.kr-tech-theme .woocommerce ul.products li.product .button:hover,
+body.kr-tech-theme .wc-block-product .wp-block-button__link:hover {
+  border-color: #087985;
+  background: #087985;
+  color: #fff;
+}
+
+.kr-tech-theme-note {
+  display: grid;
+  gap: 3px;
+  margin-block: 18px;
+  padding: 14px;
+  border: 1px solid #b9e7e7;
+  border-radius: 6px;
+  background: #e9fbfa;
+  color: #10262a;
+  font-size: 0.86rem;
+}
+
+/* Technology pages use one high-contrast announcement treatment. The
+   /shop/technology/ route resolves to the Trade Desk page; descendants receive
+   kr-ai-catalog or kr-ai-product, including nested product categories. */
+/* Tech collection archives retain the shared black theme through filtering. */
+body.kr-tech-theme,
+body.kr-tech-theme .wp-site-blocks,
+body.kr-tech-theme .wp-site-blocks main { background:#000 !important; color:#f5fbff; }
+body.kr-tech-theme :is(.orderby,.wc-block-product-filters__overlay-dialog,.wc-block-product-filter-checkbox-list__item) { background:#000; color:#f5fbff; border-color:#35434f; }
+body.kr-tech-theme .orderby { color-scheme:dark; padding:8px 12px; border:1px solid #35434f; border-radius:4px; }
+body.kr-tech-theme .wc-block-product-filter-checkbox-list__item { box-shadow:none; }
+body.kr-tech-theme .kr-catalog-filters .wc-block-product-filters__overlay-content { background:#000; border-color:#35434f; color:#f5fbff; }
+body.kr-tech-theme { color-scheme:dark; }
+body.kr-tech-theme .kr-catalog-filters input:not([type="range"]):not([type="checkbox"]) { background:#000; color:#f5fbff; border-color:#35434f; }
+body.kr-tech-theme .kr-drawer .kr-icon-button { background:transparent; color:#fff; border-color:rgba(255,255,255,.34); }
+body.kr-tech-theme .kr-drawer :is(.kr-search button,.kr-sell-button) { background:#087985; color:#fff; border-color:#087985; }
+
+/* Canonical surface and text tokens also cover future Tech descendant pages. */
+body.kr-tech-theme { --kr-bg:#000; --kr-surface:#0b1521; --kr-text:#f5fbff; --kr-muted:#afc0cb; --kr-border:#35434f; color-scheme:dark; }
+body.kr-tech-theme .kr-tech-desk { --kr-tech-bg:#000; --kr-tech-panel:#0b1521; --kr-tech-line:rgba(130,224,231,.22); --kr-tech-cyan:#7ce5e8; --kr-tech-coral:#ff665d; --kr-tech-text:#f4f9fc; --kr-tech-muted:#9fb0bf; }
+body.kr-tech-theme :is(.kr-footer,.kr-footer-newsletter) { background:#000; color:#f5fbff; }
+body.kr-tech-theme .kr-footer :is(a,p,summary,h2,h3) { color:#f5fbff; }
+@media(max-width:1360px) { body.kr-tech-theme .kr-header-actions a.kr-sell-button { display:none; } }

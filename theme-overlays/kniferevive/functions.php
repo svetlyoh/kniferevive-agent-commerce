@@ -18,6 +18,7 @@ require_once get_stylesheet_directory() . '/inc/annex.php';
 require_once get_stylesheet_directory() . '/inc/knife-card.php';
 require_once get_stylesheet_directory() . '/inc/categories.php';
 require_once get_stylesheet_directory() . '/inc/metacategories.php';
+require_once get_stylesheet_directory() . '/inc/tech-theme.php';
 require_once get_stylesheet_directory() . '/inc/catalog-search.php';
 require_once get_stylesheet_directory() . '/inc/account-avatar.php';
 require_once get_stylesheet_directory() . '/inc/email-branding.php';

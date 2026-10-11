@@ -13,21 +13,10 @@
 .krev-category-card--technology .krev-category-child p { color:#afc0cb; }
 .krev-category-card--technology .krev-category-child a { color:#7ce5e8; }
 @media(min-width:850px) { .kr-tech-meta-feature { grid-template-columns:1fr 1fr; } .kr-tech-meta-section:nth-of-type(even) .kr-tech-meta-feature figure { order:2; } }
-@media(max-width:1360px) { body:is(.krev-categories-page,.kr-tech-desk-page,.kr-ai-catalog,.kr-ai-product,.kr-dell-brand,.kr-other-finds-page) .kr-header-actions a.kr-sell-button { display:none; } }
+@media(max-width:1360px) { body:is(.krev-categories-page,.kr-other-finds-page) .kr-header-actions a.kr-sell-button { display:none; } }
 .kr-tech-meta-section { scroll-margin-top:120px; }
 .kr-meta-landing .kr-other-feature h2 { margin:0 0 20px; font-size:clamp(2rem,4vw,3.4rem); line-height:1.1; }
 .kr-meta-landing-carousel { margin-top:36px; background:transparent; }
 .kr-meta-landing figure img { display:block; width:100%; max-width:100%; aspect-ratio:3/2; object-fit:cover; }
 .kr-annex-menu-panel { max-height:min(75vh,680px); overflow-y:auto; }
 @media(max-width:420px) { .krev-category-card__tech-metas .krev-category-child { grid-template-columns:92px minmax(0,1fr); gap:14px; } }
-/* Tech collection archives retain the shared black theme through filtering. */
-body.kr-ai-catalog,
-body.kr-ai-catalog .wp-site-blocks,
-body.kr-ai-catalog .wp-site-blocks main { background:#000 !important; color:#f5fbff; }
-body.kr-ai-catalog :is(.orderby,.wc-block-product-filters__overlay-dialog,.wc-block-product-filter-checkbox-list__item) { background:#000; color:#f5fbff; border-color:#35434f; }
-body.kr-ai-catalog .orderby { color-scheme:dark; padding:8px 12px; border:1px solid #35434f; border-radius:4px; }
-body.kr-ai-catalog .wc-block-product-filter-checkbox-list__item { box-shadow:none; }
-body.kr-ai-catalog .kr-catalog-filters .wc-block-product-filters__overlay-content { background:#000; border-color:#35434f; color:#f5fbff; }
-body.kr-ai-catalog { color-scheme:dark; }
-body.kr-ai-catalog .kr-catalog-filters input:not([type="range"]):not([type="checkbox"]) { background:#000; color:#f5fbff; border-color:#35434f; }
-body:is(.kr-tech-desk-page,.kr-ai-catalog,.kr-ai-product,.kr-dell-brand) .kr-drawer .kr-icon-button { background:transparent; color:#fff; border-color:rgba(255,255,255,.34); }

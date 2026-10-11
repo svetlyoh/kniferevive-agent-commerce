@@ -1,17 +1,21 @@
 {
-  "version": "2026.10.11.9",
+  "version": "2026.10.11.11",
   "files": [
     {
       "file": "assets/css/annex.css",
-      "sha256": "0d70bfa7a5b35bd89b7ad33ade150243960fac32700ff947307da223dccaad17"
+      "sha256": "4c9fd25bdbd2b0dca1c0b6dcb62a361d3d53fca4b9841732d7f044e9062a2062"
     },
     {
       "file": "assets/css/metacategories.css",
-      "sha256": "5aaf737ca93fb0989ca5e2055b759c6b43840714c050987858c3b43f0221be80"
+      "sha256": "82e75d3d41a611dfe9834e6fe595968f77bac01fac556ca46309413b79a0e6dd"
     },
     {
       "file": "assets/css/navigation.css",
-      "sha256": "17cd442c33c890dd55cb043c60d6ca927be9da08271966e1639bbbb0bb28f6fd"
+      "sha256": "bee1aa66d0619a3aed3f9e5947b1d0aaa7a2a0566ecdaefcbf42301a9b7c0c8f"
+    },
+    {
+      "file": "assets/css/tech-theme.css",
+      "sha256": "e8ebc12b7458a0169eadaf9167618f637a52ef706c9703ce776631e45fb1dabc"
     },
     {
       "file": "assets/images/categories/home-garden-2026-10-11.png",
@@ -59,7 +63,7 @@
     },
     {
       "file": "functions.php",
-      "sha256": "7a0fda021d2ad5b7d6e591ebf5e335ac893ce6818b7f59e3fccb3bbd81e6033f"
+      "sha256": "300396d700be221d3dafaea1af37e407871c96698c7c1b1a2893d40b0a4378c4"
     },
     {
       "file": "inc/annex.php",
@@ -74,8 +78,12 @@
       "sha256": "31e795d362d974983db7621c0551100dfc90249fc0e5b1ccf9c053cdadb547ca"
     },
     {
+      "file": "inc/tech-theme.php",
+      "sha256": "b8d8f8830283467a022c669d9f7e373e364ab5a07ba93382123ff82d9d19b200"
+    },
+    {
       "file": "style.css",
-      "sha256": "49ccdc240c2b1a9f6d1262a45c694e83abddbc588e6d010cd31131ea6fc481fb"
+      "sha256": "2973f6f3c384235d5bb68ea767d7e041e349112d508dabc7043ac6524e4c9af3"
     },
     {
       "file": "templates/page-collectibles.html",
