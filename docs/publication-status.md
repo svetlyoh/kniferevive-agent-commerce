@@ -5,8 +5,8 @@ shared route predicate for products, pages, native descendants and collection
 filters. Future Tech color/navigation edits belong in that file. See
 [canonical scope and verification](canonical-tech-theme-2026-10-11.md).
 
-October 11, 2026: Product Attributes 0.3.7, ListLab 1.8.5, Merchant Sync 0.8.8,
-Marketplace Imports 1.0.6 and theme 2026.10.11.11 were updated in place through
+October 11, 2026: Product Attributes 0.3.8, ListLab 1.8.5, Merchant Sync 0.8.8,
+Marketplace Imports 1.0.6 and theme 2026.10.11.12 were updated in place through
 native WordPress uploads. All 34 Collectibles children are imported. Six-field
 profiles cover all 1,489 Tech, Home & Garden and Collectibles choices. New
 landing pages, Annex destinations, Tech section links and published-only
@@ -14,6 +14,16 @@ Google subtype menus passed desktop/mobile browser checks. The existing Dell
 remains Google Desktop Computers 325 and also belongs to AI-Tech. Five supplied
 images now theme iPhones, Laptops, Mini-Computers, Collectibles and Pokémon
 Cards in the directory and corresponding sections/pages.
+
+Bluetooth Gadgets adds a fifth native Tech collection, a fourth alternating
+Tech section/carousel, directory description and placeholder illustration,
+and shared Annex/Shop Categories links. Seventeen official product types are
+mapped with Bluetooth title/connectivity evidence or explicit seller selection;
+the Bluetooth Transmitters type qualifies directly. Google feed IDs remain
+independent from this browsing collection. Follow-up validation passed 148
+native taxonomy/collection/specification assertions and 39 canonical Tech
+route/class/enqueue checks. See the Bluetooth follow-up in the implementation
+document for mapping rules and live proof.
 
 Listing 1.0.6 uses GitHub tag `kniferevive-listing-v1.0.6` and updates the
 existing seller skill identity in the active host catalog. Actual Muse

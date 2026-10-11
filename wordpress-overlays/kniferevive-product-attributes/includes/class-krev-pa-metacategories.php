@@ -4,11 +4,11 @@ defined( 'ABSPATH' ) || exit;
 /** Browsing collections are additive native categories, independent of Google feed categories. */
 final class KREV_PA_Metacategories {
     const META = '_krev_metacategory';
-    public static function labels() { return array( 'iphones' => 'iPhones', 'laptops' => 'Laptops', 'mini-computers' => 'Mini-Computers', 'ai-tech' => 'AI-Tech', 'pokemon-cards' => 'Pokémon Cards' ); }
-    public static function parents() { return array( 'iphones' => 'technology', 'laptops' => 'technology', 'mini-computers' => 'technology', 'ai-tech' => 'technology', 'pokemon-cards' => 'collectibles' ); }
+    public static function labels() { return array( 'iphones' => 'iPhones', 'laptops' => 'Laptops', 'mini-computers' => 'Mini-Computers', 'bluetooth-gadgets' => 'Bluetooth Gadgets', 'ai-tech' => 'AI-Tech', 'pokemon-cards' => 'Pokémon Cards' ); }
+    public static function parents() { return array( 'iphones' => 'technology', 'laptops' => 'technology', 'mini-computers' => 'technology', 'bluetooth-gadgets' => 'technology', 'ai-tech' => 'technology', 'pokemon-cards' => 'collectibles' ); }
     public static function init() { add_action( 'init', array( __CLASS__, 'setup' ), 29 ); }
     public static function setup() {
-        if ( ! get_option( 'krev_metacategories_20261011_ready_v2', false ) ) {
+        if ( ! get_option( 'krev_metacategories_20261011_ready_v3', false ) ) {
             $ready = true;
             foreach ( self::labels() as $slug => $label ) {
                 $root = KREV_PA_Tech_Categories::root_id( self::parents()[$slug] );
@@ -23,7 +23,7 @@ final class KREV_PA_Metacategories {
                 $result = update_term_meta( $term->term_id, self::META, $slug );
                 if ( is_wp_error( $result ) ) return;
             }
-            if ( $ready ) update_option( 'krev_metacategories_20261011_ready_v2', true, false );
+            if ( $ready ) update_option( 'krev_metacategories_20261011_ready_v3', true, false );
         }
         // Owner-requested assignment is narrowly bound to this exact existing listing.
         if ( ! get_option( 'krev_metacategories_20261011_dell_done', false ) ) {
@@ -66,6 +66,12 @@ final class KREV_PA_Metacategories {
         $matched = array_intersect( array_map( 'strval', $google_ids ), array_map( 'strval', self::catalog()[$slug]['google_ids'] ?? array() ) );
         // Title clues fill a broad/absent Google type; compatibility prose cannot override a specific type.
         $generic = ! $google_ids || ! array_diff( array_map( 'strval', $google_ids ), array( '222', '298' ) );
+        if ( 'bluetooth-gadgets' === $slug ) {
+            if ( in_array( '5130', array_map( 'strval', $google_ids ), true ) ) return true;
+            $bluetooth = (bool) preg_match( '/\bblue[ -]?tooth\b/iu', $text );
+            $negative = (bool) preg_match( '/\b(?:no|without|non)[ -]?bluetooth\b|\bbluetooth\s+(?:not\s+supported|unavailable)\b/iu', $text );
+            return $bluetooth && ! $negative && ( (bool) $matched || $generic );
+        }
         if ( 'pokemon-cards' === $slug ) return (bool) $matched && (bool) preg_match( '/\bpok(?:e|é)mon\b/iu', $text );
         if ( 'iphones' === $slug ) { $iphone = (bool) preg_match( '/\biphone\b/i', $text ); return ( (bool) $matched && ( $apple || $iphone ) ) || ( $generic && $iphone ); }
         if ( 'laptops' === $slug ) return (bool) $matched || ( $generic && (bool) preg_match( '/\b(laptop|notebook|macbook|chromebook)\b/i', $text ) );

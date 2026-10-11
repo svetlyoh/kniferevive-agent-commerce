@@ -11,6 +11,7 @@ function kr_metacategories(): array {
         'iphones' => ['label' => 'iPhones', 'url' => home_url('/technology-trade-desk/#iphones'), 'slugs' => ['technology']],
         'laptops' => ['label' => 'Laptops', 'url' => home_url('/technology-trade-desk/#laptops'), 'slugs' => ['technology']],
         'mini-computers' => ['label' => 'Mini-Computers', 'url' => home_url('/technology-trade-desk/#mini-computers'), 'slugs' => ['technology']],
+        'bluetooth-gadgets' => ['label' => 'Bluetooth Gadgets', 'url' => home_url('/technology-trade-desk/#bluetooth-gadgets'), 'slugs' => ['technology']],
         'ai-tech' => ['label' => 'AI-Tech', 'slugs' => ['technology']],
         'other-finds' => ['label' => 'Other Finds', 'url' => home_url('/other-finds/'), 'slugs' => ['other_finds', 'miscellaneous']],
         'world-coins' => ['label' => 'World Coins', 'slugs' => ['world-coins']],
@@ -29,6 +30,7 @@ function kr_metacategory_description(string $slug): string {
         'iphones' => 'Pre-owned iPhones and useful Apple-compatible accessories, with storage, carrier status, and condition recorded when known.',
         'laptops' => 'Portable computers, notebooks, docking stations, and accessories for work, learning, and a desk that travels.',
         'mini-computers' => 'Compact PCs, desktop systems, servers, and streaming devices—including Chromecast—for everyday computing and home projects.',
+        'bluetooth-gadgets' => 'Bluetooth speakers, headphones, transmitters, keyboards, mice, controllers, and wearable gadgets, with connectivity and condition recorded when known.',
         'ai-tech' => 'Configured computers for self-hosted AI tools, automation, and Linux experimentation, including the OpenClaw-ready Dell system.',
         'home-garden' => 'Useful pieces for the home, kitchen, patio, and garden, ready for another home and organized by their actual product type.',
         'collectibles' => 'Trading cards, coins, stamps, models, and memorabilia, with identifying details and condition recorded when known.',
@@ -95,7 +97,7 @@ function kr_metacategory_inventory(): array {
         $google = kr_metacategory_feed_category($product, $terms);
         $groups = [];
         foreach (kr_metacategories() as $slug => $group) {
-            if (in_array($slug, ['iphones', 'laptops', 'mini-computers', 'ai-tech', 'pokemon-cards'], true)) continue;
+            if (in_array($slug, ['iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'ai-tech', 'pokemon-cards'], true)) continue;
             if (array_intersect($slugs, $group['slugs'])) $groups[] = $slug;
         }
         if (in_array('tech', $groups, true) && class_exists('KREV_PA_Metacategories')) {
@@ -105,7 +107,10 @@ function kr_metacategory_inventory(): array {
             $brandNames = taxonomy_exists('product_brand') ? wp_get_post_terms($id, 'product_brand', ['fields' => 'names']) : [];
             $apple = !is_wp_error($brandNames) && in_array('apple', array_map('strtolower', $brandNames), true);
             $text = $product->get_name();
-            foreach (['iphones', 'laptops', 'mini-computers', 'ai-tech'] as $slug) if (KREV_PA_Metacategories::matches($slug, $google ? [$google['id']] : [], $text, $apple, $explicit)) $groups[] = $slug;
+            foreach (['iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'ai-tech'] as $slug) {
+                $evidence = $slug === 'bluetooth-gadgets' ? $text . ' ' . $product->get_attribute('pa_connectivity') : $text;
+                if (KREV_PA_Metacategories::matches($slug, $google ? [$google['id']] : [], $evidence, $apple, $explicit)) $groups[] = $slug;
+            }
         }
         if ($google && str_starts_with($google['path'], 'Arts & Entertainment > Hobbies & Creative Arts > Collectibles')) $groups[] = 'collectibles';
         if (in_array('collectibles', $groups, true) && class_exists('KREV_PA_Metacategories')) {
@@ -151,6 +156,7 @@ function kr_tech_metacategory_sections(): string {
         'iphones' => ['Pocket-size possibilities', 'iPhones', 'Find a useful next life for an iPhone, with Apple-compatible accessories alongside the phones themselves.'],
         'laptops' => ['Work from anywhere', 'Laptops', 'Portable computers, notebook accessories, docking stations, and useful equipment for a desk that travels.'],
         'mini-computers' => ['Small systems, useful jobs', 'Mini-Computers', 'Compact PCs, desktop systems, servers, and streaming devices—including Chromecast—for everyday computing and home projects.'],
+        'bluetooth-gadgets' => ['Small connections, useful possibilities', 'Bluetooth Gadgets', 'Find Bluetooth speakers, headphones, transmitters, wireless peripherals, controllers, and wearables. Explore the connectivity, compatibility, and condition each seller can verify.'],
     ];
     $output = '';
     foreach ($copy as $slug => [$kicker, $title, $description]) {
@@ -227,5 +233,5 @@ add_filter('render_block_core/query-title', static function(string $content): st
     }
     return preg_replace_callback('/(<h[1-6]\b[^>]*>).*?(<\/h[1-6]>)/s', static fn($match) => $match[1] . esc_html($title) . $match[2], $content, 1) ?? $content;
 }, 110);
-add_filter('body_class', static function(array $classes): array { $slug = (string) get_query_var('kr_collection'); if (in_array($slug, ['tech', 'iphones', 'laptops', 'mini-computers', 'ai-tech'], true)) $classes[] = 'kr-ai-catalog'; return $classes; }, 25);
+add_filter('body_class', static function(array $classes): array { $slug = (string) get_query_var('kr_collection'); if (in_array($slug, ['tech', 'iphones', 'laptops', 'mini-computers', 'bluetooth-gadgets', 'ai-tech'], true)) $classes[] = 'kr-ai-catalog'; return $classes; }, 25);
 add_action('wp_enqueue_scripts', static function(): void { wp_enqueue_style('kniferevive-metacategories', get_stylesheet_directory_uri() . '/assets/css/metacategories.css', ['kniferevive-annex'], kr_asset_version('assets/css/metacategories.css')); }, 25);

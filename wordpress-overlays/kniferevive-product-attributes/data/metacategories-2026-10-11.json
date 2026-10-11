@@ -148,6 +148,47 @@
     "google_ids": [
       "6997"
     ],
-    "rule": "Collectible Trading Cards with Pokémon identity, or explicit collection assignment."
+    "rule": "Collectible Trading Cards with PokÃ©mon identity, or explicit collection assignment."
+  },
+  "bluetooth-gadgets": {
+    "google_ids": [
+      "5130",
+      "5129",
+      "241",
+      "505771",
+      "543626",
+      "543627",
+      "249",
+      "7182",
+      "505299",
+      "290",
+      "303",
+      "304",
+      "301",
+      "543589",
+      "543590",
+      "201",
+      "6544"
+    ],
+    "rule": "Bluetooth Transmitters (5130) automatically roll up. Other candidate types need Bluetooth evidence in title/connectivity or explicit seller assignment. Feed category remains unchanged.",
+    "category_paths": {
+      "5130": "Electronics > Audio > Audio Components > Audio Transmitters > Bluetooth Transmitters",
+      "5129": "Electronics > Audio > Audio Components > Audio Transmitters",
+      "241": "Electronics > Audio > Audio Components > Audio & Video Receivers",
+      "505771": "Electronics > Audio > Audio Components > Headphones & Headsets",
+      "543626": "Electronics > Audio > Audio Components > Headphones & Headsets > Headphones",
+      "543627": "Electronics > Audio > Audio Components > Headphones & Headsets > Headsets",
+      "249": "Electronics > Audio > Audio Components > Speakers",
+      "7182": "Electronics > Electronics Accessories > Adapters > USB Adapters",
+      "505299": "Electronics > Electronics Accessories > Computer Components > I/O Cards & Adapters > Computer Interface Cards & Adapters",
+      "290": "Electronics > Networking > Network Cards & Adapters",
+      "303": "Electronics > Electronics Accessories > Computer Components > Input Devices > Keyboards",
+      "304": "Electronics > Electronics Accessories > Computer Components > Input Devices > Mice & Trackballs",
+      "301": "Electronics > Electronics Accessories > Computer Components > Input Devices > Game Controllers",
+      "543589": "Electronics > Electronics Accessories > Computer Components > Input Devices > Game Controllers > Gaming Pads",
+      "543590": "Electronics > Electronics Accessories > Computer Components > Input Devices > Game Controllers > Game Remotes",
+      "201": "Apparel & Accessories > Jewelry > Watches",
+      "6544": "Electronics > GPS Tracking Devices"
+    }
   }
 }

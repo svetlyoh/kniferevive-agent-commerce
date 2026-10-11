@@ -314,6 +314,11 @@ function kr_get_annex_terms(): array
             'category' => kr_find_product_category(['mini-computers'], ['Mini-Computers']),
             'page_url' => kr_metacategory_landing_url('mini-computers'),
         ],
+        'bluetooth-gadgets' => [
+            'label' => 'Bluetooth Gadgets',
+            'category' => kr_find_product_category(['bluetooth-gadgets'], ['Bluetooth Gadgets']),
+            'page_url' => kr_metacategory_landing_url('bluetooth-gadgets'),
+        ],
         'ai-tech' => [
             'label' => 'AI-Tech',
             'category' => kr_find_product_category(['ai-tech'], ['AI-Tech']),

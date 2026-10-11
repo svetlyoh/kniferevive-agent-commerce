@@ -24,6 +24,49 @@ These are merchant specification profiles supplementing [Google's product data s
 
 ListLab's searchable Google subcategory selector fetches the selected child's profile, including when reopening an existing listing. Collection selection is separate and restricted to the native parent. The public Marketplace Imports schema advertises the same profile and native IDs. Preparation validates category/collection compatibility and uses the selected Google child for category pricing, including private review edits. Photo inventory, maximum image count, quantity default 1 and missing-parcel defaults remain unchanged.
 
+## Bluetooth Gadgets follow-up
+
+Bluetooth Gadgets (`bluetooth-gadgets`) is a fifth native Tech collection. Its
+directory description, Annex links and Shop Categories flyout use the same
+shared helpers as iPhones and Mini-Computers. A fourth alternating feature
+section on `/technology-trade-desk/#bluetooth-gadgets` has the shared carousel
+and an honest empty-inventory state, plus a replaceable SVG theme illustration.
+Filtered Bluetooth archives inherit the canonical Tech palette automatically.
+
+The official Google taxonomy mapping covers 17 relevant types: Bluetooth
+Transmitters (5130), Audio Transmitters (5129), Audio & Video Receivers (241),
+Headphones & Headsets (505771), Headphones (543626), Headsets (543627), Speakers
+(249), USB Adapters (7182), Computer Interface Cards & Adapters (505299), Network
+Cards & Adapters (290), Keyboards (303), Mice & Trackballs (304), Game Controllers
+(301), Gaming Pads (543589), Game Remotes (543590), Watches (201), and GPS Tracking
+Devices (6544). Paths are retained in the collection catalog for review.
+
+Google type 5130 qualifies directly. Other candidate types need positive
+Bluetooth evidence in the title or `pa_connectivity`, or explicit native seller
+collection selection. “Wireless” by itself and negative Bluetooth wording do
+not qualify. Phones and computers retain their existing collections. No feed
+IDs or product attributes are rewritten by browsing rollup. ListLab and the
+live Imports schema obtain the new choice from the native collection registry;
+existing six-field profiles continue to follow the selected Google subtype.
+
+Follow-up validation passed 54 native taxonomy checks, 56 collection checks
+(including connectivity-field matching and wired-item exclusion), and 38
+specification/landing checks: 148 native assertions. The existing canonical
+Tech route/class/enqueue suite passed all 39 checks. PHP lint and complete
+source/package byte verification passed. The test DB was verified as the
+owned loopback sandbox on port 11029 and shut down after testing.
+
+Live native replacement confirmed Product Attributes 0.3.7 → 0.3.8 and theme
+2026.10.11.11 → 2026.10.11.12, both successful. Browser QA confirms the directory
+description/artwork, top Annex link, dark Shop Categories flyout, alternating
+Tech section and empty collection archive. The illustration loads, and both
+the landing section and collection archive have `kr-tech-theme`; the archive
+body is black. Current live inventory has no qualifying Bluetooth items, so
+no subtype submenu or unrelated product is displayed. The public Tech Imports
+schema returns native Bluetooth collection ID 5354 under Tech 1892 alongside
+the four existing choices. Owner diagnostics retain the native test log,
+public schema and `bluetooth-gadgets-tech-section.png` / menu screenshot.
+
 ## Muse skill
 
 The separate seller skill is now `kniferevive-listing` **1.0.6**. It reads the live schema, extracts only supported facts for the six fields, separates browsing collections from Google subcategories and preserves complete-gallery extraction. Installation guidance remains in [references/installation.md](../skills/kniferevive-listing/references/installation.md). Update the existing identity in the host's active custom catalog, with one active copy. This release does not install or reload Muse remotely and does not publish the Listing skill on ClawHub. Concierge is unchanged.
@@ -38,7 +81,7 @@ loaded by `inc/tech-theme.php` for the entire Tech tree. See
 
 Final native WordPress/WooCommerce checks: 54 existing category assertions, 44 metacategory assertions and 38 specification/landing-page assertions. Marketplace import regressions: 108. Category selector behavior: 32. Searchable selector DOM checks: 27. Total: **303 assertions**, plus PHP lint and source/package verification. Native tests run only against the fenced `krev_agent_sandbox` DB, port 11029; external HTTP and mail are blocked in that harness.
 
-Live deployment uses WordPress's native in-place plugin/theme upload replacement. Final runtime versions: Product Attributes **0.3.7**, ListLab **1.8.5**, Merchant Sync **0.8.8**, Marketplace Imports **1.0.6**, theme **2026.10.11.11**. Collectibles' bounded native import reports **34 of 34** complete. The final ListLab upload also corrects the searchable collection's accessibility label to match Collectibles or Tech. The image follow-up passed PHP lint and package verification; browser checks confirm all five supplied themes load in the corresponding directory and landing sections. Tech child headings, descriptions and links now have light colors appropriate to their dark directory card. Original image bytes are verified against the supplied files. Desktop/mobile checks preceded this image follow-up; the browser's later viewport override did not take effect, so the new image screenshots are labeled desktop rather than claiming a new mobile pass.
+Live deployment uses WordPress's native in-place plugin/theme upload replacement. Final runtime versions: Product Attributes **0.3.8**, ListLab **1.8.5**, Merchant Sync **0.8.8**, Marketplace Imports **1.0.6**, theme **2026.10.11.12**. Collectibles' bounded native import reports **34 of 34** complete. The final ListLab upload also corrects the searchable collection's accessibility label to match Collectibles or Tech. The image follow-up passed PHP lint and package verification; browser checks confirm all five supplied themes load in the corresponding directory and landing sections. Tech child headings, descriptions and links now have light colors appropriate to their dark directory card. Original image bytes are verified against the supplied files. Desktop/mobile checks preceded this image follow-up; the browser's later viewport override did not take effect, so the new image screenshots are labeled desktop rather than claiming a new mobile pass.
 
 Owner artifacts are in `C:\Users\Svet\Documents\KnifeRevive_Documentation\releases\metacategories-2026-10-11`: complete runtime ZIPs preserving existing vendor dependencies/assets, skill ZIP, SHA-256 manifest and local rollback baselines. Earlier intermediate packages are retained for history; use the versions above and `manifest.json`. Rollback ZIPs are local prechange baselines, not downloaded production database backups. Runtime rollback does not delete imported terms or reverse native product assignments.
 

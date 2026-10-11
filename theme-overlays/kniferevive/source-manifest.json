@@ -1,5 +1,5 @@
 {
-  "version": "2026.10.11.11",
+  "version": "2026.10.11.12",
   "files": [
     {
       "file": "assets/css/annex.css",
@@ -20,6 +20,10 @@
     {
       "file": "assets/images/categories/home-garden-2026-10-11.png",
       "sha256": "12250edfa34b0cfe4b8cae71c817f09a0519c1a0a462ceaef7de2b6dd15469f5"
+    },
+    {
+      "file": "assets/images/metacategories/bluetooth-gadgets-placeholder.svg",
+      "sha256": "d2e9723b74eff36f82ca96561f90236c4d3476838a808f0b9a9c097b08c5c823"
     },
     {
       "file": "assets/images/metacategories/collectibles-2026-10-11.png",
@@ -67,15 +71,15 @@
     },
     {
       "file": "inc/annex.php",
-      "sha256": "01e87485bd86e115f75fecdf6e0faf5cfdeb0c47f55032423907570513e4f7c0"
+      "sha256": "9232636c20dd4f32846db56888e7f02d556a4c64b41b4f97c05c7ed29f99219a"
     },
     {
       "file": "inc/categories.php",
-      "sha256": "a371502c3a69ddd85bc0b41cbc6fd77bfeacfa7deaab277165b773d07ae9b3e2"
+      "sha256": "36672f914d1d9234d4aa5c4859bfbcb5f644af4147cf270e96d8e6cea2d96df2"
     },
     {
       "file": "inc/metacategories.php",
-      "sha256": "31e795d362d974983db7621c0551100dfc90249fc0e5b1ccf9c053cdadb547ca"
+      "sha256": "d52bc60e28da09d02e057b9fce00e0e446657428d5defe4483f75376a41ec218"
     },
     {
       "file": "inc/tech-theme.php",
@@ -83,7 +87,7 @@
     },
     {
       "file": "style.css",
-      "sha256": "2973f6f3c384235d5bb68ea767d7e041e349112d508dabc7043ac6524e4c9af3"
+      "sha256": "0f7f1d6419193643166b150c933ab545776be314c830ac62e700a07b7145d1a7"
     },
     {
       "file": "templates/page-collectibles.html",
