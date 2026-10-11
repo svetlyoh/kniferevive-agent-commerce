@@ -8,7 +8,7 @@ final class KREV_PA_Config {
 	public static function category_groups() {
 		return array(
 			'knives' => array(
-				'boning-knife', 'bread-knife', 'butcher-knife', 'chefs-knife', 'cleaver',
+				'boning-knife', 'bread-knife', 'butcher-knife', 'chefs-knife', 'cleaver', 'electric-knife',
 				'fillet-knife', 'nakiri-knife', 'oyster-knife', 'paring-knife', 'santoku-knife',
 				'serated-utility-knife', 'carving-knife', 'steak-knife', 'tomato-knife', 'utility-knife',
 			),

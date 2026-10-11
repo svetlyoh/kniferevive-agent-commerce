@@ -1,5 +1,5 @@
 {
-  "version": "2026.10.11.13",
+  "version": "2026.10.11.14",
   "files": [
     {
       "file": "assets/css/annex.css",
@@ -71,11 +71,11 @@
     },
     {
       "file": "functions.php",
-      "sha256": "300396d700be221d3dafaea1af37e407871c96698c7c1b1a2893d40b0a4378c4"
+      "sha256": "e892dbddd75c16b5108978e591485a331ed7af3f408b28b7ef8f4856bab1a4b0"
     },
     {
       "file": "inc/annex.php",
-      "sha256": "76fc2cc6bddc42989defe2b495ae99c10e2e13a023d98168d2f88cdc1478b845"
+      "sha256": "befdd3fab09270635c64a03f62d8045cc130b4a29db505f589b2c28b86c5297b"
     },
     {
       "file": "inc/categories.php",
@@ -83,7 +83,7 @@
     },
     {
       "file": "inc/metacategories.php",
-      "sha256": "a82c258b46033256a7e8c654fd4afc1f5a1a88812b42907951bf463a10e403e1"
+      "sha256": "87635a4166e42c4ea86ee1151616f237b1d5f7fd7aab556b868709a5c09d4488"
     },
     {
       "file": "inc/tech-theme.php",
@@ -91,7 +91,7 @@
     },
     {
       "file": "style.css",
-      "sha256": "d9de6142a4885687dbdd4aca4e7a11122730c4973601a8946e39ae9cf97ecaf8"
+      "sha256": "b8542e19577897cf785c9bd06494f43acc24cce83696bdcb70f483c89b68a1ee"
     },
     {
       "file": "templates/page-collectibles.html",

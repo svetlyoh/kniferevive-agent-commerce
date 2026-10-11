@@ -141,7 +141,30 @@ function kr_metacategory_children(string $slug): array {
     uasort($children, static fn($a, $b) => strnatcasecmp($a['label'], $b['label']));
     return array_values($children);
 }
+/** Extend every saved Knife Type branch without duplicating existing entries. */
+function kr_electric_knife_navigation_tree(array $tree): array {
+    foreach ($tree as &$row) {
+        $row['children'] = kr_electric_knife_navigation_tree($row['children'] ?? []);
+        if (strcasecmp($row['label'] ?? '', 'Knife Type') !== 0) continue;
+        foreach ($row['children'] as $child) {
+            if (strcasecmp($child['label'] ?? '', 'Electric Knife') === 0 || str_contains($child['url'] ?? '', '/product-category/electric-knife/')) continue 2;
+        }
+        $row['children'][] = ['label' => 'Electric Knife', 'url' => home_url('/product-category/electric-knife/'), 'children' => [], 'target' => '', 'rel' => ''];
+    }
+    unset($row);
+    return $tree;
+}
+add_filter('render_block_data', static function(array $block): array {
+    if (($block['blockName'] ?? '') !== 'core/navigation-submenu' || strcasecmp(wp_strip_all_tags($block['attrs']['label'] ?? ''), 'Knife Type') !== 0) return $block;
+    foreach ($block['innerBlocks'] ?? [] as $child) {
+        if (strcasecmp($child['attrs']['label'] ?? '', 'Electric Knife') === 0 || str_contains($child['attrs']['url'] ?? '', '/product-category/electric-knife/')) return $block;
+    }
+    $block['innerBlocks'][] = ['blockName' => 'core/navigation-link', 'attrs' => ['label' => 'Electric Knife', 'url' => home_url('/product-category/electric-knife/'), 'kind' => 'custom'], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []];
+    $block['innerContent'][] = null;
+    return $block;
+});
 function kr_metacategory_navigation_tree(array $tree): array {
+    $tree = kr_electric_knife_navigation_tree($tree);
     $knifeTypes = kr_find_navigation_item($tree, ['Knife Type']);
     $children = [];
     foreach (kr_metacategories() as $slug => $group) {

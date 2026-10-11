@@ -382,6 +382,7 @@ function kr_get_knife_category_slugs(): array
         'butcher-knife',
         'chefs-knife',
         'cleaver',
+        'electric-knife',
         'fillet-knife',
         'nakiri-knife',
         'oyster-knife',

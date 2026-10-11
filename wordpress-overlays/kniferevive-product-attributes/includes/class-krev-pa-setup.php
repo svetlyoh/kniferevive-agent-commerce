@@ -45,6 +45,14 @@ final class KREV_PA_Setup {
 			'preserved'  => array(),
 		);
 
+		// A native knife type gets the same WooCommerce archive and seller schema.
+		if ( ! get_term_by( 'slug', 'electric-knife', 'product_cat' ) ) {
+			$electric = wp_insert_term( 'Electric Knife', 'product_cat', array(
+				'slug' => 'electric-knife',
+				'description' => 'Electric kitchen knives for carving and slicing, with brand, blade details, and item condition recorded when available.',
+			) );
+			if ( is_wp_error( $electric ) ) { $result['errors'][] = $electric->get_error_message(); }
+		}
 		$other_finds = get_term_by( 'slug', 'other_finds', 'product_cat' );
 		$parent_id   = $other_finds ? (int) $other_finds->term_id : 0;
 		$category = get_term_by( 'slug', 'world-coins', 'product_cat' );

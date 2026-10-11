@@ -1,5 +1,10 @@
 ## Category-dependent conditions live; Listing 1.0.7
 
+Electric Knife follow-up: Product Attributes 0.3.11 and theme 2026.10.11.14
+are deployed. Native category 5357 uses `electric-knife`, the shared knife
+archive, Knife Type and Kitchen Knives menus, homepage links, and knife seller
+attributes/conditions. See [implementation and live proof](electric-knife-category-2026-10-11.md).
+
 October 11 follow-up: Product Attributes 0.3.10, ListLab 1.8.6 and Marketplace
 Imports 1.0.7 were updated in place. Item Condition follows subcategory,
 then compatible metacategory, then category. Context changes refresh choices,

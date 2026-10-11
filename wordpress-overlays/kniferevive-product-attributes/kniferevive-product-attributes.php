@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KnifeRevive Product Attributes
  * Description: Category-scoped WooCommerce attributes, Dokan fields, and safe catalog backfill tools.
- * Version: 0.3.10
+ * Version: 0.3.11
  * Author: KnifeRevive
  * Text Domain: kniferevive-product-attributes
  * Requires Plugins: woocommerce
@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KREV_PA_VERSION', '0.3.10' );
+define( 'KREV_PA_VERSION', '0.3.11' );
 define( 'KREV_PA_FILE', __FILE__ );
 define( 'KREV_PA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KREV_PA_URL', plugin_dir_url( __FILE__ ) );

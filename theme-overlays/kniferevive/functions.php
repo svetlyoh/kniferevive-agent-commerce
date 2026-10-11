@@ -869,7 +869,7 @@ function kr_homepage_shortcode(): string
     $shopUrl = kr_home_link($tree, ['Shop All'], home_url('/shop/'));
     $dealsUrl = kr_home_link($tree, ['Shop Deals'], home_url('/product-tag/deals/'));
     $modelsUrl = kr_home_link($tree, ['Models'], home_url('/model-directory/'));
-    $typeLabels = ["Chef's Knife", 'Paring Knife', 'Santoku Knife', 'Bread Knife', 'Serrated Utility Knife', 'Slicing/Carving Knife'];
+    $typeLabels = ["Chef's Knife", 'Paring Knife', 'Santoku Knife', 'Bread Knife', 'Serrated Utility Knife', 'Slicing/Carving Knife', 'Electric Knife'];
     $brandRoots = function_exists('kr_native_brand_roots') ? kr_native_brand_roots() : [];
     $tiktokItem = kr_find_navigation_item(kr_navigation_tree(1232), ['TikTok']);
     $tiktokUrl = $tiktokItem ? trim((string) ($tiktokItem['url'] ?? '')) : '';
