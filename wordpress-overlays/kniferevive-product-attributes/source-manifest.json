@@ -1,0 +1,64 @@
+{
+  "version": "0.3.4",
+  "files": [
+    {
+      "file": "assets/admin-product-attributes.js",
+      "sha256": "c27a6ed15969f20442a91bd267c6bd824d421bbee24fa64d97ff34a68da234a6"
+    },
+    {
+      "file": "data/google-electronics-2026-10-10.json",
+      "sha256": "375aef9317a81080cbd0cb09e5855cd9e9dfa0ed5904d02da015f5215ce72096"
+    },
+    {
+      "file": "includes/class-krev-pa-admin.php",
+      "sha256": "221761a8f19be0b8c0c08416f36ab98c7b1c7192758cfe95e16b7c619fb92257"
+    },
+    {
+      "file": "includes/class-krev-pa-cli.php",
+      "sha256": "ced1ef162c3af8f9f2dff82af158bcc3af232797ef2aafd944fccde6a1f5b0ce"
+    },
+    {
+      "file": "includes/class-krev-pa-condition-migrator.php",
+      "sha256": "ea3a8e24e6aefdb896215c83e9431a4b3ebe5a2ee8a0c11abf7579d84dd01bcd"
+    },
+    {
+      "file": "includes/class-krev-pa-condition-resolver.php",
+      "sha256": "6fdbde9c94f1b6cf8d19330e2e29137761cc038e54fc6f1dda5ae6e4b68c16a6"
+    },
+    {
+      "file": "includes/class-krev-pa-config.php",
+      "sha256": "4aba9fab3323d009bded40c2e10793f80b34a4ef5f958b75fd47240f48a9fefb"
+    },
+    {
+      "file": "includes/class-krev-pa-editor.php",
+      "sha256": "5d05017d33069dce235dedc16353db477f388fca079e91a77d752eea9eb4ed63"
+    },
+    {
+      "file": "includes/class-krev-pa-migrator.php",
+      "sha256": "447462b9e7bd42ce218300bf49782f24b3655ddcaaeaccf4fd3984c49eb4915d"
+    },
+    {
+      "file": "includes/class-krev-pa-setup.php",
+      "sha256": "ef6024f4c76aba5f7c6c624e5f66196c515d21bba0fffc06304e1f9cb8a8a6f5"
+    },
+    {
+      "file": "includes/class-krev-pa-tech-categories.php",
+      "sha256": "e079f1165fbb8f8d1672f815fa980441f2cacead608555a45f25d4e5861073e4"
+    },
+    {
+      "file": "kniferevive-product-attributes.php",
+      "sha256": "0452743d832b5d741e67c19a20739e7e3fe7bc655d040c0e8f47cf6750c4abb6"
+    },
+    {
+      "file": "README.md",
+      "sha256": "c4726eda1d9716b719dbefd268766c795b365ec1dc71da0f68dc809756101ede"
+    },
+    {
+      "file": "tests/run-condition-policy.php",
+      "sha256": "0d196b4f0b658f8d83f7109943ecdc4ddf7a2462f7e5d11dc5f0122d8eaa4746"
+    }
+  ],
+  "hash_scope": "Git source normalized to LF. Deployment ZIP manifests verify original runtime bytes.",
+  "deployment": "2026-10-10 kniferevive.com",
+  "vendor_note": "Third-party vendor code is omitted here, including Merchant Sync dependencies and ListLab ZXing; apply over the existing plugin. Full runtime is in the owner release ZIP."
+}

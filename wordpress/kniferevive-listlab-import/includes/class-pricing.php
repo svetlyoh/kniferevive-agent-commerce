@@ -60,6 +60,8 @@ final class KREV_Import_Pricing {
                 if ( ! $term || is_wp_error( $term ) || is_wp_error( $parsed ) ) { $clean = new WP_Error( 'import_pricing', 'One category rule is invalid. No settings were saved.' ); break; }
                 $categories[ (int) $id ] = $parsed;
             }
+            // PHP may truncate a large form at max_input_vars. Never replace settings from a partial request.
+            if ( empty( $input['krev_import_pricing_complete'] ) ) $clean = new WP_Error( 'import_pricing', 'The pricing form was incomplete. No settings were saved. Enable fewer category overrides and try again.' );
             if ( is_wp_error( $clean ) ) $notice = $clean->get_error_message();
             else { $clean['categories'] = $categories; update_option( self::OPTION, $clean, false ); $notice = 'Pricing settings saved.'; }
         }
@@ -74,11 +76,11 @@ final class KREV_Import_Pricing {
         $terms = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
         foreach ( is_wp_error( $terms ) ? array() : $terms as $term ) {
             $id = (int) $term->term_id; $enabled = isset( $settings['categories'][ $id ] );
-            echo '<tr><td><label><input type="checkbox" name="categories[' . $id . '][enabled]" value="1" ' . checked( $enabled, true, false ) . '> ' . esc_html( $term->name ) . ' (#' . $id . ')</label></td><td>';
+            echo '<tr><td><label><input type="checkbox" name="categories[' . $id . '][enabled]" value="1" ' . checked( $enabled, true, false ) . ' onchange="this.closest(\'tr\').querySelector(\'fieldset\').disabled=!this.checked"> ' . esc_html( $term->name ) . ' (#' . $id . ')</label></td><td><fieldset ' . ( $enabled ? '' : 'disabled' ) . '>';
             self::rule_inputs( 'categories[' . $id . ']', $enabled ? $settings['categories'][ $id ] : $settings );
-            echo '</td></tr>';
+            echo '</fieldset></td></tr>';
         }
-        echo '</tbody></table>'; submit_button( 'Save import pricing' ); echo '</form></div>';
+        echo '</tbody></table><input type="hidden" name="krev_import_pricing_complete" value="1">'; submit_button( 'Save import pricing' ); echo '</form></div>';
     }
 
     private static function rule_inputs( $prefix, $rule ) {

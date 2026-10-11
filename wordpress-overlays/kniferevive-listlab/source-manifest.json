@@ -1,0 +1,156 @@
+{
+  "version": "1.8.2",
+  "files": [
+    {
+      "file": "assets/css/account-profile.css",
+      "sha256": "3993f9186c01a549e702669084dca44ae8b40b1fac02365a7be3a9ba716df176"
+    },
+    {
+      "file": "assets/css/listing-video.css",
+      "sha256": "0f1975db35d34b3b3a2b821dd79434b03b78504311b213c9b4f0b3dc038e0d2f"
+    },
+    {
+      "file": "assets/css/listlab.css",
+      "sha256": "34068cab87cf28e7bd67bc428a4b2a7119e25877698b6fe75d97d5ed861ebbe4"
+    },
+    {
+      "file": "assets/css/timed-offers.css",
+      "sha256": "ae72b8c3005a38e499fb1fca83d3b29e357eb3b1bb721b5601c44acbe23bf45e"
+    },
+    {
+      "file": "assets/css/whatnot-demo.css",
+      "sha256": "155e6abce9fa8fa628f23f463b60f4c96e441784a117be277ca4e1a1a5906074"
+    },
+    {
+      "file": "assets/images/whatnot-mark.svg",
+      "sha256": "7abf57dbdbc9d412272db9136dbca670e4773a44647a2367f80b08b7914b3d37"
+    },
+    {
+      "file": "assets/js/listlab.js",
+      "sha256": "bec654c82e21b342c63d894c877d12ef71ef63f74d9300a10e042595d81742e8"
+    },
+    {
+      "file": "assets/js/timed-offers.js",
+      "sha256": "e0ec85eb3e9657a3223b4e7a7e21bdd14c64181f8cec388c1bb84140e9484ab0"
+    },
+    {
+      "file": "assets/js/whatnot-demo.js",
+      "sha256": "5d71415767cd38130d5a40394c4298ec38e833e30bf5ce531f9fa92b63f5f827"
+    },
+    {
+      "file": "includes/class-krev-listlab-account-dashboard.php",
+      "sha256": "1899de84cc01bfd093dbdafe0123cd7ce6975e4e06b6337cb9d0db2b2904fcb8"
+    },
+    {
+      "file": "includes/class-krev-listlab-attributes.php",
+      "sha256": "beba9fe10e7413e169caf9b1f2595dde4e4bf54417c2a0d7031449febeabb82c"
+    },
+    {
+      "file": "includes/class-krev-listlab-categories.php",
+      "sha256": "f8f8a681d21a6c356d287a1b0bac85beb422e87969091aa146b05c2051fca0a0"
+    },
+    {
+      "file": "includes/class-krev-listlab-dokan-adapter.php",
+      "sha256": "07f473992ff43768deb38f66f502b59e775aa56fc5b2f3152da7b966d2d5d8fe"
+    },
+    {
+      "file": "includes/class-krev-listlab-endpoint.php",
+      "sha256": "88d354ed77fd22973f99a278de2c291ab9d45a14ab1b437ba4b2d8313c2d850e"
+    },
+    {
+      "file": "includes/class-krev-listlab-image-handler.php",
+      "sha256": "619844f6f8c0a778faa13fd48ddf93e1f13d20e76de0a17a314e53abfd48885e"
+    },
+    {
+      "file": "includes/class-krev-listlab-plugin.php",
+      "sha256": "c40be551f6e9cf331d7712bbb3efb8cef9191afbc68534675c3bfe48afc69e21"
+    },
+    {
+      "file": "includes/class-krev-listlab-policies.php",
+      "sha256": "596816dd898af6b8fe2bcf107e34fc171e18608603b5a8aa89c0ea740219e7fa"
+    },
+    {
+      "file": "includes/class-krev-listlab-product-reader.php",
+      "sha256": "d3a1150d55cfb356aaceac12d2b669e3b360e67a9b15cd1ce778dc4f2de45fec"
+    },
+    {
+      "file": "includes/class-krev-listlab-product-writer.php",
+      "sha256": "632d2bdc4518a56e13f33a0c8dddb5f036f67532f6d71a34158d19b6c92e607b"
+    },
+    {
+      "file": "includes/class-krev-listlab-rest.php",
+      "sha256": "d5e5d699b0612d8636705be32e983441e22983c51421c6036df12ea205efc706"
+    },
+    {
+      "file": "includes/class-krev-listlab-timed-offers.php",
+      "sha256": "d2bbe75024b4fb26f85dc95865877ef9daad6329dc3fc1e79a2054552a5a54f0"
+    },
+    {
+      "file": "includes/class-krev-listlab-video-handler.php",
+      "sha256": "ae22c3a3c73d505cfc32c9d6c1857b1037d0539f10cc202dcdcf759f2d9fd1a3"
+    },
+    {
+      "file": "includes/class-krev-listlab-views.php",
+      "sha256": "599116f8673158bb60c1fb54e69d52c6c68c580ed7d9c40e9f58ab3a90697878"
+    },
+    {
+      "file": "includes/class-krev-listlab-whatnot-demo.php",
+      "sha256": "5e7447e48cd14b30dd3ffb9a667d5e2c599a1c424b552f6cffb249c4d7ae9b7b"
+    },
+    {
+      "file": "kniferevive-listlab.php",
+      "sha256": "76516cf37687e8e63aa3ebda1d3b174a52bbfeccad9c2f6f72476e9ed8639169"
+    },
+    {
+      "file": "templates/listlab.php",
+      "sha256": "ac1728308901f282baa03cd1f28b6ef0b3b59872de7b5153bdd533354833dfa5"
+    },
+    {
+      "file": "templates/myaccount-dashboard.php",
+      "sha256": "7d81063973a5c5d4cb74ba5096b34e0bb8e2605c1551efe66dc7140d630113d6"
+    },
+    {
+      "file": "tests/run-gtin-validation.php",
+      "sha256": "cf9dc9b662c14b872a359e3d2840a0b04736a413a025262464b197966ace2127"
+    },
+    {
+      "file": "tests/run-listing-visibility.php",
+      "sha256": "ad310de98404bdb4b42d25b91ff6ad2b72bf51a4f0a454673fe71dabfb655568"
+    },
+    {
+      "file": "tests/run-timed-offer-render.php",
+      "sha256": "e499da9c7e10835b0aad4f2b57fdadf05ec24cd6dcde6f7195786e9b3547df65"
+    },
+    {
+      "file": "tests/run-video-validation.php",
+      "sha256": "f9f88a0fd1788c33bcf8b00ca5569b72abbae532603ffdaa33738894be2736f1"
+    },
+    {
+      "file": "tests/run-whatnot-demo.php",
+      "sha256": "1f43052b3f0f1b0e025292337e076e47d24546851950ed8ea5ea60dd099844dc"
+    },
+    {
+      "file": "tests/test-category-labels.php",
+      "sha256": "0d30adb5b42c2e443bf35ce9e0796d6176d18b46a621ada11d568456643549bc"
+    },
+    {
+      "file": "tests/test-search-select-js.cjs",
+      "sha256": "eb5c19f9c2fcbc2c63d2c36f929242fdcf076f584fb5b3c85a58a0777d91e0d7"
+    },
+    {
+      "file": "tests/test-tech-categories-js.js",
+      "sha256": "57fb1ddfacdbaeaedbe45f42162f6dc9b22d265ae77b5d4d373f87014db12358"
+    },
+    {
+      "file": "tests/test-timed-offers-js.js",
+      "sha256": "c8871b4dcdb658e19723732799caccf8fd55d9908e126a244b6e9e1eff402242"
+    },
+    {
+      "file": "tests/test-video-js.js",
+      "sha256": "53726520e85f0856e636918b30670f6572f845abc2fe6a5fc92dc5e81f6dbb4e"
+    }
+  ],
+  "hash_scope": "Git source normalized to LF. Deployment ZIP manifests verify original runtime bytes.",
+  "deployment": "2026-10-10 kniferevive.com",
+  "vendor_note": "Third-party vendor code is omitted here, including Merchant Sync dependencies and ListLab ZXing; apply over the existing plugin. Full runtime is in the owner release ZIP."
+}

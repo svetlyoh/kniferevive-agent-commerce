@@ -1,0 +1,72 @@
+{
+  "version": "0.8.6",
+  "files": [
+    {
+      "file": "composer.json",
+      "sha256": "a14cac8abc064c4032494f0217b87d2f207df860063a641bc083f96e8ab47a94"
+    },
+    {
+      "file": "composer.lock",
+      "sha256": "7b2c6bcaafe764ef3d106bc0d95349da2899237470107ee79f67daa6d8afccff"
+    },
+    {
+      "file": "includes/class-krev-admin.php",
+      "sha256": "0f8618c2d41d03e83a671a175bced8a0193b4e23468df8b862f67ac9d2637a20"
+    },
+    {
+      "file": "includes/class-krev-cli.php",
+      "sha256": "eb8f53c75fbd58039556de765d2f209f807fdb98736af8d52626698480158370"
+    },
+    {
+      "file": "includes/class-krev-google-auth.php",
+      "sha256": "23238d1e027159bb9fdbb1a915c74be56a89ceca13fbaab99a9aa9a121eb6f21"
+    },
+    {
+      "file": "includes/class-krev-google-category-mapper.php",
+      "sha256": "5ad3b5b3e154a84c1a50696057f6e7a55e8ab0c222dc6943e5c2a3413491e606"
+    },
+    {
+      "file": "includes/class-krev-logger.php",
+      "sha256": "b86c5ea91f7511a332984dd5118f282ffce2cdb4e39569d2280a592d53fcb443"
+    },
+    {
+      "file": "includes/class-krev-merchant-api.php",
+      "sha256": "49d024a697ea28326dc7e5138dff36665bf0e366cffad2dfb83f541afef89721"
+    },
+    {
+      "file": "includes/class-krev-merchant-config.php",
+      "sha256": "46c34bb817737a1e5b782c927f8745a7bfd5b21fddc9f28185577a2f678099a5"
+    },
+    {
+      "file": "includes/class-krev-product-mapper.php",
+      "sha256": "0d4edf480cbb0533dcd3828f743ba04aee446b4cb33aa4b560820da225e720b1"
+    },
+    {
+      "file": "includes/class-krev-product-sync.php",
+      "sha256": "15041194a45f9f5527f2c6adf187be06843ab8af8296d38d9b3ae6488c34146f"
+    },
+    {
+      "file": "includes/class-krev-sync-queue.php",
+      "sha256": "e05cc4d391f45dcc20f66d5ec948845312b9cdd572591761a2f1e8e0f7013458"
+    },
+    {
+      "file": "kniferevive-merchant-sync.php",
+      "sha256": "36c1fc3a902095a25cf458346b798003b7176007d77cd08975781be73c5b2586"
+    },
+    {
+      "file": "README.md",
+      "sha256": "ebdca3ed87ad2ffb306ad9d3b1ae9af93032d3785bc74d9f86a4f302b516343f"
+    },
+    {
+      "file": "tests/run-google-category-mapper.php",
+      "sha256": "5e452f038c347c07ce3067282ca9a361b9350ec9b227a826c4e71f1528776ef1"
+    },
+    {
+      "file": "tests/run.php",
+      "sha256": "491e42cc96be8bc6ef8486e5af6eccf8190696c09c13487e4b9bd91d80b3607e"
+    }
+  ],
+  "hash_scope": "Git source normalized to LF. Deployment ZIP manifests verify original runtime bytes.",
+  "deployment": "2026-10-10 kniferevive.com",
+  "vendor_note": "Third-party vendor code is omitted here, including Merchant Sync dependencies and ListLab ZXing; apply over the existing plugin. Full runtime is in the owner release ZIP."
+}
