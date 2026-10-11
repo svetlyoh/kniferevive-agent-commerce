@@ -1,3 +1,20 @@
+## Marketplace Imports and Listing 1.0.5
+
+October 10, 2026: Marketplace Imports was updated in place from 1.0.4 to 1.0.5.
+WordPress confirmed success; the public schema returns 1.0.5 and requires a
+counted gallery manifest for new preparations. A live request declaring eight
+source photos but submitting one returned `import_photo_count`, HTTP 422, without
+creating a preparation/product. Older prepared links remain claimable.
+
+The separate Listing skill 1.0.5 is published at GitHub tag
+`kniferevive-listing-v1.0.5`. It requires source gallery inventory and traversal
+before counting submitted images. Muse sent one 403 × 403 metadata thumbnail
+for the owner's Wüsthof fork, while Facebook exposed eight 720 × 960 photos.
+Product 3046 now has all eight saved through native ListLab, retaining quantity
+1 and price $43. All 108 native assertions and 14 selection tests passed.
+The skill still requires an in-place update in Muse; that installation is not
+performed here. See [the repair and contract](counted-gallery-1.0.5.md).
+
 ## Marketplace Imports 1.0.3 live; separate Listing 1.0.4 on GitHub
 
 October 10, 2026: Marketplace Imports was updated in place on kniferevive.com.
