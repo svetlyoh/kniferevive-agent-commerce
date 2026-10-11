@@ -35,7 +35,13 @@ final class KREV_ListLab_Product_Writer {
 			if ( is_wp_error( $timed_offer ) ) return $timed_offer;
 		}
 		$product->set_sku( $clean['sku'] );
-		$product->set_category_ids( $clean['category_ids'] );
+		// Browsing collections are additive; omitted collection fields retain legacy assignments.
+		$category_ids = $clean['category_ids'];
+		if ( class_exists( 'KREV_PA_Metacategories' ) ) {
+			$meta = $clean['metacategory_provided'] ? $clean['metacategory_id'] : KREV_PA_Metacategories::selected( $product->get_category_ids() );
+			if ( $meta && KREV_PA_Metacategories::valid( $clean['category_id'], $meta ) ) $category_ids[] = $meta;
+		}
+		$product->set_category_ids( array_values( array_unique( $category_ids ) ) );
 		$product->set_image_id( $clean['featured_image_id'] );
 		$product->set_gallery_image_ids( $clean['gallery_ids'] );
 		if ( $clean['video_id_provided'] ) {
@@ -106,6 +112,9 @@ final class KREV_ListLab_Product_Writer {
 		$gallery = array_values( array_unique( array_filter( array_map( 'absint', (array) ( $d['gallery_ids'] ?? array() ) ) ) ) );
 		$evidence = is_array( $d['refurbishment_evidence'] ?? null ) ? $d['refurbishment_evidence'] : array();
 		return array(
+			'metacategory_provided' => array_key_exists( 'metacategory_id', $d ) || ( class_exists( 'KREV_PA_Metacategories' ) && KREV_PA_Metacategories::is_meta( $category ) ),
+			'metacategory_valid' => ! array_key_exists( 'metacategory_id', $d ) || ( is_scalar( $d['metacategory_id'] ) && preg_match( '/^\d+$/D', (string) $d['metacategory_id'] ) ),
+			'metacategory_id' => array_key_exists( 'metacategory_id', $d ) ? ( is_scalar( $d['metacategory_id'] ) ? absint( $d['metacategory_id'] ) : 0 ) : ( class_exists( 'KREV_PA_Metacategories' ) ? KREV_PA_Metacategories::selected( array( $category ) ) : 0 ),
 			'video_id_provided' => array_key_exists( 'video_id', $d ),
 			'video_url_provided' => array_key_exists( 'video_url', $d ),
 			'video_url' => KREV_ListLab_Video_Handler::normalize_url( $d['video_url'] ?? '' ),
@@ -117,6 +126,8 @@ final class KREV_ListLab_Product_Writer {
 
 	private static function validate( $d, $publishing ) {
 		$e = $publishing ? self::required_errors( $d ) : array();
+		$meta_valid = class_exists( 'KREV_PA_Metacategories' ) ? KREV_PA_Metacategories::valid( $d['category_id'], $d['metacategory_id'] ) : ! $d['metacategory_id'];
+		if ( ! $d['metacategory_valid'] || ! $meta_valid ) $e['metacategory_id'] = 'Choose a collection belonging to the selected category.';
 		$category_validation = KREV_ListLab_Categories::validate( $d['category_id'], $d['subcategory_id'] );
 		if ( ! $d['subcategory_valid'] || is_wp_error( $category_validation ) ) $e['subcategory_id'] = 'Choose a valid subcategory for this category.';
 		if ( false === $d['video_url'] ) $e['video_url'] = 'Enter a public HTTPS YouTube or Vimeo video link.';

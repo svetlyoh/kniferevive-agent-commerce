@@ -1,5 +1,5 @@
 {
-  "version": "1.8.3",
+  "version": "1.8.5",
   "files": [
     {
       "file": "assets/css/account-profile.css",
@@ -27,7 +27,7 @@
     },
     {
       "file": "assets/js/listlab.js",
-      "sha256": "1e2501f3037c36a36de7adca30701a890379e5fc5fffe560cdbac98c08b6d154"
+      "sha256": "11af8f01c4a34843389bbe7b34fd08b61f980d609d88d39e7a8cacda36259765"
     },
     {
       "file": "assets/js/timed-offers.js",
@@ -43,11 +43,11 @@
     },
     {
       "file": "includes/class-krev-listlab-attributes.php",
-      "sha256": "cfc66ddc7374ef3880b7ad2bc3dbbf8ad653e06e2e96dd27858446b62c8ff231"
+      "sha256": "8bf457d8559b826ae63ab38dc54d97c9efb732ff2a94b80bf638e4534b8f51e3"
     },
     {
       "file": "includes/class-krev-listlab-categories.php",
-      "sha256": "dc395ee3cdd58bf2fdd73507a264035b9eaaafd46c8fed59e33a1415d7278c1a"
+      "sha256": "6593b8a7ac8ef7818e3d54204da19bccba96b55a5d47c98cd7bae8e9280d511d"
     },
     {
       "file": "includes/class-krev-listlab-dokan-adapter.php",
@@ -71,15 +71,15 @@
     },
     {
       "file": "includes/class-krev-listlab-product-reader.php",
-      "sha256": "c11499dd0dad57d610d5f0cbd5701882413fc66a17a572465545291b96678ffd"
+      "sha256": "b74565653d7660db0f0680b2fe74e8847cf67e8badb9d864333e9fa8435dc76c"
     },
     {
       "file": "includes/class-krev-listlab-product-writer.php",
-      "sha256": "d287c9634101415521896b72850c5d1cfae67841f12936803f48ed4586e08817"
+      "sha256": "0ed24646870cc59b7e6f18c26b6e4ab93cd5e449147d6e5378172ee43cfaf14b"
     },
     {
       "file": "includes/class-krev-listlab-rest.php",
-      "sha256": "d5e5d699b0612d8636705be32e983441e22983c51421c6036df12ea205efc706"
+      "sha256": "8286c8610d89551e17b696690bdd342f28dbdafd53d5f1476c489b024889796f"
     },
     {
       "file": "includes/class-krev-listlab-timed-offers.php",
@@ -99,7 +99,7 @@
     },
     {
       "file": "kniferevive-listlab.php",
-      "sha256": "65458496e6a36630d7c8ac28f692a2bbb27571d61acd4fa24ad2bcd15d37c4e0"
+      "sha256": "0465af9081b48d817ffe96af6208e49672b0f906f058087620c24131c1dc0923"
     },
     {
       "file": "templates/listlab.php",
@@ -150,7 +150,6 @@
       "sha256": "53726520e85f0856e636918b30670f6572f845abc2fe6a5fc92dc5e81f6dbb4e"
     }
   ],
-  "hash_scope": "LF-normalized source bytes; release manifest verifies full runtime ZIPs.",
-  "deployment": "2026-10-11 release",
-  "vendor_note": "Third-party vendor code omitted from Git. Complete runtime ZIP retains the installed dependencies."
+  "hash_scope": "LF-normalized text and original image bytes; complete runtime ZIP verified separately.",
+  "deployment": "2026-10-11 metacategories release"
 }

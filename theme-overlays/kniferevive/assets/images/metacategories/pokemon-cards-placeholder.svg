@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1066" viewBox="0 0 1600 1066" role="img" aria-labelledby="title desc">
+<title id="title">Pokémon Cards collection</title><desc id="desc">Illustrated stack of collectible trading cards, with no actual cards or characters depicted.</desc>
+<rect width="1600" height="1066" fill="#ede8dc"/><circle cx="1120" cy="270" r="340" fill="#dfcf9e"/>
+<g stroke="#294239" stroke-width="10" stroke-linejoin="round"><rect x="500" y="195" width="420" height="585" rx="30" fill="#c6d4c9" transform="rotate(-13 710 490)"/><rect x="685" y="145" width="420" height="585" rx="30" fill="#f7f1e6" transform="rotate(12 895 438)"/><rect x="690" y="216" width="330" height="228" rx="16" fill="#688174"/><path d="m824 258 25 54 60 7-45 41 12 60-52-29-53 29 12-60-44-41 60-7z" fill="#dfcf9e"/><path d="M729 509h254M729 558h195M729 607h225" stroke-linecap="round"/></g>
+<text x="800" y="902" text-anchor="middle" font-family="Arial,sans-serif" font-size="74" font-weight="700" fill="#294239">Pokémon Cards</text><text x="800" y="968" text-anchor="middle" font-family="Arial,sans-serif" font-size="28" fill="#68776d">Explore collectible trading cards</text>
+</svg>

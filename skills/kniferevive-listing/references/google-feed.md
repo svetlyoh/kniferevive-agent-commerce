@@ -47,6 +47,28 @@ field, preserve it in the description and flag the missing structured merchant
 field for completion; do not invent a top-level `mpn` or private metadata key.
 Source facts do not establish inventory ownership or photo rights.
 
+Tech, Home & Garden, and Collectibles expose six predefined specification fields
+per Google subcategory under `specification_profile.fields`. Fetch `/schema` with
+the selected native Google child as `category_id`; a parent schema is only a
+general fallback. Marketplace Imports 1.0.6 advertises `subcategory_id` and
+`metacategory_id` separately. Use the advertised IDs, not labels or guessed IDs.
+Retain the Google child when assigning AI-Tech or Pokémon Cards. Pokémon's native
+collection rolls up confirmed Pokémon trading cards while the feed uses Google
+6997. Trading-card facts are game/franchise, set/expansion, card name, card number,
+rarity/finish, and grade; do not assert grading or authentication without evidence.
+
+Fill each advertised field only from the listing or a readable product label.
+Keep unsupported facts in the description and mention missing specifications at
+handoff. `pa_model-code` holds a stated product/model code, such as an Apple model
+identifier; `pa_mpn` holds a genuine manufacturer-issued part number. Do not turn
+a model code into an MPN. An IMEI or device serial is neither an MPN nor a GTIN.
+Use existing native term IDs or the import's
+supported custom-value prefix for numeric text rather than mistaking a code for a
+term ID. Seller SKU remains the separate `sku` field and cannot substitute for a
+manufacturer identifier. The six fields supplement core feed title, description,
+price, image, availability, brand, condition and shipping; they do not establish
+Google approval by themselves.
+
 The seller reviews quantity, selling/photo rights, shipping and returns in
 ListLab, then publishes. Native Merchant Sync automatically queues eligible
 published saves when its verified sync gate is enabled. Draft preparation is

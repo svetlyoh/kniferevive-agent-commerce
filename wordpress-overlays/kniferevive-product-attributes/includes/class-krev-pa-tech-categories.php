@@ -8,7 +8,7 @@ final class KREV_PA_Tech_Categories {
     const PATH_META = '_krev_google_taxonomy_path';
     const PROGRESS = 'krev_tech_taxonomy_20261010';
 
-    public static function groups() { return array( 'technology' => 'Tech', 'world-coins' => 'World Coins', 'art' => 'Art', 'home-garden' => 'Home & Garden' ); }
+    public static function groups() { return array( 'technology' => 'Tech', 'world-coins' => 'World Coins', 'art' => 'Art', 'home-garden' => 'Home & Garden', 'collectibles' => 'Collectibles' ); }
     public static function init() {
         add_action( 'admin_menu', static function() { add_submenu_page( 'woocommerce', 'Google Subcategories', 'Google Subcategories', 'manage_woocommerce', self::PAGE, array( __CLASS__, 'page' ) ); } );
         add_action( 'admin_post_krev_tech_categories', array( __CLASS__, 'handle' ) );
@@ -31,12 +31,17 @@ final class KREV_PA_Tech_Categories {
         return '';
     }
     public static function parent_id( $id ) { $group = self::group_for( $id ); return $group ? self::root_id( $group ) : 0; }
-    public static function is_managed_child( $id ) { $root = self::parent_id( $id ); return $root && (int) $id !== $root; }
-    public static function is_child( $id ) { return 'technology' === self::group_for( $id ) && (int) $id !== self::root_id(); }
+    public static function is_managed_child( $id ) { if ( class_exists( 'KREV_PA_Metacategories' ) && KREV_PA_Metacategories::is_meta( $id ) ) return false; $root = self::parent_id( $id ); return $root && (int) $id !== $root; }
+    public static function is_child( $id ) { return 'technology' === self::group_for( $id ) && self::is_managed_child( $id ); }
     public static function mapping( $id ) {
         $group = self::group_for( $id );
         if ( ! $group ) return null;
-        if ( ! self::is_managed_child( $id ) ) return 'home-garden' === $group ? array( 'id' => '536', 'path' => 'Home & Garden' ) : null;
+        if ( ! self::is_managed_child( $id ) ) {
+            if ( class_exists( 'KREV_PA_Metacategories' ) && KREV_PA_Metacategories::is_meta( $id ) ) return null;
+            if ( 'home-garden' === $group ) return array( 'id' => '536', 'path' => 'Home & Garden' );
+            if ( 'collectibles' === $group ) return array( 'id' => '216', 'path' => 'Arts & Entertainment > Hobbies & Creative Arts > Collectibles' );
+            return null;
+        }
         $google_id = (string) get_term_meta( $id, self::ID_META, true );
         foreach ( self::catalog( $group ) as $row ) if ( (string) $row['id'] === $google_id ) return array( 'id' => $google_id, 'path' => $row['path'] );
         return null;
@@ -46,8 +51,8 @@ final class KREV_PA_Tech_Categories {
     public static function import_batch( $limit = 50, $group = 'technology' ) {
         if ( ! isset( self::groups()[$group] ) ) return new WP_Error( 'krev_google_group', 'Choose a supported category group.' );
         $root = self::root_id( $group );
-        if ( ! $root && 'home-garden' === $group ) {
-            $created = wp_insert_term( 'Home & Garden', 'product_cat', array( 'slug' => $group ) );
+        if ( ! $root && in_array( $group, array( 'home-garden', 'collectibles' ), true ) ) {
+            $created = wp_insert_term( self::groups()[$group], 'product_cat', array( 'slug' => $group ) );
             if ( is_wp_error( $created ) ) return $created;
             $root = (int) $created['term_id'];
         }

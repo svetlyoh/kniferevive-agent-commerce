@@ -1,17 +1,25 @@
 {
-  "version": "0.3.5",
+  "version": "0.3.7",
   "files": [
     {
       "file": "assets/admin-product-attributes.js",
       "sha256": "c27a6ed15969f20442a91bd267c6bd824d421bbee24fa64d97ff34a68da234a6"
     },
     {
+      "file": "data/category-specifications-2026-10-11.json",
+      "sha256": "b95c5e1fe525acf9ccc1a186126df664ecb360d76b0cb5aad2fb85948350bea7"
+    },
+    {
       "file": "data/google-category-groups-2026-10-11.json",
-      "sha256": "f7320196ed7015f0b01d38aa96c3f93c8d45f5cffeb36ed159cd1ad4a3bdafc9"
+      "sha256": "5f2ebbe9e4c2af3848dd1fd3a0f79c4e2320bbccd0aef866254f7fa0e951f90d"
     },
     {
       "file": "data/google-electronics-2026-10-10.json",
       "sha256": "375aef9317a81080cbd0cb09e5855cd9e9dfa0ed5904d02da015f5215ce72096"
+    },
+    {
+      "file": "data/metacategories-2026-10-11.json",
+      "sha256": "0fd9d13026cb1e64e9c25958a0a13d4ecd7179f77cf1d70b8ceeac6190f46c71"
     },
     {
       "file": "includes/class-krev-pa-admin.php",
@@ -31,11 +39,15 @@
     },
     {
       "file": "includes/class-krev-pa-config.php",
-      "sha256": "563a3547082ae6a371c6e57ea2fc5ebcac8b3930640b3d4242c1023f3aa0633a"
+      "sha256": "5df03e99e06ead8958040058427a31d3e5b336bbff6ceceeb995f76ff0d37af9"
     },
     {
       "file": "includes/class-krev-pa-editor.php",
       "sha256": "5d05017d33069dce235dedc16353db477f388fca079e91a77d752eea9eb4ed63"
+    },
+    {
+      "file": "includes/class-krev-pa-metacategories.php",
+      "sha256": "57fe1ff05aef8f795f64746c963ad419bd3b90d91840e023e53cc939765b31d5"
     },
     {
       "file": "includes/class-krev-pa-migrator.php",
@@ -46,19 +58,22 @@
       "sha256": "ef6024f4c76aba5f7c6c624e5f66196c515d21bba0fffc06304e1f9cb8a8a6f5"
     },
     {
+      "file": "includes/class-krev-pa-specifications.php",
+      "sha256": "3328060281a07ea12391f82338f9ada91137feb45cd901492e434b7ee7161865"
+    },
+    {
       "file": "includes/class-krev-pa-tech-categories.php",
-      "sha256": "a893c19f1494f55d0f79052a409da3905f5dd5568e22c256900861e629be3ad0"
+      "sha256": "38f5cb2ac221de193b4f64bcd91e7b6935dd66eaa5bd250a5b3cc944e1f1b4d3"
     },
     {
       "file": "kniferevive-product-attributes.php",
-      "sha256": "af39877cddf7e183c925c136e7b3b5a771d3309bb0e5c847402c91705b9e7c86"
+      "sha256": "20ffa8ba0556fd0271b4de9ea41dd6f8007fbc214b24c8a36f41db4b0cd9370b"
     },
     {
       "file": "tests/run-condition-policy.php",
       "sha256": "0d196b4f0b658f8d83f7109943ecdc4ddf7a2462f7e5d11dc5f0122d8eaa4746"
     }
   ],
-  "hash_scope": "LF-normalized source bytes; release manifest verifies full runtime ZIPs.",
-  "deployment": "2026-10-11 release",
-  "vendor_note": "Third-party vendor code omitted from Git. Complete runtime ZIP retains the installed dependencies."
+  "hash_scope": "LF-normalized text and original image bytes; complete runtime ZIP verified separately.",
+  "deployment": "2026-10-11 metacategories release"
 }

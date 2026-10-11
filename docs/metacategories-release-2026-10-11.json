@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-11",
+  "source_commit_before_changes": "903f46bf7dbc74287906266f21b4a9ecb1420037",
+  "packages": [
+    {
+      "file": "kniferevive-product-attributes-0.3.7.zip",
+      "bytes": 98383,
+      "sha256": "188974044e9545f8b2faad203221a931647d3f009832565b47b343ef6c5fa27c"
+    },
+    {
+      "file": "kniferevive-listlab-1.8.5.zip",
+      "bytes": 185656,
+      "sha256": "ea577e62f3cbd24596f3bdf8427c52e5c090802906425defdbb794e1d3bd75e0"
+    },
+    {
+      "file": "kniferevive-merchant-sync-0.8.8.zip",
+      "bytes": 729229,
+      "sha256": "27428d6e83faa670e37d38d35843597529f0f722ce0a3e56cf573b43e23fac24"
+    },
+    {
+      "file": "kniferevive-listlab-import-1.0.6.zip",
+      "bytes": 18938,
+      "sha256": "dbf92e9c4d45e6895ce0fd371931b9a2df5a0eb20287e585ed4525be0ef25450"
+    },
+    {
+      "file": "kniferevive-2026.10.11.3.zip",
+      "bytes": 31092061,
+      "sha256": "b9b6478da2602a565165b5a94e7acf890588f22c7fee82e3d8b66922a8359bfa"
+    }
+  ],
+  "skill": {
+    "file": "kniferevive-listing-1.0.6.zip",
+    "version": "1.0.6",
+    "bytes": 19263,
+    "sha256": "639975d1feb3fefff8f8c533d1b9cb055354261c99fc5cd49289e9361101c83a"
+  },
+  "rollback": [
+    {
+      "file": "rollback-kniferevive-listlab-1.8.3.zip",
+      "bytes": 184948,
+      "sha256": "76bdca424259d77f00347d1822cd4bfa77ca6de908fee2184edfcc40bdeef3db"
+    },
+    {
+      "file": "rollback-kniferevive-listlab-import-1.0.5.zip",
+      "bytes": 18643,
+      "sha256": "6c6b8371158955b718f20547cdcce6d04f2e4197474872385dea3f3ea824f608"
+    },
+    {
+      "file": "rollback-kniferevive-merchant-sync-0.8.7.zip",
+      "bytes": 729166,
+      "sha256": "304db98429194bf359f00524cac0fad2268c9b6de3d03ee0c63aa039b1eb4488"
+    },
+    {
+      "file": "rollback-kniferevive-product-attributes-0.3.5.zip",
+      "bytes": 62315,
+      "sha256": "99c925b1fadfab8b5b494e9c634bce5657fcf75d91b182159956b43b5c3a3d31"
+    },
+    {
+      "file": "rollback-kniferevive-theme-2026.10.09.1.zip",
+      "bytes": 46316176,
+      "sha256": "4974c6170e35c03c0f6fbc97c7186182db5d2d34ac5b664723e7037ed59dfbf8"
+    }
+  ]
+}

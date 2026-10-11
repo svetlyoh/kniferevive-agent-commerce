@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.5"
+  version: "1.0.6"
 ---
 
 # KnifeRevive Listing
@@ -42,6 +42,12 @@ category and native attributes advertised by the live schema. Blade length is
 not overall length or shipping-package length. Do not invent missing measurements.
 Read [Google feed preparation](references/google-feed.md) to collect feed fields
 as far as the source supports them. Preserve any explicitly stated condition.
+For Tech, Home & Garden, and Collectibles, fetch the live schema for the selected
+Google subcategory and read its six-field `specification_profile`. Extract those
+facts and any genuine SKU, manufacturer part/model code, or barcode. Keep unknown
+fields blank. Use the separate `metacategory_id` for AI-Tech or Pokémon Cards;
+retain the actual Google subcategory for the feed. Pokémon cards normally use
+Google **6997, Collectible Trading Cards**, not a made-up Pokémon taxonomy ID.
 If Facebook omits condition, use the owner's default **Gently Used** for knives
 and **Used** for every other category, in the category's structured condition
 field. Label it as a seller default in the description and handoff. Both map to

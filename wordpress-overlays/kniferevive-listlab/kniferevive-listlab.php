@@ -2,14 +2,14 @@
 /**
  * Plugin Name: KnifeRevive ListLab
  * Description: KnifeRevive's mobile-first seller listing manager and editor.
- * Version: 1.8.3
+ * Version: 1.8.5
  * Requires Plugins: woocommerce
  * Text Domain: kniferevive-listlab
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KREV_LISTLAB_VERSION', '1.8.3' );
+define( 'KREV_LISTLAB_VERSION', '1.8.5' );
 define( 'KREV_LISTLAB_FILE', __FILE__ );
 define( 'KREV_LISTLAB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'KREV_LISTLAB_URL', plugin_dir_url( __FILE__ ) );

@@ -12,6 +12,11 @@ final class KREV_ListLab_Categories {
             usort( $children, static function( $a, $b ) { return count( get_ancestors( $b, 'product_cat', 'taxonomy' ) ) <=> count( get_ancestors( $a, 'product_cat', 'taxonomy' ) ); } );
             return array( 'category_id' => self::parent_id( $children[0] ), 'subcategory_id' => $children[0] );
         }
+        if ( class_exists( 'KREV_PA_Metacategories' ) ) {
+            $meta = KREV_PA_Metacategories::selected( $ids );
+            $ids = array_values( array_filter( $ids, static function( $id ) { return ! KREV_PA_Metacategories::is_meta( $id ); } ) );
+            if ( ! $ids && $meta ) $ids = array( self::parent_id( $meta ) );
+        }
         return array( 'category_id' => $ids ? (int) reset( $ids ) : 0, 'subcategory_id' => 0 );
     }
     public static function validate( $parent, $child ) {
@@ -22,6 +27,6 @@ final class KREV_ListLab_Categories {
         $selection = self::selection( array( (int) $category ) ); $parent = $selection['category_id'];
         $children = $parent && self::parent_id( $parent ) === $parent ? array_values( array_filter( KREV_ListLab_Product_Reader::categories(), static function( $row ) use ( $parent ) { return ! empty( $row['is_subcategory'] ) && (int) $row['subcategory_parent_id'] === $parent; } ) ) : array();
         $term = $parent ? get_term( $parent, 'product_cat' ) : null;
-        return array( 'subcategory_parent_id' => $parent, 'subcategory_label' => $term && ! is_wp_error( $term ) ? html_entity_decode( $term->name, ENT_QUOTES, 'UTF-8' ) . ' subcategory' : 'Subcategory', 'subcategories' => $children, 'tech_category_id' => self::root_id(), 'tech_subcategories' => $parent === self::root_id() ? $children : array() );
+        return ( class_exists( 'KREV_PA_Specifications' ) ? KREV_PA_Specifications::schema( $category ) : array() ) + array( 'metacategory_label' => $term && ! is_wp_error( $term ) ? html_entity_decode( $term->name, ENT_QUOTES, 'UTF-8' ) . ' collection' : 'Collection', 'metacategories' => class_exists( 'KREV_PA_Metacategories' ) ? KREV_PA_Metacategories::choices( $parent ) : array(), 'subcategory_parent_id' => $parent, 'subcategory_label' => $term && ! is_wp_error( $term ) ? html_entity_decode( $term->name, ENT_QUOTES, 'UTF-8' ) . ' subcategory' : 'Subcategory', 'subcategories' => $children, 'tech_category_id' => self::root_id(), 'tech_subcategories' => $parent === self::root_id() ? $children : array() );
     }
 }

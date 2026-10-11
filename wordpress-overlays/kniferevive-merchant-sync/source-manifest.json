@@ -1,5 +1,5 @@
 {
-  "version": "0.8.7",
+  "version": "0.8.8",
   "files": [
     {
       "file": "composer.json",
@@ -39,7 +39,7 @@
     },
     {
       "file": "includes/class-krev-product-mapper.php",
-      "sha256": "0d4edf480cbb0533dcd3828f743ba04aee446b4cb33aa4b560820da225e720b1"
+      "sha256": "26acd0984e21ae8bf0d1754f993c32fb518aaf01dec448379d6f1090bb5eea46"
     },
     {
       "file": "includes/class-krev-product-sync.php",
@@ -51,7 +51,7 @@
     },
     {
       "file": "kniferevive-merchant-sync.php",
-      "sha256": "0b8d25060972994bc3ddfcd70fcc3bbca7dc30e89aca66fabc538172bfd09165"
+      "sha256": "dc568951d2f03d3c784215700ed88dfe03510d3a0f0abb1fc9f6ac857804a5d6"
     },
     {
       "file": "tests/run-google-category-mapper.php",
@@ -62,7 +62,6 @@
       "sha256": "491e42cc96be8bc6ef8486e5af6eccf8190696c09c13487e4b9bd91d80b3607e"
     }
   ],
-  "hash_scope": "LF-normalized source bytes; release manifest verifies full runtime ZIPs.",
-  "deployment": "2026-10-11 release",
-  "vendor_note": "Third-party vendor code omitted from Git. Complete runtime ZIP retains the installed dependencies."
+  "hash_scope": "LF-normalized text and original image bytes; complete runtime ZIP verified separately.",
+  "deployment": "2026-10-11 metacategories release"
 }

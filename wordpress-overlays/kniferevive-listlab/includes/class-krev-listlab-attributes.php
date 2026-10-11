@@ -50,10 +50,11 @@ final class KREV_ListLab_Attributes {
 			}
 			$groups = KREV_PA_Config::groups_for_category_slugs( $category_slugs );
 			$slugs = KREV_PA_Config::allowed_slugs_for_groups( $groups );
+			if ( class_exists( 'KREV_PA_Specifications' ) ) { $profile_slugs = KREV_PA_Specifications::listing_slugs( $category_id ); if ( null !== $profile_slugs ) $slugs = $profile_slugs; }
 			$definitions = KREV_PA_Config::all_definitions();
 		} else { $definitions = array(); }
 		$fields = array();
-		if ( taxonomy_exists( 'product_brand' ) && array_intersect( $groups, array( 'knives', 'tech', 'world-spices', 'art', 'home-garden' ) ) ) {
+		if ( taxonomy_exists( 'product_brand' ) && array_intersect( $groups, array( 'knives', 'tech', 'world-spices', 'art', 'home-garden', 'collectibles' ) ) ) {
 			$brand_terms = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false, 'number' => 0 ) );
 			$fields[] = array( 'slug' => 'brand', 'taxonomy' => 'product_brand', 'label' => in_array( 'art', $groups, true ) ? 'Artist / Brand' : 'Brand', 'field_type' => 'select', 'allow_new_value' => true, 'options' => is_wp_error( $brand_terms ) ? array() : array_map( static function( $term ) { return array( 'id' => (int) $term->term_id, 'name' => $term->name ); }, $brand_terms ) );
 		}
@@ -64,7 +65,7 @@ final class KREV_ListLab_Attributes {
 			$terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => false, 'number' => 0 ) );
 			$label = $definitions[ $slug ]['name'] ?? ucwords( str_replace( '-', ' ', $slug ) );
 			if ( 'condition' === $slug && ! in_array( 'knives', $groups, true ) ) { $label = 'Item Condition'; }
-			$required = 'condition' === $slug && array_intersect( $groups, array( 'tech', 'world-spices', 'world-coins' ) );
+			$required = 'condition' === $slug && array_intersect( $groups, array( 'tech', 'world-spices', 'world-coins', 'home-garden', 'collectibles' ) );
 			$is_tech_condition = 'condition' === $slug && in_array( 'tech', $groups, true );
 			$options = is_wp_error( $terms ) ? array() : array_map( static function( $term ) use ( $is_tech_condition ) {
 				$name = $term->name;

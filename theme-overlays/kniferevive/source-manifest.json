@@ -1,0 +1,67 @@
+{
+  "version": "2026.10.11.3",
+  "files": [
+    {
+      "file": "assets/css/metacategories.css",
+      "sha256": "c57b5dff339e846473bef3c05b04f81a600acade1026cc62a7ee4ac520d891b7"
+    },
+    {
+      "file": "assets/images/categories/home-garden-2026-10-11.png",
+      "sha256": "12250edfa34b0cfe4b8cae71c817f09a0519c1a0a462ceaef7de2b6dd15469f5"
+    },
+    {
+      "file": "assets/images/metacategories/iphones-placeholder.svg",
+      "sha256": "4d28d468054a4a711441ea7ba3ab2774b9bb4ca3b3bb4e0180deee52a789788a"
+    },
+    {
+      "file": "assets/images/metacategories/laptops-placeholder.svg",
+      "sha256": "c845ebefa594caeb82e6820114d4229a3a359cbf65e58486c146c1ee1a798f2a"
+    },
+    {
+      "file": "assets/images/metacategories/mini-computers-placeholder.svg",
+      "sha256": "b1099b3e72d7a88be90f88ec8ecd9f1a482cbd135cf8789db5bcb380fac2bbb1"
+    },
+    {
+      "file": "assets/images/metacategories/pokemon-cards-placeholder.svg",
+      "sha256": "309830f8bc8e81a8072ce95ab81fe88a58a5f3f87ae8e9b2e8319a7c2fd88068"
+    },
+    {
+      "file": "assets/js/navigation.js",
+      "sha256": "e31335904036123fbd410bc6dd136b456dd208e99327c9ed43a9c34c6f4a3232"
+    },
+    {
+      "file": "functions.php",
+      "sha256": "7a0fda021d2ad5b7d6e591ebf5e335ac893ce6818b7f59e3fccb3bbd81e6033f"
+    },
+    {
+      "file": "inc/annex.php",
+      "sha256": "01e87485bd86e115f75fecdf6e0faf5cfdeb0c47f55032423907570513e4f7c0"
+    },
+    {
+      "file": "inc/categories.php",
+      "sha256": "98253a9ed0de970a66f7595a5268c929ed8c04dac6c40f0284fe5642f147941c"
+    },
+    {
+      "file": "inc/metacategories.php",
+      "sha256": "ac84ffba9200cb32d49dcc31dc2286c1ac7ee4caa0636628d6f3da429cb9b4f1"
+    },
+    {
+      "file": "style.css",
+      "sha256": "d71cdb972d813e88abd255d281f80b10e9fb5e4e750b0db519f0318df5b50d38"
+    },
+    {
+      "file": "templates/page-collectibles.html",
+      "sha256": "4ebfaea21b3ad81ec3e05bc1ed78a0e59146797c929610a2040bdcb1376f7172"
+    },
+    {
+      "file": "templates/page-home-garden.html",
+      "sha256": "1f0ac3859c5cc02aba948ed3443784d42b54067728d5cbc14b8617708591e554"
+    },
+    {
+      "file": "templates/page-pokemon-cards.html",
+      "sha256": "365e69ab49e4ae3f710a94bce4e97c691168c35321cf69199bc87244b29985e5"
+    }
+  ],
+  "hash_scope": "LF-normalized text and original image bytes; complete runtime ZIP verified separately.",
+  "deployment": "2026-10-11 metacategories release"
+}

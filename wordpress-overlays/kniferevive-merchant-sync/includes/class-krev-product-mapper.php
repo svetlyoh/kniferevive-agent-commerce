@@ -81,8 +81,13 @@ final class KREV_Product_Mapper {
 		}
 
 		$mpn = $this->first_meta( $product->get_id(), array( '_wc_gla_mpn', '_google_mpn', '_mpn', 'mpn' ) );
+		if ( '' === $mpn ) { $values = $this->global_attribute_values( $product, 'mpn' ); $candidate = (string) reset( $values ); if ( self::is_confirmed_product_detail_value( $candidate ) ) $mpn = $candidate; }
 		if ( '' !== $mpn ) {
 			$attributes['mpn'] = $this->plain_text( $mpn );
+		}
+		foreach ( array( 'color', 'material', 'size' ) as $slug ) {
+			$values = array_values( array_filter( $this->global_attribute_values( $product, $slug ), array( __CLASS__, 'is_confirmed_product_detail_value' ) ) );
+			if ( $values ) $attributes[$slug] = $this->plain_text( implode( '/', $values ) );
 		}
 
 		if ( '' !== $gtin || ( '' !== $mpn && '' !== $brand ) ) {
@@ -374,7 +379,7 @@ final class KREV_Product_Mapper {
 		$groups = KREV_PA_Config::groups_for_product( $product->get_id() );
 		$mapping = KREV_PA_Config::merchant_details();
 		$details = array();
-		foreach ( array( 'knives', 'tech', 'art', 'world-coins', 'world-spices' ) as $group ) {
+		foreach ( array_keys( $mapping ) as $group ) {
 			if ( ! in_array( $group, $groups, true ) || empty( $mapping[ $group ] ) ) {
 				continue;
 			}

@@ -19,11 +19,12 @@ final class KREV_PA_Config {
 			'knife-sharpening' => array( 'knife-sharpening' ),
 			'other-finds'      => array( 'other_finds' ),
 			'home-garden'      => array( 'home-garden' ),
+			'collectibles'     => array( 'collectibles' ),
 		);
 	}
 
 	public static function group_attributes() {
-		return array(
+		$mapping = array(
 			'knives' => array( 'model-number', 'msrp', 'condition', 'blade-length', 'blade-steel', 'edge-type', 'handle-material', 'country-of-origin' ),
 			'tech' => array( 'brand', 'condition', 'processor', 'memory', 'storage', 'graphics', 'operating-system', 'form-factor' ),
 			'art' => array( 'artist', 'medium', 'art-style', 'subject', 'dimensions', 'year-period', 'condition' ),
@@ -36,10 +37,14 @@ final class KREV_PA_Config {
 			'other-finds' => array(),
 			'home-garden' => array( 'model-number', 'condition', 'country-of-origin' ),
 		);
+		if ( class_exists( 'KREV_PA_Specifications' ) ) foreach ( array( 'technology' => 'tech', 'home-garden' => 'home-garden', 'collectibles' => 'collectibles' ) as $group => $key ) {
+			$mapping[$key] = array_values( array_unique( array_merge( $mapping[$key] ?? array(), array( 'brand', 'condition', 'mpn' ), KREV_PA_Specifications::group_slugs( $group ) ) ) );
+		}
+		return $mapping;
 	}
 
 	public static function definitions() {
-		return array(
+		$definitions = array(
 			'msrp' => array( 'name' => 'MSRP', 'description' => "Manufacturer's suggested retail price in the store currency. Store a non-negative decimal amount without a currency symbol." ),
 			'blade-length' => array( 'name' => 'Blade Length', 'description' => 'Specifies the length of the knife blade, typically measured from the heel to the tip.' ),
 			'blade-steel' => array( 'name' => 'Blade Steel', 'description' => 'Identifies the steel or primary blade material used in the knife.' ),
@@ -68,6 +73,7 @@ final class KREV_PA_Config {
 			'spice-form' => array( 'name' => 'Form / Grind', 'description' => 'Describes the product form, such as whole, ground, crushed, or flakes.' ),
 			'net-weight' => array( 'name' => 'Net Weight / Package Size', 'description' => 'Describes the packaged net quantity; this is catalog information and is not the WooCommerce shipping weight.' ),
 		);
+		return array_merge( class_exists( 'KREV_PA_Specifications' ) ? KREV_PA_Specifications::definitions() : array(), $definitions );
 	}
 
 	public static function existing_definitions() {
@@ -124,7 +130,7 @@ final class KREV_PA_Config {
 	}
 
 	public static function merchant_details() {
-		return array(
+		$mapping = array(
 			'knives' => array(
 				'blade-length' => array( 'Knife specifications', 'Blade length' ),
 				'blade-steel' => array( 'Knife specifications', 'Blade steel' ),
@@ -162,5 +168,7 @@ final class KREV_PA_Config {
 				'net-weight' => array( 'Spice details', 'Net weight / package size' ),
 			),
 		);
+		if ( class_exists( 'KREV_PA_Specifications' ) ) foreach ( KREV_PA_Specifications::merchant_details() as $group => $fields ) $mapping[$group] = array_merge( $fields, $mapping[$group] ?? array() );
+		return $mapping;
 	}
 }

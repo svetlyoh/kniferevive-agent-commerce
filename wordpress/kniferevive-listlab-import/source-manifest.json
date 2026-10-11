@@ -1,0 +1,43 @@
+{
+  "version": "1.0.6",
+  "files": [
+    {
+      "file": "assets/review.css",
+      "sha256": "7fa02964d4b9015e5f1f123ee6eca695f901a3399b5ef3748e880786f6484caa"
+    },
+    {
+      "file": "assets/review.js",
+      "sha256": "e83d454bdfa8f56393ea82a7bec7579c23aa8e70ffc449347acc6d7185c38ab3"
+    },
+    {
+      "file": "includes/class-imports.php",
+      "sha256": "1b0557e2f7fcc062b9d2ada808520c04e843f134f121fb1ecf3903e761dab883"
+    },
+    {
+      "file": "includes/class-package-defaults.php",
+      "sha256": "2e8493f92cec9fd91cf1e3933578b8437f38ecc6bbbe287841a1c2acf60bb8e6"
+    },
+    {
+      "file": "includes/class-photo-manifest.php",
+      "sha256": "268dbe99ef356e12969a4889fb3459850debda02f0bc8eabdee7cab4f390a88f"
+    },
+    {
+      "file": "includes/class-pricing.php",
+      "sha256": "d9c484ce5de604cb9792fd333e0b8ec606d3cd2337af39e906bc12f54d42c25f"
+    },
+    {
+      "file": "kniferevive-listlab-import.php",
+      "sha256": "2f8e4842407801ad74dbc547f35683374ed78d7065ede0c9cddb7e0175ce472e"
+    },
+    {
+      "file": "LICENSE",
+      "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361"
+    },
+    {
+      "file": "templates/review.php",
+      "sha256": "4fa0cd004b96ad0a1042e0bca1e1ee72974ae6360b339886a5f6e6ce6085fff1"
+    }
+  ],
+  "hash_scope": "LF-normalized text and original image bytes; complete runtime ZIP verified separately.",
+  "deployment": "2026-10-11 metacategories release"
+}

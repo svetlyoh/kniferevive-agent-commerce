@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KnifeRevive Product Attributes
  * Description: Category-scoped WooCommerce attributes, Dokan fields, and safe catalog backfill tools.
- * Version: 0.3.5
+ * Version: 0.3.7
  * Author: KnifeRevive
  * Text Domain: kniferevive-product-attributes
  * Requires Plugins: woocommerce
@@ -10,13 +10,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KREV_PA_VERSION', '0.3.5' );
+define( 'KREV_PA_VERSION', '0.3.7' );
 define( 'KREV_PA_FILE', __FILE__ );
 define( 'KREV_PA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KREV_PA_URL', plugin_dir_url( __FILE__ ) );
 
 require_once KREV_PA_DIR . 'includes/class-krev-pa-config.php';
 require_once KREV_PA_DIR . 'includes/class-krev-pa-tech-categories.php';
+require_once KREV_PA_DIR . 'includes/class-krev-pa-specifications.php';
+require_once KREV_PA_DIR . 'includes/class-krev-pa-metacategories.php';
 require_once KREV_PA_DIR . 'includes/class-krev-pa-condition-resolver.php';
 require_once KREV_PA_DIR . 'includes/class-krev-pa-condition-migrator.php';
 require_once KREV_PA_DIR . 'includes/class-krev-pa-setup.php';
@@ -36,6 +38,7 @@ add_action(
 
 		KREV_PA_Setup::init();
 		KREV_PA_Tech_Categories::init();
+		KREV_PA_Metacategories::init();
 		KREV_PA_Condition_Resolver::init();
 		KREV_PA_Editor::init();
 		KREV_PA_Admin::init();

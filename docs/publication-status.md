@@ -1,3 +1,19 @@
+## Collections and specification profiles live; Listing 1.0.6
+
+October 11, 2026: Product Attributes 0.3.7, ListLab 1.8.5, Merchant Sync 0.8.8,
+Marketplace Imports 1.0.6 and theme 2026.10.11.3 were updated in place through
+native WordPress uploads. All 34 Collectibles children are imported. Six-field
+profiles cover all 1,489 Tech, Home & Garden and Collectibles choices. New
+landing pages, Annex destinations, Tech section links and published-only
+Google subtype menus passed desktop/mobile browser checks. The existing Dell
+remains Google Desktop Computers 325 and also belongs to AI-Tech.
+
+Listing 1.0.6 uses GitHub tag `kniferevive-listing-v1.0.6` and updates the
+existing seller skill identity in the active host catalog. Actual Muse
+installation/reload is not performed here; no Listing ClawHub publication is
+claimed. Concierge and existing payment/sync gates are unchanged. See
+[implementation, evidence and rollback](metacategories-2026-10-11.md).
+
 ## Searchable Google subcategories live
 
 October 11, 2026: Product Attributes 0.3.5, ListLab 1.8.3, and Merchant Sync
