@@ -203,4 +203,5 @@ checkImport( $knife_product->get_short_description() === "Wusthof chef knife\n8 
 checkImport( in_array( 'Wusthof', wp_get_object_terms( $knife_product->get_id(), 'product_brand', array( 'fields' => 'names' ) ), true ), 'extracted maker stored in native brand taxonomy' );
 checkImport( in_array( '8 inches', wp_get_object_terms( $knife_product->get_id(), 'pa_blade-length', array( 'fields' => 'names' ) ), true ) && $knife_product->get_length() === '1', 'blade length is separate from the owner’s default package length' );
 checkImport( in_array( 'Straight', wp_get_object_terms( $knife_product->get_id(), 'pa_edge-type', array( 'fields' => 'names' ) ), true ) && in_array( $knife->term_id, $knife_product->get_category_ids(), true ), 'knife type and edge style stored in native category and attribute' );
+require __DIR__ . '/marketplace-inbox.php';
 echo "$passed marketplace import assertions passed.\n"; ob_end_flush();

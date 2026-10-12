@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.8"
+  version: "1.0.9"
 ---
 
 # KnifeRevive Listing
@@ -14,6 +14,10 @@ separate Meta bot. It uses Muse's existing authorized browser/source, HTTP and
 link-opening tools; installing instructions does not add those tools.
 
 Read [the listing workflow](references/marketplace-import.md) before preparation.
+When connected to the seller's inbox, follow [inbox delivery](references/inbox.md)
+and send `inbox_key` with `/prepare`. Say **Queued in your KnifeRevive inbox** for
+`state: queued`; no draft exists yet. Keep the key private. Without a configured
+connection, retain the private-link workflow below.
 Read [photo recovery](references/photos.md) before collecting images. Verify
 each gallery position and decoded pixel dimensions; a preview or one accessible
 image is not a complete gallery. Use the largest source-served version of each

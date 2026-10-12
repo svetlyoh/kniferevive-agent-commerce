@@ -83,7 +83,7 @@ missing source condition only in the private handoff.
 2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
    HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
    on October 10, 2026. An identifying User-Agent may be
-   `KnifeRevive-Listing/1.0.8`. If the response is a hosting HTML challenge,
+   `KnifeRevive-Listing/1.0.9`. If the response is a hosting HTML challenge,
    distinguish it from an API JSON error. Do not spoof a browser, solve challenges
    or transfer browser cookies. If the supported client remains blocked, report
    that the import was not prepared and direct the seller to ListLab through
@@ -187,7 +187,7 @@ missing source condition only in the private handoff.
 If preparing or claiming times out, retain the same import link/request context.
 Claim retries return the original listing, preserving seller edits. An import
 busy/uncertain response needs original-draft recovery, not a replacement import.
-Repeated successful preparations are separate tickets; do not prepare again
+Without inbox mode, repeated successful preparations are separate tickets; do not prepare again
 merely because the existing link was not opened. Expired links require a fresh
 preparation after checking ListLab for an existing draft. Nothing authorizes
 bulk imports, unrelated Facebook scraping or background listing creation.
@@ -197,3 +197,5 @@ markup on source price, not a gross-margin percentage. The nearest category
 override applies, otherwise the global rule. Shipping remains site-native.
 
 Counted photo contract (Marketplace Imports 1.0.5): new /prepare requests require photo_manifest. source_count comes from the source gallery controls/counter or verified end/wrap traversal, never the number of OpenGraph/metadata images. gallery_complete is true only after traversing every position. Send min(source_count, max_images) distinct photos in the same request; count mismatch is rejected. Set partial_accepted or small_accepted only after the seller accepts the specific reported missing/small photos. The server measures downloaded pixels and rejects unaccepted photos below 500 pixels on either axis. It cannot independently verify what Muse saw on Facebook; truthful source inventory remains essential. Missing files need native completion. Read photo_counts from preparation and claim, and verify the native gallery after claim. Old prepared links remain usable.
+
+Inbox mode (Marketplace Imports 1.1.0+): read [seller inbox delivery](inbox.md) when the user has configured an inbox key. Add inbox_key to the same complete /prepare payload, recognize state: queued, and retain the original owner item on repeat delivery. Inbox records are durable and deduplicate by seller/source. Never report a queue arrival as a draft or published listing.

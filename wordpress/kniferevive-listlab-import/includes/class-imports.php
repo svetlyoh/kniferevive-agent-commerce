@@ -14,6 +14,7 @@ final class KREV_Marketplace_Imports {
             return;
         }
         add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
+        KREV_Import_Inbox::install();
         KREV_Import_Package_Defaults::boot();
         add_action( 'admin_menu', array( 'KREV_Import_Pricing', 'menu' ) );
         add_action( 'template_redirect', array( __CLASS__, 'review_page' ), 1 );
@@ -25,6 +26,7 @@ final class KREV_Marketplace_Imports {
     }
 
     public static function routes() {
+        KREV_Import_Inbox::routes();
         register_rest_route( self::NS, '/schema', array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'schema' ), 'permission_callback' => '__return_true' ) );
         foreach ( array( 'prepare', 'status', 'preview', 'claim' ) as $action ) {
             register_rest_route( self::NS, '/' . $action, array( 'methods' => 'POST', 'callback' => array( __CLASS__, $action ), 'permission_callback' => 'claim' === $action ? array( __CLASS__, 'seller_permission' ) : '__return_true' ) );
@@ -39,8 +41,9 @@ final class KREV_Marketplace_Imports {
     public static function schema( WP_REST_Request $request ) {
         $schema = ( new KREV_ListLab_REST() )->schema( $request );
         $package_defaults = KREV_Import_Package_Defaults::schema();
+        $inbox = array( 'supported' => true, 'url' => KREV_Import_Inbox::url(), 'destination_field' => 'inbox_key', 'setup' => 'Signed-in enabled seller connects Muse in their native inbox. Key grants delivery only, not reading or claiming.', 'retention' => 'Inbox records have no two-hour expiry. Legacy private links still expire after two hours.', 'max_waiting_items' => KREV_Import_Inbox::LIMIT, 'deduplication' => 'One inbox item per seller and canonical Facebook source; repeats retain the original item and product.', 'preserve_photos' => 'Optional seller-authorized copies on arrival; failures visible in native inbox. Verify copied gallery before publishing.' );
         $package_defaults['inventory_default'] = array( 'quantity' => 1, 'applies' => 'New Marketplace drafts with omitted/blank quantity only; explicit quantity including zero and later seller inventory are preserved.' );
-        return self::response( array( 'version' => KREV_IMPORT_VERSION, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'specification_profile' => $schema['specification_profile'] ?? null, 'metacategories' => $schema['metacategories'] ?? array(), 'metacategory_label' => $schema['metacategory_label'] ?? 'Collection', 'subcategories' => $schema['subcategories'] ?? array(), 'subcategory_parent_id' => $schema['subcategory_parent_id'] ?? 0, 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls', 'photo_manifest' ), 'photo_requirements' => array( 'manifest_required_for_new_prepare' => true, 'manifest_fields' => array( 'source_count', 'gallery_complete', 'partial_accepted', 'small_accepted' ), 'minimum_axis_pixels' => 500, 'count_basis' => 'Inspect gallery controls/counter, not metadata URLs. Traverse every source position. Explicit seller acceptance is required for missing/small photos.' ), 'max_images' => 10, 'package_defaults' => $package_defaults, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
+        return self::response( array( 'version' => KREV_IMPORT_VERSION, 'inbox' => $inbox, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'specification_profile' => $schema['specification_profile'] ?? null, 'metacategories' => $schema['metacategories'] ?? array(), 'metacategory_label' => $schema['metacategory_label'] ?? 'Collection', 'subcategories' => $schema['subcategories'] ?? array(), 'subcategory_parent_id' => $schema['subcategory_parent_id'] ?? 0, 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls', 'photo_manifest' ), 'photo_requirements' => array( 'manifest_required_for_new_prepare' => true, 'manifest_fields' => array( 'source_count', 'gallery_complete', 'partial_accepted', 'small_accepted' ), 'minimum_axis_pixels' => 500, 'count_basis' => 'Inspect gallery controls/counter, not metadata URLs. Traverse every source position. Explicit seller acceptance is required for missing/small photos.' ), 'max_images' => 10, 'package_defaults' => $package_defaults, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
     }
 
     public static function source_url( $value ) {
@@ -126,8 +129,16 @@ final class KREV_Marketplace_Imports {
         if ( $count >= 20 || $site_count >= 200 ) return self::fail( 'import_rate', 'Too many imports. Try again in an hour.', 429 );
         set_transient( $rate, $count + 1, HOUR_IN_SECONDS );
         set_transient( 'krev_import_site_rate', $site_count + 1, HOUR_IN_SECONDS );
-        $data = self::normalize( $request->get_json_params(), true );
+        $input = $request->get_json_params();
+        $destination = null;
+        if ( is_array( $input ) && array_key_exists( 'inbox_key', $input ) ) {
+            $destination = KREV_Import_Inbox::destination( $input['inbox_key'] );
+            if ( is_wp_error( $destination ) ) return $destination;
+            unset( $input['inbox_key'] );
+        }
+        $data = self::normalize( $input, true );
         if ( is_wp_error( $data ) ) return $data;
+        if ( $destination ) return KREV_Import_Inbox::enqueue( $data, $destination );
         $token = bin2hex( random_bytes( 32 ) ); $key = self::key( $token );
         $record = array( 'expires' => time() + self::TTL, 'seller_id' => 0, 'product_id' => 0, 'data' => $data, 'uploaded' => array() );
         if ( ! add_option( $key, $record, '', false ) ) return self::fail( 'import_storage', 'Unable to prepare the import.', 503 );
@@ -136,10 +147,13 @@ final class KREV_Marketplace_Imports {
 
     private static function key( $token ) { return self::PREFIX . hash( 'sha256', $token ); }
     private static function record( $request ) {
+        $input = $request->get_json_params();
+        if ( is_array( $input ) && array_key_exists( 'inbox_id', $input ) ) return KREV_Import_Inbox::record( $request );
         $params = $request->get_json_params(); $token = is_array( $params ) ? ( $params['token'] ?? '' ) : '';
         if ( ! is_string( $token ) || ! preg_match( '/^[a-f0-9]{64}$/D', $token ) ) return self::fail( 'import_missing', 'This private import link is invalid or expired.', 404 );
         $key = self::key( $token ); $record = get_option( $key );
-        if ( ! is_array( $record ) || $record['expires'] <= time() ) return self::fail( 'import_missing', 'This private import link is invalid or expired.', 404 );
+        if ( ! is_array( $record ) || ( ! empty( $record['expires'] ) && $record['expires'] <= time() ) ) return self::fail( 'import_missing', 'This private import link is invalid or expired.', 404 );
+        if ( ! empty( $record['inbox'] ) ) { $access = KREV_Import_Inbox::permission( $request ); if ( is_wp_error( $access ) ) return $access; }
         if ( $record['seller_id'] && (int) $record['seller_id'] !== get_current_user_id() ) return self::fail( 'import_owner', 'This import belongs to another seller.', 403 );
         return array( $key, $record );
     }
@@ -149,7 +163,12 @@ final class KREV_Marketplace_Imports {
         $record = $found[1]; $listing = $record['data']['listing'];
         $schema_request = new WP_REST_Request( 'GET' ); $schema_request->set_param( 'category_id', self::effective_category( $listing ) ); $schema_request->set_param( 'metacategory_id', absint( $listing['metacategory_id'] ?? 0 ) );
         $schema = ( new KREV_ListLab_REST() )->schema( $schema_request );
-        return self::response( array( 'state' => $record['product_id'] ? 'draft_created' : 'prepared', 'data' => $record['data'], 'price' => KREV_Import_Pricing::quote( $record['data']['source_price'], self::effective_category( $listing ) ), 'schema' => $schema, 'seller_ready' => self::seller_permission(), 'expires_at' => gmdate( 'c', $record['expires'] ), 'listing' => $record['product_id'] ? self::owned_dto( $record['product_id'] ) : null, 'warnings' => $record['warnings'] ?? array(), 'photo_counts' => $record['photo_counts'] ?? KREV_Import_Photo_Manifest::counts( $record['data'] ) ) );
+        $photos = array();
+        foreach ( $record['data']['image_urls'] as $url ) {
+            $id = $record['uploaded'][ hash( 'sha256', $url ) ] ?? 0;
+            $photos[] = $id && (int) get_post_field( 'post_author', $id ) === get_current_user_id() ? ( wp_get_attachment_url( $id ) ?: $url ) : $url;
+        }
+        return self::response( array( 'state' => $record['product_id'] ? 'draft_created' : 'prepared', 'data' => $record['data'], 'price' => KREV_Import_Pricing::quote( $record['data']['source_price'], self::effective_category( $listing ) ), 'schema' => $schema, 'seller_ready' => self::seller_permission(), 'expires_at' => $record['expires'] ? gmdate( 'c', $record['expires'] ) : null, 'preview_photos' => $photos, 'listing' => $record['product_id'] ? self::owned_dto( $record['product_id'] ) : null, 'warnings' => $record['warnings'] ?? array(), 'photo_counts' => $record['photo_counts'] ?? KREV_Import_Photo_Manifest::counts( $record['data'] ) ) );
     }
 
     private static function changed_data( $request, $record ) {
@@ -194,6 +213,7 @@ final class KREV_Marketplace_Imports {
                 $dto = self::owned_dto( $existing );
                 if ( ! $dto || 'trash' === $dto['status'] ) return self::fail( 'import_original', 'The original listing needs seller review. A replacement was not created.', 409 );
                 $record['seller_id'] = get_current_user_id(); $record['product_id'] = $existing; update_option( $key, $record, false );
+                if ( ! empty( $record['inbox'] ) ) KREV_Import_Inbox::link_product( $key, $existing );
                 return self::response( array( 'state' => 'existing_listing', 'listing' => $dto, 'photo_counts' => $record['photo_counts'] ?? KREV_Import_Photo_Manifest::counts( $record['data'], ( empty( $dto['featured_image'] ) ? 0 : 1 ) + count( $dto['gallery'] ?? array() ) ), 'warnings' => array_merge( $record['warnings'] ?? array(), array( 'Original listing retained. Repeated imports do not overwrite seller edits.' ) ) ) );
             }
             $data = self::changed_data( $request, $record ); if ( is_wp_error( $data ) ) return $data;
@@ -216,6 +236,7 @@ final class KREV_Marketplace_Imports {
             $dto = KREV_ListLab_Product_Writer::save( $listing );
             if ( is_wp_error( $dto ) ) return $dto;
             $record['product_id'] = $dto['id']; $record['data'] = $data; $record['warnings'] = $warnings; update_option( $key, $record, false );
+            if ( ! empty( $record['inbox'] ) ) KREV_Import_Inbox::link_product( $key, $dto['id'] );
             $product = wc_get_product( $dto['id'] );
             $product->update_meta_data( '_krev_import_source_url', $data['source_url'] );
             $product->update_meta_data( '_krev_import_source_price', $data['source_price'] );
@@ -229,7 +250,7 @@ final class KREV_Marketplace_Imports {
         } finally { if ( $source_lock ) delete_option( $source_lock ); delete_option( $key . '_lock' ); }
     }
 
-    public static function copy_image( $url, $title, $allow_small = true ) {
+    public static function copy_image( $url, $title, $allow_small = true, $author_id = null ) {
         if ( ! self::image_url( $url ) ) return self::fail( 'import_image_host', 'Unsupported image host.' );
         require_once ABSPATH . 'wp-admin/includes/file.php'; require_once ABSPATH . 'wp-admin/includes/media.php'; require_once ABSPATH . 'wp-admin/includes/image.php';
         $temp = wp_tempnam( 'krev-import' ); if ( ! $temp ) return self::fail( 'import_image_temp', 'Unable to stage image.' );
@@ -241,7 +262,7 @@ final class KREV_Marketplace_Imports {
             if ( ! isset( $extensions[ $mime ] ) || $size[0] > 10000 || $size[1] > 10000 || $size[0] * $size[1] > 25000000 ) return self::fail( 'import_image_type', 'Use a bounded JPEG, PNG or WebP photo.' );
             if ( ! $allow_small && min( $size[0], $size[1] ) < 500 ) return self::fail( 'import_image_resolution', 'The supplied photo is below 500 pixels on one axis. Use the full gallery image or explicitly accept the disclosed small-source limitation.' );
             $file = array( 'name' => 'marketplace-' . substr( hash( 'sha256', $url ), 0, 16 ) . '.' . $extensions[ $mime ], 'tmp_name' => $temp );
-            $id = media_handle_sideload( $file, 0, $title, array( 'post_author' => get_current_user_id() ) );
+            $id = media_handle_sideload( $file, 0, $title, array( 'post_author' => null === $author_id ? get_current_user_id() : absint( $author_id ) ) );
             return is_wp_error( $id ) ? $id : (int) $id;
         } finally { if ( is_file( $temp ) ) unlink( $temp ); }
     }
@@ -249,22 +270,33 @@ final class KREV_Marketplace_Imports {
     public static function cleanup() {
         global $wpdb;
         $rows = $wpdb->get_results( $wpdb->prepare( 'SELECT option_name, option_value FROM ' . $wpdb->options . ' WHERE option_name LIKE %s ORDER BY option_id LIMIT 1000', $wpdb->esc_like( self::PREFIX ) . '%' ) );
-        foreach ( $rows as $row ) { $value = maybe_unserialize( $row->option_value ); if ( is_array( $value ) && isset( $value['expires'] ) && $value['expires'] <= time() ) { delete_option( $row->option_name ); delete_option( $row->option_name . '_lock' ); } }
+        foreach ( $rows as $row ) { $value = maybe_unserialize( $row->option_value ); if ( is_array( $value ) && ! empty( $value['expires'] ) && $value['expires'] <= time() ) { delete_option( $row->option_name ); delete_option( $row->option_name . '_lock' ); } }
     }
 
     public static function login_return( $redirect, $requested, $user ) {
-        $review = add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) );
-        return $user instanceof WP_User && $review === $requested ? $review : $redirect;
+        return $user instanceof WP_User && self::valid_review_url( $requested ) ? $requested : $redirect;
     }
 
     public static function account_login_return( $redirect, $user ) {
-        $review = add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) );
         $referer = wp_get_referer(); $parts = $referer ? wp_parse_url( $referer ) : array();
         $query = array(); parse_str( $parts['query'] ?? '', $query );
-        return $user instanceof WP_User && ( $query['redirect_to'] ?? '' ) === $review ? $review : $redirect;
+        $target = $query['redirect_to'] ?? '';
+        return $user instanceof WP_User && self::valid_review_url( $target ) ? $target : $redirect;
     }
 
-    public static function listlab_link() { if ( self::seller_permission() ) echo '<p><a class="button" href="' . esc_url( add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) . '">Import a Marketplace item from Muse</a></p>'; }
+    private static function valid_review_url( $url ) {
+        if ( ! is_string( $url ) ) return false;
+        $parts = wp_parse_url( $url ); $home = wp_parse_url( home_url( '/' ) ); $q = array(); parse_str( $parts['query'] ?? '', $q );
+        return ( $parts['scheme'] ?? '' ) === ( $home['scheme'] ?? '' ) && ( $parts['host'] ?? '' ) === ( $home['host'] ?? '' ) && ( $parts['port'] ?? null ) === ( $home['port'] ?? null ) && ( $parts['path'] ?? '/' ) === ( $home['path'] ?? '/' ) && 'review' === ( $q['krev_listlab_import'] ?? '' ) && ! array_diff( array_keys( $q ), array( 'krev_listlab_import', 'inbox', 'inbox_id' ) );
+    }
+
+    public static function requested_review_url() {
+        $id = isset( $_GET['inbox_id'] ) ? absint( $_GET['inbox_id'] ) : 0;
+        if ( $id || isset( $_GET['inbox'] ) ) return KREV_Import_Inbox::url( $id );
+        return add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) );
+    }
+
+    public static function listlab_link() { if ( self::seller_permission() ) echo '<p><a class="button" href="' . esc_url( KREV_Import_Inbox::url() ) . '">Import a Marketplace item from Muse</a></p>'; }
 
     public static function review_page() {
         if ( 'review' !== ( $_GET['krev_listlab_import'] ?? '' ) ) return;
