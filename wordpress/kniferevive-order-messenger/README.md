@@ -1,4 +1,10 @@
-# KnifeRevive Order Messenger 1.0.1
+# KnifeRevive Order Messenger 1.0.2
+
+1.0.2 makes the composer mobile first: a full-screen phone sheet with a compact
+order heading, buyer address and message before expandable order/email details.
+Send Update is full-width in the persistent footer; controls have 48px touch
+targets, input text stays at least 16px, and safe-area/visual-viewport sizing
+keeps the actions within the visible screen. Desktop uses a centered dialog.
 
 1.0.1 registers the existing seller-orders endpoint in WooCommerce's query-variable
 map. Without that compatibility registration, its endpoint conditional returned
@@ -14,7 +20,7 @@ An independent WordPress plugin for **seller → buyer** transactional email fro
 
 ## Installation and editable theme/format
 
-1. Back up the database. Install `kniferevive-order-messenger-1.0.1.zip` using Plugins → Add New → Upload Plugin, then activate it.
+1. Back up the database. Install `kniferevive-order-messenger-1.0.2.zip` using Plugins → Add New → Upload Plugin, then activate it.
 2. Enable WooCommerce, Dokan Lite and KnifeRevive Seller Orders. Missing dependencies disable Messenger gracefully with an administrator notice. PHP 8.2+ is required; PNG/JPEG processing requires GD. MySQL/MariaDB advisory locks must be available.
 3. Configure **WooCommerce → Order Messenger** as an administrator (`manage_options`). Change feature/seller/manager access, Reply-To mode, screenshot limits, message limits, detailed history visibility and log retention. No SMTP credentials are stored here.
 4. Under the same settings page, change **Email and composer theme**, **Email content format**, heading, introduction, message heading, subject pattern, transactional footer note, logo, colors, type size and email width. Default branding inherits the actual KnifeRevive WooCommerce logo/header/footer and styles. Custom colors are scoped to this plugin; section order can be summary-first or message-first. Changes affect future previews/messages without editing the site theme.

@@ -1,5 +1,7 @@
 # Order Messenger 1.0.1: Quick Update
 
+Follow-up: the owner confirmed that Quick Update opens the composer on order 3093. The subsequent mobile design is deployed as 1.0.2; see `order-messenger-mobile-1.0.2.md`. The account limitation below describes the automation session during this release's QA.
+
 The installed 1.0.0 plugin could render its endpoint button while skipping JavaScript and CSS: `is_wc_endpoint_url('seller-orders')` returned false because Seller Orders registered a WordPress rewrite endpoint but not WooCommerce's endpoint query-variable map. Messenger now registers the missing mapping through `woocommerce_get_query_vars`, preserving existing mappings. This fixes the composer asset gate and the endpoint-dependent cache/header behavior. No recipient, recorded-vendor ownership, nonce, manager-access, deduplication or rate-limit rule was changed.
 
 The action is now **Quick Update**, a lime-green button with an email-send SVG icon and the existing button shape/font treatment. The composer heading matches; its send action is **Send Update**, styled blue. Mail transport outcome messages say Update rather than Ping. Email branding/settings remain independent.

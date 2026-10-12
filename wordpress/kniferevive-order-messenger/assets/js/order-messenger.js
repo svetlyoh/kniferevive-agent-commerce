@@ -45,19 +45,26 @@
     gallery($('[data-kr-om-shots]'),true);
   }
   picker.addEventListener('change',()=>{addFiles(Array.from(picker.files));picker.value='';});
+  $('.kr-om-upload').addEventListener('keydown',event=>{
+    if(event.key==='Enter' || event.key===' '){event.preventDefault();if(!picker.disabled)picker.click();}
+  });
   dialog.addEventListener('paste',event=>{
     if(sending||uncertain||accepted)return;
     const images=Array.from(event.clipboardData?.items||[]).filter(i=>i.kind==='file' && i.type.startsWith('image/')).map(i=>i.getAsFile()).filter(Boolean);
     if(images.length){if(!event.clipboardData.getData('text/plain'))event.preventDefault();addFiles(images);}
   });
   async function history() {try{const data=await api('history');const area=$('[data-kr-om-history]');area.replaceChildren();if(!data.attempts.length){area.append(el('p','No displayed attempts yet.'));return;}const list=el('ul');data.attempts.forEach(a=>list.append(el('li',`${a.created_at_gmt} UTC · ${a.status} · ${a.attachment_count} image(s)`)));area.append(list);}catch(e){$('[data-kr-om-history]').textContent='History could not be loaded.';}}
-  function viewport() {dialog.style.setProperty('--kr-om-vh',(window.visualViewport?.height || window.innerHeight)+'px');}
-  window.visualViewport?.addEventListener('resize',viewport);window.addEventListener('resize',viewport);
+  function viewport() {
+    dialog.style.setProperty('--kr-om-vh',(window.visualViewport?.height || window.innerHeight)+'px');
+    dialog.style.setProperty('--kr-om-top',(window.visualViewport?.offsetTop || 0)+'px');
+  }
+  window.visualViewport?.addEventListener('resize',viewport);window.visualViewport?.addEventListener('scroll',viewport);window.addEventListener('resize',viewport);
   async function open() {
     if(dialog.open)return;previousFocus=document.activeElement;savedScroll=[window.scrollX,window.scrollY];savedOverflow=document.body.style.overflow;document.body.style.overflow='hidden';
     viewport();dialog.showModal();historyEntry=true;window.history.pushState({...window.history.state,krOrderMessenger:order},'',window.location.href);announce('Loading order details…');controls();
     try{context=await api('context');if(!dialog.open)return;
       $('[data-kr-om-to]').textContent=context.recipient || 'No valid email';$('[data-kr-om-reply]').textContent=context.reply_to || 'Unavailable';$('[data-kr-om-number]').textContent='#'+context.order_id+(String(context.order_id)!==context.order_number?' · '+context.order_number:'');$('[data-kr-om-placed]').textContent=context.placed+' ('+context.timezone+')';$('[data-kr-om-store]').textContent=context.store_name;
+      $('[data-kr-om-heading-order]').textContent='Order #'+context.order_number;
       const items=$('[data-kr-om-items]');items.replaceChildren();context.items.forEach(i=>items.append(el('li',`${i.name} — Qty ${i.quantity}`)));$('#kr-om-subject').value=context.subject;
       const logo=$('[data-kr-om-logo]');if(context.logo){logo.src=context.logo;logo.hidden=false;}
       const l=context.attachments;$('[data-kr-om-limits]').textContent=`PNG or JPEG · up to ${l.count} screenshots · ${(l.file_bytes/1048576).toFixed(1)} MB each · ${(l.total_bytes/1048576).toFixed(1)} MB total. Images arrive as attachments.`;
@@ -65,7 +72,7 @@
     }catch(e){announce(e.message,true);controls();}
   }
   function dirty(){return !accepted && (textarea.value.trim()!=='' || files.length>0);}
-  function reset(){files.forEach(f=>URL.revokeObjectURL(f.url));files=[];textarea.value='';requestId=null;uncertain=false;sending=false;accepted=false;gallery($('[data-kr-om-shots]'),true);previewPane.hidden=true;editor.hidden=false;edit.hidden=true;preview.hidden=false;discard.hidden=true;}
+  function reset(){files.forEach(f=>URL.revokeObjectURL(f.url));files=[];textarea.value='';requestId=null;uncertain=false;sending=false;accepted=false;gallery($('[data-kr-om-shots]'),true);previewPane.hidden=true;editor.hidden=false;edit.hidden=true;preview.hidden=false;discard.hidden=true;$('.kr-om-details').open=false;}
   function close(skipHistory=false){dialog.close();document.body.style.overflow=savedOverflow;window.scrollTo(...savedScroll);previousFocus?.focus();if(historyEntry && !skipHistory){suppressPop=true;window.history.back();}historyEntry=false;reset();}
   function requestClose(fromPop=false){
     if(sending){if(fromPop){window.history.pushState({...window.history.state,krOrderMessenger:order},'',window.location.href);historyEntry=true;}announce('Wait for the send result before closing.');return;}
