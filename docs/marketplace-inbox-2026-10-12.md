@@ -75,10 +75,18 @@ Phone-width browser inspection at 390 × 844 confirmed no horizontal overflow
 and 48-pixel buttons. Tests fence the database and block external HTTP/email.
 No production inventory is created for testing.
 
-Source/skill release is published on GitHub. Live installation is pending
-administrator sign-in: the current browser account is denied access to the
-WordPress plugin upload page. Muse's installed host copy and private connection
-still require the one-time setup above. Built/tested is not live deployment.
+Marketplace Imports **1.1.0 is deployed and active on kniferevive.com**. Native
+WordPress upload replaced existing **1.0.7** and reported successful update;
+Installed Plugins shows 1.1.0 active. The live signed-in inbox successfully
+retrieved its Waiting view (zero items) and displayed the native Muse connection
+controls. ListLab's import link points to the inbox URL above. No test products,
+queue deliveries or connection keys were created on production.
+
+Source/skill release is published on GitHub. Muse's installed host copy and
+private seller connection still require the one-time setup above. Live proof:
+`KnifeRevive_Documentation/diagnostics/marketplace-inbox-live-20261012.png`.
+Direct browser navigation to the public schema was blocked by the browser client;
+active plugin metadata and the working native inbox were verified instead.
 
 Deploy only the existing Marketplace Imports plugin in place. No theme or
 other plugin replacement is needed. Connection creation is a separate native
