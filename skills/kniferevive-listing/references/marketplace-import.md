@@ -11,6 +11,36 @@ photo manifest with gallery positions and measured pixels. Incomplete galleries
 and small-only sources must be disclosed before preparation. When repairing an
 existing listing, update its photos in place; never create another product.
 
+## Description writing
+
+Write the ListLab `description` as the KnifeRevive lister's own product listing,
+then copy it exactly to `short_description`. Address the buyer directly where
+useful; describe the item without attributing facts to another seller.
+
+Exclude Facebook, Marketplace, sourcing/import explanations, source URLs and
+all references to the original seller, including their name, contact information,
+location, delivery/payment offers, personal anecdotes and phrases such as
+“the Facebook seller says” or “according to the original listing.” Do not add
+a disclaimer announcing that these details were omitted. Keep the source URL
+and extraction/default uncertainties in structured import fields and the private
+handoff, separate from both public descriptions.
+
+Preserve supported brand/model, specifications, included accessories, condition,
+wear and defects. Rewrite factual source statements without seller attribution;
+do not turn the original seller's “I bought it,” “I tested it” or warranty promises
+into the KnifeRevive lister's personal claims. Do not invent ownership history,
+testing, authenticity, refurbishment or fulfillment promises to create this voice.
+For example, “The Facebook seller says this Wüsthof fork has light scratches”
+becomes “Wüsthof carving fork with light scratches.”
+
+Before `/prepare`, review both descriptions for source/seller references and
+confirm they match. This also applies to condition/default annotations: use
+“Condition: Gently Used (default; confirm before publishing)” or the allowed Used
+equivalent, without saying Facebook did not supply the condition. Explain the
+missing source condition only in the private handoff.
+
+## Preparation workflow
+
 1. Use the host's actual browser/source tools to open the referenced Facebook
    listing when accessible. Copy title, item description, stated condition,
    brand/model/specifications, the explicitly USD item price, direct canonical
@@ -31,7 +61,8 @@ existing listing, update its photos in place; never create another product.
    Retain item facts; omit the original seller's contact details and payment links.
    For a login wall/missing content, use the user's supplied details/images or
    ask for the missing title/price/photo. Do not pretend to have read the page.
-   Set `short_description` equal to the cleaned long `description`; preserve the
+   Follow [description writing](#description-writing), then set
+   `short_description` equal to the cleaned long `description`; preserve the
    same item facts rather than generating a different summary. Extract brand
    from the listing's brand field/title/text when stated, keeping the maker
    separate from model/series. For knives, extract the knife/blade type (for
@@ -46,13 +77,13 @@ existing listing, update its photos in place; never create another product.
    **Used** for other categories only if allowed by the scoped condition field.
    Otherwise leave condition blank for seller completion; never infer New for
    consumables. Include “Condition:
-   Gently Used (seller default; Facebook did not specify)” or the corresponding
+   Gently Used (default; confirm before publishing)” or the corresponding
    Used line in both matching descriptions and identify that default in the
    private handoff. This is a seller default, not a verified source fact.
 2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
    HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
    on October 10, 2026. An identifying User-Agent may be
-   `KnifeRevive-Listing/1.0.5`. If the response is a hosting HTML challenge,
+   `KnifeRevive-Listing/1.0.8`. If the response is a hosting HTML challenge,
    distinguish it from an API JSON error. Do not spoof a browser, solve challenges
    or transfer browser cookies. If the supported client remains blocked, report
    that the import was not prepared and direct the seller to ListLab through

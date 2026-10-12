@@ -8,7 +8,9 @@ prepares source facts, not a direct Google upload or approval.
 Collect as much of the following as the listing actually provides:
 
 - Actual title and item description; keep short description equal to long.
-  Prefer the original factual wording, without seller contacts or promotion.
+  Rewrite supported facts in the KnifeRevive lister's seller voice using
+  [description writing](marketplace-import.md#description-writing); exclude
+  Facebook sourcing and all references to the original seller from both fields.
   Feed limits are 150 characters for title and 5,000 for description; flag excess
   source text for review instead of silently claiming it is feed-ready.
 - Every original product photo, with a usable main photo and remaining views
@@ -27,7 +29,8 @@ Collect as much of the following as the listing actually provides:
   the owner's rule: **Gently Used** for knives, **Used** for other goods only when
   allowed by the selected subcategory/collection/category condition field. Otherwise
   leave it blank for seller completion; never assume New for consumables.
-  State that it was defaulted, in both descriptions and the private handoff.
+  State that it was defaulted in both descriptions without naming Facebook or
+  the original seller; explain the missing source condition in the private handoff.
   Map it to the real category condition option; both defaults become Google
   `used`. Do not send a descriptive grade as a Google condition enum, infer
   sharpening, or create refurbishment/warranty evidence.

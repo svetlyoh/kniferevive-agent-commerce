@@ -1,3 +1,13 @@
+## Listing 1.0.8: seller-voice descriptions
+
+Listing skill 1.0.8 writes matching ListLab long/short descriptions in the
+KnifeRevive lister's seller voice. Public descriptions exclude Facebook sourcing,
+source URLs and references to the original seller, while retaining supported
+item facts and defects. Source metadata and extraction uncertainty remain in
+the private import/handoff. The condition-default example no longer names
+Facebook. GitHub tag: `kniferevive-listing-v1.0.8`. Muse must update its existing
+catalog copy in place; this source release does not install or reload Muse.
+
 ## Category-dependent conditions live; Listing 1.0.7
 
 Seller Orders 1.1.9 and Messenger 1.0.3 are deployed: sharpening operators
