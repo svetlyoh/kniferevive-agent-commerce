@@ -1,0 +1,72 @@
+{
+  "version": "1.0.1",
+  "package": "kniferevive-order-messenger-1.0.1.zip",
+  "bytes": 35513,
+  "sha256": "4c422ed4e82f94416cac2a1ad8328a8b700a2f421ca6fbb402c421fca703bcfc",
+  "files": [
+    {
+      "file": "assets/css/order-messenger.css",
+      "sha256": "48c996059fd841a4f44681db54eeab61016c870f515f4811999b9c803a425924"
+    },
+    {
+      "file": "assets/js/order-messenger.js",
+      "sha256": "3a8ca49f6aed5c44d36235009de5cb6c564d2ca1a0a4eb3b217cd9545b3d5a98"
+    },
+    {
+      "file": "includes/class-kr-order-context.php",
+      "sha256": "d50d67c934d6aeba0ae7f51b146ca7cbe8a8bff0ab8078228233dc702e836bcc"
+    },
+    {
+      "file": "includes/class-kr-order-message-admin.php",
+      "sha256": "10b3795471a8566b50c07dd71d263464587feff2f4e7da36696bf9c3183c3410"
+    },
+    {
+      "file": "includes/class-kr-order-message-attachments.php",
+      "sha256": "da686b5d7bb0bf8e6994666dd19106443029d55454713b0afe1b0cc16a3e1a7d"
+    },
+    {
+      "file": "includes/class-kr-order-message-log.php",
+      "sha256": "21c596553d66d5696fbedf26555bf9b91a991cad93e105494b04c39703988114"
+    },
+    {
+      "file": "includes/class-kr-order-message-mailer.php",
+      "sha256": "c5309e8da367ced9b31ef543815102164d90cf993237a2f0e83c6f848bf85238"
+    },
+    {
+      "file": "includes/class-kr-order-message-rest.php",
+      "sha256": "c4c015b4c9064ee124c3366859975dcbf9c7fb23a364dc1518fa976d8e5b9410"
+    },
+    {
+      "file": "includes/class-kr-order-messenger.php",
+      "sha256": "3728c959b8e2af82e5bac910e129b5dfe6050db7be926f8631ae38cca1decccd"
+    },
+    {
+      "file": "includes/class-kr-order-permissions.php",
+      "sha256": "b4ed0c5cb9bc5bbebde3556ebc34d8056ef5f9c1036d5d74da9f7a7de334a5dc"
+    },
+    {
+      "file": "kniferevive-order-messenger.php",
+      "sha256": "beb99398423f1a24150ebead4a3997ac1478f318b085fa4cb7ceafaaf72bebf9"
+    },
+    {
+      "file": "README.md",
+      "sha256": "4d6c443dc69e02aba902cf2aa5dbbcf08c48aa56ed04200acb220c27833b2d21"
+    },
+    {
+      "file": "templates/emails/order-message.php",
+      "sha256": "e7535b4a26d2adddd0718292086151eeda7a10ba57057b3aa54aee70e301cbdb"
+    },
+    {
+      "file": "templates/emails/plain/order-message.php",
+      "sha256": "fc613bd2af5bd0acaf1dbaffd3ea8e6a8c344a889b55ece6fdfc27d8f1ae9b50"
+    },
+    {
+      "file": "templates/order-message-composer.php",
+      "sha256": "90db498f3375f0a5531af9669a29977b8353fa7cddee0afd518c4168fe0c1478"
+    }
+  ],
+  "checks": {
+    "native": 72,
+    "dom": 43
+  }
+}

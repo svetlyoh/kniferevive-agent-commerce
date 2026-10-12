@@ -1,5 +1,12 @@
 ## Category-dependent conditions live; Listing 1.0.7
 
+Order Messenger 1.0.1 is deployed: the missing WooCommerce seller-orders
+endpoint mapping is fixed, and Quick Update replaces Ping Buyer with a lime
+email-send button. Native/DOM checks passed; real seller-session preview
+verification remains pending because the current browser account is not
+authorized by Messenger on the examined orders. See
+[repair and acceptance limits](order-messenger-fix-1.0.1.md).
+
 Electric Knife follow-up: Product Attributes 0.3.11 and theme 2026.10.11.14
 are deployed. Native category 5357 uses `electric-knife`, the shared knife
 archive, Knife Type and Kitchen Knives menus, homepage links, and knife seller
