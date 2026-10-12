@@ -22,7 +22,8 @@ if any(p.is_file() and p.relative_to(candidate).as_posix() not in expected for p
     raise SystemExit('Unexpected build file; inspect before packaging.')
 for name,path in actual.items():
     target=candidate/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(path,target)
-for path in overlay.rglob('*.php'):
+for path in overlay.rglob('*'):
+    if not path.is_file() or path.suffix not in {'.php','.js','.css'}: continue
     name=path.relative_to(overlay).as_posix()
     if name not in expected:raise SystemExit('Overlay adds an unexpected file: '+name)
     shutil.copyfile(path,candidate/name)

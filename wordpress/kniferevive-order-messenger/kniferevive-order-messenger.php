@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KnifeRevive Order Messenger
  * Description: Private seller-to-buyer order emails with screenshots, configurable presentation and delivery audit.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Requires at least: 6.6
  * Requires PHP: 8.2
  * Requires Plugins: woocommerce,dokan-lite,kniferevive-seller-orders
@@ -13,7 +13,7 @@
 defined('ABSPATH') || exit;
 define('KR_OM_FILE',__FILE__);
 define('KR_OM_PATH',plugin_dir_path(__FILE__));
-define('KR_OM_VERSION','1.0.2');
+define('KR_OM_VERSION','1.0.3');
 foreach (['class-kr-order-message-admin','class-kr-order-permissions','class-kr-order-context','class-kr-order-message-attachments','class-kr-order-message-log','class-kr-order-message-rest','class-kr-order-messenger'] as $file) require_once KR_OM_PATH.'includes/'.$file.'.php';
 add_action('before_woocommerce_init',static function () {
     if (class_exists('Automattic\\WooCommerce\\Utilities\\FeaturesUtil')) \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables',KR_OM_FILE,true);

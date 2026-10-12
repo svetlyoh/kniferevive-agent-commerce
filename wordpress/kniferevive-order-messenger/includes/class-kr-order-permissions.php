@@ -18,6 +18,13 @@ final class KR_Order_Messenger_Permissions {
         if (!$uid || !$settings['enabled']) return self::denied();
         $order=wc_get_order($order_id);
         if (!$order instanceof WC_Order || $order->get_type()!=='shop_order' || $order->has_status(['trash','auto-draft','checkout-draft'])) return self::denied();
+        // Sharpening uses its existing operator permission, without enabling
+        // global manager messaging for marketplace merchandise.
+        if (class_exists('KREV_Sharpening_Orders') && class_exists('KREV_Orders_Permissions') && KREV_Sharpening_Orders::is_sharpening_order($order) && KREV_Orders_Permissions::is_operator()) {
+            $buyer=$order->get_parent_id() ? wc_get_order($order->get_parent_id()) : $order;
+            if (!$buyer instanceof WC_Order || ($order->get_customer_id() && $buyer->get_customer_id() && $order->get_customer_id()!==$buyer->get_customer_id())) return self::denied();
+            return ['requested'=>$order,'order'=>$order,'buyer_order'=>$buyer,'vendor_id'=>$uid,'sender_id'=>$uid,'kind'=>'sharpening'];
+        }
         $manager=$settings['manager_access'] && current_user_can('manage_woocommerce');
         $seller=$settings['seller_access'] && dokan_is_user_seller($uid) && dokan_is_seller_enabled($uid);
         if (!$manager && !$seller) return self::denied();

@@ -12,8 +12,9 @@ final class KR_Order_Messenger {
         add_action('rest_api_init',['KR_Order_Messenger_REST','routes']);
         add_action('init',static function () { if (get_option('kr_om_db_version')!==KR_OM_VERSION) KR_Order_Messenger_Log::install(); });
         add_action('woocommerce_account_seller-orders_endpoint',[self::class,'screen'],30);
+        add_action('woocommerce_account_sharpening-orders_endpoint',[self::class,'screen'],30);
         add_action('wp_enqueue_scripts',[self::class,'assets'],110);
-        add_action('template_redirect',static function () { if (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('seller-orders')) { if (!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE',true); nocache_headers(); header('Referrer-Policy: no-referrer'); } });
+        add_action('template_redirect',static function () { if (function_exists('is_wc_endpoint_url') && (is_wc_endpoint_url('seller-orders') || is_wc_endpoint_url('sharpening-orders'))) { if (!defined('DONOTCACHEPAGE')) define('DONOTCACHEPAGE',true); nocache_headers(); header('Referrer-Policy: no-referrer'); } });
         add_filter('woocommerce_email_styles',['KR_Order_Messenger_Mailer','styles'],999,2);
         add_action('kr_om_cleanup',['KR_Order_Messenger_Log','cleanup']);
         add_action('kr_om_sweep',['KR_Order_Messenger_Attachments','sweep']);
@@ -22,6 +23,7 @@ final class KR_Order_Messenger {
     }
     public static function endpoint_query_vars(array $vars): array {
         if (!isset($vars['seller-orders'])) $vars['seller-orders']='seller-orders';
+        if (!isset($vars['sharpening-orders'])) $vars['sharpening-orders']='sharpening-orders';
         return $vars;
     }
     public static function screen($value=''): void {
@@ -29,8 +31,13 @@ final class KR_Order_Messenger {
         $order_id=absint($value); include KR_OM_PATH.'templates/order-message-composer.php';
     }
     public static function assets(): void {
-        if (!function_exists('is_wc_endpoint_url') || !is_wc_endpoint_url('seller-orders') || !absint(get_query_var('seller-orders'))) return;
-        $scope=KR_Order_Messenger_Permissions::scope(absint(get_query_var('seller-orders'))); if (is_wp_error($scope)) return;
+        if (!function_exists('is_wc_endpoint_url')) return;
+        $order_id=0;
+        foreach (['seller-orders','sharpening-orders'] as $endpoint) {
+            if (is_wc_endpoint_url($endpoint)) { $order_id=absint(get_query_var($endpoint)); break; }
+        }
+        if (!$order_id) return;
+        $scope=KR_Order_Messenger_Permissions::scope($order_id); if (is_wp_error($scope)) return;
         $base=plugin_dir_url(KR_OM_FILE);
         wp_enqueue_style('kr-order-messenger',$base.'assets/css/order-messenger.css',[],KR_OM_VERSION);
         wp_enqueue_script('kr-order-messenger',$base.'assets/js/order-messenger.js',[],KR_OM_VERSION,true);

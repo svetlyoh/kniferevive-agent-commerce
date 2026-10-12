@@ -6,6 +6,7 @@ final class KREV_Orders_Endpoints {
 
 	public function register() {
 		add_action( 'init', array( __CLASS__, 'rewrite' ) );
+		add_filter( 'woocommerce_get_query_vars', array( __CLASS__, 'query_vars' ) );
 		add_filter( 'woocommerce_account_menu_items', array( $this, 'menu' ), 90 );
 		foreach ( self::ENDPOINTS as $endpoint ) {
 			add_action( 'woocommerce_account_' . $endpoint . '_endpoint', array( $this, str_replace( '-', '_', $endpoint ) ) );
@@ -23,6 +24,13 @@ final class KREV_Orders_Endpoints {
 		foreach ( self::ENDPOINTS as $endpoint ) {
 			add_rewrite_endpoint( $endpoint, EP_ROOT | EP_PAGES );
 		}
+	}
+
+	public static function query_vars( $vars ) {
+		foreach ( self::ENDPOINTS as $endpoint ) {
+			if ( ! isset( $vars[ $endpoint ] ) ) { $vars[ $endpoint ] = $endpoint; }
+		}
+		return $vars;
 	}
 
 	public function menu( $items ) {

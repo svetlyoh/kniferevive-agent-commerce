@@ -1,4 +1,12 @@
-# Seller Orders 1.1.8 overlay
+# Seller Orders 1.1.9 overlay
+
+1.1.9 turns the eight sharpening illustrations into authorized operator stage
+selectors with an explicit Save selected stage action, saving/error feedback and
+duplicate-submit protection. Customers retain the read-only timeline. Endpoint
+query-variable mappings are registered with WooCommerce. Rewinding a completed
+workflow clears only its sharpening completion metadata; payment/order status
+remain separate. Scripts initialize after DOM readiness, including optimized
+asset delivery. The production baseline and schema stay unchanged.
 
 Narrow patch against the exact captured production 1.1.5 plugin. Preserve all 30 baseline files and schema 1.1.4. This is not the unrelated local 1.2.0 build. Agent Commerce 0.5.x supplies paid/unpaid appointment cards and correct merchant-trip handoff labels.
 

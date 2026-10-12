@@ -5,7 +5,7 @@
   const $=s=>root.querySelector(s),dialog=$('.kr-om-dialog'),launch=$('.kr-om-launch'),editor=$('.kr-om-editor'),textarea=$('#kr-om-message'),picker=$('#kr-om-files'),status=$('.kr-om-status'),send=$('[data-kr-om-send]'),preview=$('[data-kr-om-preview]'),previewPane=$('.kr-om-preview'),edit=$('[data-kr-om-edit]'),check=$('[data-kr-om-check]'),discard=$('.kr-om-discard');
   const order=root.dataset.orderId,config=KROrderMessenger;
   let context=null,files=[],requestId=null,uncertain=false,sending=false,accepted=false,historyEntry=false,suppressPop=false,savedScroll=[0,0],savedOverflow='',previousFocus=null;
-  const actionArea=document.querySelector(`.krev-order-detail[data-order-id="${order}"] .krev-page-header`);
+  const actionArea=document.querySelector(`.krev-order-detail[data-order-id="${order}"] .krev-page-header, .krev-sharpening-detail[data-order-id="${order}"] .krev-page-header`);
   if(actionArea) actionArea.append(root);
   // The plugin root keeps all styles scoped when positioned in the existing action header.
   const announce=(text,error=false)=>{status.textContent=text;status.classList.toggle('kr-om-error',error);};

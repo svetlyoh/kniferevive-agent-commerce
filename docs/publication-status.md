@@ -1,5 +1,11 @@
 ## Category-dependent conditions live; Listing 1.0.7
 
+Seller Orders 1.1.9 and Messenger 1.0.3 are deployed: sharpening operators
+select any timeline icon and explicitly save the stage; Quick Update also
+appears on sharpening orders. Live order 3014 was verified without saving a
+stage or sending customer mail. Both classic/HPOS native suites and frontend
+checks pass. See [sharpening controls and messaging](sharpening-stage-controls-2026-10-11.md).
+
 Order Messenger 1.0.2 is deployed, with a full-screen phone composer,
 message before expandable order details, 48px controls and persistent
 full-width Send Update. The owner confirmed Quick Update opens on order
