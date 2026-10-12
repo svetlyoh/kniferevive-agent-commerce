@@ -66,9 +66,19 @@ locks blindly or generate replacements. Preserved media is retained on archive.
 
 ## Validation and deployment evidence
 
-Native sandbox regression and browser DOM validation results are recorded in
-the owner release report after packaging. Tests fence the database and block
-external HTTP/email. No production inventory is created for testing.
+181 native sandbox assertions passed, including seller/nonce isolation, no
+product on delivery, photo reuse after source expiry, duplicate/claim recovery,
+key rotation/revocation, archive preservation, pagination and capacity.
+15 DOM assertions passed for native queue/review controls, consent, safe text,
+signed-out handling and legacy links. PHP syntax and skill validation passed.
+Phone-width browser inspection at 390 × 844 confirmed no horizontal overflow
+and 48-pixel buttons. Tests fence the database and block external HTTP/email.
+No production inventory is created for testing.
+
+Source/skill release is published on GitHub. Live installation is pending
+administrator sign-in: the current browser account is denied access to the
+WordPress plugin upload page. Muse's installed host copy and private connection
+still require the one-time setup above. Built/tested is not live deployment.
 
 Deploy only the existing Marketplace Imports plugin in place. No theme or
 other plugin replacement is needed. Connection creation is a separate native

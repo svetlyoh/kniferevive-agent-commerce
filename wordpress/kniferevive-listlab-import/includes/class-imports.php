@@ -269,7 +269,8 @@ final class KREV_Marketplace_Imports {
 
     public static function cleanup() {
         global $wpdb;
-        $rows = $wpdb->get_results( $wpdb->prepare( 'SELECT option_name, option_value FROM ' . $wpdb->options . ' WHERE option_name LIKE %s ORDER BY option_id LIMIT 1000', $wpdb->esc_like( self::PREFIX ) . '%' ) );
+        // Durable inbox records must not fill the scan window and starve legacy expiry cleanup.
+        $rows = $wpdb->get_results( $wpdb->prepare( 'SELECT o.option_name, o.option_value FROM ' . $wpdb->options . ' o LEFT JOIN ' . KREV_Import_Inbox::table() . ' i ON i.record_key=o.option_name WHERE i.id IS NULL AND o.option_name LIKE %s ORDER BY o.option_id LIMIT 1000', $wpdb->esc_like( self::PREFIX ) . '%' ) );
         foreach ( $rows as $row ) { $value = maybe_unserialize( $row->option_value ); if ( is_array( $value ) && ! empty( $value['expires'] ) && $value['expires'] <= time() ) { delete_option( $row->option_name ); delete_option( $row->option_name . '_lock' ); } }
     }
 
