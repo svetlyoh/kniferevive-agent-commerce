@@ -1,17 +1,21 @@
 {
-  "version": "1.0.7",
+  "version": "1.1.2",
   "files": [
     {
       "file": "assets/review.css",
-      "sha256": "7fa02964d4b9015e5f1f123ee6eca695f901a3399b5ef3748e880786f6484caa"
+      "sha256": "55c57ab1d8a282297c8601e05acc0b05140035f10086fcecc238e67f2329c199"
     },
     {
       "file": "assets/review.js",
-      "sha256": "e83d454bdfa8f56393ea82a7bec7579c23aa8e70ffc449347acc6d7185c38ab3"
+      "sha256": "c27cebc6b674f2c6098bf67efc6ad96addc853590c45d20665e5930654ebae96"
     },
     {
       "file": "includes/class-imports.php",
-      "sha256": "2128599ab6de8c34e8822f04972223e68a6a4ce23a5c745b9a6c5c81a0f7f86d"
+      "sha256": "6c6e0dcdc08fce9de9341e9f82dedb9584f83f079256cdecd061870ad7a1adbc"
+    },
+    {
+      "file": "includes/class-inbox.php",
+      "sha256": "0f74fb1d709950c13f5c7659c9f9242c6f9dba633bb9f56e7eda7e787962448f"
     },
     {
       "file": "includes/class-package-defaults.php",
@@ -27,17 +31,20 @@
     },
     {
       "file": "kniferevive-listlab-import.php",
-      "sha256": "dc37197dac34245abdfca831718307b9f33a583eba02d643be7d70f5118efc7a"
+      "sha256": "876b4c36a60693e1648b2d108e952bb0f0f5fe8460b0012271346cd0d372c811"
     },
     {
       "file": "LICENSE",
       "sha256": "06c5061501bf62f265d161d3c1742d4b614d98aad44facbaaa836cd450e8a361"
     },
     {
+      "file": "README.md",
+      "sha256": "b9fe62bdf6e301c5d0376199daa4ca54d150af8a50700945985b97e567a39ad3"
+    },
+    {
       "file": "templates/review.php",
-      "sha256": "4fa0cd004b96ad0a1042e0bca1e1ee72974ae6360b339886a5f6e6ce6085fff1"
+      "sha256": "a00d8aa4435494d45a6930900d2e0e55cb51606bd1a3420c1929f86b0e720674"
     }
   ],
-  "hash_scope": "LF-normalized text and original image bytes; complete runtime ZIP verified separately.",
-  "deployment": "2026-10-11 metacategories release"
+  "hash_scope": "LF-normalized runtime source bytes; source-manifest excluded from own hashes."
 }

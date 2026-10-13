@@ -19,10 +19,16 @@ later when the user asks. Do not select unrelated items or start a watcher.
    payload in one request. Use existing gallery, attribute and description rules.
    No product is created or published by delivery. Do not call claim from Muse
    or use the key to read the inbox; it grants delivery only.
-4. Require the actual JSON response. `state: queued` means **Queued in your
-   KnifeRevive inbox**. Show the returned item review link, title, source price
-   and found/submitted photo counts from extraction. Do not report a copied
-   count until the signed-in inbox/claim confirms it. Queue delivery does not
+4. Require the actual HTTP status and JSON response. With Marketplace Imports
+   1.1.2+, read `item_state`: `queued` is Waiting; `draft`, `published` and
+   `archived` refer to the retained original in those views. Outer `state: queued`
+   is a delivery acknowledgement, not proof it remains Waiting. On an older
+   plugin, `already_queued: true` leaves its current state unverified: ask the
+   seller to open the original review link. Show that link and the extracted
+   title/source price. Read `photo_delivery` for actual submitted, preserved,
+   missing and ready counts; found counts still come from gallery extraction.
+   Never turn a missing copied count into zero confirmed copies or a success.
+   Queue delivery does not
    return a price quote; use native review for current merchant pricing.
 5. `already_queued: true` means the original item was retained. Do not overwrite
    facts, archive/restore it automatically, create another source URL, or claim
@@ -45,6 +51,42 @@ never assume every supplied URL copied. Claim reuses preserved media and retries
 missing photos. Incomplete-gallery warnings still require repair or explicit
 seller acceptance before publication. Never fabricate photos or extract only
 metadata thumbnails because the inbox can preserve images.
+
+## Reliable original-file delivery (Marketplace Imports 1.1.2+)
+
+For the owner's queued-photo workflow, use the seller's photo-preserving
+connection. Download all original source-served gallery bytes privately, then
+include top-level `photo_delivery_mode: "original_files"` with `/prepare`.
+This queues promptly without server fetches of expiring Facebook URLs. Send every
+submitted gallery slot through the original-file endpoint before reporting ready.
+Keep the bytes until the
+receipt confirms preservation. Signed Facebook URLs can fail on KnifeRevive
+even while Muse can view the photos. Three-day import tokens do not extend them.
+If `photo_delivery.missing` is positive (including older URL-mode arrivals), send the originals to the returned
+first-party `/inbox/{inbox_id}/photos` endpoint, one missing slot per POST, with
+JSON `inbox_key`, `photo_index` (one-based position in the submitted image_urls)
+and `image_base64` (raw original JPEG/PNG/WebP bytes, not a data URI). The server
+limits each file to 5 MB, validates actual pixels, preserves gallery order and
+deduplicates retries. Native photo-preservation consent is required; Muse cannot
+enable it with the delivery key.
+
+When Python and local source downloads are available, use
+`scripts/send_inbox_photos.py --inbox-id ID --files PRIVATE_FILES_JSON` with the
+key in the process environment `KREV_INBOX_KEY`, never in command arguments.
+The JSON is a list of `{"photo_index": 1, "path": "/absolute/original.jpg"}`.
+Use the exact original downloads from the authorized gallery, not screenshots
+or synthesized images. If originals cannot be downloaded/uploaded with the
+available tools, report the photo blocker; do not claim readiness. Fetch the
+live schema to verify support instead of assuming installing the skill added it.
+
+Require `photo_delivery.ready: true` and the expected preserved count before
+saying the item and its photos are ready in the inbox. Photo recovery writes only
+missing slots in unclaimed active imports; it cannot change an existing product
+or archived import. On 409, inspect the original review and do not create a
+replacement. If preservation is off, explain that pending URLs are not durable
+and ask the seller to enable it. Do not silently fall back to private-link mode
+when the user requested their inbox. New draft creation is blocked on failed
+supplied photos unless the seller explicitly accepted incomplete photos.
 
 The browser completion prompt handles draft creation, final 15% markup,
 shipping, returns, verification and publication when the user runs it. Keep

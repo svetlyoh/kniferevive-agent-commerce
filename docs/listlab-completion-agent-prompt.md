@@ -53,6 +53,8 @@ Preserve explicit condition using a matching allowed option. If unstated, use Ge
 
 Verify actual copied photos in ListLab, including the cover and gallery, against Muse's source count and claim warnings. An import preview is not proof the photos were copied. Use all distinct original photos at the largest available source resolution, subject to the native ten-photo total limit. Keep packaging/label/defect views. Report any limit overflow and retain the omitted originals privately. If only one small photo arrived despite a larger gallery, or copying failed, recover the missing original photos through the authorized source browser or ask for corrected Muse extraction; do not publish an incomplete gallery without my explicit acceptance. Do not replace original photos with screenshots of the Facebook interface or guessed CDN URLs.
 
+Marketplace Imports 1.1.2 blocks new draft creation with import_photos_incomplete when supplied originals cannot be copied. Keep the same inbox item; ask Muse to deliver the missing original file bytes through its photo-preserving connection and verify photo_delivery.ready before retrying. Do not prepare a replacement. A duplicate delivery can identify an existing draft, published or archived item through item_state; it does not necessarily add a Waiting item.
+
 SAVE, VERIFY, PUBLISH
 
 Save the same product as a draft, then reopen it and verify that the title, matching descriptions, category/subcategory/collection, supported attributes, final price, quantity, photos, package fields and exact shipping/return selections persisted. Resolve visible validation errors. If an essential fact, photo or policy is unresolved, keep the draft and ask one focused question; do not claim completion.

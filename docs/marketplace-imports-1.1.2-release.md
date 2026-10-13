@@ -1,0 +1,11 @@
+# Original-photo intake repair — October 13, 2026
+
+A repeated delivery reported queued even after the original import became draft 3138, and failed Facebook URL copies still allowed empty drafts. Item #1 remains the original Mac Mini draft; it was not changed by this repair.
+
+Marketplace Imports 1.1.2 supports photo_delivery_mode: original_files. Muse downloads source-served original gallery files, prepares the original inbox item without CDN fetches, and uploads each file to its counted slot. Each receipt exposes actual item_state and submitted/preserved/missing/ready counts. The existing photo-preserving delivery connection grants missing-slot writes only. No product edits or reading grants are added. Native consent, owner/key verification, 5 MB and decoded pixel/type limits, persistent locking, idempotent photo slots, gallery order, quota and archive/claim guards apply. No cookies or browser credentials are forwarded.
+
+New draft creation stops on failed supplied photos unless the seller explicitly accepted incomplete photos. Existing products and seller edits remain protected. Inbox pages show the account ID and explain that opened imports move to Drafts. Three-day private links and non-expiring inbox records remain unchanged.
+
+Listing skill 1.0.11 uses original-file mode and the private file helper. It reports missing source/tool capabilities instead of claiming photo success or switching to private-link mode. The helper keeps the key out of command arguments and output, restricts the destination and refuses redirects.
+
+Validation: 209 native import/recovery assertions; 10 additional native original-file checks (including zero Facebook fetches and both cover/gallery in the draft); 17 DOM checks; 5 helper tests; PHP syntax and skill/package validation. All test data is fenced synthetic, with outbound traffic blocked. Actual Muse-host installation/extraction has not been performed here. Live deployment verification will be recorded separately.

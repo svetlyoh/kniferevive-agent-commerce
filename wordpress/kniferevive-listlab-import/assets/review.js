@@ -47,7 +47,7 @@
     $('krev-inbox-page').textContent = `Page ${data.page} of ${data.pages}`;
     $('krev-inbox-prev').disabled = data.page <= 1; $('krev-inbox-next').disabled = data.page >= data.pages;
     const box = $('krev-inbox-items'); box.replaceChildren();
-    if (!data.items.length) box.append(element('p', 'No items in this view.'));
+    if (!data.items.length) box.append(element('p', 'No items in this view. Opened imports move to Drafts / review; repeat deliveries retain their original items. Check the other views or open Muse’s original review link.'));
     for (const item of data.items) {
       const card = element('article', '', 'krev-inbox-card');
       if (item.thumbnail_url) { const img = document.createElement('img'); img.src = item.thumbnail_url; img.alt = ''; img.loading = 'lazy'; card.append(img); }

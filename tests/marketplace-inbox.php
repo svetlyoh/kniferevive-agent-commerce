@@ -1,5 +1,8 @@
 <?php
 /** Included by the fenced native import suite. No production configuration or external traffic. */
+// Queue scenarios use their own arrival-rate window; the preceding import matrix consumes one.
+delete_transient( 'krev_import_rate_' . hash_hmac( 'sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown', wp_salt( 'nonce' ) ) );
+delete_transient( 'krev_import_site_rate' );
 function inboxCall( $action, $data = array(), $method = 'POST', $nonce = true ) {
     $r = new WP_REST_Request( $method, '/kniferevive-listlab-import/v1/' . $action );
     $r->set_header( 'content-type', 'application/json' );
@@ -23,6 +26,7 @@ $before = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_
 add_filter( 'pre_http_request', $fake, PHP_INT_MAX, 3 ); wp_set_current_user( 0 );
 $queued = importCall( 'prepare', $q );
 checkImport( $queued->get_status() === 201 && $queued->get_data()['state'] === 'queued' && ! $queued->get_data()['product_created'], 'anonymous Muse delivery queues without a product' );
+checkImport( $queued->get_data()['item_state'] === 'queued' && $queued->get_data()['photo_delivery']['ready'] && $queued->get_data()['photo_delivery']['preserved'] === 1, 'delivery receipt confirms original photos actually preserved' );
 checkImport( ! isset( $queued->get_data()['data'] ) && ! str_contains( $queued->get_data()['review_url'], '#import=' ), 'delivery response has no private reading grant' );
 checkImport( $before === (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='product'" ), 'queue delivery never creates or publishes a product' );
 $qid = $queued->get_data()['inbox_id'];
@@ -61,6 +65,7 @@ checkImport( inboxCall( 'inbox', array(), 'GET' )->get_data()['total'] === 0 && 
 $prod->set_name( 'Seller edited original' ); $prod->set_regular_price( '29' ); $prod->save();
 wp_set_current_user( 0 ); $q['title'] = 'Do not overwrite'; $duplicate = importCall( 'prepare', $q );
 checkImport( $duplicate->get_status() === 200 && $duplicate->get_data()['already_queued'] && $duplicate->get_data()['inbox_id'] === $qid, 'repeat delivery keeps original inbox item' );
+checkImport( $duplicate->get_data()['item_state'] === 'draft', 'repeat delivery reports existing draft instead of claiming it is waiting' );
 wp_set_current_user( $seller ); $again = inboxCall( 'claim', array( 'inbox_id' => $qid, 'authorized_to_list' => true ) );
 checkImport( $again->get_data()['listing']['id'] === $pid && $again->get_data()['listing']['title'] === 'Seller edited original' && $again->get_data()['listing']['regular_price'] === '29', 'repeat claim retains seller changes and product ID' );
 add_option( $qkey . '_lock', time(), '', false );
@@ -68,9 +73,15 @@ importError( inboxCall( 'inbox/' . $qid, array( 'archived' => true ), 'PATCH' ),
 checkImport( inboxCall( 'inbox/' . $qid, array( 'archived' => true ), 'PATCH' )->get_data()['product_unchanged'], 'archive removes queue item only' );
 importError( inboxCall( 'status', array( 'inbox_id' => $qid ) ), 'import_inbox_archived' );
 checkImport( inboxCall( 'inbox', array( 'tab' => 'archived' ), 'GET' )->get_data()['items'][0]['product_id'] === $pid && wc_get_product( $pid )->get_status() === 'draft', 'archived item retains its native product' );
+wp_set_current_user( 0 );
+checkImport( importCall( 'prepare', $q )->get_data()['item_state'] === 'archived', 'repeat receipt identifies archived original' );
+wp_set_current_user( $seller );
 inboxCall( 'inbox/' . $qid, array( 'archived' => false ), 'PATCH' );
 $prod->set_status( 'publish' ); $prod->save();
 checkImport( inboxCall( 'inbox', array( 'tab' => 'published' ), 'GET' )->get_data()['items'][0]['state'] === 'published', 'inbox reflects native publication status' );
+wp_set_current_user( 0 );
+checkImport( importCall( 'prepare', $q )->get_data()['item_state'] === 'published', 'repeat receipt identifies published original' );
+wp_set_current_user( $seller );
 inboxCall( 'inbox/connection', array( 'action' => 'disconnect' ) ); wp_set_current_user( 0 );
 importError( importCall( 'prepare', $q ), 'import_inbox_destination' );
 wp_set_current_user( $seller );
@@ -80,6 +91,53 @@ checkImport( $new !== $delivery && is_wp_error( KREV_Import_Inbox::destination( 
 $q['inbox_key'] = $new; $q['source_url'] = 'https://www.facebook.com/marketplace/item/778889990002/';
 wp_set_current_user( 0 ); $second = importCall( 'prepare', $q ); wp_set_current_user( $seller );
 checkImport( inboxCall( 'status', array( 'inbox_id' => $second->get_data()['inbox_id'] ) )->get_data()['warnings'] !== array(), 'without preservation inbox warns of source photo expiry' );
+// The native seller must opt into byte preservation; the delivery key cannot opt itself in.
+$photo_path = 'inbox/' . $second->get_data()['inbox_id'] . '/photos';
+wp_set_current_user( 0 );
+importError( importCall( $photo_path, array( 'inbox_key' => $new, 'photo_index' => 1, 'image_base64' => base64_encode( $fixture ) ) ), 'import_inbox_photos' );
+wp_set_current_user( $seller );
+$config = get_user_meta( $seller, KREV_Import_Inbox::META, true ); $config['preserve_photos'] = true; update_user_meta( $seller, KREV_Import_Inbox::META, $config );
+// Facebook HTTP copying fails; actual browser-downloaded originals recover every slot.
+$recovery = $q; $recovery['source_url'] = 'https://www.facebook.com/marketplace/item/778889990004/';
+$recovery['image_urls'] = array( 'https://scontent.test.fbcdn.net/blocked-one.png', 'https://scontent.test.fbcdn.net/blocked-two.png' );
+$recovery['photo_manifest'] = array( 'source_count' => 2, 'gallery_complete' => true, 'small_accepted' => false );
+wp_set_current_user( 0 ); $receipt = importCall( 'prepare', $recovery ); $recovery_id = $receipt->get_data()['inbox_id']; $photo_path = 'inbox/' . $recovery_id . '/photos';
+if ( $receipt->get_status() !== 201 ) throw new RuntimeException( 'Recovery fixture did not queue: ' . wp_json_encode( $receipt->get_data() ) );
+checkImport( ! $receipt->get_data()['photo_delivery']['ready'] && $receipt->get_data()['photo_delivery']['missing'] === 2, 'expired or blocked Facebook URLs report both missing copies' );
+wp_set_current_user( $seller );
+$before_recovery = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='product'" );
+importError( inboxCall( 'claim', array( 'inbox_id' => $recovery_id, 'expected_price' => '30.00', 'authorized_to_list' => true ) ), 'import_photos_incomplete' );
+checkImport( $before_recovery === (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='product'" ), 'incomplete two-photo import cannot create a draft' );
+$full = imagecreatetruecolor( 600, 600 ); ob_start(); imagepng( $full ); $full_bytes = ob_get_clean(); imagedestroy( $full );
+$upload = array( 'inbox_key' => $new, 'photo_index' => 1, 'image_base64' => base64_encode( $full_bytes ) );
+wp_set_current_user( $outsider );
+$outsider_key = inboxCall( 'inbox/connection', array( 'action' => 'connect', 'authorize_queue' => true, 'preserve_photos' => true ) )->get_data()['inbox_key'];
+wp_set_current_user( 0 );
+importError( importCall( $photo_path, array_merge( $upload, array( 'inbox_key' => $outsider_key ) ) ), 'import_inbox_missing' );
+importError( importCall( $photo_path, array_merge( $upload, array( 'inbox_key' => $delivery ) ) ), 'import_inbox_destination' );
+importError( importCall( $photo_path, array_merge( $upload, array( 'photo_index' => 3 ) ) ), 'import_photo_index' );
+importError( importCall( $photo_path, array_merge( $upload, array( 'image_base64' => 'invalid!' ) ) ), 'import_image_bytes' );
+importError( importCall( $photo_path, array_merge( $upload, array( 'image_base64' => str_repeat( 'A', 4 * (int) ceil( KREV_Marketplace_Imports::MAX_IMAGE / 3 ) + 1 ) ) ) ), 'import_image_bytes' );
+importError( importCall( $photo_path, array_merge( $upload, array( 'image_base64' => base64_encode( '<svg>unsafe</svg>' ) ) ) ), 'import_image_type' );
+importError( importCall( $photo_path, array_merge( $upload, array( 'image_base64' => base64_encode( $fixture ) ) ) ), 'import_image_resolution' );
+importError( importCall( 'inbox/999999999/photos', $upload ), 'import_inbox_missing' );
+add_option( $wpdb->get_var( $wpdb->prepare( "SELECT record_key FROM {$table} WHERE id=%d", $recovery_id ) ) . '_lock', time(), '', false );
+importError( importCall( $photo_path, $upload ), 'import_inbox_busy' );
+delete_option( $wpdb->get_var( $wpdb->prepare( "SELECT record_key FROM {$table} WHERE id=%d", $recovery_id ) ) . '_lock' );
+$one = importCall( $photo_path, $upload )->get_data();
+checkImport( $one['photo_delivery']['preserved'] === 1 && ! $one['photo_delivery']['ready'] && get_current_user_id() === 0, 'one original file preserved under destination seller without impersonation' );
+$media_before_retry = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='attachment'" );
+checkImport( importCall( $photo_path, $upload )->get_data()['photo_delivery']['preserved'] === 1 && $media_before_retry === (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='attachment'" ), 'same photo retry does not duplicate media' );
+$upload['photo_index'] = 2; $two = importCall( $photo_path, $upload )->get_data();
+checkImport( $two['photo_delivery']['ready'] && $two['photo_delivery']['preserved'] === 2, 'all original files ready before draft creation despite inaccessible CDN' );
+checkImport( ! str_contains( wp_json_encode( $two ), $new ) && ! isset( $two['data'] ) && ! isset( $two['listing'] ), 'file receipt contains no secret, record or product reading grant' );
+wp_set_current_user( $outsider );
+importError( inboxCall( 'status', array( 'inbox_id' => $recovery_id ) ), 'import_inbox_missing' );
+wp_set_current_user( $seller );
+$recovered = inboxCall( 'claim', array( 'inbox_id' => $recovery_id, 'expected_price' => '30.00', 'authorized_to_list' => true ) );
+checkImport( $recovered->get_status() === 201 && $recovered->get_data()['photo_counts']['copied'] === 2 && count( $recovered->get_data()['listing']['gallery'] ) === 1, 'native draft reuses both files as cover and gallery with no CDN refetch' );
+wp_set_current_user( 0 ); importError( importCall( $photo_path, $upload ), 'import_inbox_photo_locked' );
+wp_set_current_user( $seller ); inboxCall( 'inbox/' . $recovery_id, array( 'archived' => true ), 'PATCH' );
 set_transient( 'krev_inbox_rate_' . $seller, 20, HOUR_IN_SECONDS ); wp_set_current_user( 0 );
 $q['source_url'] = 'https://www.facebook.com/marketplace/item/778889990003/';
 importError( importCall( 'prepare', $q ), 'import_inbox_rate' ); wp_set_current_user( $seller ); delete_transient( 'krev_inbox_rate_' . $seller );

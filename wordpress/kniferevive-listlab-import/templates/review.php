@@ -3,6 +3,7 @@
 <main class="krev-import-review">
   <h1 id="krev-import-heading">Marketplace inbox</h1>
   <p><a href="<?php echo esc_url( KREV_Import_Inbox::url() ); ?>">Marketplace inbox</a> · <a href="<?php echo esc_url( wc_get_account_endpoint_url( 'listlab' ) ); ?>">My ListLab listings</a></p>
+  <?php if ( is_user_logged_in() ) : ?><p>Signed-in inbox account: <strong><?php echo esc_html( wp_get_current_user()->user_login ); ?></strong> · Account ID <?php echo (int) get_current_user_id(); ?>. The account ID must match Muse’s delivery destination.</p><?php endif; ?>
   <p>Review the details copied by Muse. Your KnifeRevive price uses the store’s import pricing rule. Shipping is calculated separately at checkout.</p>
   <p id="krev-import-message" role="status" aria-live="polite">Loading your private import…</p>
   <p id="krev-import-login" hidden><a class="button" href="<?php echo esc_url( add_query_arg( 'redirect_to', KREV_Marketplace_Imports::requested_review_url(), wc_get_page_permalink( 'myaccount' ) ) ); ?>">Sign in to your seller account</a></p>

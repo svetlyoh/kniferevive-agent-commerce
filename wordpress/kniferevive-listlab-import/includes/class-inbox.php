@@ -32,6 +32,7 @@ final class KREV_Import_Inbox {
     public static function routes() {
         register_rest_route( KREV_Marketplace_Imports::NS, '/inbox', array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'index' ), 'permission_callback' => array( __CLASS__, 'permission' ) ) );
         register_rest_route( KREV_Marketplace_Imports::NS, '/inbox/connection', array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'connection' ), 'permission_callback' => array( __CLASS__, 'permission' ) ) );
+        register_rest_route( KREV_Marketplace_Imports::NS, '/inbox/(?P<id>\d+)/photos', array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'upload_photo' ), 'permission_callback' => '__return_true' ) );
         register_rest_route( KREV_Marketplace_Imports::NS, '/inbox/(?P<id>\d+)', array( 'methods' => 'PATCH', 'callback' => array( __CLASS__, 'archive' ), 'permission_callback' => array( __CLASS__, 'permission' ) ) );
     }
 
@@ -118,17 +119,20 @@ final class KREV_Import_Inbox {
             set_transient( $hour, $count + 1, HOUR_IN_SECONDS );
             $record_key = KREV_Marketplace_Imports::PREFIX . hash( 'sha256', random_bytes( 32 ) );
             $record = array( 'expires' => 0, 'seller_id' => $seller, 'product_id' => 0, 'data' => $data, 'uploaded' => array(), 'inbox' => true, 'warnings' => array() );
+            $record['photo_delivery_mode'] = $destination['photo_delivery_mode'] ?? 'urls';
             if ( ! add_option( $record_key, $record, '', false ) ) return self::error( 'import_storage', 'Unable to queue this item.', 503 );
             if ( ! add_option( $record_key . '_lock', time(), '', false ) ) { delete_option( $record_key ); return self::error( 'import_storage', 'Unable to queue this item.', 503 ); }
             if ( false === $wpdb->insert( self::table(), array( 'seller_id' => $seller, 'source_hash' => $source_hash, 'record_key' => $record_key, 'created_at' => current_time( 'mysql', true ) ) ) ) { delete_option( $record_key ); return self::error( 'import_storage', 'Unable to queue this item.', 503 ); }
             $id = (int) $wpdb->insert_id;
             // Only serialize queue insertion/quota. Slow photos must not block every later arrival.
             delete_option( $lock ); $delivery_locked = false;
-            if ( $destination['preserve_photos'] ) {
+            if ( 'original_files' === $record['photo_delivery_mode'] ) {
+                foreach ( $data['image_urls'] as $index => $url ) $record['warnings'][] = 'Photo ' . ( $index + 1 ) . ' awaits its original file from Muse.';
+            } elseif ( $destination['preserve_photos'] ) {
                 foreach ( $data['image_urls'] as $index => $url ) {
                     try { $image = KREV_Marketplace_Imports::copy_image( $url, $data['listing']['title'], $data['photo_manifest']['small_accepted'] ?? false, $seller ); }
                     catch ( Throwable $e ) { $image = self::error( 'import_image_copy', 'Photo preservation failed.' ); }
-                    if ( is_wp_error( $image ) ) $record['warnings'][] = 'Photo ' . ( $index + 1 ) . ' could not be preserved. Refresh its source photo before creating the draft.';
+                    if ( is_wp_error( $image ) ) $record['warnings'][] = 'Photo ' . ( $index + 1 ) . ' could not be preserved (' . sanitize_key( $image->get_error_code() ) . '). Send its original file before creating the draft.';
                     else $record['uploaded'][ hash( 'sha256', $url ) ] = $image;
                     update_option( $record_key, $record, false ); // Preserve partial progress if a request is interrupted.
                 }
@@ -139,8 +143,68 @@ final class KREV_Import_Inbox {
     }
 
     private static function arrival( $id, $duplicate ) {
-        // No title, record key, private token, product details or read grant in an anonymous delivery response.
-        return self::response( array( 'state' => 'queued', 'inbox_id' => (int) $id, 'already_queued' => $duplicate, 'inbox_url' => self::url(), 'review_url' => self::url( $id ), 'product_created' => false ), $duplicate ? 200 : 201 );
+        global $wpdb;
+        $row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE id=%d', $id ), ARRAY_A );
+        $record = $row ? get_option( $row['record_key'] ) : null;
+        $state = self::item_state( $row, $record );
+        $submitted = count( $record['data']['image_urls'] ?? array() );
+        $preserved = 0;
+        foreach ( $record['data']['image_urls'] ?? array() as $url ) {
+            $image = $record['uploaded'][ hash( 'sha256', $url ) ] ?? 0;
+            if ( $image && 'attachment' === get_post_type( $image ) && (int) get_post_field( 'post_author', $image ) === (int) $row['seller_id'] ) ++$preserved;
+        }
+        // Receipt for this delivery only: no title, product ID, private URL or read grant.
+        return self::response( array( 'state' => 'queued', 'item_state' => $state, 'inbox_id' => (int) $id, 'already_queued' => $duplicate, 'inbox_url' => self::url(), 'review_url' => self::url( $id ), 'product_created' => false, 'photo_delivery' => array( 'submitted' => $submitted, 'preserved' => $preserved, 'missing' => $submitted - $preserved, 'ready' => $preserved === $submitted && ! empty( $record['arrival_complete'] ), 'upload_url' => rest_url( KREV_Marketplace_Imports::NS . '/inbox/' . (int) $id . '/photos' ) ) ), $duplicate ? 200 : 201 );
+    }
+
+    private static function item_state( $row, $record ) {
+        if ( ! $row || ! is_array( $record ) ) return 'attention';
+        if ( $row['archived'] ) return 'archived';
+        if ( ! $row['product_id'] ) return empty( $record['arrival_complete'] ) ? 'attention' : 'queued';
+        $id = (int) $row['product_id'];
+        if ( 'product' !== get_post_type( $id ) || (int) get_post_field( 'post_author', $id ) !== (int) $row['seller_id'] || 'trash' === get_post_status( $id ) ) return 'attention';
+        return 'publish' === get_post_status( $id ) ? 'published' : 'draft';
+    }
+
+    /** Write original bytes to one missing slot. Delivery consent grants no product editing. */
+    public static function upload_photo( WP_REST_Request $request ) {
+        $params = $request->get_json_params();
+        $destination = self::destination( $params['inbox_key'] ?? null );
+        if ( is_wp_error( $destination ) ) return $destination;
+        if ( ! $destination['preserve_photos'] ) return self::error( 'import_inbox_photos', 'Enable photo preservation in your seller inbox first.', 403 );
+        global $wpdb;
+        $row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE id=%d AND seller_id=%d', absint( $request['id'] ), $destination['seller_id'] ), ARRAY_A );
+        $record = $row ? get_option( $row['record_key'] ) : null;
+        if ( ! is_array( $record ) || (int) $record['seller_id'] !== $destination['seller_id'] ) return self::error( 'import_inbox_missing', 'This inbox item is unavailable.', 404 );
+        if ( $row['archived'] || $row['product_id'] || $record['product_id'] ) return self::error( 'import_inbox_photo_locked', 'The original item is archived or already has a product. Use its native seller review; delivery cannot change it.', 409 );
+        $index = $params['photo_index'] ?? null;
+        if ( ! is_int( $index ) || $index < 1 || $index > count( $record['data']['image_urls'] ) ) return self::error( 'import_photo_index', 'Choose an existing photo slot, starting at one.' );
+        $key = $row['record_key'];
+        if ( ! add_option( $key . '_lock', time(), '', false ) ) return self::error( 'import_inbox_busy', 'This import is processing. Retry the same photo after it finishes.', 409 );
+        $temp = '';
+        try {
+            $record = get_option( $key );
+            if ( ! is_array( $record ) || ! empty( $record['product_id'] ) ) return self::error( 'import_inbox_photo_locked', 'The original item already has a product.', 409 );
+            $hash = hash( 'sha256', $record['data']['image_urls'][ $index - 1 ] );
+            $existing = $record['uploaded'][ $hash ] ?? 0;
+            if ( $existing && 'attachment' === get_post_type( $existing ) && (int) get_post_field( 'post_author', $existing ) === $destination['seller_id'] ) return self::arrival( $row['id'], true );
+            $encoded = $params['image_base64'] ?? null;
+            if ( ! is_string( $encoded ) || ! $encoded || strlen( $encoded ) > 4 * (int) ceil( KREV_Marketplace_Imports::MAX_IMAGE / 3 ) ) return self::error( 'import_image_bytes', 'Supply one original photo, no larger than 5 MB, as base64.' );
+            $bytes = base64_decode( $encoded, true );
+            if ( false === $bytes || ! strlen( $bytes ) || strlen( $bytes ) > KREV_Marketplace_Imports::MAX_IMAGE ) return self::error( 'import_image_bytes', 'Invalid or oversized original photo.' );
+            $rate = 'krev_inbox_photo_rate_' . $destination['seller_id']; $count = (int) get_transient( $rate );
+            if ( $count >= 200 ) return self::error( 'import_inbox_rate', 'Photo delivery limit reached. Try later.', 429 );
+            set_transient( $rate, $count + 1, HOUR_IN_SECONDS );
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            $temp = wp_tempnam( 'krev-inbox-photo' );
+            if ( ! $temp || strlen( $bytes ) !== file_put_contents( $temp, $bytes ) ) return self::error( 'import_image_temp', 'Unable to stage photo.' );
+            $image = KREV_Marketplace_Imports::store_image_file( $temp, $record['data']['listing']['title'], $record['data']['photo_manifest']['small_accepted'] ?? false, $destination['seller_id'], hash( 'sha256', $bytes ) );
+            if ( is_wp_error( $image ) ) return $image;
+            $record['uploaded'][ $hash ] = $image;
+            $record['warnings'] = array_values( array_filter( $record['warnings'] ?? array(), static function( $warning ) use ( $index ) { return ! str_starts_with( $warning, 'Photo ' . $index . ' ' ); } ) );
+            update_option( $key, $record, false );
+            return self::arrival( $row['id'], true );
+        } finally { if ( $temp && is_file( $temp ) ) unlink( $temp ); delete_option( $key . '_lock' ); }
     }
 
     private static function dto( $row ) {

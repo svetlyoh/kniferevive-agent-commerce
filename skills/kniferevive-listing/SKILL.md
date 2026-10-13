@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.10"
+  version: "1.0.11"
 ---
 
 # KnifeRevive Listing
@@ -15,9 +15,12 @@ link-opening tools; installing instructions does not add those tools.
 
 Read [the listing workflow](references/marketplace-import.md) before preparation.
 When connected to the seller's inbox, follow [inbox delivery](references/inbox.md)
-and send `inbox_key` with `/prepare`. Say **Queued in your KnifeRevive inbox** for
-`state: queued`; no draft exists yet. Keep the key private. Without a configured
-connection, retain the private-link workflow below.
+and send `inbox_key` with `/prepare`. Read the receipt's actual item state and
+photo-preservation results; duplicate delivery can refer to an existing draft.
+Recover failed URL copies using original-file delivery before claiming photo
+readiness. Keep the key private. If the user requested inbox delivery and the
+connection is missing, stop for setup; do not silently use a private link.
+Use the private-link workflow below when that is the requested mode.
 Read [photo recovery](references/photos.md) before collecting images. Verify
 each gallery position and decoded pixel dimensions; a preview or one accessible
 image is not a complete gallery. Use the largest source-served version of each

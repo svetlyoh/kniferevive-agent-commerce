@@ -42,6 +42,8 @@ final class KREV_Marketplace_Imports {
         $schema = ( new KREV_ListLab_REST() )->schema( $request );
         $package_defaults = KREV_Import_Package_Defaults::schema();
         $inbox = array( 'supported' => true, 'url' => KREV_Import_Inbox::url(), 'destination_field' => 'inbox_key', 'setup' => 'Signed-in enabled seller connects Muse in their native inbox. Key grants delivery only, not reading or claiming.', 'retention' => 'Inbox records do not expire. New private links expire three days after preparation; previously issued links retain their original expiry.', 'max_waiting_items' => KREV_Import_Inbox::LIMIT, 'deduplication' => 'One inbox item per seller and canonical Facebook source; repeats retain the original item and product.', 'preserve_photos' => 'Optional seller-authorized copies on arrival; failures visible in native inbox. Verify copied gallery before publishing.' );
+        $inbox['photo_upload'] = array( 'supported' => true, 'route_template' => rest_url( self::NS . '/inbox/{inbox_id}/photos' ), 'fields' => array( 'inbox_key', 'photo_index', 'image_base64' ), 'max_file_bytes' => self::MAX_IMAGE, 'requires' => 'Seller photo-preservation consent; active unclaimed inbox item. Missing slots only; no product edits.', 'receipt' => 'Read item_state and photo_delivery. Do not claim photo readiness unless ready is true.' );
+        $inbox['photo_upload']['prepare_field'] = array( 'photo_delivery_mode' => 'original_files' );
         $package_defaults['inventory_default'] = array( 'quantity' => 1, 'applies' => 'New Marketplace drafts with omitted/blank quantity only; explicit quantity including zero and later seller inventory are preserved.' );
         return self::response( array( 'version' => KREV_IMPORT_VERSION, 'inbox' => $inbox, 'prepare_url' => rest_url( self::NS . '/prepare' ), 'currency' => get_woocommerce_currency(), 'categories' => $schema['categories'], 'attributes' => $schema['attributes'], 'specification_profile' => $schema['specification_profile'] ?? null, 'metacategories' => $schema['metacategories'] ?? array(), 'metacategory_label' => $schema['metacategory_label'] ?? 'Collection', 'subcategories' => $schema['subcategories'] ?? array(), 'subcategory_parent_id' => $schema['subcategory_parent_id'] ?? 0, 'listing_fields' => self::FIELDS, 'source_fields' => array( 'source_url', 'source_price', 'currency', 'image_urls', 'photo_manifest' ), 'photo_requirements' => array( 'manifest_required_for_new_prepare' => true, 'manifest_fields' => array( 'source_count', 'gallery_complete', 'partial_accepted', 'small_accepted' ), 'minimum_axis_pixels' => 500, 'count_basis' => 'Inspect gallery controls/counter, not metadata URLs. Traverse every source position. Explicit seller acceptance is required for missing/small photos.' ), 'max_images' => 10, 'package_defaults' => $package_defaults, 'expires_in_seconds' => self::TTL, 'creates' => 'private preparation only; enabled seller completes a ListLab draft', 'shipping' => 'Separate native WooCommerce shipping; never copied from Facebook', 'review_url' => add_query_arg( 'krev_listlab_import', 'review', home_url( '/' ) ) ) );
     }
@@ -131,9 +133,14 @@ final class KREV_Marketplace_Imports {
         set_transient( 'krev_import_site_rate', $site_count + 1, HOUR_IN_SECONDS );
         $input = $request->get_json_params();
         $destination = null;
+        $mode = is_array( $input ) ? ( $input['photo_delivery_mode'] ?? 'urls' ) : 'urls';
+        if ( ! in_array( $mode, array( 'urls', 'original_files' ), true ) || ( 'original_files' === $mode && ! isset( $input['inbox_key'] ) ) ) return self::fail( 'import_photo_mode', 'Original-file delivery requires a connected inbox.' );
+        if ( is_array( $input ) ) unset( $input['photo_delivery_mode'] );
         if ( is_array( $input ) && array_key_exists( 'inbox_key', $input ) ) {
             $destination = KREV_Import_Inbox::destination( $input['inbox_key'] );
             if ( is_wp_error( $destination ) ) return $destination;
+            if ( 'original_files' === $mode && ! $destination['preserve_photos'] ) return self::fail( 'import_inbox_photos', 'Enable photo preservation in your seller inbox first.', 403 );
+            $destination['photo_delivery_mode'] = $mode;
             unset( $input['inbox_key'] );
         }
         $data = self::normalize( $input, true );
@@ -226,9 +233,15 @@ final class KREV_Marketplace_Imports {
             foreach ( $data['image_urls'] as $index => $url ) {
                 $image_key = hash( 'sha256', $url ); $id = $record['uploaded'][ $image_key ] ?? 0;
                 if ( $id && KREV_ListLab_Image_Handler::authorized_image( $id ) ) { $images[] = $id; continue; }
+                if ( ! empty( $record['inbox'] ) && 'original_files' === ( $record['photo_delivery_mode'] ?? '' ) ) { $warnings[] = 'Photo ' . ( $index + 1 ) . ' awaits its original file from Muse.'; continue; }
                 $id = self::copy_image( $url, $listing['title'], $data['photo_manifest']['small_accepted'] ?? true );
-                if ( is_wp_error( $id ) ) { $warnings[] = 'Photo ' . ( $index + 1 ) . ' could not be copied. Add it in ListLab.'; continue; }
+                if ( is_wp_error( $id ) ) { $warnings[] = 'Photo ' . ( $index + 1 ) . ' could not be copied (' . sanitize_key( $id->get_error_code() ) . '). Recover its original file before draft creation.'; continue; }
                 $record['uploaded'][ $image_key ] = $id; update_option( $key, $record, false ); $images[] = $id;
+            }
+            if ( count( $images ) < count( $data['image_urls'] ) && empty( $data['photo_manifest']['partial_accepted'] ) ) {
+                $record['warnings'] = $warnings;
+                update_option( $key, $record, false );
+                return self::fail( 'import_photos_incomplete', 'Some original photos could not be copied. No draft was created. Recover the missing photos in this same import before trying again.', 422 );
             }
             if ( empty( $listing['featured_image_id'] ) && $images ) $listing['featured_image_id'] = array_shift( $images );
             $listing['gallery_ids'] = array_values( array_unique( array_merge( $listing['gallery_ids'] ?? array(), $images ) ) );
@@ -257,16 +270,22 @@ final class KREV_Marketplace_Imports {
         try {
             $response = wp_safe_remote_get( $url, array( 'timeout' => 10, 'redirection' => 0, 'stream' => true, 'filename' => $temp, 'limit_response_size' => self::MAX_IMAGE + 1, 'cookies' => array(), 'headers' => array( 'Accept' => 'image/jpeg,image/png,image/webp' ) ) );
             if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) || ! filesize( $temp ) || filesize( $temp ) > self::MAX_IMAGE ) return self::fail( 'import_image_fetch', 'Image unavailable or too large.' );
-            $size = wp_getimagesize( $temp ); $mime = $size['mime'] ?? '';
-            $extensions = array( 'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp' );
-            if ( ! isset( $extensions[ $mime ] ) || $size[0] > 10000 || $size[1] > 10000 || $size[0] * $size[1] > 25000000 ) return self::fail( 'import_image_type', 'Use a bounded JPEG, PNG or WebP photo.' );
-            if ( ! $allow_small && min( $size[0], $size[1] ) < 500 ) return self::fail( 'import_image_resolution', 'The supplied photo is below 500 pixels on one axis. Use the full gallery image or explicitly accept the disclosed small-source limitation.' );
-            $file = array( 'name' => 'marketplace-' . substr( hash( 'sha256', $url ), 0, 16 ) . '.' . $extensions[ $mime ], 'tmp_name' => $temp );
-            $id = media_handle_sideload( $file, 0, $title, array( 'post_author' => null === $author_id ? get_current_user_id() : absint( $author_id ) ) );
-            return is_wp_error( $id ) ? $id : (int) $id;
+            return self::store_image_file( $temp, $title, $allow_small, $author_id, hash( 'sha256', $url ) );
         } finally { if ( is_file( $temp ) ) unlink( $temp ); }
     }
 
+    /** Validate source-served bytes identically for URL copies and private inbox uploads. */
+    public static function store_image_file( $temp, $title, $allow_small, $author_id, $fingerprint ) {
+        require_once ABSPATH . 'wp-admin/includes/file.php'; require_once ABSPATH . 'wp-admin/includes/media.php'; require_once ABSPATH . 'wp-admin/includes/image.php';
+        if ( ! is_file( $temp ) || ! filesize( $temp ) || filesize( $temp ) > self::MAX_IMAGE ) return self::fail( 'import_image_fetch', 'Image unavailable or too large.' );
+        $size = wp_getimagesize( $temp ); $mime = $size['mime'] ?? '';
+        $extensions = array( 'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp' );
+        if ( ! isset( $extensions[ $mime ] ) || $size[0] > 10000 || $size[1] > 10000 || $size[0] * $size[1] > 25000000 ) return self::fail( 'import_image_type', 'Use a bounded JPEG, PNG or WebP photo.' );
+        if ( ! $allow_small && min( $size[0], $size[1] ) < 500 ) return self::fail( 'import_image_resolution', 'The supplied photo is below 500 pixels on one axis. Use the full gallery image or explicitly accept the disclosed small-source limitation.' );
+        $file = array( 'name' => 'marketplace-' . substr( $fingerprint, 0, 16 ) . '.' . $extensions[ $mime ], 'tmp_name' => $temp );
+        $id = media_handle_sideload( $file, 0, $title, array( 'post_author' => null === $author_id ? get_current_user_id() : absint( $author_id ) ) );
+        return is_wp_error( $id ) ? $id : (int) $id;
+    }
     public static function cleanup() {
         global $wpdb;
         // Durable inbox records must not fill the scan window and starve legacy expiry cleanup.

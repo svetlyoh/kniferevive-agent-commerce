@@ -30,6 +30,9 @@ async function setup(search, ready, handler, hash = '') {
   $('krev-inbox-connect').dispatchEvent(new a.w.Event('submit',{bubbles:true,cancelable:true})); await tick();
   check(a.calls.some(c => c.action === 'inbox/connection' && c.input.authorize_queue && c.input.preserve_photos), 'seller consent controls photo preservation');
   check(!$('krev-inbox-key-box').hidden && $('krev-inbox-key').value.includes('7.'+'a'.repeat(64)), 'once-shown setup prompt supplies destination privately');
+  data.items = []; data.total = 0;
+  $('krev-inbox-refresh').click(); await tick();
+  check($('krev-inbox-items').textContent.includes('Opened imports move to Drafts / review'), 'empty Waiting view explains where retained drafts go');
   a.dom.window.close();
   const b = await setup('?krev_listlab_import=review&inbox=1',false,()=>{throw new Error('unexpected request');});
   check(b.calls.length === 0 && !b.w.document.getElementById('krev-import-login').hidden, 'signed-out queue requests seller login before retrieval'); b.dom.window.close();

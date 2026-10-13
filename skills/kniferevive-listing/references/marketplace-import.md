@@ -83,7 +83,7 @@ missing source condition only in the private handoff.
 2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
    HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
    on October 10, 2026. An identifying User-Agent may be
-   `KnifeRevive-Listing/1.0.10`. If the response is a hosting HTML challenge,
+   `KnifeRevive-Listing/1.0.11`. If the response is a hosting HTML challenge,
    distinguish it from an API JSON error. Do not spoof a browser, solve challenges
    or transfer browser cookies. If the supported client remains blocked, report
    that the import was not prepared and direct the seller to ListLab through

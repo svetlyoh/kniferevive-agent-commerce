@@ -1,4 +1,4 @@
-# Marketplace Imports 1.1.1
+# Marketplace Imports 1.1.2
 
 The ListLab import entry point now opens a durable seller inbox. Muse can deliver
 selected items with an optional `inbox_key` on `/prepare`. Native seller setup
@@ -15,6 +15,18 @@ remain visible. New private handoffs expire after three days (259200 seconds fro
 The seller connection form checks “Allow Muse to queue items in my inbox” by
 default. This form default does not create a connection or issue a delivery key;
 the seller must submit Create / replace Muse connection.
+
+Version 1.1.2 returns the retained `item_state` and `photo_delivery` counts on
+delivery/retry, so an existing draft is not confused with a Waiting item. New
+original-file preparations send photo_delivery_mode: original_files, queue
+promptly without fetching Facebook, then send all gallery files. With
+photo preservation authorized, Muse can POST one original file as base64 to
+`/inbox/{id}/photos` using its delivery key and one-based photo slot. The server
+validates actual JPEG/PNG/WebP bytes, the existing 5 MB / pixel limits and owner,
+deduplicates slots, and refuses archived or claimed items. This route cannot
+create, edit or publish products. Failed original URL copies block new draft
+creation unless incomplete photos were explicitly accepted. Existing drafts
+and seller edits remain unchanged. Tokens still last three days.
 
 The inbox is limited to 100 waiting items, 20 new arrivals per seller/hour, plus
 existing site rate limits. An interrupted claim/delivery can leave a persistent
