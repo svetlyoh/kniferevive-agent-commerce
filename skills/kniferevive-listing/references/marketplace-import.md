@@ -83,7 +83,7 @@ missing source condition only in the private handoff.
 2. Send `Accept: application/json` with the host's existing HTTP tool. Prefer
    HTTP/2 when configurable; PowerShell HTTP/2 read the live schema successfully
    on October 10, 2026. An identifying User-Agent may be
-   `KnifeRevive-Listing/1.0.9`. If the response is a hosting HTML challenge,
+   `KnifeRevive-Listing/1.0.10`. If the response is a hosting HTML challenge,
    distinguish it from an API JSON error. Do not spoof a browser, solve challenges
    or transfer browser cookies. If the supported client remains blocked, report
    that the import was not prepared and direct the seller to ListLab through
@@ -171,7 +171,7 @@ missing source condition only in the private handoff.
    Do not calculate a different markup locally or override the returned amount.
 5. Open the exact returned `review_url` using the host's real browser-open tool,
    or provide it privately in this chat if opening is unavailable. It contains a
-   two-hour bearer token in its fragment: never post it publicly, log it, send it
+   three-day bearer token in its fragment: never post it publicly, log it, send it
    to other services or convert it into a tracking/shortened link. Say “Prepared
    for ListLab completion”, show the item thumbnail/title, source and target
    prices, photo counts (found / submitted; copied count only after the claim
@@ -199,3 +199,5 @@ override applies, otherwise the global rule. Shipping remains site-native.
 Counted photo contract (Marketplace Imports 1.0.5): new /prepare requests require photo_manifest. source_count comes from the source gallery controls/counter or verified end/wrap traversal, never the number of OpenGraph/metadata images. gallery_complete is true only after traversing every position. Send min(source_count, max_images) distinct photos in the same request; count mismatch is rejected. Set partial_accepted or small_accepted only after the seller accepts the specific reported missing/small photos. The server measures downloaded pixels and rejects unaccepted photos below 500 pixels on either axis. It cannot independently verify what Muse saw on Facebook; truthful source inventory remains essential. Missing files need native completion. Read photo_counts from preparation and claim, and verify the native gallery after claim. Old prepared links remain usable.
 
 Inbox mode (Marketplace Imports 1.1.0+): read [seller inbox delivery](inbox.md) when the user has configured an inbox key. Add inbox_key to the same complete /prepare payload, recognize state: queued, and retain the original owner item on repeat delivery. Inbox records are durable and deduplicate by seller/source. Never report a queue arrival as a draft or published listing.
+
+Private-link expiry (Marketplace Imports 1.1.1+): new /prepare responses advertise expires_in_seconds: 259200 (three days / 72 hours from preparation). Read the actual response rather than assuming an older plugin has this duration. Previously issued links retain their original expiry. An expired link does not justify a duplicate product: recover the original draft first. Inbox items do not expire.

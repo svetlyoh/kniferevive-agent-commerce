@@ -15,7 +15,7 @@
       <p id="krev-inbox-connection"></p>
       <p>A private delivery key lets Muse send items to this account. It cannot read your inbox or create, edit or publish products. Reconnecting replaces the key; existing items stay.</p>
       <form id="krev-inbox-connect">
-        <label class="krev-import-consent"><input id="krev-inbox-authorize" type="checkbox" required> Allow Muse to queue items in my inbox.</label>
+        <label class="krev-import-consent"><input id="krev-inbox-authorize" type="checkbox" required checked> Allow Muse to queue items in my inbox.</label>
         <label class="krev-import-consent"><input id="krev-inbox-preserve" type="checkbox"> Preserve supplied photos now in my media library. I authorize sending these items and using their photos.</label>
         <p>Preserving photos avoids expired Facebook image links while items wait. Up to ten photos per item. Without it, photos copy when you create the draft.</p>
         <button type="submit">Create / replace Muse connection</button>

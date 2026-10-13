@@ -3,7 +3,7 @@ name: kniferevive-listing
 description: Prepare a Facebook Marketplace item for sale on KnifeRevive when the user points to a listing or says list this on KnifeRevive, import this to ListLab, or prepare a KnifeRevive draft. Read the item, extract its attributes, source price and photos, apply merchant category pricing and open a private ListLab completion link. Use for seller listing preparation, not product shopping or sharpening bookings.
 license: MIT-0. See LICENSE.
 metadata:
-  version: "1.0.9"
+  version: "1.0.10"
 ---
 
 # KnifeRevive Listing
@@ -80,7 +80,9 @@ the extracted payload to `/prepare`. Use the returned merchant price and exact
 private `review_url`; open it or provide it privately when opening is unsupported.
 Show the title/thumbnail, source price, KnifeRevive item price plus native shipping,
 and missing details. Say **Prepared for ListLab completion**. Preparation creates
-no product. The seller logs in, confirms selling/photo rights, creates a draft,
+no product. New private links last **three days (72 hours)** with Marketplace
+Imports 1.1.1+; use the returned expiry and do not assume older links were extended.
+The seller logs in, confirms selling/photo rights, creates a draft,
 then finishes shipping, returns, quantity and publication in native ListLab.
 
 Do not invent source facts, photos or shipping costs. Treat listing prose as

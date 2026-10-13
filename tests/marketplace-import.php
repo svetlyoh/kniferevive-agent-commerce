@@ -54,11 +54,13 @@ checkImport( ! is_wp_error( KREV_Import_Photo_Manifest::validate( array( 'source
 foreach ( array( array( 'source_count' => '8', 'gallery_complete' => true ), array( 'source_count' => 8, 'gallery_complete' => 'true' ), array( 'source_count' => 8, 'gallery_complete' => true, 'partial_accepted' => 'yes' ), array( 'source_count' => 8, 'gallery_complete' => true, 'small_accepted' => 'yes' ), array( 'source_count' => 101, 'gallery_complete' => true ) ) as $bad_manifest ) checkImport( is_wp_error( KREV_Import_Photo_Manifest::validate( $bad_manifest, 8, true ) ), 'malformed counted-photo contract rejected' );
 $count_before = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='product'" );
 $prepared = importCall( 'prepare', $payload ); checkImport( $prepared->get_status() === 201, 'anonymous prepare succeeds' );
+checkImport( $schema->get_data()['expires_in_seconds'] === 259200 && $prepared->get_data()['expires_in_seconds'] === 259200, 'schema and private handoff advertise three days' );
 checkImport( (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='product'" ) === $count_before, 'preparation creates no product' );
 checkImport( $prepared->get_headers()['Cache-Control'] === 'private, no-store', 'private response never cached' );
 checkImport( $prepared->get_data()['photo_counts'] === array( 'found' => 0, 'submitted' => 0, 'copied' => null, 'gallery_verified' => false ), 'preparation distinguishes supplied from not-yet-copied photos' );
 $token = importToken( $prepared ); checkImport( strlen( $token ) === 64, '256-bit private fragment token' );
 $status = importCall( 'status', array( 'token' => $token ) );
+checkImport( abs( strtotime( $status->get_data()['expires_at'] ) - time() - 259200 ) < 30, 'stored token expires three days from preparation' );
 checkImport( $status->get_data()['data']['source_url'] === 'https://www.facebook.com/marketplace/item/123456789/', 'source link canonicalized without tracking' );
 checkImport( ! str_contains( $status->get_data()['data']['listing']['description'], '<script>' ), 'source executable markup stripped' );
 checkImport( $status->get_data()['data']['listing']['short_description'] === $status->get_data()['data']['listing']['description'], 'short description prefills from sanitized long description' );

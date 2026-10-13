@@ -25,6 +25,7 @@ async function setup(search, ready, handler, hash = '') {
   $('krev-inbox-next').click(); await tick(); check(a.calls.at(-1).action.includes('page=2'), 'next page retrieves second oldest group');
   $('krev-inbox-items').querySelector('button').click(); await tick(); check(a.calls.some(c => c.method === 'PATCH' && c.input.archived === true), 'archive stays separate from product publication');
   check($('krev-inbox-key-box').hidden, 'delivery key absent from initial queue view');
+  check($('krev-inbox-authorize').checked && !a.calls.some(c => c.action === 'inbox/connection'), 'Allow Muse defaults to yes without automatically creating a connection');
   $('krev-inbox-authorize').checked = true; $('krev-inbox-preserve').checked = true;
   $('krev-inbox-connect').dispatchEvent(new a.w.Event('submit',{bubbles:true,cancelable:true})); await tick();
   check(a.calls.some(c => c.action === 'inbox/connection' && c.input.authorize_queue && c.input.preserve_photos), 'seller consent controls photo preservation');

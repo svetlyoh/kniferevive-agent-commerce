@@ -1,4 +1,4 @@
-# Marketplace Imports 1.1.0
+# Marketplace Imports 1.1.1
 
 The ListLab import entry point now opens a durable seller inbox. Muse can deliver
 selected items with an optional `inbox_key` on `/prepare`. Native seller setup
@@ -6,11 +6,15 @@ creates a once-shown key stored only as a hash. It grants delivery, not reading,
 claiming, editing or publishing. Seller-scoped nonce-protected inbox views show
 Waiting, Drafts / review, Published and Archived, oldest first, 20 per page.
 
-Records do not expire after two hours. Canonical source URLs deduplicate per
+Inbox records do not expire. Canonical source URLs deduplicate per
 seller, and claim retains existing product IDs/edits. Archive affects only the
 inbox. Optional authorized photo preservation copies original bytes on arrival
 into the destination seller's native media; claims reuse those images. Errors
-remain visible. Legacy private two-hour handoffs still work.
+remain visible. New private handoffs expire after three days (259200 seconds from preparation). Previously issued links retain their original expiry; existing legacy handoffs still work.
+
+The seller connection form checks “Allow Muse to queue items in my inbox” by
+default. This form default does not create a connection or issue a delivery key;
+the seller must submit Create / replace Muse connection.
 
 The inbox is limited to 100 waiting items, 20 new arrivals per seller/hour, plus
 existing site rate limits. An interrupted claim/delivery can leave a persistent

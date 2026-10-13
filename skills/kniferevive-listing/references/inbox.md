@@ -32,11 +32,11 @@ later when the user asks. Do not select unrelated items or start a watcher.
    On 409 busy/full or 429 limit, report the state and wait for user action.
    A disconnected/rotated/revoked key requires reconnecting; do not bypass it.
 
-Records have no two-hour expiry. Up to 100 waiting items and 20 new items per
+Inbox records do not expire. Up to 100 waiting items and 20 new items per
 seller per hour, plus existing site limits. ListLab uses owner-scoped signed-in
 access with a native nonce. Inbox item IDs are not read credentials. Repeated
 canonical Facebook sources deduplicate per seller, including archived items.
-Existing private handoffs without an inbox key still use their two-hour token.
+New private handoffs without an inbox key use a three-day token in Marketplace Imports 1.1.1+. Previously issued links retain their original expiry.
 
 Photo preservation is optional and seller-authorized. It copies up to ten
 supported original images into that seller's media library on arrival, keeping
