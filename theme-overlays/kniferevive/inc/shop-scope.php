@@ -17,7 +17,7 @@ function kr_shop_scope_control(): string
     $checked = checked('1', (string) get_query_var('kr_knives_only'), false);
     $fields = wc_query_string_form_fields(null, ['kr_knives_only', 'paged', 'page', 'product-page', 'pagename'], '', true);
     return '<form class="kr-shop-scope-form" method="get" action="' . esc_url(wc_get_page_permalink('shop')) . '">' . $fields
-        . '<label class="kr-shop-scope-label"><input type="checkbox" name="kr_knives_only" value="1" ' . $checked . ' onchange="this.form.requestSubmit ? this.form.requestSubmit() : this.form.submit()"><span>Shop Knives Only</span></label>'
+        . '<label class="kr-shop-scope-label"><input type="checkbox" name="kr_knives_only" value="1" ' . $checked . '><span>Shop Knives Only</span></label>'
         . '<noscript><button type="submit">Apply</button></noscript></form>';
 }
 
@@ -39,4 +39,5 @@ add_filter('woocommerce_get_breadcrumb', static function (array $crumbs): array 
 add_action('wp_enqueue_scripts', static function (): void {
     if (!kr_shop_scope_visible()) { return; }
     wp_enqueue_style('kr-shop-scope', get_stylesheet_directory_uri() . '/assets/css/shop-scope.css', [], wp_get_theme()->get('Version'));
+    wp_enqueue_script('kr-shop-scope', get_stylesheet_directory_uri() . '/assets/js/shop-scope.js', [], wp_get_theme()->get('Version'), true);
 });

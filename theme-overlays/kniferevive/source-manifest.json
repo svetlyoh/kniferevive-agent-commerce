@@ -1,5 +1,5 @@
 {
-  "version": "2026.10.13.1",
+  "version": "2026.10.13.2",
   "files": [
     {
       "file": "assets/css/annex.css",
@@ -74,6 +74,10 @@
       "sha256": "e31335904036123fbd410bc6dd136b456dd208e99327c9ed43a9c34c6f4a3232"
     },
     {
+      "file": "assets/js/shop-scope.js",
+      "sha256": "0f394343df1d1733d77a783693bf26c5126e32b48c7fc076e28034cffd03bf7d"
+    },
+    {
       "file": "functions.php",
       "sha256": "669f22681ef2ca838706c1ce2e6d667e98612a069685bd0d937265ac9bd0a9f9"
     },
@@ -91,7 +95,7 @@
     },
     {
       "file": "inc/shop-scope.php",
-      "sha256": "f3b393289dfdf3d1369658abcfeed106ccaf7b4dfd686884dc2038328bec85a8"
+      "sha256": "c3158ac07a6df225d9072a8971e445ae2eacaf1354f1615ec7a6c5fd771b7c44"
     },
     {
       "file": "inc/tech-theme.php",
@@ -99,7 +103,7 @@
     },
     {
       "file": "style.css",
-      "sha256": "75f5064f0a5d7702eb24cbf4d0125318989ce57cfb6a82fffce5658da8e6bbe9"
+      "sha256": "0da2e32e446c3570d095b407d8840256e72fce062f5d3d6928ee7ec2a9155ec4"
     },
     {
       "file": "templates/page-collectibles.html",
