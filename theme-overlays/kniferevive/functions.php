@@ -15,6 +15,7 @@ require_once get_stylesheet_directory() . '/inc/brands.php';
 require_once get_stylesheet_directory() . '/inc/product-subtitle.php';
 require_once get_stylesheet_directory() . '/inc/product-admin-columns.php';
 require_once get_stylesheet_directory() . '/inc/annex.php';
+require_once get_stylesheet_directory() . '/inc/shop-scope.php';
 require_once get_stylesheet_directory() . '/inc/knife-card.php';
 require_once get_stylesheet_directory() . '/inc/categories.php';
 require_once get_stylesheet_directory() . '/inc/metacategories.php';

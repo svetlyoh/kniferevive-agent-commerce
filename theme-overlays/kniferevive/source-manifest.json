@@ -1,5 +1,5 @@
 {
-  "version": "2026.10.11.14",
+  "version": "2026.10.13.1",
   "files": [
     {
       "file": "assets/css/annex.css",
@@ -14,12 +14,16 @@
       "sha256": "bee1aa66d0619a3aed3f9e5947b1d0aaa7a2a0566ecdaefcbf42301a9b7c0c8f"
     },
     {
+      "file": "assets/css/shop-scope.css",
+      "sha256": "24fa70f58c07b11141afe4a75edba04a70df69096ae1b98788a87df4120411fa"
+    },
+    {
       "file": "assets/css/tech-theme.css",
       "sha256": "e8ebc12b7458a0169eadaf9167618f637a52ef706c9703ce776631e45fb1dabc"
     },
     {
       "file": "assets/images/categories/home-garden-2026-10-11.png",
-      "sha256": "12250edfa34b0cfe4b8cae71c817f09a0519c1a0a462ceaef7de2b6dd15469f5"
+      "sha256": "f11aa65f603f9aebedf447630c44d4527a72be210792ca3b3e5f4dfc08dbaddf"
     },
     {
       "file": "assets/images/metacategories/bluetooth-gadgets-placeholder.svg",
@@ -31,7 +35,7 @@
     },
     {
       "file": "assets/images/metacategories/collectibles-2026-10-11.png",
-      "sha256": "28813490122e19a819f1e3b83c14306050e54c8e01c213703afd8123bd9c23c2"
+      "sha256": "eee700079c9ff927e6f4dffcce51d78cdff8c8c79cf031f16c0ea9411e5d9f74"
     },
     {
       "file": "assets/images/metacategories/iphones-placeholder.svg",
@@ -39,15 +43,15 @@
     },
     {
       "file": "assets/images/metacategories/kniferevive-iphones-1536x1024.png",
-      "sha256": "21c0a86d8499fa05b651a091ada70204a7ae9710c493c5990f25daf5047f949a"
+      "sha256": "d359e84ab94baeb01dcdfcab4bc29baea580ed7f6fcad5f915b3f592d4f54090"
     },
     {
       "file": "assets/images/metacategories/kniferevive-laptops-1536x1024.png",
-      "sha256": "f2ee6dbca3a2941a086ea346fcd25ceac52fc47289560dafc8ae378864fab130"
+      "sha256": "914ac06e5213d906c35b778848d9f110577081d948227b105217587e458fd6f0"
     },
     {
       "file": "assets/images/metacategories/kniferevive-mini-computers-1536x1024.png",
-      "sha256": "094b62a0d4c0b2af9e678587b3bdb021fdad2f185b39e119734a86885c615604"
+      "sha256": "70056b2b18d775bceaffcf4565ec0eefdc6477f2ac7eed98cae798acd58db334"
     },
     {
       "file": "assets/images/metacategories/laptops-placeholder.svg",
@@ -59,7 +63,7 @@
     },
     {
       "file": "assets/images/metacategories/pokemon-cards-2026-10-11.png",
-      "sha256": "0ffb94732f9052a1058f0f3d09a4ab9d32d57b3d93634343839672ac033c5f22"
+      "sha256": "7779f3064c0ff1b7d87f1829ef907b2116e2524329772da904925f704b57c4cc"
     },
     {
       "file": "assets/images/metacategories/pokemon-cards-placeholder.svg",
@@ -71,11 +75,11 @@
     },
     {
       "file": "functions.php",
-      "sha256": "e892dbddd75c16b5108978e591485a331ed7af3f408b28b7ef8f4856bab1a4b0"
+      "sha256": "669f22681ef2ca838706c1ce2e6d667e98612a069685bd0d937265ac9bd0a9f9"
     },
     {
       "file": "inc/annex.php",
-      "sha256": "befdd3fab09270635c64a03f62d8045cc130b4a29db505f589b2c28b86c5297b"
+      "sha256": "683f00f7d2d3a1eea1bcc5b7189735d727632bdab3b0adb58c425e336fd2a5c7"
     },
     {
       "file": "inc/categories.php",
@@ -86,12 +90,16 @@
       "sha256": "87635a4166e42c4ea86ee1151616f237b1d5f7fd7aab556b868709a5c09d4488"
     },
     {
+      "file": "inc/shop-scope.php",
+      "sha256": "f3b393289dfdf3d1369658abcfeed106ccaf7b4dfd686884dc2038328bec85a8"
+    },
+    {
       "file": "inc/tech-theme.php",
       "sha256": "b8d8f8830283467a022c669d9f7e373e364ab5a07ba93382123ff82d9d19b200"
     },
     {
       "file": "style.css",
-      "sha256": "b8542e19577897cf785c9bd06494f43acc24cce83696bdcb70f483c89b68a1ee"
+      "sha256": "75f5064f0a5d7702eb24cbf4d0125318989ce57cfb6a82fffce5658da8e6bbe9"
     },
     {
       "file": "templates/page-collectibles.html",
@@ -106,6 +114,5 @@
       "sha256": "365e69ab49e4ae3f710a94bce4e97c691168c35321cf69199bc87244b29985e5"
     }
   ],
-  "hash_scope": "LF-normalized text and original image bytes; complete runtime ZIP verified separately.",
-  "deployment": "2026-10-11 metacategories release"
+  "hash_scope": "LF-normalized overlay source bytes and original images; complete runtime ZIP preserves all other files."
 }

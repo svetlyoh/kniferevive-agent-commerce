@@ -486,26 +486,31 @@ function kr_render_knife_products_shortcode(string $shortcode): string
 }
 
 /**
- * Keep the Shop archive knife-only with the same positive taxonomy allowlist.
+ * Apply the Shop Knives Only selection using the canonical knife allowlist.
  */
 add_action('pre_get_posts', static function (WP_Query $query): void {
-    if (is_admin() || !$query->is_main_query() || $query->is_search() || !function_exists('is_shop') || !is_shop() || isset(kr_metacategories()[(string) $query->get('kr_collection')])) {
+    if (is_admin() || !$query->is_main_query() || $query->is_search() || !function_exists('is_shop') || !is_shop() || '1' !== (string) $query->get('kr_knives_only') || isset(kr_metacategories()[(string) $query->get('kr_collection')])) {
         return;
     }
     $knifeCategories = kr_get_knife_category_ids();
     if (!$knifeCategories) {
+        $query->set('post__in', [0]);
         return;
     }
     $taxQuery = $query->get('tax_query');
     $taxQuery = is_array($taxQuery) ? $taxQuery : [];
-    $taxQuery[] = [
+    $scope = ['relation' => 'AND'];
+    if ($taxQuery) { $scope[] = $taxQuery; }
+    $scope[] = [
         'taxonomy' => 'product_cat',
         'field' => 'term_id',
         'terms' => $knifeCategories,
         'operator' => 'IN',
-        'include_children' => false,
+        'include_children' => true,
     ];
-    $query->set('tax_query', $taxQuery);
+    $sharpening = get_term_by('slug', 'knife-sharpening', 'product_cat');
+    if ($sharpening instanceof WP_Term) { $scope[] = ['taxonomy' => 'product_cat', 'field' => 'term_id', 'terms' => [(int) $sharpening->term_id], 'operator' => 'NOT IN', 'include_children' => true]; }
+    $query->set('tax_query', $scope);
 }, 30);
 
 /**
