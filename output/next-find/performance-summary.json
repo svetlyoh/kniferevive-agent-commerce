@@ -1,0 +1,25 @@
+{
+  "scope": "Local native campaign fragment + GET-captured public global site chrome; NOT production performance",
+  "device": "390x844 1x mobile",
+  "network": "Fast 4G",
+  "cpu_slowdown": 4,
+  "cold_reload": true,
+  "lcp_ms": 3025,
+  "cls": 0,
+  "ttfb_ms": 3,
+  "inp_ms": null,
+  "lcp_target_met": false,
+  "lcp_element": "p.kr-campaign-lead",
+  "render_delay_ms": 3022,
+  "blocking_stylesheets": 13,
+  "inherited_stylesheets": 12,
+  "estimated_combined_render_blocking_savings_ms": 259,
+  "lighthouse": {
+    "accessibility": 100,
+    "best_practices": 100,
+    "seo": 66,
+    "agentic_browsing": 100,
+    "seo_failure": "Intentional local draft noindex"
+  },
+  "production_and_real_user_cwv": "unverified"
+}
