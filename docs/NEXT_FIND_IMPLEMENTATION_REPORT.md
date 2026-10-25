@@ -2,6 +2,8 @@
 
 Date: 2026-10-25. Branch: `codex/next-find-campaign-20261025`, based on remote main5ac2417. Existing dirty local packing-slip/address work and the separate messaging release were left untouched.
 
+Review: [draft PR #5](https://github.com/svetlyoh/kniferevive-agent-commerce/pull/5).
+
 ## Status and review links
 
 **Built and locally tested; NOT deployed, activated or published.** No Meta ad destination, campaign, budget, pixel, dataset or account was changed. The brief says “Do not publish/activate the new page or change live ad destinations without explicit owner approval.”
