@@ -294,6 +294,11 @@ function kr_get_annex_terms(): array
             'category' => $art,
             'page_url' => home_url('/art-trade-gallery/'),
         ],
+        'books' => [
+            'label' => 'Books',
+            'category' => kr_find_product_category(['books'], ['Books']),
+            'page_url' => home_url('/books/'),
+        ],
         'ai' => [
             'label' => 'Technology Trade Desk',
             'category' => $ai,
@@ -694,8 +699,65 @@ function kr_render_annex_product_cards(array $products, string $buttonLabel = 'V
  * Render one editorial Annex card so progressive loading reuses the exact
  * initial card markup.
  */
+/** One card body for art, coins and spices across every server-rendered collection. */
+function kr_collection_card_group(WC_Product $product): string
+{
+    if (class_exists('KREV_Books_Model') && KREV_Books_Model::is_book($product)) return 'books';
+    if (class_exists('KREV_ListLab_Art_Details') && KREV_ListLab_Art_Details::is_product($product)) return 'art';
+    return class_exists('KREV_ListLab_Category_Details') ? KREV_ListLab_Category_Details::group_for_product($product) : '';
+}
+
+function kr_render_collection_product_card(WC_Product $item): string
+{
+    if (class_exists('KREV_Books_Model') && KREV_Books_Model::is_book($item)) return KREV_Books_Catalog::card($item);
+    $group = kr_collection_card_group($item);
+    if ($group === '') return '';
+    $url = $item->get_permalink();
+    $html = '<article class="kr-annex-product-card kr-collection-product-card kr-collection-product-card--'.esc_attr($group).'" data-product-id="'.esc_attr((string)$item->get_id()).'">';
+    $html .= '<a class="kr-annex-product-image" href="'.esc_url($url).'" aria-label="'.esc_attr($item->get_name()).'">'.$item->get_image('woocommerce_thumbnail', ['loading' => 'lazy', 'decoding' => 'async']).'</a>';
+    $html .= '<div class="kr-annex-product-copy"><h3><a href="'.esc_url($url).'">'.esc_html($item->get_name()).'</a></h3>';
+    $subtitle = trim((string)$item->get_meta('_kniferevive_listing_subtitle'));
+    if ($subtitle !== '') $html .= '<p class="kniferevive-product-subtitle">'.esc_html($subtitle).'</p>';
+    $html .= $group === 'art' ? KREV_ListLab_Art_Details::render($item) : KREV_ListLab_Category_Details::render($item);
+    if (function_exists('kr_product_brand_markup')) $html .= kr_product_brand_markup($item->get_id(), 'loop');
+    if (function_exists('kniferevive_render_whatnot_demo_card')) $html .= kniferevive_render_whatnot_demo_card($item->get_id());
+    if (class_exists('KREV_ListLab_Timed_Offers')) $html .= KREV_ListLab_Timed_Offers::render($item, 'compact');
+    $contacts = function_exists('kr_shop_seller_contacts') ? kr_shop_seller_contacts($item->get_id()) : '';
+    $html .= '<div class="kr-product-price-row kr-collection-card-commerce"><div class="kr-product-price">'.wp_kses_post($item->get_price_html()).'</div><div class="kr-product-contact">'.$contacts.'</div></div>';
+    if (class_exists('\KnifeRevive\Shipping\View')) $html .= \KnifeRevive\Shipping\View::card($item);
+    // WooCommerce owns stock, product-type, AJAX and accessibility behavior.
+    global $product;
+    $previous = $product;
+    $product = $item;
+    ob_start();
+    try { woocommerce_template_loop_add_to_cart(); $button = (string)ob_get_contents(); }
+    finally { ob_end_clean(); $product = $previous; }
+    // Featured and complete collections can show the same product on one page.
+    $descriptionId = 'woocommerce_loop_add_to_cart_link_describedby_'.$item->get_id();
+    if (str_contains($button, $descriptionId)) $button = str_replace($descriptionId, wp_unique_id($descriptionId.'_'), $button);
+    return $html.'<div class="kr-collection-card-purchase">'.$button.'</div></div></article>';
+}
+
+/** Preserve list IDs, collection context and pagination; replace only eligible card bodies. */
+function kr_refresh_collection_cards(string $content): string
+{
+    if (is_admin()) return $content;
+    return preg_replace_callback('~(<li\b[^>]*\bpost-(\d+)\b[^>]*>).*?(</li>)~is', static function(array $match): string {
+        $item = wc_get_product((int)$match[2]);
+        if (!$item instanceof WC_Product || kr_collection_card_group($item) === '') return $match[0];
+        return $match[1].kr_render_collection_product_card($item).$match[3];
+    }, $content) ?? $content;
+}
+foreach (['woocommerce/product-template', 'core/post-template', 'woocommerce/related-products', 'woocommerce/products', 'woocommerce/product-collection'] as $kr_collection_block) {
+    add_filter('render_block_'.$kr_collection_block, 'kr_refresh_collection_cards', 200);
+}
+add_filter('do_shortcode_tag', static function(string $output, string $tag): string {
+    return in_array($tag, ['products', 'product_category', 'product_categories', 'sale_products', 'featured_products', 'recent_products', 'best_selling_products', 'top_rated_products', 'related_products'], true) ? kr_refresh_collection_cards($output) : $output;
+}, 200, 2);
+
 function kr_render_annex_product_card(WC_Product $product, string $buttonLabel = 'View Work', string $cardType = 'default'): string
 {
+    if (kr_collection_card_group($product) !== '') return kr_render_collection_product_card($product);
     $url = $product->get_permalink();
     $subtitle = trim((string) $product->get_meta(defined('KNIFEREVIVE_LISTING_SUBTITLE_META_KEY') ? KNIFEREVIVE_LISTING_SUBTITLE_META_KEY : '_kniferevive_listing_subtitle'));
     if ($subtitle === '' && function_exists('kniferevive_generate_listing_subtitle')) {
@@ -704,7 +766,9 @@ function kr_render_annex_product_card(WC_Product $product, string $buttonLabel =
     $output = '<article class="kr-annex-product-card kr-annex-product-card--' . esc_attr($cardType) . '">';
     $output .= '<a class="kr-annex-product-image" href="' . esc_url($url) . '">' . $product->get_image('woocommerce_thumbnail', ['loading' => 'lazy', 'decoding' => 'async']) . '</a>';
     $output .= '<div class="kr-annex-product-copy"><h3><a href="' . esc_url($url) . '">' . esc_html($product->get_name()) . '</a></h3>';
-    if ($subtitle !== '') {
+    if (function_exists('kniferevive_tech_card_description') && kr_is_technology_product($product->get_id())) {
+        $output .= kniferevive_tech_card_description($product);
+    } elseif ($subtitle !== '') {
         $output .= '<p class="kniferevive-product-subtitle">' . esc_html($subtitle) . '</p>';
     }
     if ($cardType === 'spice') {
@@ -726,6 +790,7 @@ function kr_render_annex_product_card(WC_Product $product, string $buttonLabel =
     $whatsapp = function_exists('kniferevive_whatsapp_render_icon') ? kniferevive_whatsapp_render_icon($product->get_id()) : '';
     $contacts = $telegram . $whatsapp;
     $output .= '<div class="kr-product-price-row kr-product-price-row--annex"><div class="kr-product-price kr-annex-product-price">' . wp_kses_post($product->get_price_html()) . '</div>' . ($contacts !== '' ? '<div class="kr-product-contact kr-product-contact-actions">' . $contacts . '</div>' : '') . '</div>';
+    if (class_exists('\KnifeRevive\Shipping\View')) $output .= \KnifeRevive\Shipping\View::card($product);
     if ($cardType === 'coin') {
         $tags = wp_get_post_terms($product->get_id(), 'product_tag');
         if (!is_wp_error($tags)) {
@@ -835,6 +900,8 @@ function kr_render_tech_product_rows(array $products): string
                         <h3><a href="<?php echo esc_url($url); ?>"><?php echo esc_html($product->get_name()); ?></a></h3>
                         <?php $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : ''; $whatsapp = function_exists('kniferevive_whatsapp_render_icon') ? kniferevive_whatsapp_render_icon($product->get_id()) : ''; $contacts = $telegram . $whatsapp; ?>
                         <div class="kr-product-price-row kr-product-price-row--tech"><div class="kr-product-price kr-tech-price"><?php echo wp_kses_post($product->get_price_html()); ?></div><?php if ($contacts !== '') : ?><div class="kr-product-contact kr-product-contact-actions"><?php echo $contacts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped shared renderers. ?></div><?php endif; ?></div>
+                        <?php if (class_exists('\KnifeRevive\Shipping\View')) echo \KnifeRevive\Shipping\View::card($product); ?>
+                        <?php if (class_exists('KR_Tech_Trust') && kr_is_technology_product($product->get_id())): ?><div class="kr-tech-card-evidence"><p><?php echo esc_html($product->is_in_stock() ? 'Available' : 'Sold out'); ?></p><dl><dt>Condition</dt><dd><?php echo esc_html(KR_Tech_Trust::grade($product)); ?></dd><dt>Testing</dt><dd><?php echo esc_html(KR_Tech_Trust::provenance(KR_Tech_Trust::record($product))); ?></dd><dt>Accessories</dt><dd><?php echo esc_html(KR_Tech_Trust::included($product)); ?></dd></dl></div><?php endif; ?>
                         <?php echo kr_render_timed_offer($product, 'compact'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         <?php if (function_exists('kniferevive_render_whatnot_demo_card')) echo kniferevive_render_whatnot_demo_card($product->get_id()); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         <div class="kr-tech-stock"><?php echo wp_kses_post(wc_get_stock_html($product)); ?></div>
@@ -871,6 +938,11 @@ function kr_render_tech_featured_carousel(array $products): string
         </div>
         <div class="kr-tech-carousel-track" data-kr-tech-carousel-track aria-label="<?php esc_attr_e('Featured Technology listings', 'kniferevive'); ?>" tabindex="0">
             <?php foreach ($products as $product) :
+                if (kr_collection_card_group($product) !== '') {
+                    echo '<div class="kr-tech-carousel-card kr-collection-carousel-item" data-product-id="'.esc_attr((string)$product->get_id()).'">'.kr_render_collection_product_card($product).'</div>';
+                    continue;
+                }
+
                 $url = $product->get_permalink();
                 $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : '';
                 $whatsapp = function_exists('kniferevive_whatsapp_render_icon') ? kniferevive_whatsapp_render_icon($product->get_id()) : '';
@@ -881,6 +953,8 @@ function kr_render_tech_featured_carousel(array $products): string
                     <div class="kr-tech-carousel-copy">
                         <h3><a href="<?php echo esc_url($url); ?>"><?php echo esc_html($product->get_name()); ?></a></h3>
                         <div class="kr-product-price-row kr-product-price-row--tech-carousel"><div class="kr-product-price"><?php echo wp_kses_post($product->get_price_html()); ?></div><?php if ($contacts !== '') : ?><div class="kr-product-contact kr-product-contact-actions"><?php echo $contacts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped shared renderers. ?></div><?php endif; ?></div>
+                        <?php if (class_exists('\KnifeRevive\Shipping\View')) echo \KnifeRevive\Shipping\View::card($product); ?>
+                        <?php if (class_exists('KR_Tech_Trust') && kr_is_technology_product($product->get_id())): ?><div class="kr-tech-card-evidence"><p><?php echo esc_html($product->is_in_stock() ? 'Available' : 'Sold out'); ?></p><dl><dt>Condition</dt><dd><?php echo esc_html(KR_Tech_Trust::grade($product)); ?></dd><dt>Testing</dt><dd><?php echo esc_html(KR_Tech_Trust::provenance(KR_Tech_Trust::record($product))); ?></dd><dt>Accessories</dt><dd><?php echo esc_html(KR_Tech_Trust::included($product)); ?></dd></dl></div><?php endif; ?>
                         <?php echo kr_render_timed_offer($product, 'compact'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         <?php if (function_exists('kniferevive_render_whatnot_demo_card')) echo kniferevive_render_whatnot_demo_card($product->get_id()); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         <a class="kr-tech-carousel-link" href="<?php echo esc_url($url); ?>"><?php esc_html_e('View listing', 'kniferevive'); ?> <span aria-hidden="true">→</span></a>
@@ -996,6 +1070,10 @@ function kr_render_annex_cards(): string
                     <div class="kr-annex-home-media"><?php echo $otherFindsImage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
                     <div><p>One-offs and useful objects</p><h3>Other Finds</h3><span>Interesting things that don’t fit the knife drawer.</span><a href="<?php echo esc_url((string) $terms['misc']['page_url']); ?>">Browse Other Finds <span aria-hidden="true">→</span></a></div>
                 </article>
+                <article class="kr-annex-home-card kr-home-discovery__all-card">
+                    <div class="kr-annex-home-media kr-home-discovery__collage" aria-hidden="true"><?php foreach ([0, 1, 2, 14] as $index) { $tile = kr_home_discovery_manifest()[$index]; $tile['alt'] = ''; echo kr_home_discovery_image($tile); } ?></div>
+                    <div><p>All the categories</p><h3>Shop All Categories</h3><span>All the good stuff, all in one place. See everything KnifeRevive has to explore.</span><a href="<?php echo esc_url(home_url('/categories/')); ?>">Browse All Categories <span aria-hidden="true">→</span></a></div>
+                </article>
             </div>
         </div>
     </section>
@@ -1066,50 +1144,34 @@ add_shortcode('kniferevive_art_gallery', 'kr_art_gallery_shortcode');
  */
 function kr_technology_trade_desk_shortcode(): string
 {
-    $featuredProducts = kr_get_tech_products(true);
-    $recentProducts = kr_get_tech_products(false);
-    $ai = kr_find_product_category(['technology', 'ai-systems'], ['Tech', 'AI Systems']);
-    $allSystemsUrl = $ai instanceof WP_Term ? get_term_link($ai) : home_url('/product-category/technology/');
-    if (is_wp_error($allSystemsUrl)) {
-        $allSystemsUrl = home_url('/product-category/technology/');
-    }
-    $heroImage = kr_theme_image('assets/images/technology/Openclaw2_Feature.png', __('OpenClaw 2 release featured on a self-hosted Dell AI computer', 'kniferevive'), [
-        'class' => 'kr-tech-hero-image',
-        'loading' => 'eager',
-        'fetchpriority' => 'high',
-    ]);
-    $ubuntuImage = kr_attachment_image_by_filename('openclaw-ubuntu-terminal.jpg', 'large', ['alt' => __('Ubuntu desktop with the OpenClaw environment shown in Terminal', 'kniferevive'), 'loading' => 'lazy', 'decoding' => 'async']);
-    $folderImage = kr_attachment_image_by_filename('openclaw-ubuntu-folder.jpg', 'large', ['alt' => __('Ubuntu file browser showing an OpenClaw working folder', 'kniferevive'), 'loading' => 'lazy', 'decoding' => 'async']);
-    $hardwareFrontImage = kr_theme_image('assets/images/technology/Front_Image.png', __('OpenClaw Dell OptiPlex 3020 front presentation', 'kniferevive'));
-    $hardwareInsideImage = kr_theme_image('assets/images/technology/Dell_Inside.png', __('Dell OptiPlex 3020 interior and component overview', 'kniferevive'));
-    $hardwareManualImage = kr_theme_image('assets/images/technology/Manual.png', __('OpenClaw PC new owner instruction manual', 'kniferevive'));
-    $hardwareUbuntuImage = kr_theme_image('assets/images/technology/Ubuntu.png', __('Ubuntu desktop running the OpenClaw environment', 'kniferevive'));
-
-    ob_start();
-    ?>
+    $all = KR_Tech_Trust::inventory();
+    $available = array_values(array_filter($all, static fn($p) => $p->is_in_stock()));
+    $sold = array_values(array_filter($all, static fn($p) => !$p->is_in_stock()));
+    $featured = KR_Tech_Trust::inventory(true);
+    ob_start(); ?>
     <div class="kr-tech-desk">
-        <section class="kr-tech-hero"><div class="kr-tech-shell kr-tech-hero-grid"><div class="kr-tech-hero-copy"><p class="kr-tech-kicker">Technology Trade Desk</p><h1>Your own AI system.<br>On your hardware.</h1><p>Preconfigured Linux computers for OpenClaw, automation and experimentation — without starting from a blank machine.</p><div class="kr-actions"><?php if ($featuredProducts) : ?><a class="kr-tech-button" href="#featured-system">See the Featured System</a><?php endif; ?><a class="kr-tech-button kr-tech-button--ghost" href="#what-is-openclaw">See What OpenClaw Can Do</a></div><?php echo kr_bitcoin_lightning_badge(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div><figure><?php echo $heroImage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></figure></div></section>
-
-        <section class="kr-tech-section kr-tech-product-spotlight" id="featured-system" aria-labelledby="kr-featured-tech-heading"><div class="kr-tech-shell"><p class="kr-tech-kicker">Selected Tech</p><h2 id="kr-featured-tech-heading">Featured system<?php echo count($featuredProducts) > 1 ? 's' : ''; ?></h2>
-            <?php echo kr_render_tech_featured_carousel($featuredProducts); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-        </div></section>
-
-        <?php echo kr_tech_metacategory_sections(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-
-        <section class="kr-tech-section kr-tech-explainer" id="what-is-openclaw"><div class="kr-tech-shell kr-tech-copy-grid"><p class="kr-tech-kicker">What OpenClaw is</p><div><h2>AI you can message from anywhere.</h2><p><a href="https://openclaw.ai/" target="_blank" rel="noopener noreferrer">OpenClaw</a> is a self-hosted gateway that connects an AI agent running on your computer to chat apps you already use. Message it from Telegram, WhatsApp, or other supported channels while the gateway, sessions, and configuration run on your machine.</p><div class="kr-tech-feature-grid"><article><span>01</span><h3>One gateway</h3><p>Connect supported chat channels to a single local gateway and agent setup.</p></article><article><span>02</span><h3>Browser Control UI</h3><p>Use the browser dashboard for chat, configuration, sessions, and nodes.</p></article><article><span>03</span><h3>Extensible tools</h3><p>Build workflows with tools, memory, skills, and channel plugins under your chosen policies.</p></article></div></div></div></section>
-
-        <section class="kr-tech-section kr-tech-telegram"><div class="kr-tech-shell kr-tech-telegram-grid"><div><p class="kr-tech-kicker">Chat from Telegram</p><h2>Message your AI from your phone.</h2><div class="kr-tech-stack"><article><h3>Private bot pairing</h3><p>Telegram direct messages use pairing by default for unknown senders. The owner approves access before the bot responds.</p></article><article><h3>Control UI at the computer</h3><p>When you are at the system, use OpenClaw’s browser dashboard for local chat, configuration, and session management.</p></article></div></div><figure><?php echo $folderImage !== '' ? $folderImage : $ubuntuImage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><figcaption>Owner-provided Ubuntu/OpenClaw setup image. No credentials or tokens are displayed.</figcaption></figure></div></section>
-
-        <section class="kr-tech-section kr-tech-hardware"><div class="kr-tech-shell"><p class="kr-tech-kicker">The hardware story</p><h2>Built on real hardware.</h2><div class="kr-tech-hardware-grid"><figure><div><?php echo $hardwareFrontImage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div><figcaption><span>OpenClaw-ready system</span><strong>Dell OptiPlex 3020.</strong></figcaption></figure><figure><div><?php echo $hardwareInsideImage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div><figcaption><span>System overview</span><strong>Components documented.</strong></figcaption></figure><figure><div><?php echo $hardwareManualImage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div><figcaption><span>Owner’s manual</span><strong>Setup guidance included.</strong></figcaption></figure><figure><div><?php echo $hardwareUbuntuImage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div><figcaption><span>Ubuntu environment</span><strong>OpenClaw configured.</strong></figcaption></figure></div><p class="kr-tech-hardware-note">Used/refurbished hardware. No new Dell warranty or Dell endorsement is implied.</p></div></section>
-
-        <section class="kr-tech-section kr-tech-proof"><div class="kr-tech-shell"><p class="kr-tech-kicker">OpenClaw community</p><h2>What people say about OpenClaw</h2><div class="kr-tech-proof-grid"><article><p>Community members describe coordinating email, calendars, WordPress, and server workflows from Telegram.</p><a href="https://openclaw.ai/#what-people-say" target="_blank" rel="noopener noreferrer">OpenClaw community source →</a></article><article><p>People highlight running workflows from a phone while away from the computer hosting their gateway.</p><a href="https://openclaw.ai/#what-people-say" target="_blank" rel="noopener noreferrer">OpenClaw community source →</a></article><article><p>Users often point to extensible skills and self-hosted control as reasons the project feels adaptable.</p><a href="https://openclaw.ai/#what-people-say" target="_blank" rel="noopener noreferrer">OpenClaw community source →</a></article></div><p class="kr-tech-proof-note">These are paraphrased OpenClaw community themes, not KnifeRevive customer testimonials.</p></div></section>
-
-        <section class="kr-tech-section kr-tech-open-source"><div class="kr-tech-shell kr-tech-copy-grid"><p class="kr-tech-kicker">Ownership</p><div><h2>Open source. Your machine. Your setup.</h2><p>OpenClaw is developed in the open by the OpenClaw Foundation and its core project is available under the <a href="https://github.com/openclaw/openclaw/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>. KnifeRevive’s featured hardware is a separate marketplace offering configured for practical OpenClaw and API-driven automation use.</p><p class="kr-tech-disclosure">OpenClaw is an open-source project developed by the OpenClaw Foundation. KnifeRevive’s computer offerings are independently configured and sold unless a specific affiliation is explicitly stated.</p></div></div></section>
-
-        <section class="kr-tech-final"><div class="kr-tech-shell"><p class="kr-tech-kicker">Technology Trade Desk</p><h2>Find your next system.</h2><div class="kr-actions"><?php if ($featuredProducts) : ?><a class="kr-tech-button" href="#featured-system">View Featured Tech</a><?php endif; ?><a class="kr-tech-button kr-tech-button--ghost" href="<?php echo esc_url((string) $allSystemsUrl); ?>">See All Tech</a></div></div></section>
+      <section class="kr-tech-hero kr-tech-shop-hero"><div class="kr-tech-shell">
+        <p class="kr-tech-kicker">KnifeRevive · The Annex</p>
+        <nav class="kr-tech-compact-nav" aria-label="Technology shopping"><a href="#available-tech">Available tech</a><a href="#tech-checks">How items are checked</a><a href="#tech-delivery">Delivery &amp; returns</a><a href="#tech-contact">Contact</a></nav>
+        <h1>Technology Trade Desk</h1><p>Part of The Annex at KnifeRevive. Explore computers, docks and useful electronics, with each listing’s photos, condition, included accessories and recorded test information.</p>
+        <a class="kr-tech-button" href="#available-tech">Shop available tech <span aria-hidden="true">↓</span></a>
+      </div></section>
+      <section class="kr-tech-section" id="available-tech"><div class="kr-tech-shell"><p class="kr-tech-kicker">The current inventory</p><h2>Available tech</h2><?php echo KR_Tech_Trust::cards($available); ?>
+        <?php if($sold): ?><details class="kr-tech-report"><summary>Sold-out listings</summary><?php echo KR_Tech_Trust::cards($sold); ?></details><?php endif; ?>
+        <p><a href="<?php echo esc_url(home_url('/product-category/technology/')); ?>">Browse all technology categories →</a></p>
+      </div></section>
+      <section class="kr-tech-section" id="tech-checks"><div class="kr-tech-shell"><p class="kr-tech-kicker">Before you choose</p><h2>Condition and testing are different.</h2><div class="kr-tech-guidance-grid">
+        <article><h3>Look at the item</h3><p>Review the listing’s photos, wear notes and included accessories. An exact-item photo statement appears only when the seller confirms the current gallery.</p></article>
+        <article><h3>Read the recorded checks</h3><p>Seller-reported testing is identified separately from KnifeRevive testing. Recorded checks say Passed, Issue found or Not tested. Missing evidence is not a pass.</p></article>
+        <article><h3>Check your setup</h3><p>Match the model, host connector, power needs and software to your use. A dock’s manufacturer specifications do not prove this particular unit was tested.</p></article>
+      </div></div></section>
+      <?php if($featured): ?><section class="kr-tech-section" id="featured-system"><div class="kr-tech-shell"><p class="kr-tech-kicker">A featured collection</p><h2>Linux &amp; OpenClaw systems</h2><p>Explore the software and accessories recorded on each listing. Setup, maintenance and external AI service requirements depend on the system you choose.</p><?php echo KR_Tech_Trust::cards($featured); ?><p><a href="https://openclaw.ai/" target="_blank" rel="noopener noreferrer">About the independent OpenClaw project</a></p><p>OpenClaw community commentary is not KnifeRevive customer feedback. These marketplace systems do not imply Dell or OpenClaw endorsement.</p></div></section><?php endif; ?>
+      <section class="kr-tech-section" id="tech-people"><div class="kr-tech-shell"><p class="kr-tech-kicker">The people behind the shop</p><h2>Useful things deserve another life.</h2><p>Svet H, identified on KnifeRevive’s About page as its organizer and a marketplace seller, describes giving durable products another life. KnifeRevive’s original focus is pre-owned kitchen cutlery and sharpening. The Annex extends that same idea to other useful objects, including technology. Items here come from individual marketplace sellers; see the seller and item record on each product page.</p><p><a href="<?php echo esc_url(home_url('/about/')); ?>">Meet KnifeRevive</a> · <a href="<?php echo esc_url(home_url('/categories/')); ?>">Explore The Annex categories</a></p></div></section>
+      <?php echo KR_Tech_Trust::feedback($all); echo kr_tech_metacategory_sections(); ?>
+      <section class="kr-tech-section" id="tech-delivery"><div class="kr-tech-shell"><p class="kr-tech-kicker">Delivery, returns &amp; support</p><h2>The listing sets the terms.</h2><div class="kr-tech-guidance-grid"><article><h3>Delivery</h3><p>Each seller supplies handling information. Available shipping services and costs depend on the item and your address and appear at checkout.</p></article><article><h3>Returns</h3><p>Tech at $150 or less accepts returns. Above $150, No Returns applies except for mobile phones. Check the selected listing window and cost beside Add to cart. For damaged or incorrectly described items, follow the problem-reporting process.</p><a href="<?php echo esc_url(home_url('/return-policy/')); ?>">Read the return policy</a></article><article id="tech-contact"><h3>Questions before buying?</h3><p>Use the seller contact links on the product page for compatibility, cables and condition. KnifeRevive support can help with marketplace questions.</p><a href="<?php echo esc_url(home_url('/contact/')); ?>">Contact KnifeRevive</a></article></div></div></section>
+      <section class="kr-tech-section"><div class="kr-tech-shell"><p class="kr-tech-kicker">Pay at checkout</p><h2>Choose an available payment method.</h2><p><?php echo esc_html(KR_Tech_Trust::payments()); ?></p><?php if(KR_Tech_Trust::lightning()) echo kr_bitcoin_lightning_badge(); ?></div></section>
     </div>
-    <?php
-    return kr_compact_shortcode_markup((string) ob_get_clean());
+    <?php return kr_compact_shortcode_markup((string)ob_get_clean());
 }
 add_shortcode('kniferevive_technology_trade_desk', 'kr_technology_trade_desk_shortcode');
 
@@ -1197,14 +1259,14 @@ add_filter('body_class', static function (array $classes): array {
 
 add_action('woocommerce_single_product_summary', static function (): void {
     if (is_product() && kr_is_technology_product(get_the_ID())) {
-        echo '<div class="kr-ai-product-note"><strong>' . esc_html__('Technology Trade Desk', 'kniferevive') . '</strong><span>' . esc_html__('Configured systems for practical, API-driven AI automation and Linux experimentation.', 'kniferevive') . '</span></div>';
+        echo '<div class="kr-ai-product-note"><strong>' . esc_html__('Technology Trade Desk', 'kniferevive') . '</strong><span>' . esc_html__('Computers, docks and useful electronics from marketplace sellers. Read this item’s condition and recorded checks.', 'kniferevive') . '</span></div>';
     }
 }, 25);
 
 add_action('wp_head', static function (): void {
     $descriptions = [
         'art-trade-gallery' => 'Explore original fine art and featured works by Jordan Ivanov in KnifeRevive’s Art Trade Gallery.',
-        'technology-trade-desk' => 'Explore configured computers for practical self-hosted AI tools, OpenClaw workflows, and Linux experimentation.',
+        'technology-trade-desk' => 'Shop computers, docks and useful electronics in The Annex at KnifeRevive, with listing-specific condition, accessories, testing and return terms.',
         'other-finds' => 'Browse one-off products and useful objects in KnifeRevive’s curated Other Finds collection.',
         'home-garden' => kr_metacategory_description('home-garden'),
         'collectibles' => kr_metacategory_description('collectibles'),
