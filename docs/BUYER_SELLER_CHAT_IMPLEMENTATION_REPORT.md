@@ -1,6 +1,6 @@
 # Buyer–seller messaging implementation report
 
-Date: 2026-10-25. Branch: `codex/buyer-seller-messaging-20261025`.
+Date: 2026-10-25. Branch: `codex/buyer-seller-messaging-20261025`. Review: [draft PR #4](https://github.com/svetlyoh/kniferevive-agent-commerce/pull/4). The four assignment commits were rebased onto remote main `5ac2417` to exclude twelve earlier local commits; unchanged feature files and all native checks were verified again.
 
 ## Release status
 
@@ -92,8 +92,8 @@ All new PHP syntax checks and JavaScript syntax checks passed. Native isolated W
 | Headless Firefox153 | 69 checks passed |
 | Browser widths | 320,375,390,430,768,1280; chooser containment, touch targets, focus/Tab/Escape, no JS, lazy/carousel clones, consent, light/Tech dark contrast |
 | Existing Agent Commerce native suite | 91 assertions passed with legacy storage; 91 passed with HPOS |
-| Existing payload contract | 20 schema checks passed, then **pre-existing root/packaged AI.md mismatch** failed. Confirmed in base commit6bb1d62, left unchanged; hashes in `existing-contract-result.json` |
-| Physical iPhone Safari / Android Chrome / VoiceOver / hardware keyboard zoom | Unverified; no access supplied. Browser responsive emulation is not physical-device certification |
+| Existing payload contract | 20 schema checks passed, then **pre-existing root/packaged AI.md mismatch** failed. Confirmed in original local base6bb1d62 and remote base5ac2417, left unchanged; hashes in `existing-contract-result.json` |
+| Physical iPhone Safari / Android Chrome / VoiceOver / 200% text zoom / mobile keyboard | Unverified; no access supplied. Browser responsive emulation is not physical-device certification |
 | Full production Dokan Pro/ListLab/payment/email coexistence, hosted CDN opt-out | Not deployed or end-to-end verified; required pilot smoke checks below |
 
 Evidence: `output/seller-contact/php-results.json`, browser-results-{chrome,msedge,firefox}.json, order-link-results.json, existing-contract-result.json and screenshots. Public before captures are GET-only. All **LOCAL-PROPOSAL** after images are isolated captured DOM layouts with sample channel destinations/disabled links; they do not show a production messaging deployment. Storefront after is a component placement proposal; actual template integration is in the supplied overlay. No chat messages, purchases or mail were sent. Private live Seller Orders proof is stored outside the public repository.

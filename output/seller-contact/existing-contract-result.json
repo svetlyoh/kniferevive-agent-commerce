@@ -5,5 +5,10 @@
     "wordpress/kniferevive-agent-commerce/assets/AI.md": "871cfed04594cf172fab7b07ca96bfbfdcec84f5f6c6051e11ee6e519c919e20"
   },
   "payload_schema_checks_passed": 20,
-  "contract_result": "Pre-existing packaged AI.md mismatch at HEAD; unrelated API files unchanged."
+  "contract_result": "Pre-existing packaged AI.md mismatch at HEAD; unrelated API files unchanged.",
+  "verified_base_commits": [
+    "6bb1d62",
+    "5ac2417"
+  ],
+  "rerun_after_rebase": "20 schemas passed; existing packaged AI.md equality assertion failed unchanged."
 }
