@@ -117,12 +117,16 @@ function kniferevive_render_knife_card(WC_Product $product): string
     $policy = kr_knife_card_return_policy($productId);
     $policyClass = str_starts_with(strtolower($policy), 'no returns') ? ' kr-knife-card__return-policy--neutral' : '';
     $brand = function_exists('kr_product_brand_markup') ? kr_product_brand_markup($productId, 'knife-card') : '';
+    if (function_exists('kr_seller_contact_markup')) {
+        $sharing = kr_seller_contact_markup($productId, 'card');
+    } else {
     $sharing = '';
     if (function_exists('kniferevive_telegram_render_icon')) {
         $sharing .= (string) kniferevive_telegram_render_icon($productId, ['hide_for_owner' => true]);
     }
     if (function_exists('kniferevive_whatsapp_render_icon')) {
         $sharing .= (string) kniferevive_whatsapp_render_icon($productId, ['hide_for_owner' => true]);
+    }
     }
 
     $details = [];
@@ -166,7 +170,7 @@ function kniferevive_render_knife_card(WC_Product $product): string
             <?php endif; ?>
             <div class="kr-knife-card__commerce kr-knife-card__price-row">
                 <span class="kr-knife-card__price"><?php echo kr_knife_card_price_markup($product); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-                <?php if ($sharing !== '') : ?><span class="kr-knife-card__share" aria-label="<?php esc_attr_e('Contact seller', 'kniferevive'); ?>"><?php echo $sharing; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted output from KnifeRevive messaging helpers ?></span><?php endif; ?>
+                <?php if ($sharing !== '') : ?><div class="<?php echo function_exists('kr_seller_contact_markup') ? 'kr-knife-card__contact' : 'kr-knife-card__share'; ?>" aria-label="<?php esc_attr_e('Contact seller', 'kniferevive'); ?>"><?php echo $sharing; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted output from KnifeRevive messaging helpers ?></div><?php endif; ?>
             </div>
             <?php do_action('kniferevive_knife_card_after_price', $product); ?>
         </div>

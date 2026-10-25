@@ -16,8 +16,10 @@ foreach(['publish','draft','pending','private','future','trash'] as $status){
  wp_delete_post($id,true);
 }
 if($krev_order_listing_url(['product_id'=>PHP_INT_MAX])!=='')throw new RuntimeException('Deleted product must not create a false link');
+$rows[]=['status'=>'deleted','pass'=>true];
 wp_set_current_user(0);$id=wp_insert_post(['post_type'=>'product','post_status'=>'draft','post_author'=>$seller,'post_title'=>'Private QA']);
 if($krev_order_listing_url(['product_id'=>$id])!=='')throw new RuntimeException('Private record leaked to unauthorized viewer');
+$rows[]=['status'=>'unauthorized_draft','pass'=>true];
 wp_delete_post($id,true);require_once ABSPATH.'wp-admin/includes/user.php';wp_delete_user($seller);
 file_put_contents(dirname(__DIR__).'/output/seller-contact/order-link-results.json',wp_json_encode($rows,JSON_PRETTY_PRINT));
 echo "8 order-link checks passed: six listing states at zero stock, deleted listing, unauthorized draft. Isolated database; mail/network blocked.\n";

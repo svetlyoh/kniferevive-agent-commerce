@@ -430,7 +430,7 @@ function kr_validate_storefront_messaging(array $input)
     $personal = KR_Telegram_Helper::normalize_username($personalRaw);
     $bot = KR_Telegram_Helper::normalize_username($botRaw);
     $phoneRaw = $read('kr_store_whatsapp_number');
-    $phone = KR_WhatsApp_Helper::normalize_number($phoneRaw);
+    $phone = class_exists('\KnifeRevive\SellerContact\Resolver') ? \KnifeRevive\SellerContact\Resolver::number($phoneRaw) : KR_WhatsApp_Helper::normalize_number($phoneRaw);
     if (($personalRaw !== '' && !$personal) || ($botRaw !== '' && !$bot) || ($telegram && !($mode === 'bot' ? $bot : $personal))) {
         return new WP_Error('telegram_username', __('Enter a public Telegram username, or turn Telegram off.', 'kniferevive'));
     }
@@ -491,13 +491,13 @@ add_action('kniferevive_storefront_editor_socials', static function ($sellerId):
             <input type="hidden" name="kr_messaging_seller_id" value="<?php echo esc_attr((string) $sellerId); ?>">
             <div class="kr-store-messaging__fields">
                 <fieldset><legend>Telegram</legend>
-                    <label><input type="checkbox" name="kr_store_telegram_enabled" value="1" <?php checked($telegram); ?>> <?php esc_html_e('Show Telegram', 'kniferevive'); ?></label>
+                    <label><input type="checkbox" name="kr_store_telegram_enabled" value="1" <?php checked($telegram); ?>> <?php esc_html_e('Allow buyers to contact me on Telegram', 'kniferevive'); ?></label>
                     <label><?php esc_html_e('Account type', 'kniferevive'); ?><select name="kr_store_telegram_mode"><option value="personal" <?php selected($mode, 'personal'); ?>><?php esc_html_e('Personal account', 'kniferevive'); ?></option><option value="bot" <?php selected($mode, 'bot'); ?>><?php esc_html_e('Seller bot', 'kniferevive'); ?></option></select></label>
                     <label><?php esc_html_e('Public username', 'kniferevive'); ?><input type="text" name="kr_store_telegram_username" maxlength="64" placeholder="@yourstore" autocomplete="off" value="<?php echo esc_attr((string) get_user_meta($sellerId, KR_Telegram_Helper::USERNAME_META_KEY, true)); ?>"></label>
                     <label><?php esc_html_e('Bot username (for seller bots)', 'kniferevive'); ?><input type="text" name="kr_store_telegram_bot" maxlength="64" placeholder="@YourStoreBot" autocomplete="off" value="<?php echo esc_attr((string) get_user_meta($sellerId, KR_Telegram_Helper::BOT_USERNAME_META_KEY, true)); ?>"></label>
                 </fieldset>
                 <fieldset><legend>WhatsApp</legend>
-                    <label><input type="checkbox" name="kr_store_whatsapp_enabled" value="1" <?php checked($whatsapp); ?>> <?php esc_html_e('Show WhatsApp', 'kniferevive'); ?></label>
+                    <label><input type="checkbox" name="kr_store_whatsapp_enabled" value="1" <?php checked($whatsapp); ?>> <?php esc_html_e('Allow buyers to contact me on WhatsApp', 'kniferevive'); ?></label>
                     <label><?php esc_html_e('Number with country code', 'kniferevive'); ?><input type="tel" name="kr_store_whatsapp_number" maxlength="32" placeholder="+1 555 123 4567" autocomplete="tel" value="<?php echo esc_attr((string) get_user_meta($sellerId, KR_WhatsApp_Helper::NUMBER_META_KEY, true)); ?>"></label>
                 </fieldset>
             </div>

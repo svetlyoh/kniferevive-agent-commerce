@@ -28,5 +28,13 @@
         "status": "trash",
         "zero_stock": true,
         "pass": true
+    },
+    {
+        "status": "deleted",
+        "pass": true
+    },
+    {
+        "status": "unauthorized_draft",
+        "pass": true
     }
 ]

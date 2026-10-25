@@ -786,9 +786,9 @@ function kr_render_annex_product_card(WC_Product $product, string $buttonLabel =
             $output .= '<p class="kr-annex-card-brand"><strong>' . esc_html__('Brand:', 'kniferevive') . '</strong> ' . esc_html(implode(', ', array_unique($brandNames))) . '</p>';
         }
     }
-    $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : '';
+    if (function_exists('kr_seller_contact_markup')) { $contacts = kr_seller_contact_markup($product->get_id(), 'card'); } else { $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : '';
     $whatsapp = function_exists('kniferevive_whatsapp_render_icon') ? kniferevive_whatsapp_render_icon($product->get_id()) : '';
-    $contacts = $telegram . $whatsapp;
+    $contacts = $telegram . $whatsapp; }
     $output .= '<div class="kr-product-price-row kr-product-price-row--annex"><div class="kr-product-price kr-annex-product-price">' . wp_kses_post($product->get_price_html()) . '</div>' . ($contacts !== '' ? '<div class="kr-product-contact kr-product-contact-actions">' . $contacts . '</div>' : '') . '</div>';
     if (class_exists('\KnifeRevive\Shipping\View')) $output .= \KnifeRevive\Shipping\View::card($product);
     if ($cardType === 'coin') {
@@ -898,7 +898,7 @@ function kr_render_tech_product_rows(array $products): string
                     <a class="kr-tech-product-media" href="<?php echo esc_url($url); ?>" aria-label="<?php echo esc_attr($product->get_name()); ?>"><?php echo $product->get_image('large', ['loading' => 'lazy', 'decoding' => 'async']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>
                     <div class="kr-tech-product-copy">
                         <h3><a href="<?php echo esc_url($url); ?>"><?php echo esc_html($product->get_name()); ?></a></h3>
-                        <?php $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : ''; $whatsapp = function_exists('kniferevive_whatsapp_render_icon') ? kniferevive_whatsapp_render_icon($product->get_id()) : ''; $contacts = $telegram . $whatsapp; ?>
+                        <?php if (function_exists('kr_seller_contact_markup')) { $contacts = kr_seller_contact_markup($product->get_id(), 'card'); } else { $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : ''; $whatsapp = function_exists('kniferevive_whatsapp_render_icon') ? kniferevive_whatsapp_render_icon($product->get_id()) : ''; $contacts = $telegram . $whatsapp; } ?>
                         <div class="kr-product-price-row kr-product-price-row--tech"><div class="kr-product-price kr-tech-price"><?php echo wp_kses_post($product->get_price_html()); ?></div><?php if ($contacts !== '') : ?><div class="kr-product-contact kr-product-contact-actions"><?php echo $contacts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped shared renderers. ?></div><?php endif; ?></div>
                         <?php if (class_exists('\KnifeRevive\Shipping\View')) echo \KnifeRevive\Shipping\View::card($product); ?>
                         <?php if (class_exists('KR_Tech_Trust') && kr_is_technology_product($product->get_id())): ?><div class="kr-tech-card-evidence"><p><?php echo esc_html($product->is_in_stock() ? 'Available' : 'Sold out'); ?></p><dl><dt>Condition</dt><dd><?php echo esc_html(KR_Tech_Trust::grade($product)); ?></dd><dt>Testing</dt><dd><?php echo esc_html(KR_Tech_Trust::provenance(KR_Tech_Trust::record($product))); ?></dd><dt>Accessories</dt><dd><?php echo esc_html(KR_Tech_Trust::included($product)); ?></dd></dl></div><?php endif; ?>
@@ -944,9 +944,9 @@ function kr_render_tech_featured_carousel(array $products): string
                 }
 
                 $url = $product->get_permalink();
-                $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : '';
+                if (function_exists('kr_seller_contact_markup')) { $contacts = kr_seller_contact_markup($product->get_id(), 'card'); } else { $telegram = function_exists('kniferevive_telegram_render_icon') ? kniferevive_telegram_render_icon($product->get_id()) : '';
                 $whatsapp = function_exists('kniferevive_whatsapp_render_icon') ? kniferevive_whatsapp_render_icon($product->get_id()) : '';
-                $contacts = $telegram . $whatsapp;
+                $contacts = $telegram . $whatsapp; }
                 ?>
                 <article class="kr-tech-carousel-card" data-product-id="<?php echo esc_attr((string) $product->get_id()); ?>">
                     <a class="kr-tech-carousel-media" href="<?php echo esc_url($url); ?>" aria-label="<?php echo esc_attr($product->get_name()); ?>"><?php echo $product->get_image('woocommerce_thumbnail', ['loading' => 'lazy', 'decoding' => 'async']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>

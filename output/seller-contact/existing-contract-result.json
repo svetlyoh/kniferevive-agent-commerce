@@ -1,0 +1,9 @@
+{
+  "pre_existing_in_HEAD": true,
+  "hashes": {
+    "AI.md": "8e37829a5fd2c1c1a3b3380fa265288afa4b32c532ccf66982587897164ce68d",
+    "wordpress/kniferevive-agent-commerce/assets/AI.md": "871cfed04594cf172fab7b07ca96bfbfdcec84f5f6c6051e11ee6e519c919e20"
+  },
+  "payload_schema_checks_passed": 20,
+  "contract_result": "Pre-existing packaged AI.md mismatch at HEAD; unrelated API files unchanged."
+}

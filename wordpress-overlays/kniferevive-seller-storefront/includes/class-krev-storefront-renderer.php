@@ -49,7 +49,7 @@ final class KREV_Storefront_Renderer {
 					<div class="krev-store-intro"><p class="krev-store-kicker"><?php esc_html_e( 'KnifeRevive Seller', 'kniferevive-seller-storefront' ); ?></p><h1 id="krev-store-title"><?php echo esc_html( $name ); ?></h1>
 					<?php if ( $config['tagline'] ) : ?><p class="krev-store-tagline"><?php echo esc_html( $config['tagline'] ); ?></p><?php endif; ?>
 					<div class="krev-store-proof"><?php if ( $rating_count ) : ?><span aria-label="<?php echo esc_attr( sprintf( __( '%1$s out of 5 stars from %2$d reviews', 'kniferevive-seller-storefront' ), number_format_i18n( $rating_value, 1 ), $rating_count ) ); ?>"><span aria-hidden="true">★</span> <?php echo esc_html( number_format_i18n( $rating_value, 1 ) ); ?> <small>(<?php echo esc_html( number_format_i18n( $rating_count ) ); ?>)</small></span><?php endif; ?><span><?php echo esc_html( sprintf( _n( '%d active listing', '%d active listings', count( $source ), 'kniferevive-seller-storefront' ), count( $source ) ) ); ?></span></div></div>
-					<div class="krev-store-actions"><?php self::contact_action( $source ); ?><?php if ( self::can_edit( $seller_id ) ) : ?><a class="krev-store-button krev-store-button--secondary" href="<?php echo esc_url( add_query_arg( user_can( get_current_user_id(), 'manage_woocommerce' ) ? array( 'seller_id' => $seller_id ) : array(), wc_get_account_endpoint_url( 'storefront' ) ) ); ?>"><?php esc_html_e( 'Customize storefront', 'kniferevive-seller-storefront' ); ?></a><?php endif; ?></div>
+					<div class="krev-store-actions"><?php self::contact_action( $source, $seller_id ); ?><?php if ( self::can_edit( $seller_id ) ) : ?><a class="krev-store-button krev-store-button--secondary" href="<?php echo esc_url( add_query_arg( user_can( get_current_user_id(), 'manage_woocommerce' ) ? array( 'seller_id' => $seller_id ) : array(), wc_get_account_endpoint_url( 'storefront' ) ) ); ?>"><?php esc_html_e( 'Customize storefront', 'kniferevive-seller-storefront' ); ?></a><?php endif; ?></div>
 					<div class="krev-store-details"><?php do_action( 'kniferevive_storefront_after_actions', $seller_id ); ?></div>
 				</div>
 				<?php if ( $config['about'] ) : ?><p class="krev-store-about"><?php echo nl2br( esc_html( $config['about'] ) ); ?></p><?php endif; ?>
@@ -91,7 +91,8 @@ final class KREV_Storefront_Renderer {
 		return is_user_logged_in() && ( get_current_user_id() === $seller_id || current_user_can( 'manage_woocommerce' ) );
 	}
 
-	private static function contact_action( array $products ): void {
+	private static function contact_action( array $products, int $seller_id = 0 ): void {
+		if ( function_exists( 'kr_seller_store_contact_markup' ) ) { echo kr_seller_store_contact_markup($seller_id); return; }
 		if ( ! $products ) { return; }
 		$id = $products[0]->get_id();
 		if ( function_exists( 'kniferevive_whatsapp_render_button' ) ) {

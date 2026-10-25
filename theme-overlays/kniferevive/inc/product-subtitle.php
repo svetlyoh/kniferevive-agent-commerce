@@ -580,6 +580,7 @@ add_action('woocommerce_single_product_summary', 'kniferevive_render_single_list
 /** Seller-owned contact actions for the Shop All grid. Never substitute another seller. */
 function kr_shop_seller_contacts(int $productId): string
 {
+    if (function_exists('kr_seller_contact_markup')) { return kr_seller_contact_markup($productId, 'card'); }
     $icons = '';
     if (function_exists('kniferevive_telegram_render_icon')) {
         $icons .= kniferevive_telegram_render_icon($productId, ['hide_for_owner' => false]);
@@ -611,7 +612,7 @@ function kr_refresh_shop_seller_contacts(string $content): string
     }
     return preg_replace_callback('~<li\b[^>]*\bpost-(\d+)\b[^>]*>.*?</li>~is', static function (array $match): string {
         $card = $match[0];
-        if (str_contains($card, 'kr-shop-seller-contact') || !wc_get_product((int) $match[1])) {
+        if (str_contains($card, 'krc-contact') || str_contains($card, 'kr-shop-seller-contact') || !wc_get_product((int) $match[1])) {
             return $card;
         }
         $contacts = kr_shop_seller_contacts((int) $match[1]);
