@@ -1,0 +1,32 @@
+[
+    {
+        "status": "publish",
+        "zero_stock": true,
+        "pass": true
+    },
+    {
+        "status": "draft",
+        "zero_stock": true,
+        "pass": true
+    },
+    {
+        "status": "pending",
+        "zero_stock": true,
+        "pass": true
+    },
+    {
+        "status": "private",
+        "zero_stock": true,
+        "pass": true
+    },
+    {
+        "status": "future",
+        "zero_stock": true,
+        "pass": true
+    },
+    {
+        "status": "trash",
+        "zero_stock": true,
+        "pass": true
+    }
+]
