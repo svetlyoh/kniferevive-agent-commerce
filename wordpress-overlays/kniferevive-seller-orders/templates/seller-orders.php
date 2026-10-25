@@ -1,4 +1,4 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
+<?php defined( 'ABSPATH' ) || exit; $appointment_cards = isset($appointment_cards) && is_array($appointment_cards) ? $appointment_cards : array(); ?>
 <section class="krev-orders">
 	<header class="krev-page-header krev-heading-row"><div><p class="krev-eyebrow"><?php esc_html_e( 'Marketplace', 'kniferevive-seller-orders' ); ?></p><h2><?php esc_html_e( 'Seller Orders', 'kniferevive-seller-orders' ); ?></h2></div><a class="krev-account-return" href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" aria-label="<?php esc_attr_e( 'My Account', 'kniferevive-seller-orders' ); ?>"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.5 20c.6-4 3.2-6 7.5-6s6.9 2 7.5 6"></path></svg><span><?php esc_html_e( 'My Account', 'kniferevive-seller-orders' ); ?></span></a></header>
 	<nav class="krev-tabs" aria-label="<?php esc_attr_e( 'Seller order filters', 'kniferevive-seller-orders' ); ?>">
@@ -26,7 +26,7 @@
 			<article class="krev-card krev-order-row">
 				<div class="krev-card-heading"><div><span><?php echo esc_html( sprintf( 'Order #%s', $dto['order_number'] ) ); ?></span><small><?php echo esc_html( $dto['date'] ); ?></small></div><span class="krev-status"><?php echo esc_html( $dto['status_label'] ); ?></span></div>
 				<div class="krev-row-items"><?php foreach ( $dto['seller_items'] as $item ) : ?><div class="krev-product-line"><img src="<?php echo esc_url( $item['image'] ); ?>" alt=""><div><strong><?php echo esc_html( $item['title'] ); ?></strong><span><?php echo esc_html( sprintf( 'Qty %d', $item['quantity'] ) ); ?></span></div></div><?php endforeach; ?></div>
-				<dl><div><dt><?php esc_html_e( 'Shipping', 'kniferevive-seller-orders' ); ?></dt><dd><?php echo esc_html( $dto['shipping']['method'] ?: '—' ); ?></dd></div><div><dt><?php esc_html_e( 'Tracking', 'kniferevive-seller-orders' ); ?></dt><dd><?php echo esc_html( $dto['tracking'] ? end( $dto['tracking'] )['tracking_number'] : __( 'Not added', 'kniferevive-seller-orders' ) ); ?></dd></div></dl>
+				<dl><div><dt><?php esc_html_e( 'Shipping', 'kniferevive-seller-orders' ); ?></dt><dd><?php echo esc_html( $dto['shipping']['method'] ?: '—' ); ?></dd></div><div><dt><?php esc_html_e( 'Fulfillment', 'kniferevive-seller-orders' ); ?></dt><dd><?php echo esc_html( KREV_Shipment_UI::summary( $order )); ?></dd></div></dl>
 				<div class="krev-row-action"><a class="button krev-primary-action" href="<?php echo esc_url( trailingslashit( wc_get_account_endpoint_url( 'seller-orders' ) ) . $order->get_id() . '/' ); ?>"><?php esc_html_e( 'View Order', 'kniferevive-seller-orders' ); ?></a></div>
 				<?php include KREV_ORDERS_PATH . 'templates/order-earnings.php'; ?>
 			</article>
