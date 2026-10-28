@@ -1,0 +1,137 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-25",
+  "deployed": false,
+  "published": false,
+  "analytics_default": false,
+  "proposed_page": "https://kniferevive.com/your-next-find/",
+  "source_kit": "KnifeRevive_Meta_Campaign_Updated_Ads_And_Codex_Kit",
+  "product_bindings_observed_not_hardcoded": {
+    "wusthof": 538,
+    "fire-tv": 3196,
+    "cutco": 1448
+  },
+  "files": [
+    {
+      "path": "kniferevive-campaign-landing/assets/campaign.css",
+      "bytes": 18497,
+      "sha256": "5ed1d55874bf76813d432ba9fc0b5e3a4b2f8d8b67c46538a95b1f57a28dd160"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/campaign.js",
+      "bytes": 1317,
+      "sha256": "0065edc476d7492d4f9beb44a40245a5e2427c5f6bb32adc786ff0fd8bb7ab82"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/cutco-320.webp",
+      "bytes": 1834,
+      "sha256": "9ae7bc504597cd17cc6684b706f4d5c099fba7fbfd6e58e6d88c2f06a51747b6"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/cutco-640.webp",
+      "bytes": 5142,
+      "sha256": "51a7bfab16308d33dac613876b637ce619f3fb20d438b283955bde59bea92770"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/cutco-960.webp",
+      "bytes": 9836,
+      "sha256": "78d2028a2ecd867991a8bd35bb21e8c42ffd2c0982120986b603e60099ba1864"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/dispatch-480.webp",
+      "bytes": 26352,
+      "sha256": "c26048dff3b104ab6733fc6daf55b8142e4133923dd4712d6170230f53ec98c4"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/dispatch-960.webp",
+      "bytes": 65448,
+      "sha256": "1fb8ac5774ddceac4b22b7ac23cf0e6cca4879fe42aad8e7b3b09001f55bd1fd"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/fire-tv-320.webp",
+      "bytes": 17356,
+      "sha256": "9fbc64fdecbe0ec46bfd248b9308f4eec5cf7149c6e621d7881f6edf61e46ee5"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/fire-tv-640.webp",
+      "bytes": 57120,
+      "sha256": "30622e08ee8a18678995bbf2891c561727fcb9735d32b1dc6a18e191aecb481e"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/fire-tv-960.webp",
+      "bytes": 98570,
+      "sha256": "af90f75ab086eba62c5f3fe8c8a0f7781db46fa45546e92d16a5a4ceb54faeb5"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/manifest.json",
+      "bytes": 2740,
+      "sha256": "67f1a07e75e735b9f5f785462bb3c2ec96a30e620fe6b788f4b95d97e014271d"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/og-marketplace-1080.webp",
+      "bytes": 45050,
+      "sha256": "bed7c5b81f663c31680c1c4b96eb1ac90af9971ec96d28031220f4a544c015af"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/wusthof-320.webp",
+      "bytes": 1658,
+      "sha256": "9779d2b736eb5e30a8b5fdb0dc1d19e2d932bd98367e498fb65724cd4cb3dbfd"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/wusthof-640.webp",
+      "bytes": 4058,
+      "sha256": "9b48db413bbb2b17b9144f1b84b0cca0619b1a2bb0640f9182b56df560163b06"
+    },
+    {
+      "path": "kniferevive-campaign-landing/assets/images/wusthof-960.webp",
+      "bytes": 7040,
+      "sha256": "ac32187e5cdb54b67584225c72ad75985df22e13068c4de3886192fd86342488"
+    },
+    {
+      "path": "kniferevive-campaign-landing/CHANGELOG.md",
+      "bytes": 685,
+      "sha256": "f3e29407d7ab937987960ced40f973db667b59db25aa4ceadfe7d058d5eb1b32"
+    },
+    {
+      "path": "kniferevive-campaign-landing/includes/Admin.php",
+      "bytes": 3431,
+      "sha256": "8043fa85de9c89456dbf1d38a9fec6dfebb3c1f6f32435595a1f84b4afb32ef4"
+    },
+    {
+      "path": "kniferevive-campaign-landing/includes/Campaign.php",
+      "bytes": 10718,
+      "sha256": "f4e023494aff38af8067e2bef856f0fe66d6cfe912160ff9479fdfd8351fa0bf"
+    },
+    {
+      "path": "kniferevive-campaign-landing/kniferevive-campaign-landing.php",
+      "bytes": 802,
+      "sha256": "31522d0deec4f3462460aa37afd3ade95e8c677dd6ba905d357d79ed2033ec40"
+    },
+    {
+      "path": "kniferevive-campaign-landing/README.md",
+      "bytes": 6030,
+      "sha256": "6f664b5c33d5211a9be266de0222663e5f0efd393f17c5e1c46e0c5ba4b35604"
+    },
+    {
+      "path": "kniferevive-campaign-landing/templates/landing.php",
+      "bytes": 14795,
+      "sha256": "f6f4357420d5dd1b8a368a8d3aa7c0f60a794719f2fd471fa2259d208eaeb1a8"
+    }
+  ],
+  "payloads": {
+    "campaign.css": {
+      "raw_bytes": 18497,
+      "gzip_bytes": 3895,
+      "requested_by_default": true
+    },
+    "campaign.js": {
+      "raw_bytes": 1317,
+      "gzip_bytes": 710,
+      "requested_by_default": false
+    }
+  },
+  "template": {
+    "target": "wp-content/themes/kniferevive/templates/page-your-next-find.html",
+    "sha256": "a42e33b8bf5812483b5a0a5e5778b5d753c52434655fcf25253ab443086a2efd"
+  }
+}

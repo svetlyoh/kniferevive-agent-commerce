@@ -1,0 +1,206 @@
+[
+    {
+        "check": "No measurement enabled by default",
+        "pass": true
+    },
+    {
+        "check": "Attribution preserves the four standard fields",
+        "pass": true
+    },
+    {
+        "check": "Malformed, array, email and oversized UTMs discarded",
+        "pass": true
+    },
+    {
+        "check": "Safe link carries campaign without arbitrary query",
+        "pass": true
+    },
+    {
+        "check": "Protocol-relative redirect cannot become a destination",
+        "pass": true
+    },
+    {
+        "check": "Legal links do not carry query values",
+        "pass": true
+    },
+    {
+        "check": "Native published Page is campaign-active",
+        "pass": true
+    },
+    {
+        "check": "wusthof resolves by verified slug",
+        "pass": true
+    },
+    {
+        "check": "wusthof live public WooCommerce card",
+        "pass": true
+    },
+    {
+        "check": "fire-tv resolves by verified slug",
+        "pass": true
+    },
+    {
+        "check": "fire-tv live public WooCommerce card",
+        "pass": true
+    },
+    {
+        "check": "cutco resolves by verified slug",
+        "pass": true
+    },
+    {
+        "check": "cutco live public WooCommerce card",
+        "pass": true
+    },
+    {
+        "check": "Exactly one H1",
+        "pass": true
+    },
+    {
+        "check": "Both deep links exist",
+        "pass": true
+    },
+    {
+        "check": "All three actual photo sources in the intended order",
+        "pass": true
+    },
+    {
+        "check": "No hardcoded price or fee promotion",
+        "pass": true
+    },
+    {
+        "check": "Dispatch explicitly qualified and conceptual",
+        "pass": true
+    },
+    {
+        "check": "No account modal or purchase form",
+        "pass": true
+    },
+    {
+        "check": "Canonical privacy route",
+        "pass": true
+    },
+    {
+        "check": "Seven accessible FAQ disclosures",
+        "pass": true
+    },
+    {
+        "check": "Read-only page adds no REST endpoint",
+        "pass": true
+    },
+    {
+        "check": "Master page uses registered shortcode block",
+        "pass": true
+    },
+    {
+        "check": "Dedicated native template preserves header and footer",
+        "pass": true
+    },
+    {
+        "check": "Canonical strips campaign query values",
+        "pass": true
+    },
+    {
+        "check": "Campaign title is scoped through native document filter",
+        "pass": true
+    },
+    {
+        "check": "Existing Jetpack gets one campaign description value",
+        "pass": true
+    },
+    {
+        "check": "OG uses the approved real-product creative",
+        "pass": true
+    },
+    {
+        "check": "Empty category routes to current explorer",
+        "pass": true
+    },
+    {
+        "check": "Landing cache invalidation targets only its Page",
+        "pass": true
+    },
+    {
+        "check": "No link to draft product (actual: draft, reason: not_public)",
+        "pass": true
+    },
+    {
+        "check": "No link to private product (actual: private, reason: not_public)",
+        "pass": true
+    },
+    {
+        "check": "No link to pending product (actual: pending, reason: product_missing)",
+        "pass": true
+    },
+    {
+        "check": "No link to future product (actual: future, reason: not_public)",
+        "pass": true
+    },
+    {
+        "check": "No link to trash product (actual: trash, reason: product_missing)",
+        "pass": true
+    },
+    {
+        "check": "Sold out gets Explore similar",
+        "pass": true
+    },
+    {
+        "check": "Hidden product never advertised",
+        "pass": true
+    },
+    {
+        "check": "Password protected never advertised",
+        "pass": true
+    },
+    {
+        "check": "Unicode titles escaped in rendered content",
+        "pass": true
+    },
+    {
+        "check": "Removed product uses fallback",
+        "pass": true
+    },
+    {
+        "check": "Settings reject wrong photographed product",
+        "pass": true
+    },
+    {
+        "check": "Settings reject invalid page type",
+        "pass": true
+    },
+    {
+        "check": "Settings accept approved products without enabling analytics",
+        "pass": true
+    },
+    {
+        "check": "Saved product ID survives a permalink slug change",
+        "pass": true
+    },
+    {
+        "check": "Owner can retain a previously verified binding after rename",
+        "pass": true
+    },
+    {
+        "check": "Campaign CSS enqueued on its page",
+        "pass": true
+    },
+    {
+        "check": "No JS added by default",
+        "pass": true
+    },
+    {
+        "check": "Missing official readiness integration blocks optional metrics",
+        "pass": true
+    },
+    {
+        "check": "No CSS or content on unrelated page",
+        "pass": true
+    },
+    {
+        "check": "guest can browse same campaign",
+        "pass": true
+    },
+    {
+        "check": "owner can browse same campaign",
+        "pass": true
+    }
+]
