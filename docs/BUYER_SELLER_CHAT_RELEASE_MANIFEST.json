@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-25",
+  "messaging_deployed": false,
+  "hash_mode": "SHA256 of UTF-8 bytes with CRLF normalized to LF; no other whitespace changes",
+  "defaults": {
+    "master": false,
+    "analytics": false
+  },
+  "integration_files": [
+    {
+      "source": "theme-overlays/kniferevive/inc/account-avatar.php",
+      "target": "wp-content/themes/kniferevive/inc/account-avatar.php",
+      "before_sha256_lf": "e9e6dc1aeaf5cf3500838a81f69ac501bf2b3f1cab6e461a694eed82c60aba21",
+      "after_sha256_lf": "1be821a6aa95dcc9417350ed243ab4f36f0847f74178cf6a8d646f605827e14d"
+    },
+    {
+      "source": "theme-overlays/kniferevive/inc/annex.php",
+      "target": "wp-content/themes/kniferevive/inc/annex.php",
+      "before_sha256_lf": "375f941fe6b47013664125f2ff3c1491a27b000a0e3e3d94ebcfb1bbbe135740",
+      "after_sha256_lf": "33b75150dce3e8651c74cb6d28af5d2ffdce287e322d24b9afafe91094f44d08"
+    },
+    {
+      "source": "theme-overlays/kniferevive/inc/knife-card.php",
+      "target": "wp-content/themes/kniferevive/inc/knife-card.php",
+      "before_sha256_lf": "e7b4f648079c4369d54cf6e37270c3963a9fb84d3e42f619ef4af5bbfc2d7503",
+      "after_sha256_lf": "8af5d115212f67af34850419c601be206396f73e0b7d84a0355493caf7c370cd"
+    },
+    {
+      "source": "theme-overlays/kniferevive/inc/product-subtitle.php",
+      "target": "wp-content/themes/kniferevive/inc/product-subtitle.php",
+      "before_sha256_lf": "ccc5411292258bd307320f04119a5088ed883d36e8c7f84f8e38aeca510addf7",
+      "after_sha256_lf": "54f6b4c1d923a54d22f6ebb2ea63e904948e4376e38596b2a95b337452df5b06"
+    },
+    {
+      "source": "wordpress-overlays/kniferevive-seller-storefront/includes/class-krev-storefront-renderer.php",
+      "target": "wp-content/plugins/kniferevive-seller-storefront/includes/class-krev-storefront-renderer.php",
+      "before_sha256_lf": "1e94d6a55c15f3bb0814ce8213ba3131ac632cc53b28214a702b17ae05523c93",
+      "after_sha256_lf": "eccbd2d0ab37495a0e8957c7a631c116c11fcee9aa4701f0ae244f1f711e6469"
+    }
+  ],
+  "plugin_files": [
+    {
+      "path": "kniferevive-seller-contact/assets/contact.css",
+      "sha256_lf": "f7ae54b8b3164c5c5873539d414d717e3fb8a98d9b1c056c4171ef35ae26da37"
+    },
+    {
+      "path": "kniferevive-seller-contact/assets/contact.js",
+      "sha256_lf": "535492e77d05e598d15e3f2ee0252e3771b725d214b797a2c21f6d5c0036e047"
+    },
+    {
+      "path": "kniferevive-seller-contact/CHANGELOG.md",
+      "sha256_lf": "f914f50b3220fdaa256c1b80f0f7b18e85ff62f4b1b0970808464d525b7d7c5b"
+    },
+    {
+      "path": "kniferevive-seller-contact/includes/Analytics.php",
+      "sha256_lf": "777c8b6beb5e891f9b9baebcfebbe9de864013342e16d3a31749944725a03c56"
+    },
+    {
+      "path": "kniferevive-seller-contact/includes/Config.php",
+      "sha256_lf": "3842d3a1885cf66dfb6f9872ab1c1064f40310d68f97ef1953545d100b96d106"
+    },
+    {
+      "path": "kniferevive-seller-contact/includes/Plugin.php",
+      "sha256_lf": "b2070a3b46b53e07d0066037d71d7aeb88297385d1d3d119732b734fef4d1703"
+    },
+    {
+      "path": "kniferevive-seller-contact/includes/Renderer.php",
+      "sha256_lf": "cb79e6c286eddb88a0f6c31f600fdcf2aa76d83b179e215f532ede76961620ee"
+    },
+    {
+      "path": "kniferevive-seller-contact/includes/Resolver.php",
+      "sha256_lf": "aa0ebdcc55d3d47eaa342b0aeb60842e22b68d3c61f294c481f8a180c3043815"
+    },
+    {
+      "path": "kniferevive-seller-contact/includes/Settings.php",
+      "sha256_lf": "1a2326a05885863773ba7bfc6b1dce40e046092d12e67b4f88917dcb25fa9a7f"
+    },
+    {
+      "path": "kniferevive-seller-contact/kniferevive-seller-contact.php",
+      "sha256_lf": "41e22b9cb37c6e439897e62acebf3b289fc2f87961fd54548a82c548bfed5368"
+    },
+    {
+      "path": "kniferevive-seller-contact/README.md",
+      "sha256_lf": "c326eaac02733e5ecb474c12c985338b69664698fb2673ea8bfc48783cda517f"
+    }
+  ],
+  "separate_already_deployed_order_patch": {
+    "target": "wp-content/plugins/kniferevive-seller-orders/templates/seller-orders.php",
+    "before_sha256_lf": "31ff6895feff7aec73a050564f307fa9f93c85511d30552824dd50f21bcea2fc",
+    "after_sha256_lf": "229607e332cf56901c8c3b6226f65cb29e7615972768e11e9436b873d1a9c80f",
+    "included_in_messaging_archives": false
+  }
+}

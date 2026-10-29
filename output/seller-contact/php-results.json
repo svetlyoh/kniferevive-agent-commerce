@@ -1,0 +1,310 @@
+[
+    {
+        "check": "New release defaults to master OFF",
+        "pass": true
+    },
+    {
+        "check": "Activation preserves _kniferevive_whatsapp_enabled",
+        "pass": true
+    },
+    {
+        "check": "Activation preserves _kniferevive_whatsapp_number",
+        "pass": true
+    },
+    {
+        "check": "Activation preserves _kr_telegram_enabled",
+        "pass": true
+    },
+    {
+        "check": "Activation preserves _kr_telegram_mode",
+        "pass": true
+    },
+    {
+        "check": "Activation preserves _kr_telegram_username",
+        "pass": true
+    },
+    {
+        "check": "Activation preserves _kr_telegram_bot_username",
+        "pass": true
+    },
+    {
+        "check": "Active seller and both channels resolve",
+        "pass": true
+    },
+    {
+        "check": "Dokan store identity used",
+        "pass": true
+    },
+    {
+        "check": "Opt-in combination 10",
+        "pass": true
+    },
+    {
+        "check": "Opt-in combination 01",
+        "pass": true
+    },
+    {
+        "check": "Opt-in combination 00",
+        "pass": true
+    },
+    {
+        "check": "Opt-in combination 11",
+        "pass": true
+    },
+    {
+        "check": "Malformed phone excluded",
+        "pass": true
+    },
+    {
+        "check": "Number sanitizer never adds a country code",
+        "pass": true
+    },
+    {
+        "check": "Unsafe Telegram destination rejected",
+        "pass": true
+    },
+    {
+        "check": "Unsafe Telegram destination rejected",
+        "pass": true
+    },
+    {
+        "check": "Unsafe Telegram destination rejected",
+        "pass": true
+    },
+    {
+        "check": "Unsafe Telegram destination rejected",
+        "pass": true
+    },
+    {
+        "check": "Unsafe Telegram destination rejected",
+        "pass": true
+    },
+    {
+        "check": "Formatted international digits accepted",
+        "pass": true
+    },
+    {
+        "check": "Disabled seller has no public contact",
+        "pass": true
+    },
+    {
+        "check": "Non-public product hidden: draft",
+        "pass": true
+    },
+    {
+        "check": "Non-public product hidden: private",
+        "pass": true
+    },
+    {
+        "check": "Non-public product hidden: pending",
+        "pass": true
+    },
+    {
+        "check": "Non-public product hidden: trash",
+        "pass": true
+    },
+    {
+        "check": "Catalog-hidden product suppressed",
+        "pass": true
+    },
+    {
+        "check": "Public out-of-stock item remains contactable",
+        "pass": true
+    },
+    {
+        "check": "Supported type simple",
+        "pass": true
+    },
+    {
+        "check": "Supported type variable",
+        "pass": true
+    },
+    {
+        "check": "Supported type external",
+        "pass": true
+    },
+    {
+        "check": "Supported type grouped",
+        "pass": true
+    },
+    {
+        "check": "Variation uses parent seller, not variation author",
+        "pass": true
+    },
+    {
+        "check": "Ownership changes resolve fresh without prior seller leakage",
+        "pass": true
+    },
+    {
+        "check": "Administrator ownership alone is not a seller",
+        "pass": true
+    },
+    {
+        "check": "Administrator explicitly enabled as a Dokan seller can resolve \u00b7 eligible",
+        "pass": true
+    },
+    {
+        "check": "WhatsApp context contains canonical product URL",
+        "pass": true
+    },
+    {
+        "check": "Personal Telegram has no false prefill",
+        "pass": true
+    },
+    {
+        "check": "Existing seller bot convention preserved",
+        "pass": true
+    },
+    {
+        "check": "Owner and guest have consistent contact placement",
+        "pass": true
+    },
+    {
+        "check": "Single compact card trigger for two channels",
+        "pass": true
+    },
+    {
+        "check": "Unsafe Unicode title escaped",
+        "pass": true
+    },
+    {
+        "check": "External links use safe attributes",
+        "pass": true
+    },
+    {
+        "check": "Storefront question is generic, no unrelated product URL",
+        "pass": true
+    },
+    {
+        "check": "Published seller with no listings can resolve",
+        "pass": true
+    },
+    {
+        "check": "Detail rendered once across two hook paths",
+        "pass": true
+    },
+    {
+        "check": "Pilot does not expose out-of-cohort sellers",
+        "pass": true
+    },
+    {
+        "check": "Forged save nonce rejected",
+        "pass": true
+    },
+    {
+        "check": "Other seller settings cannot be edited",
+        "pass": true
+    },
+    {
+        "check": "Valid owner settings save",
+        "pass": true
+    },
+    {
+        "check": "Invalid settings rejected atomically",
+        "pass": true
+    },
+    {
+        "check": "Analytics default off",
+        "pass": true
+    },
+    {
+        "check": "Unknown statistics consent blocks metrics",
+        "pass": true
+    },
+    {
+        "check": "GPC overrides existing statistics consent",
+        "pass": true
+    },
+    {
+        "check": "Consented event accepted",
+        "pass": true
+    },
+    {
+        "check": "Duplicate session\/product event ignored",
+        "pass": true
+    },
+    {
+        "check": "Malformed session rejected",
+        "pass": true
+    },
+    {
+        "check": "Foreign origin rejected",
+        "pass": true
+    },
+    {
+        "check": "Unknown event cannot record messages sent",
+        "pass": true
+    },
+    {
+        "check": "Aggregate report contains adopted events",
+        "pass": true
+    },
+    {
+        "check": "No phone, handle, IP, question, cookie or raw token in stored counts",
+        "pass": true
+    },
+    {
+        "check": "Dedupe storage holds HMAC only",
+        "pass": true
+    },
+    {
+        "check": "Malformed enabled toggle rejected",
+        "pass": true
+    },
+    {
+        "check": "Array product ID rejected without coercion",
+        "pass": true
+    },
+    {
+        "check": "Foreign same-host port rejected",
+        "pass": true
+    },
+    {
+        "check": "Seven-day retention deletes old HMAC keys",
+        "pass": true
+    },
+    {
+        "check": "Cross-product session denominator counted once",
+        "pass": true
+    },
+    {
+        "check": "Legacy WhatsApp block renderer removed",
+        "pass": true
+    },
+    {
+        "check": "Legacy Telegram block renderer removed",
+        "pass": true
+    },
+    {
+        "check": "Empty out-of-stock purchase block still receives contact",
+        "pass": true
+    },
+    {
+        "check": "Second purchase hook cannot duplicate detail contact",
+        "pass": true
+    },
+    {
+        "check": "Main Product Price block has no competing primary contact",
+        "pass": true
+    },
+    {
+        "check": "Related-product block receives exactly one compact contact",
+        "pass": true
+    },
+    {
+        "check": "One unified private settings menu replaces legacy duplicate screens",
+        "pass": true
+    },
+    {
+        "check": "New settings endpoint registered with WooCommerce",
+        "pass": true
+    },
+    {
+        "check": "Cache invalidation exposes only seller ID to host integration",
+        "pass": true
+    },
+    {
+        "check": "Opt-out removes contact immediately",
+        "pass": true
+    }
+]
