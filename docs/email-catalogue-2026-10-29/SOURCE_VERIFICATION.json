@@ -1,0 +1,1422 @@
+{
+  "note": "Plugin status/version live-read; local source hashes are not live source equivalence or sending proof.",
+  "plugins": [
+    {
+      "slug": "kniferevive-ads-controller",
+      "live_version": "0.5.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-ads-controller",
+      "local_version": "0.5.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-agent-commerce",
+      "live_version": "0.6.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\email-catalogue-2026-10-29\\version-matched-source\\kniferevive-agent-commerce",
+      "local_version": "0.6.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-books",
+      "live_version": "1.1.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-books",
+      "local_version": "1.1.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-checkout-cart",
+      "live_version": "1.1.2",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-checkout-cart",
+      "local_version": "1.1.2",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-delivery-preference",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-delivery-preference",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-desktop-bridge",
+      "live_version": "0.1.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-desktop-bridge",
+      "local_version": "0.1.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-dispatch",
+      "live_version": "0.2.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-dispatch",
+      "local_version": "0.2.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-dokan-lockdown",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-dokan-lockdown",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-google-customer-reviews",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-google-customer-reviews",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-home-tips",
+      "live_version": "1.3.3",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-home-tips",
+      "local_version": "1.3.3",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-homepage-banner",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-homepage-banner",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-knife-details",
+      "live_version": "1.1.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-knife-details",
+      "local_version": "1.1.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-lightning-payments",
+      "live_version": "0.1.16",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-lightning-payments",
+      "local_version": "0.1.16",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-listlab",
+      "live_version": "1.13.6",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-listlab",
+      "local_version": "1.13.6",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-listlab-import",
+      "live_version": "1.2.2",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-listlab-import",
+      "local_version": "1.2.2",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-marketplace-core",
+      "live_version": "1.0.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-marketplace-core",
+      "local_version": "1.0.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-merchant-sync",
+      "live_version": "0.8.11",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-merchant-sync",
+      "local_version": "0.8.11",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-meta-controls",
+      "live_version": "1.0.3",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-meta-controls",
+      "local_version": "1.0.3",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-model-pages",
+      "live_version": "1.2.5",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-model-pages",
+      "local_version": "1.2.5",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-my-money",
+      "live_version": "1.2.1-rc1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-my-money",
+      "local_version": "1.2.1-rc1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-order-address-contact",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-order-address-contact",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-order-messenger",
+      "live_version": "1.0.4",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger",
+      "local_version": "1.0.4",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-order-packing-slip",
+      "live_version": "1.0.2",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-order-packing-slip",
+      "local_version": "1.0.2",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-passkey-bridge",
+      "live_version": "0.1.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-passkey-bridge",
+      "local_version": "0.1.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-product-attributes",
+      "live_version": "0.3.17",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-product-attributes",
+      "local_version": "0.3.17",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-product-grid",
+      "live_version": "1.0.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-product-grid",
+      "local_version": "1.0.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-reminders",
+      "live_version": "1.0.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-reminders",
+      "local_version": "1.0.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-return-policies",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-return-policies",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-return-policy-setup",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-return-policy-setup",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-returns",
+      "live_version": "0.1.0-rc2",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-returns",
+      "local_version": "0.1.0-rc2",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-search-experience",
+      "live_version": "1.0.6",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-search-experience",
+      "local_version": "1.0.6",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-seller-commissions",
+      "live_version": "0.2.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-seller-commissions",
+      "local_version": "0.2.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-seller-contact",
+      "live_version": "1.0.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-seller-contact",
+      "local_version": "1.0.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-seller-onboarding",
+      "live_version": "0.3.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\onboarding-hotfix-dispatch-v4-2026-10-23\\src\\kniferevive-seller-onboarding",
+      "local_version": "0.3.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-seller-orders",
+      "live_version": "1.7.0-rc1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders",
+      "local_version": "1.7.0-rc1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-seller-socials",
+      "live_version": "1.1.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-seller-socials",
+      "local_version": "1.1.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-seller-storefront",
+      "live_version": "1.0.10",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-seller-storefront",
+      "local_version": "1.0.10",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-shipkit",
+      "live_version": "0.6.3-rc1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-shipkit",
+      "local_version": "0.6.3-rc1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-shipping",
+      "live_version": "1.1.3",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-shipping",
+      "local_version": "1.1.3",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-stripe-connect",
+      "live_version": "0.7.2-rc1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-stripe-connect",
+      "local_version": "0.7.2-rc1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-telegram-seller-messaging",
+      "live_version": "1.0.3",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-telegram-seller-messaging",
+      "local_version": "1.0.3",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-vendor-bulk-load",
+      "live_version": "0.1.1",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-vendor-bulk-load",
+      "local_version": "0.1.1",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-video-upload-links",
+      "live_version": "1.1.0",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-video-upload-links",
+      "local_version": "1.1.0",
+      "version_matches": true
+    },
+    {
+      "slug": "kniferevive-whatsapp-seller-messaging",
+      "live_version": "1.0.4",
+      "live_status": "active",
+      "local_source": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-whatsapp-seller-messaging",
+      "local_version": "1.0.4",
+      "version_matches": true
+    }
+  ],
+  "examined_email_sources": [
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-order-contact.php",
+      "sha256": "d2d35774c002355b2c12323c45e7b9cdae61f3b068a9cc581f7b56a7be4bb34a",
+      "lines": [
+        43,
+        60,
+        34,
+        19
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-order-cancellations.php",
+      "sha256": "e8b3e8264e9bfd2f94519a9865dd020a90d57769be36a28bd9e85160324ad5b7",
+      "lines": [
+        109
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-order-address-contact\\includes\\service.php",
+      "sha256": "eaa589718dbefdadf3b201db709c0687926e5c3e663f8c831a881d6a1f9fd93a",
+      "lines": [
+        109
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-shipment-mail.php",
+      "sha256": "b3da040c8533b911286234690ff5c6e03829e4333033800c080bbd883ca22e7b",
+      "lines": [
+        90
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-shipment-services.php",
+      "sha256": "00cf2f7adca528d60e37768373799d8191b45f36e13f2e8a7ceedc2c3cd928da",
+      "lines": [
+        65
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-order-address-contact\\includes\\service.php",
+      "sha256": "eaa589718dbefdadf3b201db709c0687926e5c3e663f8c831a881d6a1f9fd93a",
+      "lines": [
+        103
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger\\includes\\class-kr-order-message-admin.php",
+      "sha256": "5b271f8ab20df2cbcdceff01133a5a838e6b9c78fd8ba4321d639760b42b0ee9",
+      "lines": [
+        4,
+        50
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger\\includes\\class-kr-order-context.php",
+      "sha256": "0cdfc7d864fa82bfdb28339d58a601deb4801f7068546f7eb52f71fe7caed0e0",
+      "lines": [
+        13
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger\\templates\\emails\\order-message.php",
+      "sha256": "e7535b4a26d2adddd0718292086151eeda7a10ba57057b3aa54aee70e301cbdb",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger\\templates\\emails\\plain\\order-message.php",
+      "sha256": "fc613bd2af5bd0acaf1dbaffd3ea8e6a8c344a889b55ece6fdfc27d8f1ae9b50",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\onboarding-hotfix-dispatch-v4-2026-10-23\\src\\kniferevive-seller-onboarding\\includes\\class-notifications.php",
+      "sha256": "e9b4edd2f9cdc0f4320b5f71ef991f30e71c496d40935f5106657b995ccebb21",
+      "lines": [
+        26,
+        31,
+        11,
+        36
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-stripe-connect\\includes\\class-kr-connect-settlement-events.php",
+      "sha256": "0cf847c5279bb64d9cd3058ec28f4e2239150f50dd01e570229b24b7fa086a11",
+      "lines": [
+        58,
+        70
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-shipkit\\includes\\Notices.php",
+      "sha256": "1e5841ddcf0a4bddcb858bdea36112f7130d19d99de8012605b1d5face196d7e",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-dispatch\\includes\\class-krd-adapters.php",
+      "sha256": "a7cb0132f7012a3d0badda6f3aa6fabe713d83748e60dd5c440b38fd1662854e",
+      "lines": [
+        81,
+        73,
+        68
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-returns\\includes\\Jobs.php",
+      "sha256": "eedfb76d978b5d857647bcf05f9fb05f0e54213dac0eb618d0e5b08761b83708",
+      "lines": [
+        13
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-returns\\includes\\Cases.php",
+      "sha256": "81544f567f44c3095a1e89025630c2030c6356ae5382cd5e47459691548f07e0",
+      "lines": [
+        192
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-returns\\includes\\Guest.php",
+      "sha256": "e84fc5409a6faa7a77cd72c99946103f4bd98e0f217207a487c7ffdde1e53388",
+      "lines": [
+        11
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-return-mail.php",
+      "sha256": "b3b52fd4b6f6d040c9d0988d5eaf75a4ccbf66ab4bceb374aac777e8c5ba6594",
+      "lines": [
+        25
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-reminders\\includes\\service.php",
+      "sha256": "cc4fcd05195841e82ca97c671d2433ef1bdabc34dfc41686ef40c891ff37ca6f",
+      "lines": [
+        354
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\email-catalogue-2026-10-29\\version-matched-source\\kniferevive-agent-commerce\\includes\\BookingOutbox.php",
+      "sha256": "6a378bb7368a137e9d2ca38726176b23aee756f178d14e0ec1d7702af55382f0",
+      "lines": [
+        64,
+        92
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-sharpening-workflow.php",
+      "sha256": "fa44496188a03196c35e9d8ed254a8c72c7b673b0921979e5165103ff7319cbf",
+      "lines": [
+        122
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-admin-payment-gateway-enabled.php",
+      "sha256": "11b1a5922ec0d0acd8f63e422d219207e7178003786b45ac741f895237cdee4f",
+      "lines": [
+        96,
+        106,
+        318
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\admin-payment-gateway-enabled.php",
+      "sha256": "371ad96dcecbdf8e9c76145ee0b83f027a321e35b90a9eef32ce5d5284f4e191",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\admin-payment-gateway-enabled.php",
+      "sha256": "6a3051c4a6aed6bf790070602e44e07121708fa57cefcb64cda02c19ad96d57d",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-cancelled-order.php",
+      "sha256": "45c822584e27f196647a4f21de28c787db1fb3fda0a0ae5a69f8fc74b8c75503",
+      "lines": [
+        71,
+        81,
+        173
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\admin-cancelled-order.php",
+      "sha256": "4aa61ea55382adaee325dce4cf1f22f574379538e049583415d6019b950852ae",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\admin-cancelled-order.php",
+      "sha256": "ee34e18c5c495a16a3977db2101dc58007aa88b16258e2964760e94fa3437e0e",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-cancelled-order.php",
+      "sha256": "f1a44afbcff0f60bd217b7c948d0a7eefbdc08526212a5af55ffcccd25266180",
+      "lines": [
+        68,
+        78,
+        171
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-cancelled-order.php",
+      "sha256": "f178591678d69d5f7b276e53abab93c00518649dcfd6e7a3babe70e72a401990",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-cancelled-order.php",
+      "sha256": "261ead9754c68a8b39b02d65e3c36c99ae2d5c71e965a0fb2668ff21213c8ab7",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-completed-order.php",
+      "sha256": "def57602f28ddf135da6406e9039d82f28da7ff8b48d53090ddcaa46812e8769",
+      "lines": [
+        89,
+        101,
+        151
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-completed-order.php",
+      "sha256": "5936eb2a37724e1ff74d2f18df8ecdcf0d74ded6690f2fa6da960aa0ffadf458",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-completed-order.php",
+      "sha256": "99e20c283e5757afdabd604f6fe2a7b7856ef3ad4cdb8c64b89c462bc37c95e3",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-failed-order.php",
+      "sha256": "14faff5e92839ccb9cbf309bf881d98cfde28971b762677aa1c18816e885d510",
+      "lines": [
+        88,
+        98,
+        148
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-failed-order.php",
+      "sha256": "8b8a742afaa215a69ba3821eb1b023446adda15420f1dfb44a0a549f611842e5",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-failed-order.php",
+      "sha256": "c605d1e44a3b48e79472c551756932f42c589f6465f8e2b630d68d4cb17f2500",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-fulfillment-created.php",
+      "sha256": "b783d53b85feca7c803eb21dbb0d8b19e1d78c38cb9b9b32fced677c798ac459",
+      "lines": [
+        113,
+        127,
+        201
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-fulfillment-created.php",
+      "sha256": "1366534d693c6ff9ca7505c243aa3b52f27f21c194ea98aecb193f3f8298d6dd",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-fulfillment-created.php",
+      "sha256": "20b0b542068f3f53ac04b1b7823cc62e1f18d065b269490b9290a86dd40a2f5b",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-fulfillment-deleted.php",
+      "sha256": "d944f379e1bd79bda89c702d93b219211b94dbda5976208036e88bcb7ef00b57",
+      "lines": [
+        93,
+        103,
+        174
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-fulfillment-deleted.php",
+      "sha256": "e3f3feadb9b2a8d5669d304c9e9f1cf456ca8e5ce33f969a2cc1e682c7737327",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-fulfillment-deleted.php",
+      "sha256": "f3688253ab9e2e38dbc326da423a58223a9b96fb4971929e9ba5dd26ac80892f",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-fulfillment-updated.php",
+      "sha256": "a4d3757f6ad4a131af2b894c6bd2450861be1a58930ee3f275bfdeee97e39a2a",
+      "lines": [
+        102,
+        112,
+        186
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-fulfillment-updated.php",
+      "sha256": "92d90d09a3531337e64727c1d9c0cd1d42a35fc3131a2bdd56447a79c9af0fa8",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-fulfillment-updated.php",
+      "sha256": "f03a5e4a3c86123690d5c1ed976e0e2dc43699824fefa26fca93f2defe5a26e9",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-invoice.php",
+      "sha256": "bdd1082db985d591f1c4224deaff0b09513bb28e04f168225399a533dd07dc92",
+      "lines": [
+        70,
+        81,
+        131
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-invoice.php",
+      "sha256": "8aef58ad80f4529aa80231428562c99d57ef7d237f2b9ba673c4d6fe0f2dd295",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-invoice.php",
+      "sha256": "0082b81106d537510e5880e22c15d597a458154a49829f220e70c8bce2830cdc",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-new-account.php",
+      "sha256": "f2f9d592a962e5d1570da4b9e05d2a1c5575f21d9e3aca32419471dd613319d8",
+      "lines": [
+        95,
+        105,
+        212
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-new-account.php",
+      "sha256": "9fb39e212b9cf50406fe6f247718d915daa6a0150e3f239dd62d42060ea985c8",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-new-account.php",
+      "sha256": "cd26ece922582fab0272399af0bf70d10b75dd885350d3d08649d27be3ec1fc6",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-note.php",
+      "sha256": "579f6b5d7fd97b34d4791e3c7f2a9229c3b0e81777d0e4f23094e56d0b7dcddd",
+      "lines": [
+        71,
+        83,
+        169
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-note.php",
+      "sha256": "cca7be8d2153ccef7d7bacdca053d234b9e052129730854d8211200bc2be4c34",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-note.php",
+      "sha256": "068f2d15f83ee74329db37f78916285507e095f26fe6ccd25173099ef2b2e4cc",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-on-hold-order.php",
+      "sha256": "fed8ab80eb8f40f4cab58e59fbf7dbd9ed2fe4159bb64611aac0a5705de4aab1",
+      "lines": [
+        66,
+        79,
+        155
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-on-hold-order.php",
+      "sha256": "681c067965920b256d84a4b4bac11e0aa0e1f635b64cd891991d43103ec2d922",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-on-hold-order.php",
+      "sha256": "d04db3da634d55abdff1f4690243efdf74c22ee05046b85b9dac82fede12480f",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-order-withdrawal-requested.php",
+      "sha256": "7c9dd56f15a7f105d90487e7c83141cf89f99f782764d7b19be51ebc2e4709d5",
+      "lines": [
+        69,
+        78,
+        87
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-order-withdrawal-requested.php",
+      "sha256": "0a27c359230952bc4e496129224e9041286419a3c67c55bc9c079e6f40ee95dd",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-order-withdrawal-requested.php",
+      "sha256": "0e4e71af9c5c8b9acdf560d208816111325503c4cf5c7cc3304e8e2bf9e4dde6",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-pos-completed-order.php",
+      "sha256": "13fb55b279b332be6fb7b20187b89969c5ed7ebf47e3a55f4197c6d58be0f320",
+      "lines": [
+        102,
+        114
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-pos-completed-order.php",
+      "sha256": "4d777757532c2f0a10d2a156873865aa7985b1465b87b8fddaee8af631c1d13a",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-pos-completed-order.php",
+      "sha256": "ed6eef3fa3802c9d4ff3833963f7afded85c75f2267adfd81dc20baf1cbfc815",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-pos-refunded-order.php",
+      "sha256": "5690fc519f53a3474da1ef0a9ccfa039d2a4b05d857c6f28fc0d26464bd722b2",
+      "lines": [
+        86,
+        104
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-pos-refunded-order.php",
+      "sha256": "5b8d67bbfbcd4c5cf08eba4123073c4bb44a8bebcd68ec31a042090c39a851e5",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-pos-refunded-order.php",
+      "sha256": "72165daca22ad2e064d06685affa2b609d13ef0d9736fcc0d18d0d185732117d",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-processing-order.php",
+      "sha256": "0ca84ab9339e2a551ff76d272d196bfa78ed33262b1efc33f1c809f13c226eb1",
+      "lines": [
+        68,
+        78,
+        151
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-processing-order.php",
+      "sha256": "b02ea43e74ce4b88cbc65262d3637e98679f928a2c28b1f21caa857936bb284c",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-processing-order.php",
+      "sha256": "de4c059bb03fa5e82c32d29a78eada746821f5edb3a18cd0c6bad6249e389ecc",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-refunded-order.php",
+      "sha256": "19c3b367b3df42c1730cce901eb7cf34bd2a34333025538868d2c698d1035c93",
+      "lines": [
+        83,
+        98,
+        285
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-refunded-order.php",
+      "sha256": "effa6e4cb39b5030d6d62ad90cb82d4d813630de823e3901368d3811fe5f4b07",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-refunded-order.php",
+      "sha256": "0a777c0229c6cbf94898313b6a5cc597813539b74b57a7ed583b230be0509f7d",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-reset-password.php",
+      "sha256": "c419f21eeb19e8bc6583a71325f8ff0dd3788634d275ff8223584b28d2c525f0",
+      "lines": [
+        97,
+        109,
+        219
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-reset-password.php",
+      "sha256": "7084168e12a5bcf41fae8a7ca3a845cab04272fd9d8a6285a4a47b978940de5c",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-reset-password.php",
+      "sha256": "e8540baffaa5e83fdc8db2d76b6fc51e6fe4c84fece4a3fd022ac0fac36e0ccf",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-customer-review-request.php",
+      "sha256": "b3d22e9a5e83cd9dd2b332bf2d7bf4b545973655c6fcc3b1642611c3b234bb67",
+      "lines": [
+        163,
+        173,
+        183
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\customer-review-request.php",
+      "sha256": "5e529752180876c20a5affb759859b5737fe8b51083016a2d4e802636879fc59",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\customer-review-request.php",
+      "sha256": "70bb47350cb9849d4876ed9a2f3d0cdb96e04d79eb4af752d4e1736cf445d656",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-failed-order.php",
+      "sha256": "39582ed9f70d7c1a171304a5f2d7788d79166e313d8af106f347cbbcd7f663aa",
+      "lines": [
+        68,
+        78,
+        170
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\admin-failed-order.php",
+      "sha256": "6d7ad30ab38ce5069fb480214b0500ccbaf9d60fa3730fb848fe7a5e1c31cc06",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\admin-failed-order.php",
+      "sha256": "d8a981ba2dd363c6230149013cf5a0019cc59ccfb38b5065be526376d594f29b",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-new-order.php",
+      "sha256": "1b5e8f18cf7669b2c6d7ce4bd0dce8e13976500996c8c62aab2d66abd26485ea",
+      "lines": [
+        76,
+        88,
+        199
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\admin-new-order.php",
+      "sha256": "2f7bb40a545c0b8ee90e352986a02320c20602e87e027c03ec2be29ad7fbbafc",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\admin-new-order.php",
+      "sha256": "a485a633aa484afdef37a53f1e2f3ec050cc4d40b05842ed52c5b6335f4d4e62",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\includes\\emails\\class-wc-email-order-withdrawal-requested.php",
+      "sha256": "03ac4166270c5523f6bb443ebccd3c1f98dbd8617b7e0d8351016da7d189ce2f",
+      "lines": [
+        92,
+        101,
+        110
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\admin-order-withdrawal-requested.php",
+      "sha256": "e16494f6929938b3ded4fe81461d113f62414d8668fe37cfb033ec9aa3ba8af7",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\tests\\vendor-current\\woocommerce\\templates\\emails\\plain\\admin-order-withdrawal-requested.php",
+      "sha256": "68c06b4cbaf45ed49096dd76d892d0df1778d8d19fc3fd6635ebbb6ef87665ac",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-includes\\pluggable.php",
+      "sha256": "3a2482a65b50d62ebae75a728be98b78985d3a3f5a3e007cb2d0c1338bf05777",
+      "lines": [
+        2276,
+        2197
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-includes\\user.php",
+      "sha256": "c837321fbf722f89a080324f3c742b0c44e5853c9bd6d305cb894b5f664fc6cc",
+      "lines": [
+        3262,
+        2733,
+        3679
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\ContactSeller.php",
+      "sha256": "66d1a19dab2697d994062546cc1f337e039a2fa3c045741895ba483facde9cdd",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\contact-seller.php",
+      "sha256": "7b2ab3cd53b0c901f369002b68c275e354b7ef2d54fc685358f2c5eeb167f6e4",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\contact-seller.php",
+      "sha256": "472032f5cff58fba40cafef4e4379de85993831346107b7f9940b1acaa07a5f1",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\NewProduct.php",
+      "sha256": "e597891cb856578d4c7434aecaddd5897e47d70386ae687b88d7a99e4f78287e",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\new-product.php",
+      "sha256": "92bad95cc37b7ffa261a4bc9ad747543295ad5483db532fbeb5c2463c352e81f",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\new-product.php",
+      "sha256": "c698381f72d6dcb8059da3cbb1c2fad5dd6990b5ccd06de5b286f909950d9a22",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\NewProductPending.php",
+      "sha256": "08273e3243b0fea9aef5b9b2ceb8c192569ad973a2c884e9e7f0acd6218354fb",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\new-product-pending.php",
+      "sha256": "c6fb1564efdc8cd3af994eff645215f2b2163ee67e0cb12d7ef3c6da356c8e8c",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\new-product-pending.php",
+      "sha256": "69baa89d93ce3fd93f9fc45d84223ed0adfa67ae1de8437f8618b1bd4789198c",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\NewSeller.php",
+      "sha256": "06d42c73d40ea1f2d6cccb917935144ae946f733aa4ab78b3e44d3373303047d",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\new-seller-registered.php",
+      "sha256": "c21ba4812f04904a0c7185b58835c6eeca40b1903e09f342a170422c1573b1b3",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\new-seller-registered.php",
+      "sha256": "7467e38f9c1cbda662d4aefb7583c116867f543b83a1e4baa321ef3b1797405f",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\ProductPublished.php",
+      "sha256": "7e408357bff7f15c5dc478d445601d5ac5a48d2de704c1bdeeccc74c42b1dfe4",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\product-published.php",
+      "sha256": "32339789cf5a5a69ae92e1189e64e16d7f32873512109fd9cab07f938a1b3a3a",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\product-published.php",
+      "sha256": "ec8d7e027d790c9bfd321cc80fd2967570cf3afc25f0a8419e8c2308221b39bd",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\ReverseWithdrawalInvoice.php",
+      "sha256": "84aa68080f7d7e1cdf304fa8f7870e5ccc1d0ded1d265c824934e86b4f812b0f",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\reverse-withdrawal-invoice.php",
+      "sha256": "e9ca570c765994c93af983bcd7e5d6b380d7958c6aab41afc8a776ac60fc8c51",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\reverse-withdrawal-invoice.php",
+      "sha256": "d1cfffd84453693c26d81dec3c3d910b470df983abbb78f0c2a9c80a7f000164",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\VendorCompletedOrder.php",
+      "sha256": "065e80736596a204048ee426721ff33df487ca9c5f517a09ca02157d46a32c58",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\vendor-completed-order.php",
+      "sha256": "7331b7a9a095ae1b1a9a5cb6493e08d03ead7e2cdfa7678fb6d250e899db2567",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\vendor-completed-order.php",
+      "sha256": "02cbfccb0f9a7c9425c551cd78f3591612c74d0ce9d8c7b68c6ad7c98adba665",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\VendorNewOrder.php",
+      "sha256": "70f9ad8aadb87bba876655a63d1c9e472c3f5a35e8ebdab6fc748915c932e109",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\vendor-new-order.php",
+      "sha256": "7d462c58b8294ee8b19239f910c9ddf1f8f816a446cd60002e4bf3dfebe74f2d",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\vendor-new-order.php",
+      "sha256": "1014833c0022aa68ca09641a92e9a972d348d73f285d18af720ea437a1918ab6",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\VendorProductReview.php",
+      "sha256": "271fc5682a82b8f6e74fb09d5bc70526ca4e507043232ce73164fafd88a2cfdb",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\vendor-product-review.php",
+      "sha256": "48553db523d9ad8d98406349ed2ba362da250768dddc4041f2cf4d41a7352251",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\vendor-product-review.php",
+      "sha256": "7e830675602543cb6068fd03ba3dcf5c1fb2ca07f7af728008774f2132adcbaf",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\VendorWithdrawRequest.php",
+      "sha256": "aca63f1d6cf149513c6f97a007a4e2fb034dae483b1ec287a05567cb8ddcd4b7",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\withdraw-new.php",
+      "sha256": "3be19ed399d7207566ed9b7a838d14ff99ecf455f7a97e41e8ff76b2436059d4",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\withdraw-new.php",
+      "sha256": "a9318413f6dd979a737ff16dc0f275014cde23a7333c4d88d96d0ae551fe39ee",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\WithdrawApproved.php",
+      "sha256": "5b141c875b768874b62329a1e3e740f7d49db4d812b81b7cb26d22dde00384f5",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\withdraw-approve.php",
+      "sha256": "4b0794003baaf096b2d0d0cfde13d9d6abecf31e066f0f7fecda340690b73e40",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\withdraw-approve.php",
+      "sha256": "c6b25dab0239f4263c23e89bfa68bf7b492cb88e51f2a93aa4dff0ba15318d21",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\includes\\Emails\\WithdrawCancelled.php",
+      "sha256": "418ca7d800839373a4d9ec1dee4ff90ac54bc9badef2b93e18366d916cd3f0be",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\withdraw-cancel.php",
+      "sha256": "a0416554806607a58a73ad59d617992939826b367e73330b8f5672b191b5a46f",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\dokan-lite\\templates\\emails\\plain\\withdraw-cancel.php",
+      "sha256": "04959a4895a336ce79190a6c21ad2fb5cdf28e7adb37f91481cbc07f95c29e09",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\woocommerce-gateway-stripe\\includes\\compat\\class-wc-stripe-email-failed-authentication.php",
+      "sha256": "eb23c1446ad2f64908c641a4632dccc16f03e4609be3d21bffc49a449bba6a9f",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\themes\\kniferevive\\inc\\email-branding.php",
+      "sha256": "c69e31a5e0a97ce8be681f37d958a704c4973fc009e8cd1bec54c45be87909a4",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\themes\\kniferevive\\woocommerce\\emails\\email-footer.php",
+      "sha256": "5b59e83578fda173c84c12c2a9db51587085badb190e322237bcf27887a84576",
+      "lines": [
+        1
+      ]
+    },
+    {
+      "path": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\themes\\kniferevive\\woocommerce\\emails\\email-header.php",
+      "sha256": "db001e93d81acdafb1a779597d8be9e28d38b3c048001589802dc78a2e0fc0d6",
+      "lines": [
+        1
+      ]
+    }
+  ],
+  "send_calls": [
+    {
+      "plugin": "kniferevive-ads-controller",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\dokan-pro-exit-2026-10-25\\production-cutover-2026-10-26\\private-production-copy\\plugins\\kniferevive-ads-controller\\includes\\Settings.php",
+      "line": 155,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-agent-commerce",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\email-catalogue-2026-10-29\\version-matched-source\\kniferevive-agent-commerce\\includes\\BookingOutbox.php",
+      "line": 81,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-dispatch",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-dispatch\\includes\\class-krd-adapters.php",
+      "line": 79,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-order-address-contact",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-order-address-contact\\includes\\store.php",
+      "line": 75,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-order-messenger",
+      "file": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger\\includes\\class-kr-order-message-admin.php",
+      "line": 47,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-order-messenger",
+      "file": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger\\includes\\class-kr-order-message-mailer.php",
+      "line": 4,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-order-messenger",
+      "file": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-order-messenger\\includes\\class-kr-order-message-mailer.php",
+      "line": 51,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-reminders",
+      "file": "C:\\Users\\Svet\\Local Sites\\kniferevive\\app\\public\\wp-content\\plugins\\kniferevive-reminders\\includes\\service.php",
+      "line": 339,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-seller-onboarding",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Documentation\\onboarding-hotfix-dispatch-v4-2026-10-23\\src\\kniferevive-seller-onboarding\\includes\\class-notifications.php",
+      "line": 50,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-seller-orders",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-order-cancellations.php",
+      "line": 115,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-seller-orders",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-order-contact.php",
+      "line": 55,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-seller-orders",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-order-contact.php",
+      "line": 82,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-seller-orders",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-return-mail.php",
+      "line": 48,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-seller-orders",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-sharpening-workflow.php",
+      "line": 127,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-seller-orders",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-seller-orders\\includes\\class-krev-shipment-mail.php",
+      "line": 54,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-shipkit",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-shipkit\\includes\\Notices.php",
+      "line": 23,
+      "version_matches": true
+    },
+    {
+      "plugin": "kniferevive-stripe-connect",
+      "file": "C:\\Users\\Svet\\Documents\\KnifeRevive_Agent_Commerce\\wordpress\\kniferevive-stripe-connect\\includes\\class-kr-connect-settlement-events.php",
+      "line": 82,
+      "version_matches": true
+    }
+  ]
+}

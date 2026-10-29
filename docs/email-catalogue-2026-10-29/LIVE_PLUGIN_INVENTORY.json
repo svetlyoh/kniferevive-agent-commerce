@@ -1,0 +1,510 @@
+{
+  "checked_on": "2026-10-29 America/Los_Angeles",
+  "source": "WordPress.com plugin.list (read only)",
+  "plugins": [
+    {
+      "name": "Akismet Anti-spam: Spam Protection",
+      "version": "5.7.2",
+      "status": "active",
+      "plugin_file": "akismet/akismet"
+    },
+    {
+      "name": "All-in-One WP Migration and Backup",
+      "version": "7.112",
+      "status": "inactive",
+      "plugin_file": "all-in-one-wp-migration/all-in-one-wp-migration"
+    },
+    {
+      "name": "Banner Management For WooCommerce",
+      "version": "2.5.3",
+      "status": "inactive",
+      "plugin_file": "banner-management-for-woocommerce/woocommerce-category-banner-management"
+    },
+    {
+      "name": "Classic Editor",
+      "version": "1.7.0",
+      "status": "active",
+      "plugin_file": "classic-editor/classic-editor"
+    },
+    {
+      "name": "Classic Menu Block",
+      "version": "0.1.7",
+      "status": "active",
+      "plugin_file": "classic-menu-block/classic-menu-block"
+    },
+    {
+      "name": "Code Snippets",
+      "version": "4.0.0",
+      "status": "active",
+      "plugin_file": "code-snippets/code-snippets"
+    },
+    {
+      "name": "Content Control",
+      "version": "2.7.4",
+      "status": "active",
+      "plugin_file": "content-control/content-control"
+    },
+    {
+      "name": "Conversion Tracking for WooCommerce",
+      "version": "2.1.6",
+      "status": "inactive",
+      "plugin_file": "woocommerce-conversion-tracking/conversion-tracking"
+    },
+    {
+      "name": "Crowdsignal Dashboard - Polls, Surveys & more",
+      "version": "3.1.8",
+      "status": "inactive",
+      "plugin_file": "polldaddy/polldaddy"
+    },
+    {
+      "name": "Crowdsignal Forms",
+      "version": "1.8.3",
+      "status": "inactive",
+      "plugin_file": "crowdsignal-forms/crowdsignal-forms"
+    },
+    {
+      "name": "Custom Order Status for WooCommerce",
+      "version": "3.0.1",
+      "status": "active",
+      "plugin_file": "custom-order-statuses-woocommerce/custom-order-statuses-for-woocommerce"
+    },
+    {
+      "name": "Discount Rules for WooCommerce",
+      "version": "2.6.18",
+      "status": "inactive",
+      "plugin_file": "woo-discount-rules/woo-discount-rules"
+    },
+    {
+      "name": "Display Product Attributes for WooCommerce",
+      "version": "1.0.1",
+      "status": "inactive",
+      "plugin_file": "display-product-attributes-for-woocommerce/display-woo-product-attributes"
+    },
+    {
+      "name": "Dokan",
+      "version": "5.3.0",
+      "status": "active",
+      "plugin_file": "dokan-lite/dokan"
+    },
+    {
+      "name": "Dokan Vendor Dashboard (Deprecated)",
+      "version": "1.0.4",
+      "status": "inactive",
+      "plugin_file": "dokan-vendor-dashboard/dokan-vendor-dashboard"
+    },
+    {
+      "name": "Easy Popup Window Maker",
+      "version": "1.4",
+      "status": "inactive",
+      "plugin_file": "easy-popup-maker/popup"
+    },
+    {
+      "name": "Google for WooCommerce",
+      "version": "3.10.0",
+      "status": "active",
+      "plugin_file": "google-listings-and-ads/google-listings-and-ads"
+    },
+    {
+      "name": "Gravatar Enhanced",
+      "version": "0.14.0",
+      "status": "active",
+      "plugin_file": "gravatar-enhanced/gravatar-enhanced"
+    },
+    {
+      "name": "Gutenberg",
+      "version": "24.3.0",
+      "status": "active",
+      "plugin_file": "gutenberg/gutenberg"
+    },
+    {
+      "name": "Jetpack",
+      "version": "16.4-a.5",
+      "status": "active",
+      "plugin_file": "jetpack/jetpack"
+    },
+    {
+      "name": "KnifeRevive Ads Controller",
+      "version": "0.5.1",
+      "status": "active",
+      "plugin_file": "kniferevive-ads-controller/kniferevive-ads-controller"
+    },
+    {
+      "name": "KnifeRevive Agent Commerce",
+      "version": "0.6.1",
+      "status": "active",
+      "plugin_file": "kniferevive-agent-commerce/kniferevive-agent-commerce"
+    },
+    {
+      "name": "KnifeRevive Books",
+      "version": "1.1.0",
+      "status": "active",
+      "plugin_file": "kniferevive-books/kniferevive-books"
+    },
+    {
+      "name": "KnifeRevive Checkout Cart",
+      "version": "1.1.2",
+      "status": "active",
+      "plugin_file": "kniferevive-checkout-cart/kniferevive-checkout-cart"
+    },
+    {
+      "name": "KnifeRevive Delivery Preference",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-delivery-preference/kniferevive-delivery-preference"
+    },
+    {
+      "name": "KnifeRevive Desktop Bridge",
+      "version": "0.1.1",
+      "status": "active",
+      "plugin_file": "kniferevive-desktop-bridge/kniferevive-desktop-bridge"
+    },
+    {
+      "name": "KnifeRevive Dispatch",
+      "version": "0.2.0",
+      "status": "active",
+      "plugin_file": "kniferevive-dispatch/kniferevive-dispatch"
+    },
+    {
+      "name": "KnifeRevive Dokan Lockdown Installer",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-dokan-lockdown/kniferevive-dokan-lockdown"
+    },
+    {
+      "name": "KnifeRevive Google Customer Reviews",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-google-customer-reviews/kniferevive-google-customer-reviews"
+    },
+    {
+      "name": "KnifeRevive Homepage Banner",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-homepage-banner/kniferevive-homepage-banner"
+    },
+    {
+      "name": "KnifeRevive Homepage Tips",
+      "version": "1.3.3",
+      "status": "active",
+      "plugin_file": "kniferevive-home-tips/kniferevive-home-tips"
+    },
+    {
+      "name": "KnifeRevive Knife Details",
+      "version": "1.1.0",
+      "status": "active",
+      "plugin_file": "kniferevive-knife-details/kniferevive-knife-details"
+    },
+    {
+      "name": "KnifeRevive Lightning Payments",
+      "version": "0.1.16",
+      "status": "active",
+      "plugin_file": "kniferevive-lightning-payments/kniferevive-lightning-payments"
+    },
+    {
+      "name": "KnifeRevive ListLab",
+      "version": "1.13.6",
+      "status": "active",
+      "plugin_file": "kniferevive-listlab/kniferevive-listlab"
+    },
+    {
+      "name": "KnifeRevive Marketplace Core",
+      "version": "1.0.1",
+      "status": "active",
+      "plugin_file": "kniferevive-marketplace-core/kniferevive-marketplace-core"
+    },
+    {
+      "name": "KnifeRevive Marketplace Imports",
+      "version": "1.2.2",
+      "status": "active",
+      "plugin_file": "kniferevive-listlab-import/kniferevive-listlab-import"
+    },
+    {
+      "name": "KnifeRevive Merchant Sync",
+      "version": "0.8.11",
+      "status": "active",
+      "plugin_file": "kniferevive-merchant-sync/kniferevive-merchant-sync"
+    },
+    {
+      "name": "KnifeRevive Meta Controls",
+      "version": "1.0.3",
+      "status": "active",
+      "plugin_file": "kniferevive-meta-controls/kniferevive-meta-controls"
+    },
+    {
+      "name": "KnifeRevive Model Pages",
+      "version": "1.2.5",
+      "status": "active",
+      "plugin_file": "kniferevive-model-pages/kniferevive-model-pages"
+    },
+    {
+      "name": "KnifeRevive My Money",
+      "version": "1.2.1-rc1",
+      "status": "active",
+      "plugin_file": "kniferevive-my-money/kniferevive-my-money"
+    },
+    {
+      "name": "KnifeRevive Order Address & Contact",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-order-address-contact/kniferevive-order-address-contact"
+    },
+    {
+      "name": "KnifeRevive Order Messenger",
+      "version": "1.0.4",
+      "status": "active",
+      "plugin_file": "kniferevive-order-messenger/kniferevive-order-messenger"
+    },
+    {
+      "name": "KnifeRevive Order Packing Slip",
+      "version": "1.0.2",
+      "status": "active",
+      "plugin_file": "kniferevive-order-packing-slip/kniferevive-order-packing-slip"
+    },
+    {
+      "name": "KnifeRevive Passkey Bridge",
+      "version": "0.1.1",
+      "status": "active",
+      "plugin_file": "kniferevive-passkey-bridge/kniferevive-passkey-bridge"
+    },
+    {
+      "name": "KnifeRevive Product Attributes",
+      "version": "0.3.17",
+      "status": "active",
+      "plugin_file": "kniferevive-product-attributes/kniferevive-product-attributes"
+    },
+    {
+      "name": "KnifeRevive Product Grid",
+      "version": "1.0.1",
+      "status": "active",
+      "plugin_file": "kniferevive-product-grid/kniferevive-product-grid"
+    },
+    {
+      "name": "KnifeRevive Return Policies",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-return-policies/kniferevive-return-policies"
+    },
+    {
+      "name": "KnifeRevive Return Policy Setup",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-return-policy-setup/kniferevive-return-policy-setup"
+    },
+    {
+      "name": "KnifeRevive Returns",
+      "version": "0.1.0-rc2",
+      "status": "active",
+      "plugin_file": "kniferevive-returns/kniferevive-returns"
+    },
+    {
+      "name": "KnifeRevive Search Experience",
+      "version": "1.0.6",
+      "status": "active",
+      "plugin_file": "kniferevive-search-experience/kniferevive-search-experience"
+    },
+    {
+      "name": "KnifeRevive Seller Commissions",
+      "version": "0.2.0",
+      "status": "active",
+      "plugin_file": "kniferevive-seller-commissions/kniferevive-seller-commissions"
+    },
+    {
+      "name": "KnifeRevive Seller Contact",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-seller-contact/kniferevive-seller-contact"
+    },
+    {
+      "name": "KnifeRevive Seller Onboarding",
+      "version": "0.3.1",
+      "status": "active",
+      "plugin_file": "kniferevive-seller-onboarding/kniferevive-seller-onboarding"
+    },
+    {
+      "name": "KnifeRevive Seller Orders",
+      "version": "1.7.0-rc1",
+      "status": "active",
+      "plugin_file": "kniferevive-seller-orders/kniferevive-seller-orders"
+    },
+    {
+      "name": "KnifeRevive Seller Socials",
+      "version": "1.1.0",
+      "status": "active",
+      "plugin_file": "kniferevive-seller-socials/kniferevive-seller-socials"
+    },
+    {
+      "name": "KnifeRevive Seller Storefront",
+      "version": "1.0.10",
+      "status": "active",
+      "plugin_file": "kniferevive-seller-storefront/kniferevive-seller-storefront"
+    },
+    {
+      "name": "KnifeRevive Set Reminders",
+      "version": "1.0.1",
+      "status": "active",
+      "plugin_file": "kniferevive-reminders/kniferevive-reminders"
+    },
+    {
+      "name": "KnifeRevive ShipKit",
+      "version": "0.6.3-rc1",
+      "status": "active",
+      "plugin_file": "kniferevive-shipkit/kniferevive-shipkit"
+    },
+    {
+      "name": "KnifeRevive Shipping System",
+      "version": "1.1.3",
+      "status": "active",
+      "plugin_file": "kniferevive-shipping/kniferevive-shipping"
+    },
+    {
+      "name": "KnifeRevive Stripe Connect",
+      "version": "0.7.2-rc1",
+      "status": "active",
+      "plugin_file": "kniferevive-stripe-connect/kniferevive-stripe-connect"
+    },
+    {
+      "name": "KnifeRevive Telegram Seller Messaging",
+      "version": "1.0.3",
+      "status": "active",
+      "plugin_file": "kniferevive-telegram-seller-messaging/kniferevive-telegram-seller-messaging"
+    },
+    {
+      "name": "KnifeRevive Vendor Bulk Load",
+      "version": "0.1.1",
+      "status": "active",
+      "plugin_file": "kniferevive-vendor-bulk-load/kniferevive-vendor-bulk-load"
+    },
+    {
+      "name": "KnifeRevive Video Upload Links",
+      "version": "1.1.0",
+      "status": "active",
+      "plugin_file": "kniferevive-video-upload-links/kniferevive-video-upload-links"
+    },
+    {
+      "name": "KnifeRevive WhatsApp Seller Messaging",
+      "version": "1.0.4",
+      "status": "active",
+      "plugin_file": "kniferevive-whatsapp-seller-messaging/kniferevive-whatsapp-seller-messaging"
+    },
+    {
+      "name": "Layout Grid",
+      "version": "1.8.5",
+      "status": "active",
+      "plugin_file": "layout-grid/index"
+    },
+    {
+      "name": "MailPoet",
+      "version": "5.44.0",
+      "status": "active",
+      "plugin_file": "mailpoet/mailpoet"
+    },
+    {
+      "name": "Meta for WooCommerce",
+      "version": "3.7.8",
+      "status": "active",
+      "plugin_file": "facebook-for-woocommerce/facebook-for-woocommerce"
+    },
+    {
+      "name": "Page Optimize",
+      "version": "0.6.4",
+      "status": "active",
+      "plugin_file": "page-optimize/page-optimize"
+    },
+    {
+      "name": "PI Conditional cart fee / Extra charge rule for WooCommerce",
+      "version": "1.1.73",
+      "status": "active",
+      "plugin_file": "conditional-extra-fees-for-woocommerce/conditional-fees-rule-woocommerce"
+    },
+    {
+      "name": "Secure Passkeys",
+      "version": "1.3.0",
+      "status": "active",
+      "plugin_file": "secure-passkeys/secure-passkeys"
+    },
+    {
+      "name": "Storefront Powerpack",
+      "version": "1.6.3",
+      "status": "inactive",
+      "plugin_file": "storefront-powerpack/storefront-powerpack"
+    },
+    {
+      "name": "Texty",
+      "version": "2.0.2",
+      "status": "inactive",
+      "plugin_file": "texty/texty"
+    },
+    {
+      "name": "User Role Editor",
+      "version": "4.66.3",
+      "status": "inactive",
+      "plugin_file": "user-role-editor/user-role-editor"
+    },
+    {
+      "name": "weMail - Email Marketing Simplified With WordPress",
+      "version": "2.1.6",
+      "status": "inactive",
+      "plugin_file": "wemail/wemail"
+    },
+    {
+      "name": "WooCommerce",
+      "version": "11.2.1",
+      "status": "active",
+      "plugin_file": "woocommerce/woocommerce"
+    },
+    {
+      "name": "WooCommerce.com Update Manager",
+      "version": "1.0.3",
+      "status": "inactive",
+      "plugin_file": "woo-update-manager/woo-update-manager"
+    },
+    {
+      "name": "WooCommerce PayPal Payments",
+      "version": "4.2.0",
+      "status": "active",
+      "plugin_file": "woocommerce-paypal-payments/woocommerce-paypal-payments"
+    },
+    {
+      "name": "WooCommerce Product Tab Manager",
+      "version": "3.0.10",
+      "status": "inactive",
+      "plugin_file": "product-tabs-manager-for-woocommerce/woocommerce-tab-manager"
+    },
+    {
+      "name": "WooCommerce Shipping",
+      "version": "2.4.3",
+      "status": "active",
+      "plugin_file": "woocommerce-shipping/woocommerce-shipping"
+    },
+    {
+      "name": "WooCommerce Stripe Gateway",
+      "version": "11.1.1",
+      "status": "active",
+      "plugin_file": "woocommerce-gateway-stripe/woocommerce-gateway-stripe"
+    },
+    {
+      "name": "WooCommerce Tax (previously WooCommerce Shipping & Tax)",
+      "version": "3.7.3",
+      "status": "active",
+      "plugin_file": "woocommerce-services/woocommerce-services"
+    },
+    {
+      "name": "WooPayments",
+      "version": "11.2.0",
+      "status": "active",
+      "plugin_file": "woocommerce-payments/woocommerce-payments"
+    },
+    {
+      "name": "WP Mail SMTP",
+      "version": "4.10.3",
+      "status": "active",
+      "plugin_file": "wp-mail-smtp/wp_mail_smtp"
+    },
+    {
+      "name": "WP Migrate Lite",
+      "version": "2.7.12",
+      "status": "inactive",
+      "plugin_file": "wp-migrate-db/wp-migrate-db"
+    }
+  ]
+}
