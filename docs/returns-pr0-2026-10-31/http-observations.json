@@ -1,0 +1,55 @@
+{
+  "observed_date": "2026-10-31",
+  "timezone": "America/Los_Angeles",
+  "rest_routes": [
+    {
+      "route": "/kniferevive-returns/v1",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "route": "/kniferevive-returns/v1/guest/request",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "route": "/kniferevive-returns/v1/guest/exchange",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "route": "/kniferevive-returns/v1/orders/(?P<id>\\d+)/cases",
+      "methods": [
+        "GET",
+        "POST"
+      ]
+    },
+    {
+      "route": "/kniferevive-returns/v1/cases/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "route": "/kniferevive-returns/v1/cases/(?P<id>\\d+)/actions/(?P<action>[a-z_]+)",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "route": "/kniferevive-returns/v1/cases/(?P<id>\\d+)/files/(?P<file>[a-f0-9]{32})",
+      "methods": [
+        "GET"
+      ]
+    }
+  ],
+  "anonymous_case_probe": {
+    "method": "GET",
+    "path": "/wp-json/kniferevive-returns/v1/cases/0",
+    "status": 401,
+    "code": "return_auth"
+  }
+}

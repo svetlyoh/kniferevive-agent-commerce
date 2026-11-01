@@ -1,0 +1,18 @@
+{
+  "observed_date": "2026-10-31",
+  "timezone": "America/Los_Angeles",
+  "source": "Authenticated Return Desk UI, read only; no save submitted",
+  "accept_new_requests": false,
+  "deadline_review_reminders": true,
+  "reviewed_policy_version": "unconfigured",
+  "return_label_issuance": false,
+  "refund_execution": false,
+  "separate_return_label_budget_usd": "0.00",
+  "seller_response_hours": 48,
+  "address_confirmation_hours": 24,
+  "buyer_handover_calendar_days": 7,
+  "inspection_business_days": 2,
+  "ui_states_first_return_free_off": true,
+  "ui_states_new_return_review_payout_holds_off": true,
+  "not_exported": ["customers", "orders", "case contents", "addresses", "API keys", "nonces", "payment identifiers", "private files"]
+}

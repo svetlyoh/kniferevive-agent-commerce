@@ -1,0 +1,67 @@
+{
+  "observed_date": "2026-10-31",
+  "timezone": "America/Los_Angeles",
+  "source": "WordPress.com plugin.list (read-only)",
+  "plugins": [
+    {
+      "name": "Dokan",
+      "version": "5.3.0",
+      "status": "active",
+      "plugin_file": "dokan-lite/dokan"
+    },
+    {
+      "name": "KnifeRevive My Money",
+      "version": "1.2.2",
+      "status": "active",
+      "plugin_file": "kniferevive-my-money/kniferevive-my-money"
+    },
+    {
+      "name": "KnifeRevive Return Policies",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-return-policies/kniferevive-return-policies"
+    },
+    {
+      "name": "KnifeRevive Return Policy Setup",
+      "version": "1.0.0",
+      "status": "active",
+      "plugin_file": "kniferevive-return-policy-setup/kniferevive-return-policy-setup"
+    },
+    {
+      "name": "KnifeRevive Returns",
+      "version": "0.1.0-rc4",
+      "status": "active",
+      "plugin_file": "kniferevive-returns/kniferevive-returns"
+    },
+    {
+      "name": "KnifeRevive Seller Orders",
+      "version": "1.7.0-rc3",
+      "status": "active",
+      "plugin_file": "kniferevive-seller-orders/kniferevive-seller-orders"
+    },
+    {
+      "name": "KnifeRevive ShipKit",
+      "version": "0.6.9-rc3",
+      "status": "active",
+      "plugin_file": "kniferevive-shipkit/kniferevive-shipkit"
+    },
+    {
+      "name": "KnifeRevive Stripe Connect",
+      "version": "0.7.2-rc1",
+      "status": "active",
+      "plugin_file": "kniferevive-stripe-connect/kniferevive-stripe-connect"
+    },
+    {
+      "name": "WooCommerce",
+      "version": "11.2.1",
+      "status": "active",
+      "plugin_file": "woocommerce/woocommerce"
+    },
+    {
+      "name": "WooCommerce Shipping",
+      "version": "2.4.3",
+      "status": "active",
+      "plugin_file": "woocommerce-shipping/woocommerce-shipping"
+    }
+  ]
+}

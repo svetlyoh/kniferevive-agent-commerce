@@ -1,0 +1,839 @@
+{
+  "observed_date": "2026-10-31",
+  "timezone": "America/Los_Angeles",
+  "meaning": "Local comparison candidates only; not a verified production export",
+  "candidates": [
+    {
+      "plugin": "kniferevive-returns",
+      "expected_live_version": "0.1.0-rc4",
+      "candidate_version": "0.1.0-rc4",
+      "candidate_root": "C:/Users/Svet/Documents/KnifeRevive_Documentation/checkout-returns-hotfix-2026-10-29/kniferevive-returns",
+      "header_matches_live": true,
+      "full_production_hash_verified": false,
+      "files": [
+        {
+          "path": "assets/returns.css",
+          "sha256": "dc83c9c7d1cc4f5df6d580b75b0b5c4475bcfe17f90fe17680877de2dcb82568"
+        },
+        {
+          "path": "assets/returns.js",
+          "sha256": "cd69fad87a37f14b901d3b78eda89e1076ee103a1a05ced85e33bd8c381be60a"
+        },
+        {
+          "path": "includes/Access.php",
+          "sha256": "48da9e678299244c0ffc487dce017ce2a7a47c5b65d03393c17a27d96407dc8d"
+        },
+        {
+          "path": "includes/Cases.php",
+          "sha256": "81544f567f44c3095a1e89025630c2030c6356ae5382cd5e47459691548f07e0"
+        },
+        {
+          "path": "includes/Files.php",
+          "sha256": "4898f8d43964ad789f3ca53ba2f8e7c4301d55bd51078500a19cc90336ca2a46"
+        },
+        {
+          "path": "includes/Guest.php",
+          "sha256": "e84fc5409a6faa7a77cd72c99946103f4bd98e0f217207a487c7ffdde1e53388"
+        },
+        {
+          "path": "includes/Inspection.php",
+          "sha256": "1589fccb570cce8b51beec5e8f315ff64a632927e2ae5c8788cee564a52e8b82"
+        },
+        {
+          "path": "includes/Jobs.php",
+          "sha256": "989b62a2626100ab7426c5eb9524cae672de8a7c874af6967548279602c4096f"
+        },
+        {
+          "path": "includes/Labels.php",
+          "sha256": "5c3b6f307d2a648dab3c43236c7c39f53916a4c13d83df7b70e0a419d5463422"
+        },
+        {
+          "path": "includes/Money.php",
+          "sha256": "37b407fc11120706e4e9815006d422c9c022f9ce81e85bc63912e1ab66087592"
+        },
+        {
+          "path": "includes/Plugin.php",
+          "sha256": "787265f5a3225bfb77025154a5681b5441ff7a4ff178e4434bd5d59faa766040"
+        },
+        {
+          "path": "includes/Policy.php",
+          "sha256": "2161df8b20d4fc106c18d2d429e3d61686da3930408f9abb3eceebd66b17b42a"
+        },
+        {
+          "path": "includes/Refunds.php",
+          "sha256": "c0d95567c5052abdb0e3c08aff114edb9e50914b3d6c932931b2cbfa75413124"
+        },
+        {
+          "path": "includes/Rest.php",
+          "sha256": "f0ba71344ee5815f0785e61ca2ebd5adf850c29b5e6b8a43de0cc6dbd59cc2c3"
+        },
+        {
+          "path": "includes/Screens.php",
+          "sha256": "d30cd7fbc29def9a068b02c5b12d571cad59a6f869a5adb642e2a01a4d65f119"
+        },
+        {
+          "path": "includes/Store.php",
+          "sha256": "8025d9faf26c314e8b2e140440b2e63921b816ab00c8c5671362a994e3c39039"
+        },
+        {
+          "path": "includes/Support.php",
+          "sha256": "2b1ed22fe7f1639f88847ee425ea2b757d7277ea2cb8719b03ecf4da43f75d67"
+        },
+        {
+          "path": "includes/Tracking.php",
+          "sha256": "f03532e1b6c6f58f5cb0e442762fc0381b060c4f498855511bea873e22e70eaf"
+        },
+        {
+          "path": "kniferevive-returns.php",
+          "sha256": "4727d0a3b29adc3a1c519dd9d123dc5565d1ebc306450354ab594aa85a393ce3"
+        },
+        {
+          "path": "README.md",
+          "sha256": "fd1bda8bbb9469f5fc265e6901915a88302da9d317cd8e5caef3f4565bd9411e"
+        }
+      ]
+    },
+    {
+      "plugin": "kniferevive-return-policies",
+      "expected_live_version": "1.0.0",
+      "candidate_version": "1.0.0",
+      "candidate_root": "C:/Users/Svet/Local Sites/kniferevive/app/public/wp-content/plugins/kniferevive-return-policies",
+      "header_matches_live": true,
+      "full_production_hash_verified": false,
+      "files": [
+        {
+          "path": "kniferevive-return-policies.php",
+          "sha256": "6e5a48a8384404d04e96b5117753a4c483eeb89927a553c554d7c5225b0d7c3d"
+        },
+        {
+          "path": "README.md",
+          "sha256": "eb10ad34a9422fdd53e831b5e80c243b0eacfb087514cf7722d16365507679b5"
+        }
+      ]
+    },
+    {
+      "plugin": "kniferevive-seller-orders",
+      "expected_live_version": "1.7.0-rc3",
+      "candidate_version": "1.7.0-rc2",
+      "candidate_root": "C:/Users/Svet/Documents/KnifeRevive_Documentation/email-money-deployment-2026-10-29/src/kniferevive-seller-orders",
+      "header_matches_live": false,
+      "full_production_hash_verified": false,
+      "files": [
+        {
+          "path": "assets/css/returns.css",
+          "sha256": "ef2b667ab22a6d00e80e9c6e2b723339b1505ae6733537da79142606777e3e8f"
+        },
+        {
+          "path": "assets/css/seller-orders.css",
+          "sha256": "e0d60120e60a9f51eeaf4db67c5f317c06df94f937dc7c5699fbefd22be60b1d"
+        },
+        {
+          "path": "assets/css/shipments.css",
+          "sha256": "83b8e5bbda13b7baaad2f6430a60ed0c67613ca1b8ddc999324e8a1675ced302"
+        },
+        {
+          "path": "assets/js/returns.js",
+          "sha256": "b455b34247ab455935716912203ca40a306abc9bff0749f7a0b31b882e8d9712"
+        },
+        {
+          "path": "assets/js/seller-orders.js",
+          "sha256": "e73c5d59d621a5af4354353e45f61041309908e7f0cb60e97dec02ff5a533270"
+        },
+        {
+          "path": "assets/js/shipments.js",
+          "sha256": "0b9f116a0e984fd0fd22f43f965ad808befc4b97ea6ef10a8812365b4b0f0cbb"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "sha256": "42d386eaa7874f3a02fe95061c01da40e0fa2f754abc3df157f0984fcf5c81d9"
+        },
+        {
+          "path": "docs/returns-redesign/BUYER_COPY.md",
+          "sha256": "07f56ec1deb2e2b228941b7902b79c649a097e1a93ddb195366e1ba6ac161353"
+        },
+        {
+          "path": "docs/returns-redesign/IMPLEMENTATION_REPORT.md",
+          "sha256": "cf33d17bbc67ad77fac067857ab7ecdd0f867facb38f6633a90f2829196c4d9b"
+        },
+        {
+          "path": "docs/returns-redesign/ROLLBACK.md",
+          "sha256": "4222ff92ae69496fde45c7b70bd93f2e81b4844246ecf458e4c4c113f8bad97e"
+        },
+        {
+          "path": "docs/returns-redesign/TEST_MATRIX.md",
+          "sha256": "d1e648edcd9e09b6ae4e527e90f9dfb0f6c01d21a11514c8f27142a802efba18"
+        },
+        {
+          "path": "docs/returns-redesign/verification-results.json",
+          "sha256": "ae55bae44a48e872eec992442269a2c849ad700c27f43ae8a6b7964af65567ff"
+        },
+        {
+          "path": "docs/shipping-redesign/BUYER_COPY.md",
+          "sha256": "5b560ab0c4a3f51801d4ba07a237f9dd80b717e0bb4af557275a0c2a8b4760f9"
+        },
+        {
+          "path": "docs/shipping-redesign/CURRENT_STATE_AUDIT.md",
+          "sha256": "0c79f03fc8da69abddfe0bd2a104a5216e4feb0a8572f51ba7a7680831491199"
+        },
+        {
+          "path": "docs/shipping-redesign/IMPLEMENTATION_REPORT.md",
+          "sha256": "7448ee01e9312aa27ce472285c9b858c4926843716f18930341f68d7ff22bc95"
+        },
+        {
+          "path": "docs/shipping-redesign/RELEASE_1.3.1.md",
+          "sha256": "4698316133994c6b06a6d564f6ed327c4d491ea9ebdd8a6c721644689b1776d9"
+        },
+        {
+          "path": "docs/shipping-redesign/ROLLBACK.md",
+          "sha256": "b8b1482f657a10f615fc3d9c59b9a8358dd4c411d466b0298d351b45dcd3854a"
+        },
+        {
+          "path": "docs/shipping-redesign/TEST_MATRIX.md",
+          "sha256": "2a73afc2e53b694344b6a7d2c932c2eb29343a9889b11f3e50a7bea93eaa5df7"
+        },
+        {
+          "path": "docs/shipping-redesign/test-classic-no-extension.txt",
+          "sha256": "224a2f67111d485fec08158e994996232ebe2e555b175250317975657c6dca97"
+        },
+        {
+          "path": "docs/shipping-redesign/test-hpos-extension.txt",
+          "sha256": "b77fe409b535385cdbf5abc0199381d8f58cf25885280531d3b60282601fc557"
+        },
+        {
+          "path": "docs/shipping-redesign/verification-results.json",
+          "sha256": "0e3a850a44d94609cef933c8cb25e0d083859e31e9cded033da5bcf43ecf9d31"
+        },
+        {
+          "path": "docs/tracking-emails/first-tracking.html",
+          "sha256": "0c4454244db7d998af452bda9685bffaca5ce696e0f77c674724f7f1b2695e1f"
+        },
+        {
+          "path": "docs/tracking-emails/new-tracking.html",
+          "sha256": "2e0dfea84c14a2546617e1d005350f000c0d9ef2fd446519371a46f8545dfaca"
+        },
+        {
+          "path": "docs/tracking-emails/preview-new-tracking.html",
+          "sha256": "fc20a989f9de4bf31d27562fea2c9abf825798d823888e96c478717f96a37470"
+        },
+        {
+          "path": "includes/class-krev-order-cancellations.php",
+          "sha256": "e8b3e8264e9bfd2f94519a9865dd020a90d57769be36a28bd9e85160324ad5b7"
+        },
+        {
+          "path": "includes/class-krev-order-contact.php",
+          "sha256": "d2d35774c002355b2c12323c45e7b9cdae61f3b068a9cc581f7b56a7be4bb34a"
+        },
+        {
+          "path": "includes/class-krev-orders-actions.php",
+          "sha256": "64eb23354c585f44ad263f49db970e1056ab0936b533f53889c8c7ee6244255c"
+        },
+        {
+          "path": "includes/class-krev-orders-endpoints.php",
+          "sha256": "f15c4e31efd190874ac9e562c3cac74a7de0ae407d1398783cddcdd37d54375e"
+        },
+        {
+          "path": "includes/class-krev-orders-permissions.php",
+          "sha256": "f54405c33ff638fcbeb7d10036e66fa112fe9244d31ad6420b65b20ebc7a1e0c"
+        },
+        {
+          "path": "includes/class-krev-orders-plugin.php",
+          "sha256": "913eb954426127cfec3ea0e126dfd2c659a1d79f783c8ee4a74fb6da18ac839a"
+        },
+        {
+          "path": "includes/class-krev-orders-policy-copy.php",
+          "sha256": "f354143800d20eda91ae6393c9430446e2647c29ad40d60a46c8af0218d5526a"
+        },
+        {
+          "path": "includes/class-krev-orders-query.php",
+          "sha256": "0b1c675a5d238c9a2711696f3dc98b46ad62fe36d55c45768a7c426b60435488"
+        },
+        {
+          "path": "includes/class-krev-orders-reader.php",
+          "sha256": "8bd6ff58e49826131442102379e641b2de858b88f08a4e3b39d1c713920e706d"
+        },
+        {
+          "path": "includes/class-krev-orders-rest.php",
+          "sha256": "69188bb597f1c55fcb28a0d94a87063186b266d0bc4970e5fee2bc287b027824"
+        },
+        {
+          "path": "includes/class-krev-refund-authority.php",
+          "sha256": "daa28f826d0d9d9472ac5c4d0176821cbce8ac91024a1c7b07a71d6f803d03c1"
+        },
+        {
+          "path": "includes/class-krev-refunds.php",
+          "sha256": "89ac1196b95e7c5ba9cac8066d18b8f536ea9e35eadf2e7e8a515e7f8bed154d"
+        },
+        {
+          "path": "includes/class-krev-return-mail.php",
+          "sha256": "b3b52fd4b6f6d040c9d0988d5eaf75a4ccbf66ab4bceb374aac777e8c5ba6594"
+        },
+        {
+          "path": "includes/class-krev-return-permissions.php",
+          "sha256": "1475e5f53ed28dfd56cea3062d1403197c7613eccaa4d4107eb527630da15dd5"
+        },
+        {
+          "path": "includes/class-krev-return-ui.php",
+          "sha256": "f5063640278d291e4e86eeb1cc37993892d0194e37d75bb5610f8a11596f5719"
+        },
+        {
+          "path": "includes/class-krev-return-workflow.php",
+          "sha256": "3fabbdd8a1b7d4087235ff080e3d60bf7ecc0adb0a5e6571ec3870d1274e2473"
+        },
+        {
+          "path": "includes/class-krev-returns.php",
+          "sha256": "ae538404728c08fe707fa5d9bae93a6210540a539fd0ff1aa3ef8f70d5ac0399"
+        },
+        {
+          "path": "includes/class-krev-sharpening-assets.php",
+          "sha256": "ad5178a13c10e9d42a5f930d614914e9e4a7ab6c8e9266ef7c3c6b1a6297c7e1"
+        },
+        {
+          "path": "includes/class-krev-sharpening-orders.php",
+          "sha256": "91c071ce32a2cede74e0a5024a66f8a0ab08caccd03ac23c9730db56e3baeaae"
+        },
+        {
+          "path": "includes/class-krev-sharpening-workflow.php",
+          "sha256": "fa44496188a03196c35e9d8ed254a8c72c7b673b0921979e5165103ff7319cbf"
+        },
+        {
+          "path": "includes/class-krev-shipment-images.php",
+          "sha256": "003106e337349673d47a8104ae8d1667d0226c95107a5f8ca29c22a6a3624e50"
+        },
+        {
+          "path": "includes/class-krev-shipment-mail.php",
+          "sha256": "e9d1f4eda51eb80b91581966b0a038eae855507e9ea24a1ceb63becede3e0a38"
+        },
+        {
+          "path": "includes/class-krev-shipment-message.php",
+          "sha256": "fdc05675248f8ec0c1b806ff6f2b3fe8284587198faa4f8987e2a6de77bd9064"
+        },
+        {
+          "path": "includes/class-krev-shipment-rest.php",
+          "sha256": "2702211707acb8fbc81bdbc595d543ea3368a47ca14e804a5ca0b5aa9d1d7c02"
+        },
+        {
+          "path": "includes/class-krev-shipment-services.php",
+          "sha256": "00cf2f7adca528d60e37768373799d8191b45f36e13f2e8a7ceedc2c3cd928da"
+        },
+        {
+          "path": "includes/class-krev-shipment-tracking.php",
+          "sha256": "94aace3aa7bd9e2746d0c1684ff655639103b67359ba5d0c4b3c6f1dd54e3915"
+        },
+        {
+          "path": "includes/class-krev-shipment-ui.php",
+          "sha256": "7d60927c404308f18a338d7aa56bd7fd3667e30cd51f16cb8d10cca15ecb0fb7"
+        },
+        {
+          "path": "includes/class-krev-shipments.php",
+          "sha256": "c4eb325c2c4e86743bfa8920c8ae9a924a4978b774bd396f027ab83eebcd423b"
+        },
+        {
+          "path": "includes/class-krev-shipping-policies.php",
+          "sha256": "9d51de4a7971111eec51abbe32aba86ae3fc9939dc8889ed82c673432b1801d5"
+        },
+        {
+          "path": "includes/class-krev-shipping-reader.php",
+          "sha256": "ef5e032cf588784baeec89734017a17d1a4441ea96842c4f3d9b0f9554764559"
+        },
+        {
+          "path": "kniferevive-seller-orders.php",
+          "sha256": "55e3dd6835eef991e1e1145540c10bd603c4cf5ee69245a6c52b8df1be40af75"
+        },
+        {
+          "path": "README.md",
+          "sha256": "66dd7aab3314c61b38cb7eb6325a025f31ba439469fa57b1ea72ceaacb638ddb"
+        },
+        {
+          "path": "RELEASE_SHIPMENT_MESSAGES.md",
+          "sha256": "3402df2f41e0f1c64621327258b77e9b2231d51f2fbe45e460ec54dbad3db43e"
+        },
+        {
+          "path": "RETURNS_RELEASE_CANDIDATE.md",
+          "sha256": "439e531bfaa4b1ba4d9625ec3a57a1795454e1f464bd14e2e1b027a5da10b5db"
+        },
+        {
+          "path": "SHIPKIT_COORDINATED_UPGRADE.md",
+          "sha256": "b827ed2747aa7ab9fc3a7dc1d19f4cd73665ba0aa715115104cf68984c0b2d1a"
+        },
+        {
+          "path": "templates/buyer-order-contact.php",
+          "sha256": "57c65a593dad7950fad2aecbaa2f751dd074b719d0b2f36dc772b42275a2b8ae"
+        },
+        {
+          "path": "templates/order-earnings.php",
+          "sha256": "735cc84fc064441986cefbf6d09306b8e88a766276ef5e5289d22161e9daf871"
+        },
+        {
+          "path": "templates/return-detail.php",
+          "sha256": "e478572bf53fe259512999781b862056f888968e257041c67a22f3cee463203b"
+        },
+        {
+          "path": "templates/return-request.php",
+          "sha256": "0a2cadecd5466c4246688e0c476300430aa76081eb7c07415231adf078f101a7"
+        },
+        {
+          "path": "templates/seller-order-cancellation.php",
+          "sha256": "ce31796d53e30acf45fe4f7ed05a7ac227d9ac665f38aeded9de4cfefa5c2554"
+        },
+        {
+          "path": "templates/seller-order-detail.php",
+          "sha256": "404acd15972bf7993c486807a949c96488aa621046d97a95b0d127f5778805e2"
+        },
+        {
+          "path": "templates/seller-orders.php",
+          "sha256": "6a17edd7e4474aacfd96a4f00bb0b7082e3753976c5fb92ab2c406982442dc0c"
+        },
+        {
+          "path": "templates/seller-shipping-editor.php",
+          "sha256": "fa463ea6fd38814a45f0e217040253a42b4cdfa1bf1ea725c2851641ebe2f3f9"
+        },
+        {
+          "path": "templates/sharpening-order-detail.php",
+          "sha256": "cca2f36ed8906e8acee7497282037c36b02b3351c53cbb426b98508680276f7b"
+        },
+        {
+          "path": "templates/sharpening-orders.php",
+          "sha256": "8c1e591dd34809dbdc42af227e4ea379b562b9bdb5b687d771c9b863d4c014ce"
+        },
+        {
+          "path": "templates/shipping-policies.php",
+          "sha256": "a09b12d3254a99e3d346eeb6763425a716a756c5653e177ec05e608f858c2b5e"
+        }
+      ]
+    },
+    {
+      "plugin": "kniferevive-shipkit",
+      "expected_live_version": "0.6.9-rc3",
+      "candidate_version": "0.6.9-rc3",
+      "candidate_root": "C:/Users/Svet/Documents/KnifeRevive_Documentation/shipkit-activation-2026-10-29/kniferevive-shipkit",
+      "header_matches_live": true,
+      "full_production_hash_verified": false,
+      "files": [
+        {
+          "path": "assets/shipkit.css",
+          "sha256": "9539ac74659bb6720658c9c04c3a7b886b7ae994a17c8b3e93990c033eba1531"
+        },
+        {
+          "path": "includes/AdjustmentIntake.php",
+          "sha256": "7dc0a052d84094dfcf4904ab134a1dd8b75a0f4a163167c957b1d2ed1304f3f9"
+        },
+        {
+          "path": "includes/Adjustments.php",
+          "sha256": "aadb55fb1e21ed5fccb7cfa400e750c5ad30cea8d12d65430081491d693ea430"
+        },
+        {
+          "path": "includes/Application.php",
+          "sha256": "e2242eeec5155a8ae9c295024915493155f9fb488d4de3e48871ec61de6095c9"
+        },
+        {
+          "path": "includes/Assisted.php",
+          "sha256": "5dea8b68b63e5bf00b9b74fb4f76eeb82dfb4dc47ad0ec0931a223afa1b75359"
+        },
+        {
+          "path": "includes/Commands.php",
+          "sha256": "ac588053c1088aa02c73a4c5a34a39bc854a6c74cbe2b73e124fe88888d89d3d"
+        },
+        {
+          "path": "includes/ConnectIntegration.php",
+          "sha256": "6061b7bf226ab8d59d8de9a91843a8cd34e743b85d86759cefda4854fad81c5c"
+        },
+        {
+          "path": "includes/Documents.php",
+          "sha256": "b95d2bd66bf524f696dbefb9868588e3a1d0c4e40de2e2552f54a6f103a5842c"
+        },
+        {
+          "path": "includes/Domain.php",
+          "sha256": "a445451c667005bc8d5965b2709b9524fe843c0a51c70fac2664a504de433616"
+        },
+        {
+          "path": "includes/FundingEligibility.php",
+          "sha256": "7fb3191aca857d089c1b22fa67e61cbcee24f84df2c2177d442b3340c9154547"
+        },
+        {
+          "path": "includes/Ledger.php",
+          "sha256": "a017829d4a7df907a7284a95e07e737259c2fb81d2e270a184c872c575b62a91"
+        },
+        {
+          "path": "includes/Lifeline.php",
+          "sha256": "d15ae1fc5b492f91474be86061a6d067d3c9cffc00c95857af1cd7c215a85e9c"
+        },
+        {
+          "path": "includes/LossRecovery.php",
+          "sha256": "c6ccf5d984fd00c230c510a5b2ba03ef231e73aedbd34138a4dff43c578c08bd"
+        },
+        {
+          "path": "includes/Migration.php",
+          "sha256": "97ff29bf811a4316ce5653b2610954e2ecfafea281ec1789f4a1884de2298d06"
+        },
+        {
+          "path": "includes/MoneyProjection.php",
+          "sha256": "9ff8fc0245eeea41ed2549e608f24e5e349bd2649389e991e1c7f1bc6f455225"
+        },
+        {
+          "path": "includes/Notices.php",
+          "sha256": "2936e16400998b512d2a7f1c096cf0bf665f7bc22575d6c282c743a3bb5d610c"
+        },
+        {
+          "path": "includes/Operations.php",
+          "sha256": "72facac9711cbca5eab6c0208a9c5988a33df9188babc2f2f54f0df528f83bfb"
+        },
+        {
+          "path": "includes/Payables.php",
+          "sha256": "95dd531379c4969bc41b8c4be80074c654db6aa558710b7a99caae06c854fb24"
+        },
+        {
+          "path": "includes/Payments.php",
+          "sha256": "563dc070e25d03b4a84a27846a40e8bc92af7b0e8186a68cb4a96e01d4985e55"
+        },
+        {
+          "path": "includes/Policy.php",
+          "sha256": "9892925c52321e813e9f880a534b907dd1173fdec06179002de2017bd76df163"
+        },
+        {
+          "path": "includes/PolicyCutover.php",
+          "sha256": "0966368c83c1e509ea3d8b7e2909bce5f9f0ca19a09b542df8ae652d678e9a97"
+        },
+        {
+          "path": "includes/ProcessorLoss.php",
+          "sha256": "b2e7cb663fbba5bd8d1d432f4dae2d3e14aa1db155a7ee1a747c00b5b5633b55"
+        },
+        {
+          "path": "includes/ProviderQa.php",
+          "sha256": "9e3a593a92badcfcb5e7abb88f71b909afb1b96b0812a7b00c93332cc4393eec"
+        },
+        {
+          "path": "includes/Risk.php",
+          "sha256": "3b21babbf70bbbb19b8a79d6219ac9080f6b06035780d203166892dc33ed8f30"
+        },
+        {
+          "path": "includes/Screens.php",
+          "sha256": "0d85ec9102b525356436ab81deab05fa289ae4ebddc44e889109e7d86b3f790e"
+        },
+        {
+          "path": "includes/ShipFrom.php",
+          "sha256": "776ea8ef24c4387e29601c4fd1cd5f0bccd50c344cdfa95c6aca4730d29e6abe"
+        },
+        {
+          "path": "includes/ShippingIou.php",
+          "sha256": "b5ae5b83f3d179b38aa7da9d1bf4f243500751042ee9257af2bc47f2a5931572"
+        },
+        {
+          "path": "includes/SqlRepository.php",
+          "sha256": "12912d3b8bad1c92a719799767cb1f6faa560ea916b0ad6ef0d070db54999ecb"
+        },
+        {
+          "path": "includes/SupplementalPayouts.php",
+          "sha256": "2936f63adcb9f38b615ee1fb8613b7334e3f1dcbacad0a6a150bfbea01cd42ba"
+        },
+        {
+          "path": "includes/Vault.php",
+          "sha256": "51174fb10b1dde28cae55f948dcd94dbcd0cba7659a8c565e2303fddc3ba3226"
+        },
+        {
+          "path": "includes/WooBridge.php",
+          "sha256": "1465bf1b7d52f20e6fd2fa5b2085db0014c23619f05c1555fe44119853829fe3"
+        },
+        {
+          "path": "includes/WooRates.php",
+          "sha256": "64b9d05c25e97d4a45e990670aeff9e32ba7296076d7427f9b8d3126c6fc7e05"
+        },
+        {
+          "path": "includes/WooRuntime.php",
+          "sha256": "1aedf25c01246257c07b066e28193a880ac6ba4e3fbdf90c8d1ec9cf715de3b6"
+        },
+        {
+          "path": "includes/WordPress.php",
+          "sha256": "5a495e6607d90ec7f19fe03ec6041b90275975e60102dea6560e9d6aa20762ef"
+        },
+        {
+          "path": "kniferevive-shipkit.php",
+          "sha256": "a4a4fdb93a3f089277b5b6a0fa64934380233d44c93ee1d0272319f676717030"
+        },
+        {
+          "path": "README.md",
+          "sha256": "b60c3a49dfb4c0017ee5ff1cca3557308a76f6c4eeb3b8458d4b8721fe64cd22"
+        },
+        {
+          "path": "RETURNS_RELEASE_CANDIDATE.md",
+          "sha256": "439e531bfaa4b1ba4d9625ec3a57a1795454e1f464bd14e2e1b027a5da10b5db"
+        }
+      ]
+    },
+    {
+      "plugin": "kniferevive-stripe-connect",
+      "expected_live_version": "0.7.2-rc1",
+      "candidate_version": "0.7.2-rc1",
+      "candidate_root": "C:/Users/Svet/Documents/KnifeRevive_Agent_Commerce/wordpress/kniferevive-stripe-connect",
+      "header_matches_live": true,
+      "full_production_hash_verified": false,
+      "files": [
+        {
+          "path": "assets/css/account-payouts.css",
+          "sha256": "ec4fb94561517186f3e92abe83e71828ce7faebc77803ac2ee4e92fb1038b2b0"
+        },
+        {
+          "path": "assets/settlement.js",
+          "sha256": "dfdd801f364607f21687c13fabf9668841a6a0003924c2bf4c517e52a3c0ccf4"
+        },
+        {
+          "path": "includes/class-kr-connect-account-endpoint.php",
+          "sha256": "672607e55da0fd819330f6dd74605f4e6f89c2d661eb4c2c0d71aeefc316565b"
+        },
+        {
+          "path": "includes/class-kr-connect-account-status.php",
+          "sha256": "85f26ad64f9d9b4ddf15b8be3964ca830cccb3a2c1a7eecbd38f7dfd34360623"
+        },
+        {
+          "path": "includes/class-kr-connect-admin.php",
+          "sha256": "a06e89261cead9d236d3b97fb8ae0a413ed148387693931e4c7b4e642eb3295b"
+        },
+        {
+          "path": "includes/class-kr-connect-allocation.php",
+          "sha256": "59050a7825a2eff746cef6a8f60a63024a1d724607d4408b1ddb8abb6c6a18d9"
+        },
+        {
+          "path": "includes/class-kr-connect-country.php",
+          "sha256": "2daee9c4d9942138a2f80f8e5a77f88ada2da01cc223ac8d4857847af4a2f920"
+        },
+        {
+          "path": "includes/class-kr-connect-dependencies.php",
+          "sha256": "61e5e235cecc32fafbd1e81093a25f804a31185ccfb3f4bd46ca68432392f088"
+        },
+        {
+          "path": "includes/class-kr-connect-dispatch-hold.php",
+          "sha256": "2cb7b3b9af4d412ef1730df8f6b27e391a2c3f03a9cd5344fa405364ec3a6a66"
+        },
+        {
+          "path": "includes/class-kr-connect-install.php",
+          "sha256": "c8018973a67fe70f7eb11963f6d23f15aa56a821e58eb7cb43abf044f486bde7"
+        },
+        {
+          "path": "includes/class-kr-connect-lock.php",
+          "sha256": "96a40623a8b2dd0a4ea0f21cc2d6c90aa4c39b7814408a5c6a90b3ad21f3d096"
+        },
+        {
+          "path": "includes/class-kr-connect-logger.php",
+          "sha256": "7d0892cb56ff70d800d3949111475a0a8a3e9734a93e2eb89ac9f2ff6904e439"
+        },
+        {
+          "path": "includes/class-kr-connect-money.php",
+          "sha256": "df9ad9a29a3a4b41b696c21528795a5212c759f0c434e3da1739ab59f4815e33"
+        },
+        {
+          "path": "includes/class-kr-connect-onboarding-lock.php",
+          "sha256": "f2490f89a4e091d2aa29d8d8fb024a7ffc0ad0c18d00c2bb3839425c30f7d520"
+        },
+        {
+          "path": "includes/class-kr-connect-onboarding-service.php",
+          "sha256": "75d922b1ff12aeb288e737de80e6dbf6023314b940972992cd375dded571423b"
+        },
+        {
+          "path": "includes/class-kr-connect-order.php",
+          "sha256": "737f88a50f7f84d607acd4b5a87cdbe9cfde888a1b0256e6e5ec5e4b7e84c53c"
+        },
+        {
+          "path": "includes/class-kr-connect-plugin.php",
+          "sha256": "426146f8ea620950f5b4c6df76db55dc9dd1d246d1b3ab7073618e8206bc5ce5"
+        },
+        {
+          "path": "includes/class-kr-connect-reconciliation.php",
+          "sha256": "0f89caef30d0cce30c663b2b5a5f7d2d3b1dee39df0b965ded7826065556da01"
+        },
+        {
+          "path": "includes/class-kr-connect-refund.php",
+          "sha256": "ee5424d4243806ba1e71f9414ffd170ac6da968d07e2aff7abf08a5640f874c5"
+        },
+        {
+          "path": "includes/class-kr-connect-settings.php",
+          "sha256": "d70a1b30876b7b76278235e8ce61c37e8e6ab5d74a26d558c8234a2d8c90b1d2"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-admin.php",
+          "sha256": "bc64b6aa03d0d9d62e8ff480a912360f1aba45337aba9cf44e25d126acb752eb"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-auth.php",
+          "sha256": "f91b08c133ffa1f8cc89454e383ef34b97599f18cf2e6da219e05c43960d6369"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-automatic.php",
+          "sha256": "9bd55ca50b58fd3140298aa1e846fdf1300d6efec66a77194f05d9dfa4cc8845"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-carrier.php",
+          "sha256": "8f465b29924658d3de09e5cfa374d2487e2b99cf0887036c80297a47c8e28422"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-events.php",
+          "sha256": "0cf847c5279bb64d9cd3058ec28f4e2239150f50dd01e570229b24b7fa086a11"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-evidence.php",
+          "sha256": "4f0b0644d56f348812eb565ca9057ed002b7d10d1d9235f703ea11dd9db55676"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-paypal.php",
+          "sha256": "1e0d2d3c0efc877eb15118770f940db72a237b5e237f2fc8ff006f38a0a995f8"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-policy.php",
+          "sha256": "88bfeafbeae38885ff1e8feccac137e33aeaaefde2ea319b5c824ed469c354e2"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-release.php",
+          "sha256": "99fb91a1306e04ca999def7a013909551813f327049008a05f14e70f05439745"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-shipping.php",
+          "sha256": "fce079a1e959558b1a2a636148eb8442645b7071a8a53a7248d0866404570f7d"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-store.php",
+          "sha256": "0e9b314231c54f14c016a757bb90b296cb01f86a894b840a3e14ad1a69d6eb32"
+        },
+        {
+          "path": "includes/class-kr-connect-settlement-web.php",
+          "sha256": "0370f4821968b6e4ecb1d033ab2aa39f9ac176211a2e3748c10db1fbce85bfc4"
+        },
+        {
+          "path": "includes/class-kr-connect-shipkit.php",
+          "sha256": "98b17175052914f6738641a148c2b1c630a1e87aaa0bf5e572bc409d8aff2abe"
+        },
+        {
+          "path": "includes/class-kr-connect-stripe-client.php",
+          "sha256": "e8b647cab922296353b31ddce1f572b5d917df2cf79f07d557cb316df2e85f10"
+        },
+        {
+          "path": "includes/class-kr-connect-transfer.php",
+          "sha256": "9a8a502b7fde1257985a0e8be256b8b0ce55d4efbbf109bc5a41a52cbc528f48"
+        },
+        {
+          "path": "includes/class-kr-connect-vendor.php",
+          "sha256": "ff6caab1bfad95cbd8fac547d4167e6c9e4162c5215b4a7d3e6b37873d8a7db9"
+        },
+        {
+          "path": "includes/class-kr-connect-webhook.php",
+          "sha256": "7f1211b095d89af516c72a1c429a17a4c36554cf2d8fb6ea23e64db5e80b015e"
+        },
+        {
+          "path": "kniferevive-stripe-connect.php",
+          "sha256": "5a693dadf54457df0042d053df8bb807b18b26fd70dd9bd5e947bbfb4b7b5575"
+        },
+        {
+          "path": "README.md",
+          "sha256": "164c5349bc1e24527f85781be2e2da7e8570b2822069da905ce2258212ad9e78"
+        },
+        {
+          "path": "RELEASE_AUTOMATIC_PAYOUTS.md",
+          "sha256": "adca0bc3fa8289834695d43a8b90219940d6bd9516885d76665461de6e80e619"
+        },
+        {
+          "path": "RELEASE_MANUAL_PAYOUTS.md",
+          "sha256": "274a81bdb285b3eb9d351daebed0ffd73a158811813d6aa8f3d075670633d756"
+        },
+        {
+          "path": "RELEASE_PAYPAL_SETTLEMENT.md",
+          "sha256": "bdbef8acaca74b253cb35fae962abe4fd2caa1289b23552adf40426df3e45235"
+        },
+        {
+          "path": "RELEASE_SETTLEMENT_REVIEW.md",
+          "sha256": "c5540efcff678f70186861ca979410ef198b549f4d08450755ca0f26aebe9f55"
+        },
+        {
+          "path": "RETURNS_RELEASE_CANDIDATE.md",
+          "sha256": "439e531bfaa4b1ba4d9625ec3a57a1795454e1f464bd14e2e1b027a5da10b5db"
+        },
+        {
+          "path": "SHIPKIT_COORDINATED_UPGRADE.md",
+          "sha256": "b34914f2a85302153cbd1da4aa709b2a68f9046537d6bb8cce203cf82a10ec1d"
+        },
+        {
+          "path": "templates/myaccount/payout-methods.php",
+          "sha256": "f9319f8aafa45b0f319b6f099cfeeb8024e68876ac82401345ea0c5b7227ce88"
+        },
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "sha256": "f9400a20ae66c631018d9a326722552ff2cd9d1ea5936727cb719e002f8d3515"
+        },
+        {
+          "path": "vendor-prefixed/autoload.php",
+          "sha256": "d2f5b20b370e844e78967e5673e78432a4b57275c2c2dbcfced734d2ee27ddac"
+        },
+        {
+          "path": "vendor-prefixed/stripe-php/WebhookSignature.php",
+          "sha256": "8ba13445d9eeeba4919e682adcc8b6c55c3d45da7470c0575886f9ab4f5bdb28"
+        }
+      ]
+    },
+    {
+      "plugin": "kniferevive-my-money",
+      "expected_live_version": "1.2.2",
+      "candidate_version": "1.2.2",
+      "candidate_root": "C:/Users/Svet/Documents/KnifeRevive_Documentation/email-money-deployment-2026-10-29/src/kniferevive-my-money",
+      "header_matches_live": true,
+      "full_production_hash_verified": false,
+      "files": [
+        {
+          "path": "assets/money.css",
+          "sha256": "31074046fbfcee0a815ed3e485b2e246f884fac57bfcb379487c881fc939ad14"
+        },
+        {
+          "path": "assets/money.js",
+          "sha256": "6c54232a3f407b9d45c3e8cb20f326ea5e0f4a4a408c1b0129e0f28cc1e142b6"
+        },
+        {
+          "path": "includes/Access.php",
+          "sha256": "dd2e2823fbce70c2ac06fb8c278e5ca52a9407ca2acf10c429b18d616cefff4b"
+        },
+        {
+          "path": "includes/Controller.php",
+          "sha256": "25e938f1cf4d8e7531a76117748a757de21672c877b23ca3dc273e97237a3fe1"
+        },
+        {
+          "path": "includes/Money.php",
+          "sha256": "5f6509b4b5212f9b6d734f2a13ed6e206135ce785aede3e1cd3dc2555ebb06cb"
+        },
+        {
+          "path": "includes/Normalizer.php",
+          "sha256": "07adaa21613c787058cb53347d1d839c899626ceb8a1fbf625e00025abc873fa"
+        },
+        {
+          "path": "includes/Plugin.php",
+          "sha256": "ed965b904c5a85239aa8fbd38c86a7a4a25ed79b6cc0c3370002097bcaeacf60"
+        },
+        {
+          "path": "includes/Range.php",
+          "sha256": "c1fce7eeda48a02538ac7c50b4400d9e72f7a1743aeee3f59fddc1ae31788990"
+        },
+        {
+          "path": "includes/Repository.php",
+          "sha256": "45bead44ca7a553e7befa5321bc517438236203cc67d03123a38cb70be238f73"
+        },
+        {
+          "path": "kniferevive-my-money.php",
+          "sha256": "6a48e0caa0af065bd157d05e08d50c60ebe52741d3ddc8eeb593b59e084151fa"
+        },
+        {
+          "path": "README.md",
+          "sha256": "0686e969f331324f1d99a043193b7b4d2c941bd219cb3b7fcdf3680fba9cbce2"
+        },
+        {
+          "path": "RELEASE_SETTLEMENT_REVIEW.md",
+          "sha256": "c5540efcff678f70186861ca979410ef198b549f4d08450755ca0f26aebe9f55"
+        },
+        {
+          "path": "RETURNS_RELEASE_CANDIDATE.md",
+          "sha256": "439e531bfaa4b1ba4d9625ec3a57a1795454e1f464bd14e2e1b027a5da10b5db"
+        },
+        {
+          "path": "SHIPKIT_COORDINATED_UPGRADE.md",
+          "sha256": "5f777d9587f7ad583b2b3cbe67899aff08692e7ca15bbb7ec0fc87a821cdc4a3"
+        },
+        {
+          "path": "templates/money.php",
+          "sha256": "becf6220d6fefd611d6664575b62f0a6fcf81c03ac85e2ec5fc786e9b99c902c"
+        }
+      ]
+    }
+  ]
+}
