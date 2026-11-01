@@ -2,19 +2,19 @@
 /**
  * Plugin Name: KnifeRevive Returns
  * Description: Private buyer returns and Return Desk, using Seller Orders and ShipKit's existing authorities.
- * Version: 0.1.0-rc4
+ * Version: 0.1.1-rc1
  * Requires PHP: 8.1
  * Requires Plugins: woocommerce, kniferevive-seller-orders, kniferevive-shipkit
  */
 defined('ABSPATH') || exit;
 define('KR_RETURNS_FILE', __FILE__);
-define('KR_RETURNS_VERSION', '0.1.0-rc4');
+define('KR_RETURNS_VERSION', '0.1.1-rc1');
 
 /** WP's dependency headers do not guarantee include order. In particular,
  * ReturnScope implements interfaces declared by the ShipKit plugin file. */
 function krev_returns_load_components(): bool {
     if (!interface_exists('KnifeRevive\\ShipKit\\Scope') || !interface_exists('KnifeRevive\\ShipKit\\ScopeAccess')) return false;
-    foreach (['Support','Policy','Access','Store','Cases','Files','Guest','Labels','Refunds','Inspection','Tracking','Money','Jobs','Rest','Screens','Plugin'] as $name) {
+    foreach (['Support','Contract','Policy','Access','Store','Cases','Files','Guest','Labels','Refunds','Inspection','Tracking','Money','Jobs','Rest','Screens','Plugin'] as $name) {
         require_once __DIR__.'/includes/'.$name.'.php';
     }
     return true;

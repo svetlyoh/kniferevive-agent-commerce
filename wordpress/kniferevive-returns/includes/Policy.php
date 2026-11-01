@@ -43,6 +43,12 @@ final class Policy {
                 'sku'=>$product->get_sku()?:null,
             ],
         ];
+        $contract=(array)get_option('kr_returns_policy_contract',[]);
+        // Disclosure must have been recorded by the native checkout UI. Missing
+        // disclosure (including older orders) must retain the unknown anchor.
+        $disclosed=$values['_kr_return_contract_version']??'';
+        $created=$order->get_date_created()?->getTimestamp()??0;
+        $snapshot=Contract::apply($snapshot,$contract,$created,is_string($disclosed)?$disclosed:'');
         $item->add_meta_data('_kr_return_policy_v2',$snapshot,true);
     }
     public static function processed(\WC_Order $order): void {
