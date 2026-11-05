@@ -1,0 +1,246 @@
+[
+  {
+    "name": "No horizontal overflow at 320",
+    "pass": true
+  },
+  {
+    "name": "One H1 at 320",
+    "pass": true
+  },
+  {
+    "name": "Normal site header and footer at 320",
+    "pass": true
+  },
+  {
+    "name": "Hero photos load at 320",
+    "pass": true
+  },
+  {
+    "name": "Full product photographs use contain at 320",
+    "pass": true
+  },
+  {
+    "name": "All prominent campaign actions meet 44px at 320",
+    "pass": true
+  },
+  {
+    "name": "No purchase form at 320",
+    "pass": true
+  },
+  {
+    "name": "No horizontal overflow at 375",
+    "pass": true
+  },
+  {
+    "name": "One H1 at 375",
+    "pass": true
+  },
+  {
+    "name": "Normal site header and footer at 375",
+    "pass": true
+  },
+  {
+    "name": "Hero photos load at 375",
+    "pass": true
+  },
+  {
+    "name": "Full product photographs use contain at 375",
+    "pass": true
+  },
+  {
+    "name": "All prominent campaign actions meet 44px at 375",
+    "pass": true
+  },
+  {
+    "name": "No purchase form at 375",
+    "pass": true
+  },
+  {
+    "name": "Buy and sell buttons visible in first screen at 375",
+    "pass": true
+  },
+  {
+    "name": "No horizontal overflow at 390",
+    "pass": true
+  },
+  {
+    "name": "One H1 at 390",
+    "pass": true
+  },
+  {
+    "name": "Normal site header and footer at 390",
+    "pass": true
+  },
+  {
+    "name": "Hero photos load at 390",
+    "pass": true
+  },
+  {
+    "name": "Full product photographs use contain at 390",
+    "pass": true
+  },
+  {
+    "name": "All prominent campaign actions meet 44px at 390",
+    "pass": true
+  },
+  {
+    "name": "No purchase form at 390",
+    "pass": true
+  },
+  {
+    "name": "Buy and sell buttons visible in first screen at 390",
+    "pass": true
+  },
+  {
+    "name": "No horizontal overflow at 768",
+    "pass": true
+  },
+  {
+    "name": "One H1 at 768",
+    "pass": true
+  },
+  {
+    "name": "Normal site header and footer at 768",
+    "pass": true
+  },
+  {
+    "name": "Hero photos load at 768",
+    "pass": true
+  },
+  {
+    "name": "Full product photographs use contain at 768",
+    "pass": true
+  },
+  {
+    "name": "All prominent campaign actions meet 44px at 768",
+    "pass": true
+  },
+  {
+    "name": "No purchase form at 768",
+    "pass": true
+  },
+  {
+    "name": "No horizontal overflow at 1024",
+    "pass": true
+  },
+  {
+    "name": "One H1 at 1024",
+    "pass": true
+  },
+  {
+    "name": "Normal site header and footer at 1024",
+    "pass": true
+  },
+  {
+    "name": "Hero photos load at 1024",
+    "pass": true
+  },
+  {
+    "name": "Full product photographs use contain at 1024",
+    "pass": true
+  },
+  {
+    "name": "All prominent campaign actions meet 44px at 1024",
+    "pass": true
+  },
+  {
+    "name": "No purchase form at 1024",
+    "pass": true
+  },
+  {
+    "name": "No horizontal overflow at 1440",
+    "pass": true
+  },
+  {
+    "name": "One H1 at 1440",
+    "pass": true
+  },
+  {
+    "name": "Normal site header and footer at 1440",
+    "pass": true
+  },
+  {
+    "name": "Hero photos load at 1440",
+    "pass": true
+  },
+  {
+    "name": "Full product photographs use contain at 1440",
+    "pass": true
+  },
+  {
+    "name": "All prominent campaign actions meet 44px at 1440",
+    "pass": true
+  },
+  {
+    "name": "No purchase form at 1440",
+    "pass": true
+  },
+  {
+    "name": "Dispatch anchor below sticky-header allowance",
+    "pass": true
+  },
+  {
+    "name": "Keyboard opens native FAQ",
+    "pass": true
+  },
+  {
+    "name": "Keyboard closes native FAQ",
+    "pass": true
+  },
+  {
+    "name": "Visible keyboard focus",
+    "pass": true
+  },
+  {
+    "name": "Seller links retain whitelisted campaign attribution",
+    "pass": true
+  },
+  {
+    "name": "No campaign JS or SDK loaded by default",
+    "pass": true
+  },
+  {
+    "name": "No tracking requests before consent",
+    "pass": true
+  },
+  {
+    "name": "Declined consent sends no custom events",
+    "pass": true
+  },
+  {
+    "name": "Consented repeated browse action is deduplicated",
+    "pass": true
+  },
+  {
+    "name": "GPC overrides accepted cookie",
+    "pass": true
+  },
+  {
+    "name": "Custom events never initialize a dataset or duplicate PageView/Purchase",
+    "pass": true
+  },
+  {
+    "name": "Event payload has context only, no URLs or UTMs",
+    "pass": true
+  },
+  {
+    "name": "Accepted initial visit sends one custom landing view",
+    "pass": true
+  },
+  {
+    "name": "Featured action deduplicates approved item context",
+    "pass": true
+  },
+  {
+    "name": "No page JavaScript errors",
+    "pass": true
+  },
+  {
+    "name": "FAQ works without JavaScript",
+    "pass": true
+  },
+  {
+    "name": "Browse and seller destinations work without JavaScript",
+    "pass": true
+  }
+]
