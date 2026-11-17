@@ -1,0 +1,114 @@
+{
+  "wusthof": {
+    "source": "assets/web/wusthof.webp",
+    "source_sha256": "d08da93e67e87652d855c5a9b1d94995b3269d86f6fda97b83ad26c9f1ed231d",
+    "source_width": 1600,
+    "source_height": 312,
+    "variants": [
+      {
+        "file": "wusthof-320.webp",
+        "width": 320,
+        "height": 62,
+        "bytes": 1658
+      },
+      {
+        "file": "wusthof-640.webp",
+        "width": 640,
+        "height": 125,
+        "bytes": 4058
+      },
+      {
+        "file": "wusthof-960.webp",
+        "width": 960,
+        "height": 187,
+        "bytes": 7040
+      }
+    ]
+  },
+  "fire-tv": {
+    "source": "assets/web/fire_tv.webp",
+    "source_sha256": "dc6dabb4a38e7f673553cf19f9d29a9344d5ac778d345124f2186f6e64e4067a",
+    "source_width": 1283,
+    "source_height": 1474,
+    "variants": [
+      {
+        "file": "fire-tv-320.webp",
+        "width": 320,
+        "height": 368,
+        "bytes": 17356
+      },
+      {
+        "file": "fire-tv-640.webp",
+        "width": 640,
+        "height": 735,
+        "bytes": 57120
+      },
+      {
+        "file": "fire-tv-960.webp",
+        "width": 960,
+        "height": 1103,
+        "bytes": 98570
+      }
+    ]
+  },
+  "cutco": {
+    "source": "assets/web/cutco.webp",
+    "source_sha256": "af4db1263876bea0416848f4c1221121eb24c5dec69d7a627a899e3e773426b5",
+    "source_width": 1490,
+    "source_height": 361,
+    "variants": [
+      {
+        "file": "cutco-320.webp",
+        "width": 320,
+        "height": 78,
+        "bytes": 1834
+      },
+      {
+        "file": "cutco-640.webp",
+        "width": 640,
+        "height": 155,
+        "bytes": 5142
+      },
+      {
+        "file": "cutco-960.webp",
+        "width": 960,
+        "height": 233,
+        "bytes": 9836
+      }
+    ]
+  },
+  "dispatch": {
+    "source": "assets/dispatch_illustration.png",
+    "source_sha256": "9226b02d4adf83d0d79edd7086c32253bb9dd865fd27b98402e791728ae80d92",
+    "source_width": 1774,
+    "source_height": 887,
+    "variants": [
+      {
+        "file": "dispatch-480.webp",
+        "width": 480,
+        "height": 240,
+        "bytes": 26352
+      },
+      {
+        "file": "dispatch-960.webp",
+        "width": 960,
+        "height": 480,
+        "bytes": 65448
+      }
+    ]
+  },
+  "og-marketplace": {
+    "source": "exports/kniferevive_01_marketplace_square_1080x1080.png",
+    "source_sha256": "b36381602dfd0dbd1af11d457e45e7180c67296398d176fb9c7668de213be65e",
+    "source_width": 1080,
+    "source_height": 1080,
+    "variants": [
+      {
+        "file": "og-marketplace-1080.webp",
+        "width": 1080,
+        "height": 1080,
+        "bytes": 45050
+      }
+    ]
+  }
+}

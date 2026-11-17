@@ -1,0 +1,156 @@
+{
+  "checked_at": "2026-10-25T21:26:56.110Z",
+  "products": [
+    {
+      "id": 3196,
+      "slug": "amazon-fire-tv-stick-4k-select-with-alexa-voice-remote",
+      "name": "Amazon Fire TV Stick 4K Select with Alexa Voice Remote",
+      "permalink": "https://kniferevive.com/shop/technology/amazon-fire-tv-stick-4k-select-with-alexa-voice-remote/",
+      "is_in_stock": true
+    },
+    {
+      "id": 1448,
+      "slug": "model-1728-msrp-150",
+      "name": "Cutco Petite Chef Knife",
+      "permalink": "https://kniferevive.com/shop/chefs-knife/model-1728-msrp-150/",
+      "is_in_stock": true
+    },
+    {
+      "id": 538,
+      "slug": "wusthof-gourmet-chefs-knife-8-inch",
+      "name": "Wüsthof Gourmet Chef&#8217;s Knife",
+      "permalink": "https://kniferevive.com/shop/chefs-knife/wusthof-gourmet-chefs-knife-8-inch/",
+      "is_in_stock": true
+    }
+  ],
+  "links": [
+    {
+      "route": "/sell/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/sell/",
+      "ms": 2206,
+      "title": "Sell on KnifeRevive &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/categories/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/categories/",
+      "ms": 2484,
+      "title": "Explore KnifeRevive &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/my-account/listlab/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/my-account/?redirect_to=https://kniferevive.com/my-account/listlab/",
+      "ms": 3570,
+      "title": "My account &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/shop/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/shop/",
+      "ms": 4432,
+      "title": "Shop Knives &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/books/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/books/",
+      "ms": 2503,
+      "title": "Books &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/other-finds/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/other-finds/",
+      "ms": 2670,
+      "title": "Other Finds &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/art-trade-gallery/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/art-trade-gallery/",
+      "ms": 2989,
+      "title": "Art Trade Gallery &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/technology-trade-desk/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/technology-trade-desk/",
+      "ms": 3382,
+      "title": "Technology Trade Desk &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/help/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/help/",
+      "ms": 2187,
+      "title": "Help &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/help/privacy-policy/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/help/privacy-policy/",
+      "ms": 2283,
+      "title": "Privacy Policy &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/listing-guide/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/listing-guide/",
+      "ms": 2286,
+      "title": "Listing Guide &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/terms-and-conditions/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/terms-and-conditions/",
+      "ms": 2441,
+      "title": "Terms and Conditions &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/help/dispatch-terms/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/help/dispatch-terms/",
+      "ms": 2127,
+      "title": "Dispatch Terms &#038; Conditions &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/contact/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/contact/",
+      "ms": 2210,
+      "title": "Contact &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/return-policy/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/return-policy/",
+      "ms": 2238,
+      "title": "Return Policy &#8211; KnifeRevive",
+      "protected_login": false
+    },
+    {
+      "route": "/product-category/chefs-knife/",
+      "status": 200,
+      "final_url": "https://kniferevive.com/product-category/chefs-knife/",
+      "ms": 3992,
+      "title": "Chef&#8217;s Knife &#8211; KnifeRevive",
+      "protected_login": false
+    }
+  ]
+}
