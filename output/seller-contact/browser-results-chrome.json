@@ -1,0 +1,278 @@
+[
+  {
+    "name": "No overflow at320",
+    "pass": true
+  },
+  {
+    "name": "Three distinct surface CTAs at320",
+    "pass": true
+  },
+  {
+    "name": "Touch targets at320",
+    "pass": true
+  },
+  {
+    "name": "Chooser visible at320",
+    "pass": true
+  },
+  {
+    "name": "Chooser contained at320",
+    "pass": true
+  },
+  {
+    "name": "Escape restores trigger at320",
+    "pass": true
+  },
+  {
+    "name": "No overflow at375",
+    "pass": true
+  },
+  {
+    "name": "Three distinct surface CTAs at375",
+    "pass": true
+  },
+  {
+    "name": "Touch targets at375",
+    "pass": true
+  },
+  {
+    "name": "Chooser visible at375",
+    "pass": true
+  },
+  {
+    "name": "Chooser contained at375",
+    "pass": true
+  },
+  {
+    "name": "Escape restores trigger at375",
+    "pass": true
+  },
+  {
+    "name": "No overflow at390",
+    "pass": true
+  },
+  {
+    "name": "Three distinct surface CTAs at390",
+    "pass": true
+  },
+  {
+    "name": "Touch targets at390",
+    "pass": true
+  },
+  {
+    "name": "Chooser visible at390",
+    "pass": true
+  },
+  {
+    "name": "Chooser contained at390",
+    "pass": true
+  },
+  {
+    "name": "Escape restores trigger at390",
+    "pass": true
+  },
+  {
+    "name": "No overflow at430",
+    "pass": true
+  },
+  {
+    "name": "Three distinct surface CTAs at430",
+    "pass": true
+  },
+  {
+    "name": "Touch targets at430",
+    "pass": true
+  },
+  {
+    "name": "Chooser visible at430",
+    "pass": true
+  },
+  {
+    "name": "Chooser contained at430",
+    "pass": true
+  },
+  {
+    "name": "Escape restores trigger at430",
+    "pass": true
+  },
+  {
+    "name": "No overflow at768",
+    "pass": true
+  },
+  {
+    "name": "Three distinct surface CTAs at768",
+    "pass": true
+  },
+  {
+    "name": "Touch targets at768",
+    "pass": true
+  },
+  {
+    "name": "Chooser visible at768",
+    "pass": true
+  },
+  {
+    "name": "Chooser contained at768",
+    "pass": true
+  },
+  {
+    "name": "Escape restores trigger at768",
+    "pass": true
+  },
+  {
+    "name": "No overflow at1280",
+    "pass": true
+  },
+  {
+    "name": "Three distinct surface CTAs at1280",
+    "pass": true
+  },
+  {
+    "name": "Touch targets at1280",
+    "pass": true
+  },
+  {
+    "name": "Chooser visible at1280",
+    "pass": true
+  },
+  {
+    "name": "Chooser contained at1280",
+    "pass": true
+  },
+  {
+    "name": "Escape restores trigger at1280",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 0",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 1",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 2",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 3",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 4",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 5",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 6",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 7",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 8",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 9",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 10",
+    "pass": true
+  },
+  {
+    "name": "Modal focus stays inside 11",
+    "pass": true
+  },
+  {
+    "name": "Copy question produces item context",
+    "pass": true
+  },
+  {
+    "name": "Two safe external channel links",
+    "pass": true
+  },
+  {
+    "name": "No metrics when disabled",
+    "pass": true
+  },
+  {
+    "name": "No metrics without consent",
+    "pass": true
+  },
+  {
+    "name": "Consented eligibility and visible impression emitted",
+    "pass": true
+  },
+  {
+    "name": "Metric payload excludes contact details",
+    "pass": true
+  },
+  {
+    "name": "Carousel clone impressions deduplicate",
+    "pass": true
+  },
+  {
+    "name": "Lazy clone opens shared modal",
+    "pass": true
+  },
+  {
+    "name": "No duplicate chooser IDs after cloning",
+    "pass": true
+  },
+  {
+    "name": "whatsapp correct CTA count",
+    "pass": true
+  },
+  {
+    "name": "whatsapp no dead chooser",
+    "pass": true
+  },
+  {
+    "name": "telegram correct CTA count",
+    "pass": true
+  },
+  {
+    "name": "telegram no dead chooser",
+    "pass": true
+  },
+  {
+    "name": "neither correct CTA count",
+    "pass": true
+  },
+  {
+    "name": "neither no dead chooser",
+    "pass": true
+  },
+  {
+    "name": "Actual kr-tech-theme body class present in dark fixture",
+    "pass": true
+  },
+  {
+    "name": "Dark contact surface and text remain contrasted",
+    "pass": true
+  },
+  {
+    "name": "Dark chooser inherits the real Tech surface",
+    "pass": true
+  },
+  {
+    "name": "No-JS channel chooser works",
+    "pass": true
+  },
+  {
+    "name": "No-JS copy text remains available",
+    "pass": true
+  },
+  {
+    "name": "No uncaught browser errors",
+    "pass": true
+  }
+]
